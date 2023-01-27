@@ -3,17 +3,21 @@ import 'package:flutter/material.dart';
 class TopMenu extends StatelessWidget {
   const TopMenu({Key? key}) : super(key: key);
 
+  static String currentPage = '/';
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Image(
           image: AssetImage("images/Jos-Logo.png"),
-          width: 40,
+          width: 80,
         ),
         Spacer(),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            goto('/',context);
+          },
           style: ButtonStyle(
             foregroundColor: MaterialStateProperty.resolveWith<Color>(
               (Set<MaterialState> states) {
@@ -27,11 +31,13 @@ class TopMenu extends StatelessWidget {
           ),
           child: Text(
             "Dashboard",
-            style: TextStyle(fontSize: 8),
+            style: TextStyle(fontSize: 18),
           ),
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            goto('/modules',context);
+          },
           style: ButtonStyle(
             foregroundColor: MaterialStateProperty.resolveWith<Color>(
               (Set<MaterialState> states) {
@@ -45,11 +51,13 @@ class TopMenu extends StatelessWidget {
           ),
           child: Text(
             "Modules",
-            style: TextStyle(fontSize: 8),
+            style: TextStyle(fontSize: 18),
           ),
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            goto('/settings',context);
+          },
           style: ButtonStyle(
             foregroundColor: MaterialStateProperty.resolveWith<Color>(
               (Set<MaterialState> states) {
@@ -63,7 +71,7 @@ class TopMenu extends StatelessWidget {
           ),
           child: Text(
             "Settings",
-            style: TextStyle(fontSize: 8),
+            style: TextStyle(fontSize: 18),
           ),
         ),
         IconButton(
@@ -81,11 +89,18 @@ class TopMenu extends StatelessWidget {
           ),
           icon: Icon(
             Icons.logout,
-            size: 12,
+            size: 18,
             color: Colors.white54,
           ),
         ),
       ],
     );
+  }
+
+  void goto(String target,BuildContext context) {
+    if (currentPage != target)  {
+      Navigator.of(context).pushReplacementNamed(target);
+      currentPage = target;
+    }
   }
 }
