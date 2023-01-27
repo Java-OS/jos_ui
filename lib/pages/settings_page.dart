@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jos_ui/top_menu.dart';
+import 'package:jos_ui/pages/top_menu.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jos_ui/top_menu.dart';
+import 'package:jos_ui/pages/top_menu.dart';
 
 class ModulesPage extends StatelessWidget {
   const ModulesPage({Key? key}) : super(key: key);
