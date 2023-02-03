@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jos_ui/RouteHandler.dart';
 
+String? token;
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final storage = FlutterSecureStorage();
+  token = await storage.read(key: 'token');
   runApp(BaseApplication());
 }
 
@@ -14,9 +19,10 @@ class BaseApplication extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(useMaterial3: true),
       title: "JOS",
-      initialRoute: '/',
-      onGenerateRoute: RouteHandler.handle,
+      initialRoute: token == null ? "/login" : "/",
+      onGenerateRoute: RouteHandler.handle ,
     );
   }
 }
