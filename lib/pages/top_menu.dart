@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jos_ui/component/TextLogo.dart';
+import 'package:jos_ui/pages/settings_page.dart';
 import 'package:jos_ui/service/SecurityService.dart';
 
 class TopMenu extends StatelessWidget {

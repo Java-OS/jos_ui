@@ -7,6 +7,6 @@ class ModulesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WebLayout(child: Text('Settings Page'));
+    return WebLayout(child: Text('Modules Page'));
   }
 }

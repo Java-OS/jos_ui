@@ -15,7 +15,6 @@ class SecurityService {
     if (response.headers.containsKey("token")) {
       var token = response.headers["token"];
       await storage.write(key: 'token', value: token);
-
       return Future(() => true);
     } else {
       return Future(() => false);

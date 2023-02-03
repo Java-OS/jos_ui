@@ -32,7 +32,9 @@ class LoginPage extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 18.0),
-                  child: TextLogo(color: Colors.black,),
+                  child: TextLogo(
+                    color: Colors.black,
+                  ),
                 ),
                 SizedBox(
                   width: 300,
