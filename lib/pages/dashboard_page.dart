@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/pages/WebLayout.dart';
 import 'package:jos_ui/service/ApiService.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
 
   @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  @override
   Widget build(BuildContext context) {
-    ApiService(context).rpc(300).then((value) => print(value));
     return WebLayout(
       child: GridView(
         shrinkWrap: true,
@@ -37,5 +41,6 @@ class DashboardPage extends StatelessWidget {
         ],
       ),
     );
+
   }
 }
