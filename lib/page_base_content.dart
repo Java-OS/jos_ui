@@ -19,10 +19,12 @@ Widget getPageContent({Widget? child}) {
             color: Color.fromARGB(200, 0, 0, 0),
             width: double.infinity,
             height: double.infinity,
-            child: Center(child: child ?? Text('Empty content',style: TextStyle(color: Colors.white,fontSize: 55),)),
+            child: child ?? emptyContentMessage(),
           )
         ],
       ),
     ),
   );
 }
+
+Widget emptyContentMessage() => Center(child: Text('Empty content', style: TextStyle(color: Colors.white, fontSize: 55)));
