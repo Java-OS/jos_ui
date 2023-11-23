@@ -10,7 +10,7 @@ class RouteService {
     developer.log('Route to $target');
     switch (target) {
       case '/':
-        return MaterialPageRoute(builder: (_) => LoginPage());
+        return MaterialPageRoute(builder: (_) => HomePage());
       case '/home':
         return MaterialPageRoute(builder: (_) => HomePage());
       default:

@@ -14,12 +14,11 @@ Widget getPageContent({Widget? child}) {
               width: double.infinity,
             ),
           ),
-          // child ?? Text('Empty content')
           Container(
             color: Color.fromARGB(200, 0, 0, 0),
             width: double.infinity,
             height: double.infinity,
-            child: child ?? emptyContentMessage(),
+            child: Stack(children: [child ?? emptyContentMessage()]),
           )
         ],
       ),
