@@ -40,6 +40,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 20),
                 TextField(
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
