@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:jos_ui/component/side_menu_component.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
 import 'package:jos_ui/page_base_content.dart';
 
 class SettingPage extends StatefulWidget {
-  const SettingPage({super.key});
+  final int tabIndex;
+  const SettingPage({super.key, required this.tabIndex});
 
   @override
   State<SettingPage> createState() => _SystemPageState();
@@ -23,7 +25,23 @@ class _SystemPageState extends State<SettingPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [TopMenuComponent(selectedIndex: 1), SizedBox(height: 8), Text('Setting Page', style: TextStyle(fontSize: 55, fontWeight: FontWeight.bold,color: Colors.white))],
+          children: [
+            TopMenuComponent(selectedIndex: 1),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SideMenuComponent(indexTab : widget.tabIndex),
+                Container(
+                  width: 510,
+                  height: 400,
+                  color: Color.fromRGBO(236, 226, 226, 1.0),
+                  child: Text('Content'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -13,6 +13,14 @@ class TopMenuComponent extends StatefulWidget {
 class _HomePageState extends State<TopMenuComponent> {
   int _hoverIndex = -1;
 
+  final menuConfigs = [
+    ['/home', Colors.blueAccent, Icons.dashboard],
+    ['/setting', Colors.blueAccent, Icons.settings],
+    ['/user', Colors.blueAccent, Icons.groups_sharp],
+    ['/module', Colors.blueAccent, Icons.view_module],
+    ['/', Colors.redAccent, Icons.logout_outlined],
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -27,14 +35,6 @@ class _HomePageState extends State<TopMenuComponent> {
       ],
     );
   }
-
-  final menuConfigs = [
-    ['/home', Colors.blueAccent, Icons.info_outline_rounded],
-    ['/setting', Colors.blueAccent, Icons.settings],
-    ['/user', Colors.blueAccent, Icons.groups_sharp],
-    ['/module', Colors.blueAccent, Icons.view_module],
-    ['/', Colors.redAccent, Icons.logout_outlined],
-  ];
 
   List<Widget> getTopMenuItems() => List.generate(4, (index) => menuItem(index));
 
@@ -56,7 +56,11 @@ class _HomePageState extends State<TopMenuComponent> {
         },
         onTap: () {
           setState(() {
-            navigatorKey.currentState?.pushReplacementNamed(routePath);
+            if (routePath == '/setting') {
+              navigatorKey.currentState?.pushReplacementNamed(routePath,arguments: 0);
+            } else {
+              navigatorKey.currentState?.pushReplacementNamed(routePath);
+            }
           });
         },
         child: Padding(

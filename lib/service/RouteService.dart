@@ -17,7 +17,9 @@ class RouteService {
       case '/home':
         return PageRouteBuilder(pageBuilder: (_, __, ___) => HomePage());
       case '/setting':
-        return PageRouteBuilder(pageBuilder: (_, __, ___) => SettingPage());
+        var tabIndex = settings.arguments as int;
+        developer.log('Route arguments: $tabIndex');
+        return PageRouteBuilder(pageBuilder: (_, __, ___) => SettingPage(tabIndex: tabIndex));
       case '/user':
         return PageRouteBuilder(pageBuilder: (_, __, ___) => UserPage());
       case '/module':
