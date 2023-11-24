@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/service/RouteService.dart';
 
 void main() {
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'JOS',
       initialRoute: '/',
+      navigatorKey: navigatorKey,
       onGenerateRoute: RouteService.handle,
     );
   }
