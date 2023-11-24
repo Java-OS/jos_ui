@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: mouseOnCpuChart ? Colors.white : Colors.transparent),
-          color: mouseOnCpuChart ? Colors.redAccent : Colors.red,
+          color: mouseOnCpuChart ? Colors.lightGreen : Colors.green,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: mouseOnMemoryChart ? Colors.white : Colors.transparent),
-          color: mouseOnMemoryChart ? Colors.redAccent : Colors.red,
+          color: mouseOnMemoryChart ? Colors.lightGreen : Colors.green,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: mouseOnHardwareInformation ? Colors.white : Colors.transparent),
-          color: mouseOnHardwareInformation ? Colors.redAccent : Colors.red,
+          color: mouseOnHardwareInformation ? Colors.lightGreen : Colors.green,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: mouseOnBaseInformation ? Colors.white : Colors.transparent),
-          color: mouseOnBaseInformation ? Colors.redAccent : Colors.red,
+          color: mouseOnBaseInformation ? Colors.lightGreen : Colors.green,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
