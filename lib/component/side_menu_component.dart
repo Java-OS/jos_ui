@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jos_ui/constant.dart';
-import 'dart:developer' as developer;
 
 class SideMenuComponent extends StatefulWidget {
-  final int indexTab ;
+  final int indexTab;
+
   const SideMenuComponent({super.key, required this.indexTab});
 
   @override
@@ -48,8 +48,7 @@ class _HomePageState extends State<SideMenuComponent> {
         },
         onTap: () {
           setState(() {
-            developer.log('Click on index: $index');
-            navigatorKey.currentState?.pushReplacementNamed('/setting',arguments: index);
+            navigatorKey.currentState?.pushReplacementNamed('/setting', arguments: index);
           });
         },
         child: Padding(

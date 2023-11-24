@@ -10,7 +10,7 @@ import 'package:jos_ui/page/user_page.dart';
 class RouteService {
   static Route<dynamic> handle(RouteSettings settings) {
     var target = settings.name;
-    developer.log('Route to $target');
+    developer.log('Route to $target with args ${settings.arguments}');
     switch (target) {
       case '/':
         return PageRouteBuilder(pageBuilder: (_, __, ___) => HomePage());
@@ -18,7 +18,6 @@ class RouteService {
         return PageRouteBuilder(pageBuilder: (_, __, ___) => HomePage());
       case '/setting':
         var tabIndex = settings.arguments as int;
-        developer.log('Route arguments: $tabIndex');
         return PageRouteBuilder(pageBuilder: (_, __, ___) => SettingPage(tabIndex: tabIndex));
       case '/user':
         return PageRouteBuilder(pageBuilder: (_, __, ___) => UserPage());
