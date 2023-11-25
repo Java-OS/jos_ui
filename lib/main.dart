@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData.light(useMaterial3: false),
       debugShowCheckedModeBanner: false,
       title: 'JOS',
       initialRoute: '/',
