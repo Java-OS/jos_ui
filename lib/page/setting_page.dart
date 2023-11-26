@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jos_ui/component/date_time_component.dart';
+import 'package:jos_ui/component/environment_component.dart';
 import 'package:jos_ui/component/network_component.dart';
 import 'package:jos_ui/component/ntp_component.dart';
 import 'package:jos_ui/component/side_menu_component.dart';
@@ -156,7 +157,31 @@ class _SystemPageState extends State<SettingPage> {
   }
 
   Widget displayEnvironmentsContent() {
-    return basicContent(child: Text('Environments content'));
+    return basicContent(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text('Environments', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+              SizedBox(height: 30),
+              EnvironmentComponent(),
+              SizedBox(height: 30),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              ElevatedButton(onPressed: () {}, child: Text('Apply'))
+            ],
+          )
+        ],
+      ),
+    );
   }
 
   Widget basicContent({child}) {
