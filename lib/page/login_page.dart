@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jos_ui/page_base_content.dart';
 
 class LoginPage extends StatefulWidget {
@@ -20,15 +21,16 @@ class _LoginPageState extends State<LoginPage> {
     return Center(
       child: SizedBox(
         width: 300,
-        height: 230,
+        height: 300,
         child: Card(
           color: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(side: BorderSide(color: Colors.white38), borderRadius: BorderRadius.zero),
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(14.0),
             child: Column(
               children: [
+                Center(child: Text('JOS', style: GoogleFonts.smoochSans(letterSpacing: 3, color: Colors.white, fontSize: 55, fontWeight: FontWeight.bold))),
                 TextField(
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(

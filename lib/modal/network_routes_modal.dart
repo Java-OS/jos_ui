@@ -84,11 +84,11 @@ Future<void> displayAddNewRouteModal(BuildContext context) async {
           length: 3,
           child: SizedBox(
             width: 550,
-            height: 100,
+            height: 190,
             child: Scaffold(
               body: Column(
-                children: const [
-                  TabBar(tabs: [
+                children: [
+                  TabBar(tabs: const [
                     Tab(child: Row(children: [Icon(Icons.double_arrow, color: Colors.black), SizedBox(width: 8), Text('Default Gateway', style: TextStyle(color: Colors.black))])),
                     Tab(child: Row(children: [Icon(Icons.computer, color: Colors.black), SizedBox(width: 8), Text('Host', style: TextStyle(color: Colors.black))])),
                     Tab(child: Row(children: [Icon(Icons.account_tree_outlined, color: Colors.black), SizedBox(width: 8), Text('Network', style: TextStyle(color: Colors.black))])),
@@ -96,9 +96,9 @@ Future<void> displayAddNewRouteModal(BuildContext context) async {
                   Expanded(
                     child: TabBarView(
                       children: [
-                        Text('Default Gateway'),
-                        Text('Host'),
-                        Text('Network'),
+                        defaultGatewayTab(),
+                        hostTab(),
+                        networkTab(),
                       ],
                     ),
                   )
@@ -111,6 +111,60 @@ Future<void> displayAddNewRouteModal(BuildContext context) async {
     },
   );
 }
+
+Widget defaultGatewayTab() {
+  return Padding(
+    padding: EdgeInsets.all(14.0),
+    child: Column(
+      children: [
+        TextField(decoration: InputDecoration(label: Text('Address'), hintStyle: TextStyle(fontSize: 12))),
+        SizedBox(height: 30),
+        Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () {}, child: Text('Apply')))
+      ],
+    ),
+  );
+}
+
+Widget hostTab() {
+  return Padding(
+    padding: EdgeInsets.all(14.0),
+    child: Column(
+      children: [
+        Row(
+          children: const [
+            Flexible(child: TextField(decoration: InputDecoration(label: Text('Address'), hintStyle: TextStyle(fontSize: 12)))),
+            SizedBox(width: 8),
+            Flexible(child: TextField(decoration: InputDecoration(label: Text('metrics'), hintStyle: TextStyle(fontSize: 12)))),
+          ],
+        ),
+        SizedBox(height: 30),
+        Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () {}, child: Text('Apply')))
+      ],
+    ),
+  );
+}
+
+Widget networkTab() {
+  return Padding(
+    padding: EdgeInsets.all(14.0),
+    child: Column(
+      children: [
+        Row(
+          children: const [
+            Flexible(child: TextField(decoration: InputDecoration(label: Text('network'), hintStyle: TextStyle(fontSize: 12)))),
+            SizedBox(width: 8),
+            Flexible(child: TextField(decoration: InputDecoration(label: Text('netmask'), hintStyle: TextStyle(fontSize: 12)))),
+            SizedBox(width: 8),
+            Flexible(child: TextField(decoration: InputDecoration(label: Text('metrics'), hintStyle: TextStyle(fontSize: 12)))),
+          ],
+        ),
+        SizedBox(height: 30),
+        Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () {}, child: Text('Apply')))
+      ],
+    ),
+  );
+}
+
 
 Widget _getHeader(String title) {
   return Container(
