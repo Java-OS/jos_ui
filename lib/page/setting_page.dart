@@ -35,10 +35,15 @@ class _SystemPageState extends State<SettingPage> {
           children: [
             TopMenuComponent(selectedIndex: 1),
             SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [SideMenuComponent(indexTab: widget.tabIndex), chooseTargetTab()],
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SideMenuComponent(indexTab: widget.tabIndex),
+                  chooseTargetTab(),
+                ],
+              ),
             ),
           ],
         ),
@@ -119,9 +124,7 @@ class _SystemPageState extends State<SettingPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ElevatedButton(onPressed: () {}, child: Text('Apply'))
-            ],
+            children: [ElevatedButton(onPressed: () {}, child: Text('Apply'))],
           )
         ],
       ),
@@ -147,9 +150,7 @@ class _SystemPageState extends State<SettingPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ElevatedButton(onPressed: () {}, child: Text('Apply'))
-            ],
+            children: [ElevatedButton(onPressed: () {}, child: Text('Apply'))],
           )
         ],
       ),
@@ -171,13 +172,13 @@ class _SystemPageState extends State<SettingPage> {
   }
 
   Widget basicContent({child}) {
-    return Container(
-      width: 520,
-      height: 400,
-      color: Color.fromRGBO(236, 226, 226, 1.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: child,
+    return Expanded(
+      child: Container(
+        color: Color.fromRGBO(236, 226, 226, 1.0),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: child,
+        ),
       ),
     );
   }

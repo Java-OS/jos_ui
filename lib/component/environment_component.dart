@@ -16,13 +16,8 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              OutlinedButton(onPressed: () => displayAddUpdateEnvironmentModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
-              SizedBox(width: 8),
-            ],
-          ),
-          SizedBox(height: 8),
+          OutlinedButton(onPressed: () => displayAddUpdateEnvironmentModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
+          SizedBox(width: 8),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -38,9 +33,9 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
   }
 
   List<DataColumn> getEnvironmentColumns() {
-    var interfaceColumn = DataColumn(label: Expanded(child: Text('Key', style: TextStyle(fontWeight: FontWeight.bold))));
-    var addressColumn = DataColumn(label: Expanded(child: Text('Value', style: TextStyle(fontWeight: FontWeight.bold))));
-    var netmaskColumn = DataColumn(label: Expanded(child: SizedBox.shrink()));
+    var interfaceColumn = DataColumn(label: Text('Key', style: TextStyle(fontWeight: FontWeight.bold)));
+    var addressColumn = DataColumn(label: Text('Value', style: TextStyle(fontWeight: FontWeight.bold)));
+    var netmaskColumn = DataColumn(label: SizedBox.shrink());
     return [interfaceColumn, addressColumn, netmaskColumn];
   }
 
