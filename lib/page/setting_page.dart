@@ -77,7 +77,7 @@ class _SystemPageState extends State<SettingPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
               Text('Basic Settings', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-              SizedBox(height: 30),
+              Divider(),
               Text('Hostname', style: TextStyle(fontWeight: FontWeight.bold)),
               TextField(decoration: InputDecoration(hintText: 'Enter hostname', hintStyle: TextStyle(fontSize: 12))),
             ],
@@ -103,7 +103,7 @@ class _SystemPageState extends State<SettingPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Date and Time', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-              SizedBox(height: 30),
+              Divider(),
               Row(
                 children: [
                   Checkbox(
@@ -142,7 +142,7 @@ class _SystemPageState extends State<SettingPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
               Text('Network', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-              SizedBox(height: 30),
+              Divider(),
               NetworkComponent(),
               SizedBox(height: 30),
             ],
@@ -164,7 +164,7 @@ class _SystemPageState extends State<SettingPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
           Text('Environment Variables', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-          SizedBox(height: 30),
+          Divider(),
           EnvironmentComponent(),
         ],
       ),

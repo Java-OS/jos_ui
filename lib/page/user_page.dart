@@ -38,7 +38,7 @@ class _UserPageState extends State<UserPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
                       Text('Environment Variables', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-                      SizedBox(height: 30),
+                      Divider(),
                       UserManagementComponent()
                     ],
                   ),
