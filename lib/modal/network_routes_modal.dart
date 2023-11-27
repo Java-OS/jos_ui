@@ -6,7 +6,7 @@ Future<void> displayNetworkRoutesModal(BuildContext context) async {
     context: context,
     builder: (BuildContext context) {
       return SimpleDialog(
-        title: _getHeader('Routes'),
+        title: getModalHeader('Routes'),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         contentPadding: EdgeInsets.all(14),
         titlePadding: EdgeInsets.zero,
@@ -75,7 +75,7 @@ Future<void> displayAddNewRouteModal(BuildContext context) async {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: _getHeader('Add new route'),
+        title: getModalHeader('Add new route'),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         contentPadding: EdgeInsets.all(14),
         titlePadding: EdgeInsets.zero,
@@ -163,28 +163,4 @@ Widget networkTab() {
       ],
     ),
   );
-}
-
-
-Widget _getHeader(String title) {
-  return Container(
-    width: double.infinity,
-    height: 46,
-    color: Colors.green,
-    child: Padding(
-      padding: const EdgeInsets.all(14.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white)),
-          IconButton(onPressed: () => _closeDialog(), padding: EdgeInsets.zero, splashRadius: 10, icon: Icon(Icons.close, size: 22, color: Colors.white))
-        ],
-      ),
-    ),
-  );
-}
-
-void _closeDialog() {
-  navigatorKey.currentState?.pop();
 }
