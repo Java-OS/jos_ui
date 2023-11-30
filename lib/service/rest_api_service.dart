@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:dio/dio.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/storage_service.dart';
 
 class RestApiService {
@@ -33,7 +34,7 @@ class RestApiService {
   static Future<bool> checkLogin() async {
     var token = StorageService.getItem('token');
     if (token == null) return false;
-    var header = {'Authorization': 'Bearer $token'};
+    var header = {'authorization': 'Bearer $token'};
     developer.log('Credential send: [$header]');
 
     var response = await dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
@@ -46,23 +47,23 @@ class RestApiService {
     return false;
   }
 
-  static Future<bool> rpc(num rpc, Map<String, dynamic> parameters) async {
-    developer.log('Request call rpc');
+  static Future<String?> rpc(RPC rpc, {Map<String, dynamic>? parameters}) async {
+    developer.log('Request call rpc: [$rpc] [$parameters]');
     var token = StorageService.getItem('token');
     if (token == null) navigatorKey.currentState?.pushReplacementNamed('/');
     var header = {
-      'Authorization': 'Bearer $token',
-      'x-rpc-code': ' $rpc',
+      'authorization': 'Bearer $token',
+      'x-rpc-code': ' ${rpc.value}',
     };
-    developer.log('Credential send: [$token]');
+    developer.log('Credential send: [$header]');
 
-    parameters['call'] = rpc;
-    developer.log('Parameters : $parameters}');
-
-    var response = await dio.post(_baseLoginUrl(), queryParameters: parameters, options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
+    var response = await dio.post(_baseRpcUrl(), queryParameters: parameters, options: Options(headers: header, responseType: ResponseType.plain, validateStatus: (_) => true));
     var statusCode = response.statusCode;
-    if (statusCode == 200) {}
-    developer.log('Finished');
-    return false;
+    if (statusCode == 200) {
+      developer.log('Received data: [${response.data}]');
+      return response.data;
+    }
+
+    return null;
   }
 }

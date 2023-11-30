@@ -1,8 +1,13 @@
+import 'dart:convert';
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
+import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/page_base_content.dart';
+import 'package:jos_ui/service/rest_api_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,14 +17,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int selectedIndex = 0;
-  bool mouseOnHardwareInformation = false;
-  bool mouseOnBaseInformation = false;
-  bool mouseOnCpuChart = false;
-  bool mouseOnMemoryChart = false;
+  bool _mouseOnHardwareInformation = false;
+  bool _mouseOnBaseInformation = false;
+  bool _mouseOnCpuChart = false;
+  bool _mouseOnMemoryChart = false;
+
+  String _osUsername = '';
+  String _osType = '';
+  String _osVersion = '';
+  String _osHostname = '';
+  String _hwCpuInfo = '';
+  String _hwCpuCount = '';
+  String _hwTotalMemory = '';
+  String _hwUsedMemory = '';
+  String _hwFreeMemory = '';
+  String _jvmVendor = '';
+  String _jvmVersion = '';
+  String _jvmMaxHeapSize = '';
+  String _jvmTotalHeapSize = '';
+  String _jvmUsedHeapSize = '';
+  String _dateTimeZone = '';
 
   @override
   void initState() {
+    _fetchFullSystemInformation();
+    _fetchSystemDateTimeZone();
     super.initState();
   }
 
@@ -65,18 +87,18 @@ class _HomePageState extends State<HomePage> {
     return MouseRegion(
       onHover: (_) {
         setState(() {
-          mouseOnCpuChart = true;
+          _mouseOnCpuChart = true;
         });
       },
       onExit: (_) {
         setState(() {
-          mouseOnCpuChart = false;
+          _mouseOnCpuChart = false;
         });
       },
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: mouseOnCpuChart ? Colors.white : Colors.transparent),
-          color: mouseOnCpuChart ? Colors.lightGreen : Colors.green,
+          border: Border.all(color: _mouseOnCpuChart ? Colors.white : Colors.transparent),
+          color: _mouseOnCpuChart ? Colors.lightGreen : Colors.green,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -90,18 +112,18 @@ class _HomePageState extends State<HomePage> {
     return MouseRegion(
       onHover: (_) {
         setState(() {
-          mouseOnMemoryChart = true;
+          _mouseOnMemoryChart = true;
         });
       },
       onExit: (_) {
         setState(() {
-          mouseOnMemoryChart = false;
+          _mouseOnMemoryChart = false;
         });
       },
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: mouseOnMemoryChart ? Colors.white : Colors.transparent),
-          color: mouseOnMemoryChart ? Colors.lightGreen : Colors.green,
+          border: Border.all(color: _mouseOnMemoryChart ? Colors.white : Colors.transparent),
+          color: _mouseOnMemoryChart ? Colors.lightGreen : Colors.green,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -115,18 +137,18 @@ class _HomePageState extends State<HomePage> {
     return MouseRegion(
       onHover: (_) {
         setState(() {
-          mouseOnHardwareInformation = true;
+          _mouseOnHardwareInformation = true;
         });
       },
       onExit: (_) {
         setState(() {
-          mouseOnHardwareInformation = false;
+          _mouseOnHardwareInformation = false;
         });
       },
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: mouseOnHardwareInformation ? Colors.white : Colors.transparent),
-          color: mouseOnHardwareInformation ? Colors.lightGreen : Colors.green,
+          border: Border.all(color: _mouseOnHardwareInformation ? Colors.white : Colors.transparent),
+          color: _mouseOnHardwareInformation ? Colors.lightGreen : Colors.green,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -150,36 +172,36 @@ class _HomePageState extends State<HomePage> {
     return MouseRegion(
       onHover: (_) {
         setState(() {
-          mouseOnBaseInformation = true;
+          _mouseOnBaseInformation = true;
         });
       },
       onExit: (_) {
         setState(() {
-          mouseOnBaseInformation = false;
+          _mouseOnBaseInformation = false;
         });
       },
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: mouseOnBaseInformation ? Colors.white : Colors.transparent),
-          color: mouseOnBaseInformation ? Colors.lightGreen : Colors.green,
+          border: Border.all(color: _mouseOnBaseInformation ? Colors.white : Colors.transparent),
+          color: _mouseOnBaseInformation ? Colors.lightGreen : Colors.green,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text('Version', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14)),
-              Text('1.1', style: TextStyle(color: Colors.white, fontSize: 10)),
+              Text(_osVersion, style: TextStyle(color: Colors.white, fontSize: 10)),
               SizedBox(height: 12),
               Text('Hostname', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14)),
-              Text('Skynet-pc', style: TextStyle(color: Colors.white, fontSize: 10)),
+              Text(_osHostname, style: TextStyle(color: Colors.white, fontSize: 10)),
               SizedBox(height: 12),
               Text('Username', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14)),
-              Text('admin', style: TextStyle(color: Colors.white, fontSize: 10)),
+              Text(_osUsername, style: TextStyle(color: Colors.white, fontSize: 10)),
               SizedBox(height: 12),
               Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14)),
-              Text('Thu Nov 23 09:46:23 PM (Asia/Tehran)', style: TextStyle(color: Colors.white, fontSize: 10)),
+              Text(_dateTimeZone, style: TextStyle(color: Colors.white, fontSize: 10)),
             ],
           ),
         ),
@@ -187,7 +209,41 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _fetchHostName() {
+  void _fetchFullSystemInformation() async {
+    developer.log('Fetch Os Version called');
+    var response = await RestApiService.rpc(RPC.systemFullInformation);
+    if (response != null) {
+      var json = jsonDecode(response);
+      setState(() {
+        _osUsername = json['result']['os_username'].toString();
+        _osVersion = json['result']['os_version'].toString();
+        _osHostname = json['result']['os_hostname'].toString();
+        _hwCpuInfo = json['result']['hw_cpu_info'].toString();
+        _hwCpuCount = json['result']['hw_cpu_count'].toString();
+        _hwTotalMemory = json['result']['hw_total_memory'].toString();
+        _hwUsedMemory = json['result']['hw_used_memory'].toString();
+        _hwFreeMemory = json['result']['hw_free_memory'].toString();
+        _jvmVendor = json['result']['jvm_vendor'].toString();
+        _jvmVersion = json['result']['jvm_version'].toString();
+        _jvmMaxHeapSize = json['result']['jvm_max_heap_size'].toString();
+        _jvmTotalHeapSize = json['result']['jvm_total_heap_size'].toString();
+        _jvmUsedHeapSize = json['result']['jvm_used_heap_size'].toString();
+      });
+    }
+  }
 
+  void _fetchSystemDateTimeZone() async {
+    developer.log('Fetch System Date Time Zone called');
+    var response = await RestApiService.rpc(RPC.dateTimeInformation);
+    if (response != null) {
+      var json = jsonDecode(response);
+      setState(() {
+        var dateTimeZone = json['result']['zonedDateTime'];
+        List<String> dateTimeZoneParts = dateTimeZone.toString().split(RegExp(r'Z'));
+        List<String> dateTimeParts = dateTimeZoneParts[0].toString().split(RegExp(r'T'));
+        String formattedString = '${dateTimeParts[0]} ${dateTimeParts[1]} ${dateTimeZoneParts[1]}';
+        _dateTimeZone = formattedString;
+      });
+    }
   }
 }
