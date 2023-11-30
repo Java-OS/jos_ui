@@ -13,7 +13,7 @@ class RouteService {
     developer.log('Route to $target with args ${settings.arguments}');
     switch (target) {
       case '/':
-        return PageRouteBuilder(pageBuilder: (_, __, ___) => HomePage());
+        return PageRouteBuilder(pageBuilder: (_, __, ___) => LoginPage());
       case '/home':
         return PageRouteBuilder(pageBuilder: (_, __, ___) => HomePage());
       case '/setting':

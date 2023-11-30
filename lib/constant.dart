@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final navigatorKey = GlobalKey<NavigatorState>();
+const serverBaseUrl = 'http://localhost:8080/api/v1';
 
 Widget getModalHeader(String title) {
   return Container(

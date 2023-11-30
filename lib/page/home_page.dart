@@ -19,6 +19,11 @@ class _HomePageState extends State<HomePage> {
   bool mouseOnMemoryChart = false;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return getPageContent(child: _pageContent());
   }
