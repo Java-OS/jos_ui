@@ -1,5 +1,8 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/service/storage_service.dart';
 
 class TopMenuComponent extends StatefulWidget {
   final int selectedIndex;
@@ -57,7 +60,11 @@ class _HomePageState extends State<TopMenuComponent> {
         onTap: () {
           setState(() {
             if (routePath == '/setting') {
-              navigatorKey.currentState?.pushReplacementNamed(routePath,arguments: 0);
+              navigatorKey.currentState?.pushReplacementNamed(routePath, arguments: 0);
+            } else if (routePath == '/') {
+              StorageService.removeItem('token');
+              navigatorKey.currentState?.pushReplacementNamed(routePath);
+              developer.log('Logout called');
             } else {
               navigatorKey.currentState?.pushReplacementNamed(routePath);
             }

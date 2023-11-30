@@ -2,7 +2,6 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page_base_content.dart';
 import 'package:jos_ui/service/rest_api_service.dart';
@@ -16,7 +15,6 @@ class WaitPage extends StatefulWidget {
 }
 
 class _WaitPageState extends State<WaitPage> {
-
   @override
   Widget build(BuildContext context) {
     return getPageContent(child: _pageContent());
@@ -41,9 +39,11 @@ class _WaitPageState extends State<WaitPage> {
     developer.log('Check Login called');
     var item = StorageService.getItem('token');
     if (item != null) {
-      navigatorKey.currentState?.pushReplacementNamed('/home');
-    } else {
-      navigatorKey.currentState?.pushReplacementNamed('/login');
+      var isLogin = await RestApiService.checkLogin();
+      if (isLogin) navigatorKey.currentState?.pushReplacementNamed('/home');
+      return;
     }
+
+    navigatorKey.currentState?.pushReplacementNamed('/login');
   }
 }
