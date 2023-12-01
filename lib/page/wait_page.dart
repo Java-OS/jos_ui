@@ -42,10 +42,16 @@ class _WaitPageState extends State<WaitPage> {
       var isLogin = await RestApiService.checkLogin();
       if (isLogin) {
         navigatorKey.currentState?.pushReplacementNamed('/home');
-        return;
+      } else {
+        _gotoLoginPage();
       }
+    } else {
+      _gotoLoginPage();
     }
+  }
 
+  void _gotoLoginPage() {
+    StorageService.removeItem('token');
     navigatorKey.currentState?.pushReplacementNamed('/login');
   }
 }

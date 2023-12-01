@@ -9,9 +9,9 @@ import 'package:jos_ui/service/storage_service.dart';
 class RestApiService {
   static final dio = Dio();
 
-  static String _baseLoginUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:9090'}/api/login";
+  static String _baseLoginUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/login";
 
-  static String _baseRpcUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:9090'}/api/rpc";
+  static String _baseRpcUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/rpc";
 
   static Future<bool> login(String username, String password) async {
     developer.log('Login request [$username] [$password] [${_baseLoginUrl()}]');
@@ -21,7 +21,7 @@ class RestApiService {
 
     var response = await dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
     var statusCode = response.statusCode;
-    if (statusCode == 200) {
+    if (statusCode == 202) {
       var token = response.headers['Authorization']!.first.split(' ')[1];
       StorageService.addItem('token', token);
       developer.log('Login success');
@@ -32,6 +32,7 @@ class RestApiService {
   }
 
   static Future<bool> checkLogin() async {
+    developer.log('Check login [${_baseLoginUrl()}]');
     var token = StorageService.getItem('token');
     if (token == null) return false;
     var header = {'authorization': 'Bearer $token'};
@@ -39,7 +40,7 @@ class RestApiService {
 
     var response = await dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
     var statusCode = response.statusCode;
-    if (statusCode == 200) {
+    if (statusCode == 202) {
       developer.log('Token is valid');
       return true;
     }
@@ -48,7 +49,7 @@ class RestApiService {
   }
 
   static Future<String?> rpc(RPC rpc, {Map<String, dynamic>? parameters}) async {
-    developer.log('Request call rpc: [$rpc] [$parameters]');
+    developer.log('Request call rpc: [$rpc] [$parameters] [${_baseLoginUrl()}]');
     var token = StorageService.getItem('token');
     if (token == null) navigatorKey.currentState?.pushReplacementNamed('/');
     var header = {

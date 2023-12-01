@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/component/module_component.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
 import 'package:jos_ui/component/user_management_component.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page_base_content.dart';
 
 class ModulePage extends StatefulWidget {
@@ -31,7 +32,7 @@ class _ModulePageState extends State<ModulePage> {
             Expanded(
               child: Container(
                 width: double.infinity,
-                color: Color.fromRGBO(236, 226, 226, 1.0),
+                color: componentBackgroundColor,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(

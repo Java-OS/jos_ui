@@ -1,7 +1,7 @@
 enum RPC {
   /*
-     * System RPC
-     * */
+   * System RPC
+   * */
   systemShutdown(0),
   systemReboot(1),
   systemEnvironmentList(2),
@@ -28,8 +28,8 @@ enum RPC {
   jvmRestart(106),
 
   /*
-     * configuration
-     * */
+   * configuration
+   * */
   configBackupCreate(200),
   configBackupRestore(201),
   configBackupDelete(202),
@@ -37,22 +37,22 @@ enum RPC {
   configPrint(204),
 
   /*
-     * date and time
-     * */
+   * date and time
+   * */
   dateTimeInformation(300),
   dateTimeSyncHctosys(301),
   dateTimeSyncSystohc(302),
 
   /*
-     * ntp
-     * */
+   * ntp
+   * */
   ntpServerName(400),
   ntpSync(401),
   ntpActivate(402),
 
   /*
-     * module rpc
-     * */
+   * module rpc
+   * */
   moduleList(500),
   moduleInstall(501),
   moduleRemove(502),
@@ -66,8 +66,8 @@ enum RPC {
   moduleInit(510),
 
   /*
-     * network rpc
-     * */
+   * network rpc
+   * */
   networkEthernetInformation(600),
   networkEthernetSetIp(601),
   networkEthernetUp(602),
@@ -80,15 +80,15 @@ enum RPC {
   networkDnsNameserver(609),
 
   /*
-     * hosts
-     * */
+   * hosts
+   * */
   hostsAdd(700),
   hostsDelete(701),
   hostsList(702),
 
   /*
-     * user
-     * */
+   * user
+   * */
   userList(700),
   userAdd(701),
   userRemove(702),

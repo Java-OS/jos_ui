@@ -5,6 +5,7 @@ import 'package:jos_ui/component/network_component.dart';
 import 'package:jos_ui/component/ntp_component.dart';
 import 'package:jos_ui/component/side_menu_component.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page_base_content.dart';
 
 class SettingPage extends StatefulWidget {
@@ -174,7 +175,7 @@ class _SystemPageState extends State<SettingPage> {
   Widget basicContent({child}) {
     return Expanded(
       child: Container(
-        color: Color.fromRGBO(236, 226, 226, 1.0),
+        color: componentBackgroundColor,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: child,

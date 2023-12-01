@@ -1,13 +1,18 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jos_ui/component/LineChartSample2.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/page_base_content.dart';
 import 'package:jos_ui/service/rest_api_service.dart';
+import 'package:jos_ui/utils.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,31 +22,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool _mouseOnHardwareInformation = false;
-  bool _mouseOnBaseInformation = false;
-  bool _mouseOnCpuChart = false;
-  bool _mouseOnMemoryChart = false;
-
+  late Timer _timer ;
   String _osUsername = '';
   String _osType = '';
   String _osVersion = '';
   String _osHostname = '';
   String _hwCpuInfo = '';
   String _hwCpuCount = '';
-  String _hwTotalMemory = '';
-  String _hwUsedMemory = '';
-  String _hwFreeMemory = '';
+  int _hwTotalMemory = 0;
+  int _hwUsedMemory = 0;
+  int _hwFreeMemory = 0;
   String _jvmVendor = '';
   String _jvmVersion = '';
-  String _jvmMaxHeapSize = '';
-  String _jvmTotalHeapSize = '';
-  String _jvmUsedHeapSize = '';
+  int _jvmMaxHeapSize = 0;
+  int _jvmTotalHeapSize = 0;
+  int _jvmUsedHeapSize = 0;
   String _dateTimeZone = '';
 
   @override
   void initState() {
-    _fetchFullSystemInformation();
-    _fetchSystemDateTimeZone();
+    // _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      _fetchFullSystemInformation();
+    // });
     super.initState();
   }
 
@@ -84,126 +86,132 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget displayCpuChart() {
-    return MouseRegion(
-      onHover: (_) {
-        setState(() {
-          _mouseOnCpuChart = true;
-        });
-      },
-      onExit: (_) {
-        setState(() {
-          _mouseOnCpuChart = false;
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: _mouseOnCpuChart ? Colors.white : Colors.transparent),
-          color: _mouseOnCpuChart ? Colors.lightGreen : Colors.green,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('H2'),
+    return Container(
+      color: componentBackgroundColor,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 100,
+              height: 100,
+              child: PieChart(
+                PieChartData(
+                  // centerSpaceRadius: 25,
+                  startDegreeOffset: 270,
+                  sections: [
+                    PieChartSectionData(
+                      titleStyle: TextStyle(fontSize: 10),
+                      title: formatSize(_jvmMaxHeapSize),
+                      value: _jvmMaxHeapSize as double,
+                      color: Colors.blue
+                    ),
+                    PieChartSectionData(
+                        titleStyle: TextStyle(fontSize: 10),
+                        title: formatSize(_jvmUsedHeapSize),
+                        value: 29238392334,
+                        color: Colors.red
+                    )
+                  ]
+                )
+              ),
+            )
+          ],
         ),
       ),
     );
   }
 
   Widget displayMemoryChart() {
-    return MouseRegion(
-      onHover: (_) {
-        setState(() {
-          _mouseOnMemoryChart = true;
-        });
-      },
-      onExit: (_) {
-        setState(() {
-          _mouseOnMemoryChart = false;
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: _mouseOnMemoryChart ? Colors.white : Colors.transparent),
-          color: _mouseOnMemoryChart ? Colors.lightGreen : Colors.green,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('H2'),
+    return Container(
+      color: componentBackgroundColor,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('JVM Vendor', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+                Text(_jvmVendor, style: TextStyle(color: Colors.black, fontSize: 10)),
+                SizedBox(height: 12),
+                Text('JVM Version', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+                Text(_jvmVersion, style: TextStyle(color: Colors.black, fontSize: 10)),
+              ],
+            ),
+            SizedBox(width: 60),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('JVM Xmx', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+                Text(formatSize(_jvmMaxHeapSize), style: TextStyle(color: Colors.black, fontSize: 10)),
+                SizedBox(height: 8),
+                Text('JVM Xms', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+                Text(formatSize(_jvmTotalHeapSize), style: TextStyle(color: Colors.black, fontSize: 10)),
+                SizedBox(height: 8),
+                Text('JVM used heap size', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+                Text(formatSize(_jvmUsedHeapSize), style: TextStyle(color: Colors.black, fontSize: 10)),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget displayHardwareInformation() {
-    return MouseRegion(
-      onHover: (_) {
-        setState(() {
-          _mouseOnHardwareInformation = true;
-        });
-      },
-      onExit: (_) {
-        setState(() {
-          _mouseOnHardwareInformation = false;
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: _mouseOnHardwareInformation ? Colors.white : Colors.transparent),
-          color: _mouseOnHardwareInformation ? Colors.lightGreen : Colors.green,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text('CPU', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14)),
-              Text('Intel Core i7-4702MQ', style: TextStyle(color: Colors.white, fontSize: 10)),
-              SizedBox(height: 22),
-              Text('RAM', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14)),
-              Text('5G', style: TextStyle(color: Colors.white, fontSize: 10)),
-            ],
-          ),
+    return Container(
+      color: componentBackgroundColor,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('CPU Model', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+            Text(_hwCpuInfo, style: TextStyle(color: Colors.black, fontSize: 10)),
+            SizedBox(height: 12),
+            Text('CPU Cores', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+            Text(_hwCpuCount, style: TextStyle(color: Colors.black, fontSize: 10)),
+            SizedBox(height: 12),
+            Text('Total RAM', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+            Text(formatSize(_hwTotalMemory), style: TextStyle(color: Colors.black, fontSize: 10)),
+            SizedBox(height: 12),
+            Text('Used RAM', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+            Text(formatSize(_hwUsedMemory), style: TextStyle(color: Colors.black, fontSize: 10)),
+          ],
         ),
       ),
     );
   }
 
   Widget displayBasicInformation() {
-    return MouseRegion(
-      onHover: (_) {
-        setState(() {
-          _mouseOnBaseInformation = true;
-        });
-      },
-      onExit: (_) {
-        setState(() {
-          _mouseOnBaseInformation = false;
-        });
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: _mouseOnBaseInformation ? Colors.white : Colors.transparent),
-          color: _mouseOnBaseInformation ? Colors.lightGreen : Colors.green,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Version', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14)),
-              Text(_osVersion, style: TextStyle(color: Colors.white, fontSize: 10)),
-              SizedBox(height: 12),
-              Text('Hostname', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14)),
-              Text(_osHostname, style: TextStyle(color: Colors.white, fontSize: 10)),
-              SizedBox(height: 12),
-              Text('Username', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14)),
-              Text(_osUsername, style: TextStyle(color: Colors.white, fontSize: 10)),
-              SizedBox(height: 12),
-              Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 14)),
-              Text(_dateTimeZone, style: TextStyle(color: Colors.white, fontSize: 10)),
-            ],
-          ),
+    return Container(
+      color: componentBackgroundColor,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Version', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+            Text(_osVersion, style: TextStyle(color: Colors.black, fontSize: 10)),
+            SizedBox(height: 12),
+            Text('Hostname', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+            Text(_osHostname, style: TextStyle(color: Colors.black, fontSize: 10)),
+            SizedBox(height: 12),
+            Text('Username', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+            Text(_osUsername, style: TextStyle(color: Colors.black, fontSize: 10)),
+            SizedBox(height: 12),
+            Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 14)),
+            Text(_dateTimeZone, style: TextStyle(color: Colors.black, fontSize: 10)),
+          ],
         ),
       ),
     );
@@ -215,35 +223,27 @@ class _HomePageState extends State<HomePage> {
     if (response != null) {
       var json = jsonDecode(response);
       setState(() {
+        _dateTimeZone = json['result']['os_date_time_zone'].toString();
         _osUsername = json['result']['os_username'].toString();
         _osVersion = json['result']['os_version'].toString();
         _osHostname = json['result']['os_hostname'].toString();
         _hwCpuInfo = json['result']['hw_cpu_info'].toString();
         _hwCpuCount = json['result']['hw_cpu_count'].toString();
-        _hwTotalMemory = json['result']['hw_total_memory'].toString();
-        _hwUsedMemory = json['result']['hw_used_memory'].toString();
-        _hwFreeMemory = json['result']['hw_free_memory'].toString();
+        _hwTotalMemory = json['result']['hw_total_memory'];
+        _hwUsedMemory = json['result']['hw_used_memory'];
+        _hwFreeMemory = json['result']['hw_free_memory'];
         _jvmVendor = json['result']['jvm_vendor'].toString();
         _jvmVersion = json['result']['jvm_version'].toString();
-        _jvmMaxHeapSize = json['result']['jvm_max_heap_size'].toString();
-        _jvmTotalHeapSize = json['result']['jvm_total_heap_size'].toString();
-        _jvmUsedHeapSize = json['result']['jvm_used_heap_size'].toString();
+        _jvmMaxHeapSize = json['result']['jvm_max_heap_size'];
+        _jvmTotalHeapSize = json['result']['jvm_total_heap_size'];
+        _jvmUsedHeapSize = json['result']['jvm_used_heap_size'];
       });
     }
   }
 
-  void _fetchSystemDateTimeZone() async {
-    developer.log('Fetch System Date Time Zone called');
-    var response = await RestApiService.rpc(RPC.dateTimeInformation);
-    if (response != null) {
-      var json = jsonDecode(response);
-      setState(() {
-        var dateTimeZone = json['result']['zonedDateTime'];
-        List<String> dateTimeZoneParts = dateTimeZone.toString().split(RegExp(r'Z'));
-        List<String> dateTimeParts = dateTimeZoneParts[0].toString().split(RegExp(r'T'));
-        String formattedString = '${dateTimeParts[0]} ${dateTimeParts[1]} ${dateTimeZoneParts[1]}';
-        _dateTimeZone = formattedString;
-      });
-    }
+  @override
+  void dispose() {
+    super.dispose();
+    _timer.cancel();
   }
 }

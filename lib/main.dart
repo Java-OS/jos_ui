@@ -3,6 +3,7 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/service/route_service.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

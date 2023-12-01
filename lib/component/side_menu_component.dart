@@ -14,10 +14,10 @@ class _HomePageState extends State<SideMenuComponent> {
   int _hoverIndex = -1;
 
   final menuConfigs = [
-    [Color.fromRGBO(236, 226, 226, 1.0), Icons.info_outline_rounded],
-    [Color.fromRGBO(236, 226, 226, 1.0), Icons.date_range],
-    [Color.fromRGBO(236, 226, 226, 1.0), Icons.lan_outlined],
-    [Color.fromRGBO(236, 226, 226, 1.0), Icons.join_right],
+    [componentBackgroundColor, Icons.info_outline_rounded],
+    [componentBackgroundColor, Icons.date_range],
+    [componentBackgroundColor, Icons.lan_outlined],
+    [componentBackgroundColor, Icons.join_right],
   ];
 
   @override

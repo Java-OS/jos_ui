@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
-const serverBaseUrl = 'http://localhost:8080/api/v1';
+const componentBackgroundColor = Color.fromRGBO(236, 226, 226, 1.0);
+
 
 Widget getModalHeader(String title) {
   return Container(
