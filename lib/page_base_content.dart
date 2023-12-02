@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 Widget getPageContent({Widget? child}) {
@@ -8,17 +10,20 @@ Widget getPageContent({Widget? child}) {
           Align(
             alignment: Alignment.center,
             child: Image.asset(
-              'assets/images/background.webp',
+              'assets/images/background.jpg',
               fit: BoxFit.cover,
               height: double.infinity,
               width: double.infinity,
             ),
           ),
-          Container(
-            color: Color.fromARGB(200, 0, 0, 0),
-            width: double.infinity,
-            height: double.infinity,
-            child: Stack(children: [child ?? emptyContentMessage()]),
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 3,sigmaY: 3),
+            child: Container(
+              color: Color.fromARGB(200, 0, 0, 0),
+              width: double.infinity,
+              height: double.infinity,
+              child: Stack(children: [child ?? emptyContentMessage()]),
+            ),
           )
         ],
       ),

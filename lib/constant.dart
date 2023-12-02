@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
-const componentBackgroundColor = Color.fromRGBO(236, 226, 226, 1.0);
 
+/// Colors
+const componentBackgroundColor = Color.fromRGBO(236, 226, 226, 1.0);
+const dashboardMosaicBackgroundColor = Color.fromRGBO(116, 211, 127, 0.5019607843137255);
+const dashboardMosaicTextColor = Colors.white;
+const dashboardMosaicTitleStyle = TextStyle(fontWeight: FontWeight.bold, color: dashboardMosaicTextColor, fontSize: 12);
+const dashboardMosaicTextStyle = TextStyle(color: dashboardMosaicTextColor, fontSize: 12);
 
 Widget getModalHeader(String title) {
   return Container(

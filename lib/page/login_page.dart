@@ -3,6 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/modal/message_modal.dart';
 import 'package:jos_ui/page_base_content.dart';
 import 'package:jos_ui/service/rest_api_service.dart';
 
@@ -20,6 +21,11 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return getPageContent(child: _pageContent());
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   Widget _pageContent() {
@@ -78,7 +84,8 @@ class _LoginPageState extends State<LoginPage> {
     developer.log('Login called');
     var username = _usernameController.text;
     var password = _passwordController.text;
-    var success = await RestApiService.login(username, password);
+    var success = await RestClient.login(username, password);
     if (success) navigatorKey.currentState?.pushReplacementNamed('/home');
+    if (context.mounted) displayError('Login failed',context);
   }
 }

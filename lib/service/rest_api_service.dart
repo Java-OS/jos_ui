@@ -3,10 +3,11 @@ import 'dart:developer' as developer;
 
 import 'package:dio/dio.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/modal/message_modal.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/storage_service.dart';
 
-class RestApiService {
+class RestClient {
   static final dio = Dio();
 
   static String _baseLoginUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/login";
@@ -19,15 +20,20 @@ class RestApiService {
     var header = {'Authorization': 'Basic $authB64'};
     developer.log('Credential send: [$header]');
 
-    var response = await dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
-    var statusCode = response.statusCode;
-    if (statusCode == 202) {
-      var token = response.headers['Authorization']!.first.split(' ')[1];
-      StorageService.addItem('token', token);
-      developer.log('Login success');
-      return true;
+    try {
+      var response = await dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
+      var statusCode = response.statusCode;
+      if (statusCode == 202) {
+        var token = response.headers['Authorization']!.first.split(' ')[1];
+        StorageService.addItem('token', token);
+        developer.log('Login success');
+        return true;
+      }
+      developer.log('Login Failed');
+    } catch (e) {
+      // displayError('Failed connect to server');
+      developer.log('[Dio Error] $rpc ${e.toString()}');
     }
-    developer.log('Login Failed');
     return false;
   }
 
@@ -38,13 +44,17 @@ class RestApiService {
     var header = {'authorization': 'Bearer $token'};
     developer.log('Credential send: [$header]');
 
-    var response = await dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
-    var statusCode = response.statusCode;
-    if (statusCode == 202) {
-      developer.log('Token is valid');
-      return true;
+    try {
+      var response = await dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
+      var statusCode = response.statusCode;
+      if (statusCode == 202) {
+        developer.log('Token is valid');
+        return true;
+      }
+      developer.log('Invalid token');
+    } catch (e) {
+      developer.log('[Dio Error] $rpc ${e.toString()}');
     }
-    developer.log('Invalid token');
     return false;
   }
 
@@ -58,13 +68,17 @@ class RestApiService {
     };
     developer.log('Credential send: [$header]');
 
-    var response = await dio.post(_baseRpcUrl(), queryParameters: parameters, options: Options(headers: header, responseType: ResponseType.plain, validateStatus: (_) => true));
-    var statusCode = response.statusCode;
-    if (statusCode == 200) {
-      developer.log('Received data: [${response.data}]');
-      return response.data;
+    try {
+      var response = await dio.post(_baseRpcUrl(), queryParameters: parameters, options: Options(headers: header, responseType: ResponseType.plain, validateStatus: (_) => true));
+      var statusCode = response.statusCode;
+      if (statusCode == 200) {
+        developer.log('Received data: [${response.data}]');
+        return response.data;
+      }
+      developer.log('Invalid response $statusCode');
+    } catch (e) {
+      developer.log('[Dio Error] $rpc ${e.toString()}');
     }
-
     return null;
   }
 }
