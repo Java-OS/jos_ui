@@ -6,6 +6,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/modal/message_modal.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/page_base_content.dart';
 import 'package:jos_ui/service/rest_api_service.dart';
@@ -19,6 +20,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool _mouseHoverOnBasicBox = false;
+  bool _mouseHoverOnJVMBox = false;
+  bool _mouseHoverOnActionBox = false;
+  bool _mouseHoverOnHWBox = false;
+
   String _osUsername = '';
   String _osType = '';
   String _osVersion = '';
@@ -80,122 +86,138 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget displayActionButtons() {
-    return Container(
-      color: dashboardMosaicBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              width: 80,
-              height: 80,
-              child: actionButton(Icons.power_settings_new,'System PowerOff', _callJvmGarbageCollector),
-            ),
-            SizedBox(
-              width: 80,
-              height: 80,
-              child: actionButton(Icons.autorenew_rounded,'JVM Restart', _callJvmRestart),
-            ),
-            SizedBox(
-              width: 80,
-              height: 80,
-              child: actionButton(Icons.recycling_outlined,'JVM GC', _callJvmGarbageCollector),
-            ),
-          ],
+    return MouseRegion(
+      onHover: (_) => setState(() => _mouseHoverOnActionBox = true),
+      onExit: (_) => setState(() => _mouseHoverOnActionBox = false),
+      child: Container(
+        decoration: BoxDecoration(color: dashboardMosaicBackgroundColor, border: Border.all(color: _mouseHoverOnActionBox ? Colors.white : Colors.transparent)),
+        child: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(
+                width: 80,
+                height: 80,
+                child: actionButton(Icons.power_settings_new, 'System PowerOff', _callJvmGarbageCollector,Colors.redAccent),
+              ),
+              SizedBox(
+                width: 80,
+                height: 80,
+                child: actionButton(Icons.autorenew_rounded, 'JVM Restart', _callJvmRestart,Colors.white),
+              ),
+              SizedBox(
+                width: 80,
+                height: 80,
+                child: actionButton(Icons.recycling_outlined, 'JVM GC', _callJvmGarbageCollector,Colors.white),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget displayJvmInformation() {
-    return Container(
-      color: dashboardMosaicBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('JVM Vendor', style: dashboardMosaicTitleStyle),
-                Text(_jvmVendor, style: dashboardMosaicTextStyle),
-                SizedBox(height: 12),
-                Text('JVM Version', style: dashboardMosaicTitleStyle),
-                Text(_jvmVersion, style: dashboardMosaicTextStyle),
-              ],
-            ),
-            SizedBox(width: 60),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('JVM Xmx', style: dashboardMosaicTitleStyle),
-                Text(formatSize(_jvmMaxHeapSize), style: dashboardMosaicTextStyle),
-                SizedBox(height: 8),
-                Text('JVM Xms', style: dashboardMosaicTitleStyle),
-                Text(formatSize(_jvmTotalHeapSize), style: dashboardMosaicTextStyle),
-                SizedBox(height: 8),
-                Text('JVM used heap', style: dashboardMosaicTitleStyle),
-                Text(formatSize(_jvmUsedHeapSize), style: dashboardMosaicTextStyle),
-              ],
-            ),
-          ],
+    return MouseRegion(
+      onHover: (_) => setState(() => _mouseHoverOnJVMBox = true),
+      onExit: (_) => setState(() => _mouseHoverOnJVMBox = false),
+      child: Container(
+        decoration: BoxDecoration(color: dashboardMosaicBackgroundColor, border: Border.all(color: _mouseHoverOnJVMBox ? Colors.white : Colors.transparent)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('JVM Vendor', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(_jvmVendor, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  SizedBox(height: 12),
+                  Text('JVM Version', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(_jvmVersion, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                ],
+              ),
+              SizedBox(width: 60),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('JVM Xmx', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(formatSize(_jvmMaxHeapSize), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  SizedBox(height: 8),
+                  Text('JVM Xms', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(formatSize(_jvmTotalHeapSize), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  SizedBox(height: 8),
+                  Text('JVM used heap', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(formatSize(_jvmUsedHeapSize), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget displayHardwareInformation() {
-    return Container(
-      color: dashboardMosaicBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('CPU Model', style: dashboardMosaicTitleStyle),
-            Text(_hwCpuInfo, style: dashboardMosaicTextStyle),
-            SizedBox(height: 12),
-            Text('CPU Cores', style: dashboardMosaicTitleStyle),
-            Text(_hwCpuCount, style: dashboardMosaicTextStyle),
-            SizedBox(height: 12),
-            Text('Total RAM', style: dashboardMosaicTitleStyle),
-            Text(formatSize(_hwTotalMemory), style: dashboardMosaicTextStyle),
-            SizedBox(height: 12),
-            Text('Used RAM', style: dashboardMosaicTitleStyle),
-            Text(formatSize(_hwUsedMemory), style: dashboardMosaicTextStyle),
-          ],
+    return MouseRegion(
+      onHover: (_) => setState(() => _mouseHoverOnHWBox = true),
+      onExit: (_) => setState(() => _mouseHoverOnHWBox = false),
+      child: Container(
+        decoration: BoxDecoration(color: dashboardMosaicBackgroundColor, border: Border.all(color: _mouseHoverOnHWBox ? Colors.white : Colors.transparent)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('CPU Model', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(_hwCpuInfo, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              SizedBox(height: 12),
+              Text('CPU Cores', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(_hwCpuCount, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              SizedBox(height: 12),
+              Text('Total RAM', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(formatSize(_hwTotalMemory), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              SizedBox(height: 12),
+              Text('Used RAM', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(formatSize(_hwUsedMemory), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget displayBasicInformation() {
-    return Container(
-      color: dashboardMosaicBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Version', style: dashboardMosaicTitleStyle),
-            Text(_osVersion, style: dashboardMosaicTextStyle),
-            SizedBox(height: 12),
-            Text('Hostname', style: dashboardMosaicTitleStyle),
-            Text(_osHostname, style: dashboardMosaicTextStyle),
-            SizedBox(height: 12),
-            Text('Username', style: dashboardMosaicTitleStyle),
-            Text(_osUsername, style: dashboardMosaicTextStyle),
-            SizedBox(height: 12),
-            Text('Date & Time', style: dashboardMosaicTitleStyle),
-            Text(_dateTimeZone, style: dashboardMosaicTextStyle),
-          ],
+    return MouseRegion(
+      onHover: (_) => setState(() => _mouseHoverOnBasicBox = true),
+      onExit: (_) => setState(() => _mouseHoverOnBasicBox = false),
+      child: Container(
+        decoration: BoxDecoration(color: dashboardMosaicBackgroundColor, border: Border.all(color: _mouseHoverOnBasicBox ? Colors.white : Colors.transparent)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Version', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(_osVersion, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              SizedBox(height: 12),
+              Text('Hostname', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(_osHostname, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              SizedBox(height: 12),
+              Text('Username', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(_osUsername, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              SizedBox(height: 12),
+              Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(_dateTimeZone, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+            ],
+          ),
         ),
       ),
     );
@@ -228,14 +250,16 @@ class _HomePageState extends State<HomePage> {
   void _callJvmGarbageCollector() async {
     developer.log('JVM Garbage Collector called');
     RestClient.rpc(RPC.jvmGc).then((_) => _fetchFullSystemInformation());
+    displaySuccess('CleanUp JVM Heap Space', context);
   }
 
   void _callJvmRestart() async {
     developer.log('JVM restart called');
     RestClient.rpc(RPC.jvmRestart).then((_) => _fetchFullSystemInformation());
+    displaySuccess('JVM Restarted', context);
   }
 
-  Widget actionButton(IconData icon,String tooltipMessage, Function callApiMethod) {
+  Widget actionButton(IconData icon, String tooltipMessage, Function callApiMethod,Color hoverColor) {
     return Tooltip(
       preferBelow: false,
       verticalOffset: 45,
@@ -245,7 +269,7 @@ class _HomePageState extends State<HomePage> {
           side: MaterialStateProperty.resolveWith<BorderSide>(
             (Set<MaterialState> states) {
               if (states.contains(MaterialState.hovered)) {
-                return BorderSide(color: Colors.white);
+                return BorderSide(color: hoverColor);
               }
               return BorderSide(color: Colors.white38);
             },
@@ -253,7 +277,7 @@ class _HomePageState extends State<HomePage> {
           foregroundColor: MaterialStateProperty.resolveWith<Color>(
             (Set<MaterialState> states) {
               if (states.contains(MaterialState.hovered)) {
-                return Colors.white; // Set the hover icon color
+                return hoverColor; // Set the hover icon color
               }
               return Colors.white38; // Set the default icon color
             },

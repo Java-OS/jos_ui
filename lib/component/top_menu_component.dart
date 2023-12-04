@@ -46,17 +46,9 @@ class _HomePageState extends State<TopMenuComponent> {
     var menuColor = menuConfigs[index][1] as Color;
     var menuIcon = menuConfigs[index][2] as IconData;
     return MouseRegion(
-      onExit: (_) {
-        setState(() {
-          _hoverIndex = -1;
-        });
-      },
+      onExit: (_) => setState(() => _hoverIndex = -1),
       child: InkWell(
-        onHover: (_) {
-          setState(() {
-            _hoverIndex = index;
-          });
-        },
+        onHover: (_) => setState(() => _hoverIndex = index),
         onTap: () {
           setState(() {
             if (routePath == '/setting') {
@@ -89,7 +81,7 @@ class _HomePageState extends State<TopMenuComponent> {
               child: Icon(menuIcon,
                   size: 32,
                   color: _hoverIndex == index
-                      ? Colors.white
+                      ? routePath == '/logout' ?Colors.red : Colors.white
                       : widget.selectedIndex == index
                           ? Colors.white
                           : Colors.white38),

@@ -31,8 +31,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget _pageContent() {
     return Center(
       child: SizedBox(
-        width: 300,
-        height: 300,
+        width: 310,
+        height: 310,
         child: Card(
           color: Colors.transparent,
           shadowColor: Colors.transparent,
@@ -86,6 +86,6 @@ class _LoginPageState extends State<LoginPage> {
     var password = _passwordController.text;
     var success = await RestClient.login(username, password);
     if (success) navigatorKey.currentState?.pushReplacementNamed('/home');
-    if (context.mounted) displayError('Login failed',context);
+    if (context.mounted && !success) displayError('Login failed',context);
   }
 }
