@@ -4,10 +4,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 /// Colors
 const componentBackgroundColor = Color.fromRGBO(236, 226, 226, 1.0);
-const dashboardMosaicBackgroundColor = Color.fromRGBO(62, 108, 67, 0.5);
-const dashboardMosaicTextColor = Colors.white;
-const dashboardMosaicTitleStyle = TextStyle(fontWeight: FontWeight.bold, color: dashboardMosaicTextColor, fontSize: 12);
-const dashboardMosaicTextStyle = TextStyle(color: dashboardMosaicTextColor, fontSize: 12);
+const dashboardMosaicBackgroundColor = Color.fromRGBO(80, 100, 80, 0.5);
 
 Widget getModalHeader(String title) {
   return Container(
