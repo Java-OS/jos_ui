@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    _fetchFullSystemInformation();
+    _fetchSystemInformation();
     super.initState();
   }
 
@@ -99,17 +99,17 @@ class _HomePageState extends State<HomePage> {
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.power_settings_new, 'System PowerOff', _callJvmGarbageCollector,Colors.redAccent),
+                child: actionButton(Icons.power_settings_new, 'System PowerOff', _callJvmGarbageCollector, Colors.redAccent),
               ),
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.autorenew_rounded, 'JVM Restart', _callJvmRestart,Colors.white),
+                child: actionButton(Icons.autorenew_rounded, 'JVM Restart', _callJvmRestart, Colors.white),
               ),
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.recycling_outlined, 'JVM GC', _callJvmGarbageCollector,Colors.white),
+                child: actionButton(Icons.recycling_outlined, 'JVM GC', _callJvmGarbageCollector, Colors.white),
               ),
             ],
           ),
@@ -205,8 +205,8 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Version', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(_osVersion, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text('OS', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text('$_osType $_osVersion', style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('Hostname', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
               Text(_osHostname, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
@@ -223,7 +223,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget actionButton(IconData icon, String tooltipMessage, Function callApiMethod,Color hoverColor) {
+  Widget actionButton(IconData icon, String tooltipMessage, Function callApiMethod, Color hoverColor) {
     return Tooltip(
       preferBelow: false,
       verticalOffset: 45,
@@ -253,8 +253,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _fetchFullSystemInformation() async {
-    developer.log('Fetch Os Version called');
+  void _fetchSystemInformation() async {
+    developer.log('Fetch System Full Information');
     var response = await RestClient.rpc(RPC.systemFullInformation);
     if (response != null) {
       var json = jsonDecode(response);
@@ -262,6 +262,7 @@ class _HomePageState extends State<HomePage> {
         _dateTimeZone = json['result']['os_date_time_zone'].toString();
         _osUsername = json['result']['os_username'].toString();
         _osVersion = json['result']['os_version'].toString();
+        _osType = json['result']['os_type'].toString();
         _osHostname = json['result']['os_hostname'].toString();
         _hwCpuInfo = json['result']['hw_cpu_info'].toString();
         _hwCpuCount = json['result']['hw_cpu_count'].toString();
@@ -279,18 +280,13 @@ class _HomePageState extends State<HomePage> {
 
   void _callJvmGarbageCollector() {
     developer.log('JVM Garbage Collector called');
-    RestClient.rpc(RPC.jvmGc).then((_) => _fetchFullSystemInformation());
+    RestClient.rpc(RPC.jvmGc).then((value) => _fetchSystemInformation());
     displaySuccess('CleanUp JVM Heap Space', context);
   }
 
   void _callJvmRestart() {
     developer.log('JVM restart called');
-    RestClient.rpc(RPC.jvmRestart).then((_) => _fetchFullSystemInformation());
-    displaySuccess('JVM Restarted', context);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    RestClient.rpc(RPC.jvmRestart);
+    displaySuccess('Restarting JVM, please wait ...', context);
   }
 }

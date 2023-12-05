@@ -49,6 +49,8 @@ class RestClient {
       var statusCode = response.statusCode;
       if (statusCode == 202) {
         developer.log('Token is valid');
+        var token = response.headers['Authorization']!.first.split(' ')[1];
+        StorageService.addItem('token', token);
         return true;
       }
       developer.log('Invalid token');
@@ -73,6 +75,8 @@ class RestClient {
       var statusCode = response.statusCode;
       if (statusCode == 200) {
         developer.log('Received data: [${response.data}]');
+        var token = response.headers['Authorization']!.first.split(' ')[1];
+        StorageService.addItem('token', token);
         return response.data;
       }
       developer.log('Invalid response $statusCode');

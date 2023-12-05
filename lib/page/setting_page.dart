@@ -229,9 +229,7 @@ class _SystemPageState extends State<SettingPage> {
       RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': _hostnameController.text});
       displaySuccess('Hostname changed', context);
 
-      developer.log('JVM restart called');
       RestClient.rpc(RPC.jvmRestart);
-      displaySuccess('JVM Restarted', context);
 
       developer.log('Force Logout');
       StorageService.removeItem('token');
