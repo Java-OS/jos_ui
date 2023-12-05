@@ -223,42 +223,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _fetchFullSystemInformation() async {
-    developer.log('Fetch Os Version called');
-    var response = await RestClient.rpc(RPC.systemFullInformation);
-    if (response != null) {
-      var json = jsonDecode(response);
-      setState(() {
-        _dateTimeZone = json['result']['os_date_time_zone'].toString();
-        _osUsername = json['result']['os_username'].toString();
-        _osVersion = json['result']['os_version'].toString();
-        _osHostname = json['result']['os_hostname'].toString();
-        _hwCpuInfo = json['result']['hw_cpu_info'].toString();
-        _hwCpuCount = json['result']['hw_cpu_count'].toString();
-        _hwTotalMemory = json['result']['hw_total_memory'];
-        _hwUsedMemory = json['result']['hw_used_memory'];
-        _hwFreeMemory = json['result']['hw_free_memory'];
-        _jvmVendor = json['result']['jvm_vendor'].toString();
-        _jvmVersion = json['result']['jvm_version'].toString();
-        _jvmMaxHeapSize = json['result']['jvm_max_heap_size'];
-        _jvmTotalHeapSize = json['result']['jvm_total_heap_size'];
-        _jvmUsedHeapSize = json['result']['jvm_used_heap_size'];
-      });
-    }
-  }
-
-  void _callJvmGarbageCollector() async {
-    developer.log('JVM Garbage Collector called');
-    RestClient.rpc(RPC.jvmGc).then((_) => _fetchFullSystemInformation());
-    displaySuccess('CleanUp JVM Heap Space', context);
-  }
-
-  void _callJvmRestart() async {
-    developer.log('JVM restart called');
-    RestClient.rpc(RPC.jvmRestart).then((_) => _fetchFullSystemInformation());
-    displaySuccess('JVM Restarted', context);
-  }
-
   Widget actionButton(IconData icon, String tooltipMessage, Function callApiMethod,Color hoverColor) {
     return Tooltip(
       preferBelow: false,
@@ -287,6 +251,42 @@ class _HomePageState extends State<HomePage> {
         child: Icon(icon, size: 40),
       ),
     );
+  }
+
+  void _fetchFullSystemInformation() async {
+    developer.log('Fetch Os Version called');
+    var response = await RestClient.rpc(RPC.systemFullInformation);
+    if (response != null) {
+      var json = jsonDecode(response);
+      setState(() {
+        _dateTimeZone = json['result']['os_date_time_zone'].toString();
+        _osUsername = json['result']['os_username'].toString();
+        _osVersion = json['result']['os_version'].toString();
+        _osHostname = json['result']['os_hostname'].toString();
+        _hwCpuInfo = json['result']['hw_cpu_info'].toString();
+        _hwCpuCount = json['result']['hw_cpu_count'].toString();
+        _hwTotalMemory = json['result']['hw_total_memory'];
+        _hwUsedMemory = json['result']['hw_used_memory'];
+        _hwFreeMemory = json['result']['hw_free_memory'];
+        _jvmVendor = json['result']['jvm_vendor'].toString();
+        _jvmVersion = json['result']['jvm_version'].toString();
+        _jvmMaxHeapSize = json['result']['jvm_max_heap_size'];
+        _jvmTotalHeapSize = json['result']['jvm_total_heap_size'];
+        _jvmUsedHeapSize = json['result']['jvm_used_heap_size'];
+      });
+    }
+  }
+
+  void _callJvmGarbageCollector() {
+    developer.log('JVM Garbage Collector called');
+    RestClient.rpc(RPC.jvmGc).then((_) => _fetchFullSystemInformation());
+    displaySuccess('CleanUp JVM Heap Space', context);
+  }
+
+  void _callJvmRestart() {
+    developer.log('JVM restart called');
+    RestClient.rpc(RPC.jvmRestart).then((_) => _fetchFullSystemInformation());
+    displaySuccess('JVM Restarted', context);
   }
 
   @override

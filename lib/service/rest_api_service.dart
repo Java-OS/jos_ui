@@ -69,7 +69,7 @@ class RestClient {
     developer.log('Credential send: [$header]');
 
     try {
-      var response = await dio.post(_baseRpcUrl(), queryParameters: parameters, options: Options(headers: header, responseType: ResponseType.plain, validateStatus: (_) => true));
+      var response = await dio.post(_baseRpcUrl(), data: parameters, options: Options(headers: header, responseType: ResponseType.plain, validateStatus: (_) => true));
       var statusCode = response.statusCode;
       if (statusCode == 200) {
         developer.log('Received data: [${response.data}]');
