@@ -79,7 +79,7 @@ class RestClient {
         StorageService.addItem('token', token);
         return response.data;
       }
-      developer.log('Invalid response $statusCode');
+      developer.log('Response $statusCode');
     } catch (e) {
       developer.log('[Dio Error] $rpc ${e.toString()}');
     }

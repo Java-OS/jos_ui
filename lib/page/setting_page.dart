@@ -72,7 +72,7 @@ class _SystemPageState extends State<SettingPage> {
   Widget chooseTargetTab() {
     switch (widget.tabIndex) {
       case 0:
-        return displayBasicContent();
+        return displayBasicSettings();
       case 1:
         return displayDateAndTimeContent();
       case 2:
@@ -80,11 +80,11 @@ class _SystemPageState extends State<SettingPage> {
       case 3:
         return displayEnvironmentsContent();
       default:
-        return displayBasicContent();
+        return displayBasicSettings();
     }
   }
 
-  Widget displayBasicContent() {
+  Widget displayBasicSettings() {
     return basicContent(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,37 +120,20 @@ class _SystemPageState extends State<SettingPage> {
   Widget displayDateAndTimeContent() {
     return basicContent(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Text('Date and Time', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+          Divider(),
+          Row(
             children: [
-              Text('Date and Time', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-              Divider(),
-              Row(
-                children: [
-                  Checkbox(
-                      value: _useNtp,
-                      onChanged: (e) {
-                        setState(() {
-                          _useNtp = e!;
-                        });
-                      }),
-                  SizedBox(width: 4),
-                  Text('Set date and time automatically', style: TextStyle()),
-                ],
-              ),
-              SizedBox(height: 30),
-              Visibility(visible: _useNtp, replacement: DateTimeComponent(), child: NTPComponent())
+              Checkbox(value: _useNtp, onChanged: (e) => setState(() => _useNtp = e!)),
+              SizedBox(width: 4),
+              Text('Set date and time automatically', style: TextStyle()),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [ElevatedButton(onPressed: () {}, child: Text('Apply'))],
-          )
+          SizedBox(height: 30),
+          Visibility(visible: _useNtp, replacement: DateTimeComponent(), child: NTPComponent())
         ],
       ),
     );
