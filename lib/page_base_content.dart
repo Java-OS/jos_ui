@@ -10,7 +10,7 @@ Widget getPageContent({Widget? child}) {
           Align(
             alignment: Alignment.center,
             child: Image.asset(
-              'assets/images/background.jpg',
+              'assets/images/background.webp',
               fit: BoxFit.cover,
               height: double.infinity,
               width: double.infinity,
