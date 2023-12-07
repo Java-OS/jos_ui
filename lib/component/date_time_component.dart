@@ -262,9 +262,13 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
 
   void _apply() async {
     if (_isNtpActive) {
-      _activateNtp().then((value) => _setNtpConfiguration()).then((value) => _syncNTP());
+      _activateNtp()
+          .then((value) => _setNtpConfiguration())
+          .then((value) => _syncNTP());
     } else {
-      _activateNtp().then((value) => _updateDateTime());
+      _activateNtp()
+          .then((value) => _updateDateTime())
+          .then((value) => _fetchSystemDateTime());
     }
   }
 }
