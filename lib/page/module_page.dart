@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jos_ui/component/module_component.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
-import 'package:jos_ui/component/user_management_component.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page_base_content.dart';
 
@@ -38,11 +37,7 @@ class _ModulePageState extends State<ModulePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text('Modules', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-                      Divider(),
-                      ModuleComponent()
-                    ],
+                    children: const [Text('Modules', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)), Divider(), ModuleComponent()],
                   ),
                 ),
               ),

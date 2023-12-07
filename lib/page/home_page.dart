@@ -255,7 +255,7 @@ class _HomePageState extends State<HomePage> {
 
   void _fetchSystemInformation() async {
     developer.log('Fetch System Full Information');
-    var response = await RestClient.rpc(RPC.systemFullInformation);
+    var response = await RestClient.rpc(RPC.systemFullInformation, context);
     if (response != null) {
       var json = jsonDecode(response);
       setState(() {
@@ -280,13 +280,13 @@ class _HomePageState extends State<HomePage> {
 
   void _callJvmGarbageCollector() {
     developer.log('JVM Garbage Collector called');
-    RestClient.rpc(RPC.jvmGc).then((value) => _fetchSystemInformation());
+    RestClient.rpc(RPC.jvmGc, context).then((value) => _fetchSystemInformation());
     displaySuccess('CleanUp JVM Heap Space', context);
   }
 
   void _callJvmRestart() {
     developer.log('JVM restart called');
-    RestClient.rpc(RPC.jvmRestart);
+    RestClient.rpc(RPC.jvmRestart, context);
     displaySuccess('Restarting JVM, please wait ...', context);
   }
 }

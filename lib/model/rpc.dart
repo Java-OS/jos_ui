@@ -49,6 +49,7 @@ enum RPC {
   ntpServerName(400),
   ntpSync(401),
   ntpActivate(402),
+  ntpInformation(403),
 
   /*
    * module rpc

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/component/date_time_component.dart';
 import 'package:jos_ui/component/environment_component.dart';
 import 'package:jos_ui/component/network_component.dart';
-import 'package:jos_ui/component/ntp_component.dart';
 import 'package:jos_ui/component/side_menu_component.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
 import 'package:jos_ui/constant.dart';
@@ -28,7 +27,6 @@ class SettingPage extends StatefulWidget {
 class _SystemPageState extends State<SettingPage> {
   final TextEditingController _hostnameController = TextEditingController();
 
-  bool _useNtp = false;
   String _hostname = '';
 
   @override
@@ -122,18 +120,10 @@ class _SystemPageState extends State<SettingPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: const [
           Text('Date and Time', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
           Divider(),
-          Row(
-            children: [
-              Checkbox(value: _useNtp, onChanged: (e) => setState(() => _useNtp = e!)),
-              SizedBox(width: 4),
-              Text('Set date and time automatically', style: TextStyle()),
-            ],
-          ),
-          SizedBox(height: 30),
-          Visibility(visible: _useNtp, replacement: DateTimeComponent(), child: NTPComponent())
+          DateTimeComponent(),
         ],
       ),
     );
@@ -193,7 +183,7 @@ class _SystemPageState extends State<SettingPage> {
 
   void _fetchHostname() async {
     developer.log('Fetch hostname called');
-    var response = await RestClient.rpc(RPC.systemGetHostname);
+    var response = await RestClient.rpc(RPC.systemGetHostname, context);
     if (response != null) {
       var json = jsonDecode(response);
       setState(() {
@@ -205,18 +195,15 @@ class _SystemPageState extends State<SettingPage> {
     }
   }
 
-  void _changeHostname() async {
+  Future<void> _changeHostname() async {
     developer.log('Change hostname called');
     bool accepted = await displayAlertModal('Warning', 'JVM immediately must be reset after change hostname.', context);
     if (accepted && context.mounted) {
-      RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': _hostnameController.text});
-      displaySuccess('Hostname changed', context);
-
-      RestClient.rpc(RPC.jvmRestart);
-
-      developer.log('Force Logout');
-      StorageService.removeItem('token');
-      navigatorKey.currentState?.pushReplacementNamed('/');
+      RestClient.rpc(RPC.systemSetHostname, context, parameters: {'hostname': _hostnameController.text,'jvmRestart' : true})
+          .then((value) => displaySuccess('Hostname changed', context))
+          .then((value) => StorageService.removeItem('token'))
+          .then((value) => navigatorKey.currentState?.pushReplacementNamed('/'))
+          .then((value) => developer.log('Logout success.'));
     }
   }
 }

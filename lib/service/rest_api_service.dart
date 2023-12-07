@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/modal/message_modal.dart';
 import 'package:jos_ui/model/rpc.dart';
@@ -23,7 +24,7 @@ class RestClient {
     try {
       var response = await dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
       var statusCode = response.statusCode;
-      if (statusCode == 202) {
+      if (statusCode == 204) {
         var token = response.headers['Authorization']!.first.split(' ')[1];
         StorageService.addItem('token', token);
         developer.log('Login success');
@@ -60,7 +61,7 @@ class RestClient {
     return false;
   }
 
-  static Future<String?> rpc(RPC rpc, {Map<String, dynamic>? parameters}) async {
+  static Future<String?> rpc(RPC rpc, BuildContext context, {Map<String, dynamic>? parameters}) async {
     developer.log('Request call rpc: [$rpc] [$parameters] [${_baseLoginUrl()}]');
     var token = StorageService.getItem('token');
     if (token == null) navigatorKey.currentState?.pushReplacementNamed('/');
@@ -78,10 +79,18 @@ class RestClient {
         var token = response.headers['Authorization']!.first.split(' ')[1];
         StorageService.addItem('token', token);
         return response.data;
+      } else if (statusCode == 202) {
+        developer.log('Response $statusCode');
+      } else {
+        String msg = jsonDecode(response.data)['message'];
+        if (context.mounted) displayWarning(msg, context, timeout: 5);
       }
-      developer.log('Response $statusCode');
     } catch (e) {
-      developer.log('[Dio Error] $rpc ${e.toString()}');
+      if (rpc == RPC.systemReboot || rpc == RPC.jvmRestart || rpc == RPC.systemShutdown) {
+        developer.log('Normal error by dio , The jvm shutdown before sending response');
+      } else {
+        developer.log('[Dio Error] $rpc ${e.toString()}');
+      }
     }
     return null;
   }

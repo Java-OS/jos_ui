@@ -51,6 +51,7 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: 'Username',
                     labelStyle: TextStyle(color: Colors.white38),
                   ),
+                  onSubmitted: (_) => _login(),
                 ),
                 SizedBox(height: 20),
                 TextField(
@@ -65,6 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: 'Password',
                     labelStyle: TextStyle(color: Colors.white38),
                   ),
+                  onSubmitted: (_) => _login(),
                 ),
                 SizedBox(height: 20),
                 SizedBox(
@@ -86,6 +88,6 @@ class _LoginPageState extends State<LoginPage> {
     var password = _passwordController.text;
     var success = await RestClient.login(username, password);
     if (success) navigatorKey.currentState?.pushReplacementNamed('/home');
-    if (context.mounted && !success) displayError('Login failed',context);
+    if (context.mounted && !success) displayError('Login failed', context);
   }
 }
