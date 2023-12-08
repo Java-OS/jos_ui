@@ -5,6 +5,7 @@ import 'package:jos_ui/component/environment_component.dart';
 import 'package:jos_ui/component/network_component.dart';
 import 'package:jos_ui/component/side_menu_component.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
+import 'package:jos_ui/component/user_management_component.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page_base_content.dart';
 
@@ -62,9 +63,9 @@ class _SystemPageState extends State<SettingPage> {
       case 1:
         return displayDateAndTimeContent();
       case 2:
-        return displayNetworkContent();
-      case 3:
         return displayEnvironmentsContent();
+      case 3:
+        return displayUserManagementContent();
       default:
         return displayBasicSettings();
     }
@@ -98,27 +99,15 @@ class _SystemPageState extends State<SettingPage> {
     );
   }
 
-  Widget displayNetworkContent() {
+  Widget displayUserManagementContent() {
     return basicContent(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text('Network', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-              Divider(),
-              NetworkComponent(),
-              SizedBox(height: 30),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [ElevatedButton(onPressed: () {}, child: Text('Apply'))],
-          )
+        children: const [
+          Text('Users', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+          Divider(),
+          UserManagementComponent(),
         ],
       ),
     );

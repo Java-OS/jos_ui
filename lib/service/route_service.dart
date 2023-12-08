@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/page/home_page.dart';
 import 'package:jos_ui/page/login_page.dart';
 import 'package:jos_ui/page/module_page.dart';
+import 'package:jos_ui/page/network_page.dart';
 import 'package:jos_ui/page/setting_page.dart';
 import 'package:jos_ui/page/user_page.dart';
 import 'package:jos_ui/page/wait_page.dart';
@@ -22,8 +23,8 @@ class RouteService {
       case '/setting':
         var tabIndex = settings.arguments as int;
         return PageRouteBuilder(pageBuilder: (_, __, ___) => SettingPage(tabIndex: tabIndex));
-      case '/user':
-        return PageRouteBuilder(pageBuilder: (_, __, ___) => UserPage());
+      case '/network':
+        return PageRouteBuilder(pageBuilder: (_, __, ___) => NetworkPage());
       case '/module':
         return PageRouteBuilder(pageBuilder: (_, __, ___) => ModulePage());
       default:

@@ -19,7 +19,7 @@ class _HomePageState extends State<TopMenuComponent> {
   final menuConfigs = [
     ['/home', Colors.blueAccent, Icons.dashboard],
     ['/setting', Colors.blueAccent, Icons.settings],
-    ['/user', Colors.blueAccent, Icons.groups_sharp],
+    ['/network', Colors.blueAccent, Icons.lan_outlined],
     ['/module', Colors.blueAccent, Icons.view_module],
     ['/', Colors.redAccent, Icons.logout_outlined],
   ];

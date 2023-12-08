@@ -16,8 +16,8 @@ class _HomePageState extends State<SideMenuComponent> {
   final menuConfigs = [
     [componentBackgroundColor, Icons.info_outline_rounded],
     [componentBackgroundColor, Icons.date_range],
-    [componentBackgroundColor, Icons.lan_outlined],
     [componentBackgroundColor, Icons.join_right],
+    [componentBackgroundColor, Icons.groups_sharp],
   ];
 
   @override

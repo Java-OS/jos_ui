@@ -9,7 +9,7 @@ import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/storage_service.dart';
 
 class RestClient {
-  static final dio = Dio();
+  static final _dio = Dio();
 
   static String _baseLoginUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/login";
 
@@ -22,7 +22,7 @@ class RestClient {
     developer.log('Credential send: [$header]');
 
     try {
-      var response = await dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
+      var response = await _dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
       var statusCode = response.statusCode;
       if (statusCode == 204) {
         storeToken(response);
@@ -45,7 +45,7 @@ class RestClient {
     developer.log('Credential send: [$header]');
 
     try {
-      var response = await dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
+      var response = await _dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
       var statusCode = response.statusCode;
       if (statusCode == 204) {
         developer.log('Token is valid');
@@ -70,7 +70,7 @@ class RestClient {
     developer.log('Credential send: [$header]');
 
     try {
-      var response = await dio.post(_baseRpcUrl(), data: parameters, options: Options(headers: header, responseType: ResponseType.plain, validateStatus: (_) => true));
+      var response = await _dio.post(_baseRpcUrl(), data: parameters, options: Options(headers: header, responseType: ResponseType.plain, validateStatus: (_) => true));
       var statusCode = response.statusCode;
       developer.log('Response received with http code: $statusCode');
       if (statusCode == 200) {

@@ -23,7 +23,13 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
               scrollDirection: Axis.vertical,
               child: SizedBox(
                 width: double.infinity,
-                child: DataTable(dataRowMinHeight: 12, dataRowMaxHeight: 28, columnSpacing: 0, columns: getEnvironmentColumns(), rows: getEnvironmentRows()),
+                child: DataTable(
+                  dataRowMinHeight: 12,
+                  dataRowMaxHeight: 28,
+                  columnSpacing: 0,
+                  columns: getEnvironmentColumns(),
+                  rows: getEnvironmentRows(),
+                ),
               ),
             ),
           )
