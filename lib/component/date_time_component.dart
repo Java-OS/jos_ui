@@ -122,7 +122,10 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
               message: 'Sync from ntp server',
               preferBelow: false,
               verticalOffset: 22,
-              child: OutlinedButton(onPressed: () => _syncNTP(), child: Icon(Icons.sync, size: 16, color: Colors.black)),
+              child: OutlinedButton(
+                onPressed: () => {_syncNTP(), displayInfo('Date & time synced from $_referenceIdentifier', context)},
+                child: Icon(Icons.sync, size: 16, color: Colors.black),
+              ),
             ),
           ],
         ),
@@ -247,7 +250,6 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
         _receiveTimestamp = json['result']['receiveTimestamp'].toString();
         _transmitTimestamp = json['result']['transmitTimestamp'].toString();
       });
-      if (context.mounted) displayInfo('Date & time synced from $_referenceIdentifier', context);
     }
   }
 
@@ -263,13 +265,9 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
 
   void _apply() async {
     if (_isNtpActive) {
-      _activateNtp()
-          .then((value) => _setNtpConfiguration())
-          .then((value) => _syncNTP());
+      _activateNtp().then((value) => _setNtpConfiguration()).then((value) => _syncNTP());
     } else {
-      _activateNtp()
-          .then((value) => _updateDateTime())
-          .then((value) => _fetchSystemDateTime());
+      _activateNtp().then((value) => _updateDateTime()).then((value) => _fetchSystemDateTime());
     }
   }
 }
