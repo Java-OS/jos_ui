@@ -247,6 +247,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
         _receiveTimestamp = json['result']['receiveTimestamp'].toString();
         _transmitTimestamp = json['result']['transmitTimestamp'].toString();
       });
+      if (context.mounted) displayInfo('Date & time synced from $_referenceIdentifier', context);
     }
   }
 
