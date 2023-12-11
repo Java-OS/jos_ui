@@ -2,12 +2,10 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/modal/alert_modal.dart';
 import 'package:jos_ui/modal/message_modal.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_api_service.dart';
-import 'package:jos_ui/service/storage_service.dart';
 
 class BasicComponent extends StatefulWidget {
   const BasicComponent({super.key});
@@ -29,17 +27,19 @@ class _BasicComponentState extends State<BasicComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          controller: _hostnameController,
-          decoration: InputDecoration(
-            label: Text('Hostname'),
-            // hintStyle: TextStyle(fontSize: 12),
+    return Expanded(
+      child: Stack(
+        children: [
+          TextField(
+            controller: _hostnameController,
+            decoration: InputDecoration(
+              label: Text('Hostname'),
+            ),
+            onSubmitted: (_) => _changeHostname(),
           ),
-          onSubmitted: (_) => _changeHostname(),
-        )
-      ],
+          Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => _changeHostname(), child: Text('Apply')))
+        ],
+      ),
     );
   }
 
@@ -61,11 +61,7 @@ class _BasicComponentState extends State<BasicComponent> {
     developer.log('Change hostname called');
     bool accepted = await displayAlertModal('Warning', 'JVM immediately must be reset after change hostname.', context);
     if (accepted && context.mounted) {
-      RestClient.rpc(RPC.systemSetHostname, context, parameters: {'hostname': _hostnameController.text, 'jvmRestart': true})
-          .then((value) => displaySuccess('Hostname changed', context))
-          .then((value) => StorageService.removeItem('token'))
-          .then((value) => navigatorKey.currentState?.pushReplacementNamed('/'))
-          .then((value) => developer.log('Logout success.'));
+      RestClient.rpc(RPC.systemSetHostname, context, parameters: {'hostname': _hostnameController.text}).then((value) => displaySuccess('Hostname changed', context));
     }
   }
 }

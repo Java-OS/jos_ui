@@ -25,6 +25,11 @@ class _HomePageState extends State<TopMenuComponent> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,14 +82,28 @@ class _HomePageState extends State<TopMenuComponent> {
             width: 80,
             height: 80,
             duration: Duration(milliseconds: 200),
-            child: Center(
-              child: Icon(menuIcon,
-                  size: 32,
-                  color: _hoverIndex == index
-                      ? routePath == '/logout' ?Colors.red : Colors.white
-                      : widget.selectedIndex == index
-                          ? Colors.white
-                          : Colors.white38),
+            child: Stack(
+              children: [
+                // Visibility(
+                //   visible: _displayJvmRestartBadge && routePath == '/home',
+                //   child: Align(
+                //     alignment: Alignment.topRight,
+                //     child: Icon(Icons.restart_alt, color: Colors.red),
+                //   ),
+                // ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Icon(menuIcon,
+                      size: 32,
+                      color: _hoverIndex == index
+                          ? routePath == '/logout'
+                              ? Colors.red
+                              : Colors.white
+                          : widget.selectedIndex == index
+                              ? Colors.white
+                              : Colors.white38),
+                )
+              ],
             ),
           ),
         ),

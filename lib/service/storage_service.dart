@@ -14,4 +14,8 @@ class StorageService {
   static String? getItem(String key) {
     return _localStorage[key];
   }
+
+  static bool exists(String key) {
+    return _localStorage.containsKey(key);
+  }
 }

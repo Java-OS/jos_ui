@@ -55,3 +55,20 @@ void displayWarning(String message, BuildContext context, {timeout}) => _showMes
 void displaySuccess(String message, BuildContext context, {timeout}) => _showMessage(message, MessageType.success, timeout ?? 3, context);
 
 void displayError(String message, BuildContext context, {timeout}) => _showMessage(message, MessageType.error, timeout ?? 3, context);
+
+
+void sampleNotification(BuildContext context) {
+  toastification.show(
+    context: context,
+    type: ToastificationType.success,
+    style: ToastificationStyle.flat,
+    title: 'Component updates available.',
+    description: 'Component updates available.',
+    alignment: Alignment.bottomRight,
+    borderRadius: BorderRadius.zero,
+    icon: Icon(Icons.autorenew_rounded, color: Colors.red),
+    closeButtonShowType: CloseButtonShowType.none,
+    closeOnClick: true,
+    pauseOnHover: false,
+  );
+}

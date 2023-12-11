@@ -22,7 +22,7 @@ class _WaitPageState extends State<WaitPage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => _checkLogin());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkLogin());
     super.initState();
   }
 

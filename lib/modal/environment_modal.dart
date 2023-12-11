@@ -1,5 +1,23 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/modal/message_modal.dart';
+import 'package:jos_ui/model/rpc.dart';
+import 'package:jos_ui/service/rest_api_service.dart';
+
+final TextEditingController keyController = TextEditingController();
+final TextEditingController valueController = TextEditingController();
+
+Future<void> _setSystemEnvironment(BuildContext context) async {
+  developer.log('Add System Environments called');
+  var key = keyController.text;
+  var value = valueController.text;
+
+  await RestClient.rpc(RPC.systemEnvironmentSet, context, parameters: {'key': key, 'value': value});
+  if (context.mounted) displayInfo('New environment added', context);
+  navigatorKey.currentState!.pop();
+}
 
 Future<void> displayAddUpdateEnvironmentModal(BuildContext context) async {
   showDialog(
@@ -15,10 +33,10 @@ Future<void> displayAddUpdateEnvironmentModal(BuildContext context) async {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextField(decoration: InputDecoration(label: Text('Key'), hintStyle: TextStyle(fontSize: 12))),
-              TextField(decoration: InputDecoration(label: Text('Value'), hintStyle: TextStyle(fontSize: 12))),
+              TextField(controller: keyController, decoration: InputDecoration(label: Text('Key'), hintStyle: TextStyle(fontSize: 12))),
+              TextField(controller: valueController, decoration: InputDecoration(label: Text('Value'), hintStyle: TextStyle(fontSize: 12))),
               SizedBox(height: 20),
-              Align(alignment: Alignment.centerRight,child: ElevatedButton(onPressed: () {}, child: Text('Apply')))
+              Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _setSystemEnvironment(context), child: Text('Apply')))
             ],
           )
         ],

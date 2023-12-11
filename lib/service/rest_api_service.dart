@@ -26,6 +26,7 @@ class RestClient {
       var statusCode = response.statusCode;
       if (statusCode == 204) {
         storeToken(response);
+        storeJvmNeedRestart(response);
         developer.log('Login success');
         return true;
       }
@@ -50,6 +51,7 @@ class RestClient {
       if (statusCode == 204) {
         developer.log('Token is valid');
         storeToken(response);
+        storeJvmNeedRestart(response);
         return true;
       }
       developer.log('Invalid token');
@@ -73,13 +75,16 @@ class RestClient {
       var response = await _dio.post(_baseRpcUrl(), data: parameters, options: Options(headers: header, responseType: ResponseType.plain, validateStatus: (_) => true));
       var statusCode = response.statusCode;
       developer.log('Response received with http code: $statusCode');
+      storeJvmNeedRestart(response);
+      storeToken(response);
       if (statusCode == 200) {
         return response.data;
+      } else if (statusCode == 204) {
+        return null;
       } else {
         String msg = jsonDecode(response.data)['message'];
         if (context.mounted) displayWarning(msg, context, timeout: 5);
       }
-      storeToken(response);
     } catch (e) {
       if (rpc == RPC.systemReboot || rpc == RPC.jvmRestart || rpc == RPC.systemShutdown) {
         developer.log('Normal error by dio , The jvm shutdown before sending response');
@@ -95,6 +100,13 @@ class RestClient {
     if (authHeader != null) {
       var token = authHeader.first.split(' ')[1];
       StorageService.addItem('token', token);
+    }
+  }
+
+  static void storeJvmNeedRestart(Response<dynamic> response) {
+    var jvmNeedRestart = response.headers['X-Jvm-Restart'];
+    if (jvmNeedRestart != null) {
+      developer.log('Receive header X-Jvm-Restart');
     }
   }
 }

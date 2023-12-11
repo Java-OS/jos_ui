@@ -1,5 +1,12 @@
+import 'dart:convert';
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/modal/environment_modal.dart';
+import 'package:jos_ui/modal/message_modal.dart';
+import 'package:jos_ui/model/rpc.dart';
+import 'package:jos_ui/service/rest_api_service.dart';
 
 class EnvironmentComponent extends StatefulWidget {
   const EnvironmentComponent({super.key});
@@ -9,6 +16,14 @@ class EnvironmentComponent extends StatefulWidget {
 }
 
 class EnvironmentComponentState extends State<EnvironmentComponent> {
+  Map<String, String> _environments = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSystemEnvironments();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -39,50 +54,26 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
   }
 
   List<DataColumn> getEnvironmentColumns() {
-    var interfaceColumn = DataColumn(label: Text('Key', style: TextStyle(fontWeight: FontWeight.bold)));
-    var addressColumn = DataColumn(label: Text('Value', style: TextStyle(fontWeight: FontWeight.bold)));
-    var netmaskColumn = DataColumn(label: SizedBox.shrink());
-    return [interfaceColumn, addressColumn, netmaskColumn];
+    var keyColumn = DataColumn(label: Text('Key', style: TextStyle(fontWeight: FontWeight.bold)));
+    var valueColumn = DataColumn(label: Text('Value', style: TextStyle(fontWeight: FontWeight.bold)));
+    var emptyColumn = DataColumn(label: SizedBox.shrink());
+    return [keyColumn, valueColumn, emptyColumn];
   }
 
   List<DataRow> getEnvironmentRows() {
-    var kv = {
-      'name': 'ali',
-      'family': 'hosseini',
-      'age': '1',
-      'phoneNumber': '1234',
-      'city': 'tehran',
-      'email': 'a@b.com',
-      'username': 'ali123',
-      'address': 'aa - bb - cc',
-      'national_code': '453121345464',
-      'home': 'HOME_PATH',
-      'aaa': 'aaa',
-      'bbb': 'bbb',
-      'ccc': 'ccc',
-      'ddd': 'ddd',
-      'eee': 'eee',
-      'fff': 'fff',
-      'ggg': 'ggg',
-      'hhh': 'hhh',
-      'iii': 'iii',
-      'jjj': 'jjj',
-    };
-
     var listItems = <DataRow>[];
-
-    kv.forEach((key, value) {
+    _environments.forEach((key, value) {
       var row = DataRow(cells: [
-        DataCell(Text(key, style: TextStyle(fontSize: 12))),
-        DataCell(Text(value, style: TextStyle(fontSize: 12))),
+        DataCell(Text(truncateWithEllipsis(15, key), style: TextStyle(fontSize: 12))),
+        DataCell(Text(truncateWithEllipsis(30, value), style: TextStyle(fontSize: 12))),
         DataCell(
           Align(
-            alignment: Alignment.centerRight,
+            alignment: Alignment.centerLeft,
             child: SizedBox(
               width: 80,
               child: Row(
                 children: [
-                  IconButton(onPressed: () {}, splashRadius: 12, icon: Icon(Icons.delete, size: 16, color: Colors.black)),
+                  IconButton(onPressed: () => _deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(Icons.delete, size: 16, color: Colors.black)),
                   IconButton(onPressed: () {}, splashRadius: 12, icon: Icon(Icons.edit, size: 16, color: Colors.black)),
                 ],
               ),
@@ -92,7 +83,21 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
       ]);
       listItems.add(row);
     });
-
     return listItems;
+  }
+
+  Future<void> _fetchSystemEnvironments() async {
+    developer.log('Fetch System Environments called');
+    var response = await RestClient.rpc(RPC.systemEnvironmentList, context);
+    if (response != null) {
+      var json = jsonDecode(response);
+      setState(() => _environments = Map.from(json['result']));
+    }
+  }
+
+  Future<void> _deleteSystemEnvironment(String key) async {
+    developer.log('Delete System Environments called');
+    await RestClient.rpc(RPC.systemEnvironmentUnset, context, parameters: {'key': key}).then((value) => _fetchSystemEnvironments());
+    if (context.mounted) displayInfo('delete environment %s', context);
   }
 }
