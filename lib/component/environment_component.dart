@@ -6,7 +6,7 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/modal/environment_modal.dart';
 import 'package:jos_ui/modal/message_modal.dart';
 import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/rest_api_service.dart';
+import 'package:jos_ui/service/RpcProvider.dart';
 
 class EnvironmentComponent extends StatefulWidget {
   const EnvironmentComponent({super.key});
@@ -88,7 +88,7 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
 
   Future<void> _fetchSystemEnvironments() async {
     developer.log('Fetch System Environments called');
-    var response = await RestClient.rpc(RPC.systemEnvironmentList, context);
+    var response = await RestClient.rpc(RPC.systemEnvironmentList);
     if (response != null) {
       var json = jsonDecode(response);
       setState(() => _environments = Map.from(json['result']));
@@ -97,7 +97,7 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
 
   Future<void> _deleteSystemEnvironment(String key) async {
     developer.log('Delete System Environments called');
-    await RestClient.rpc(RPC.systemEnvironmentUnset, context, parameters: {'key': key}).then((value) => _fetchSystemEnvironments());
+    await RestClient.rpc(RPC.systemEnvironmentUnset, parameters: {'key': key}).then((value) => _fetchSystemEnvironments());
     if (context.mounted) displayInfo('delete environment %s', context);
   }
 }

@@ -1,50 +1,32 @@
-import 'dart:convert';
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/modal/message_modal.dart';
-import 'package:jos_ui/model/rpc.dart';
+import 'package:jos_ui/controller/dashboard_controller.dart';
 import 'package:jos_ui/page_base_content.dart';
-import 'package:jos_ui/service/rest_api_service.dart';
 import 'package:jos_ui/utils.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _DashboardPageState extends State<DashboardPage> {
+  final dashboardController = Get.put(DashboardController());
+
   bool _mouseHoverOnBasicBox = false;
   bool _mouseHoverOnJVMBox = false;
   bool _mouseHoverOnActionBox = false;
   bool _mouseHoverOnHWBox = false;
 
-  String _osUsername = '';
-  String _osType = '';
-  String _osVersion = '';
-  String _osHostname = '';
-  String _hwCpuInfo = '';
-  String _hwCpuCount = '';
-  int _hwTotalMemory = 0;
-  int _hwUsedMemory = 0;
-  int _hwFreeMemory = 0;
-  String _jvmVendor = '';
-  String _jvmVersion = '';
-  int _jvmMaxHeapSize = 0;
-  int _jvmTotalHeapSize = 0;
-  int _jvmUsedHeapSize = 0;
-  String _dateTimeZone = '';
-
   @override
   void initState() {
     super.initState();
-    _fetchSystemInformation();
+    dashboardController.fetchSystemInformation();
   }
 
   @override
@@ -60,7 +42,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [TopMenuComponent(selectedIndex: 0), SizedBox(height: 8), mosaicView()],
+          children: [TopMenuComponent(), SizedBox(height: 8), Obx(() => mosaicView())],
         ),
       ),
     );
@@ -99,17 +81,17 @@ class _HomePageState extends State<HomePage> {
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.power_settings_new, 'System PowerOff', _callJvmGarbageCollector, Colors.redAccent),
+                child: actionButton(Icons.power_settings_new, 'System PowerOff', Colors.redAccent, dashboardController.callJvmGarbageCollector),
               ),
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.autorenew_rounded, 'JVM Restart', _callJvmRestart, Colors.white),
+                child: actionButton(Icons.autorenew_rounded, 'JVM Restart', Colors.white, dashboardController.callJvmRestart),
               ),
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.recycling_outlined, 'JVM GC', _callJvmGarbageCollector, Colors.white),
+                child: actionButton(Icons.recycling_outlined, 'JVM GC', Colors.white, dashboardController.callJvmGarbageCollector),
               ),
             ],
           ),
@@ -135,10 +117,10 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('JVM Vendor', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(_jvmVendor, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(dashboardController.jvmVendor.value, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
                   SizedBox(height: 12),
                   Text('JVM Version', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(_jvmVersion, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(dashboardController.jvmVersion.value, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
                 ],
               ),
               SizedBox(width: 60),
@@ -147,13 +129,13 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('JVM Xmx', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(formatSize(_jvmMaxHeapSize), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(formatSize(dashboardController.jvmMaxHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
                   SizedBox(height: 8),
                   Text('JVM Xms', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(formatSize(_jvmTotalHeapSize), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(formatSize(dashboardController.jvmTotalHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
                   SizedBox(height: 8),
                   Text('JVM used heap', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(formatSize(_jvmUsedHeapSize), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(formatSize(dashboardController.jvmUsedHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
                 ],
               ),
             ],
@@ -176,16 +158,16 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('CPU Model', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(_hwCpuInfo, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(dashboardController.hwCpuInfo.value, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('CPU Cores', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(_hwCpuCount, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(dashboardController.hwCpuCount.value, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('Total RAM', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(formatSize(_hwTotalMemory), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(formatSize(dashboardController.hwTotalMemory.value), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('Used RAM', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(formatSize(_hwUsedMemory), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(formatSize(dashboardController.hwUsedMemory.value), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
             ],
           ),
         ),
@@ -206,16 +188,17 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('OS', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text('$_osType $_osVersion', style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text('${dashboardController.osType.value} ${dashboardController.osVersion.value}',
+                  style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('Hostname', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(_osHostname, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(dashboardController.osHostname.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('Username', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(_osUsername, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(dashboardController.osUsername.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(_dateTimeZone, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(dashboardController.dateTimeZone.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
             ],
           ),
         ),
@@ -223,7 +206,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget actionButton(IconData icon, String tooltipMessage, Function callApiMethod, Color hoverColor) {
+  Widget actionButton(IconData icon, String tooltipMessage, Color hoverColor, Function(BuildContext context) action) {
     return Tooltip(
       preferBelow: false,
       verticalOffset: 45,
@@ -247,46 +230,9 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ),
-        onPressed: () => callApiMethod(),
+        onPressed: () => action(context),
         child: Icon(icon, size: 40),
       ),
     );
-  }
-
-  void _fetchSystemInformation() async {
-    developer.log('Fetch System Full Information');
-    var response = await RestClient.rpc(RPC.systemFullInformation, context);
-    if (response != null) {
-      var json = jsonDecode(response);
-      setState(() {
-        _dateTimeZone = json['result']['os_date_time_zone'].toString();
-        _osUsername = json['result']['os_username'].toString();
-        _osVersion = json['result']['os_version'].toString();
-        _osType = json['result']['os_type'].toString();
-        _osHostname = json['result']['os_hostname'].toString();
-        _hwCpuInfo = json['result']['hw_cpu_info'].toString();
-        _hwCpuCount = json['result']['hw_cpu_count'].toString();
-        _hwTotalMemory = json['result']['hw_total_memory'];
-        _hwUsedMemory = json['result']['hw_used_memory'];
-        _hwFreeMemory = json['result']['hw_free_memory'];
-        _jvmVendor = json['result']['jvm_vendor'].toString();
-        _jvmVersion = json['result']['jvm_version'].toString();
-        _jvmMaxHeapSize = json['result']['jvm_max_heap_size'];
-        _jvmTotalHeapSize = json['result']['jvm_total_heap_size'];
-        _jvmUsedHeapSize = json['result']['jvm_used_heap_size'];
-      });
-    }
-  }
-
-  void _callJvmGarbageCollector() {
-    developer.log('JVM Garbage Collector called');
-    RestClient.rpc(RPC.jvmGc, context).then((value) => _fetchSystemInformation());
-    displaySuccess('CleanUp JVM Heap Space', context);
-  }
-
-  void _callJvmRestart() {
-    developer.log('JVM restart called');
-    RestClient.rpc(RPC.jvmRestart, context);
-    displaySuccess('Restarting JVM, please wait ...', context);
   }
 }

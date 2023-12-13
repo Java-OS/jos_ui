@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/modal/alert_modal.dart';
 import 'package:jos_ui/modal/message_modal.dart';
 import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/rest_api_service.dart';
+import 'package:jos_ui/service/RpcProvider.dart';
 
 class BasicComponent extends StatefulWidget {
   const BasicComponent({super.key});
@@ -45,7 +45,7 @@ class _BasicComponentState extends State<BasicComponent> {
 
   void _fetchHostname() async {
     developer.log('Fetch hostname called');
-    var response = await RestClient.rpc(RPC.systemGetHostname, context);
+    var response = await RestClient.rpc(RPC.systemGetHostname);
     if (response != null) {
       var json = jsonDecode(response);
       setState(() {
@@ -61,7 +61,7 @@ class _BasicComponentState extends State<BasicComponent> {
     developer.log('Change hostname called');
     bool accepted = await displayAlertModal('Warning', 'JVM immediately must be reset after change hostname.', context);
     if (accepted && context.mounted) {
-      RestClient.rpc(RPC.systemSetHostname, context, parameters: {'hostname': _hostnameController.text}).then((value) => displaySuccess('Hostname changed', context));
+      RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': _hostnameController.text}).then((value) => displaySuccess('Hostname changed', context));
     }
   }
 }

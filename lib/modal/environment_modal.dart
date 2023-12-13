@@ -1,10 +1,11 @@
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/modal/message_modal.dart';
 import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/rest_api_service.dart';
+import 'package:jos_ui/service/RpcProvider.dart';
 
 final TextEditingController keyController = TextEditingController();
 final TextEditingController valueController = TextEditingController();
@@ -14,9 +15,9 @@ Future<void> _setSystemEnvironment(BuildContext context) async {
   var key = keyController.text;
   var value = valueController.text;
 
-  await RestClient.rpc(RPC.systemEnvironmentSet, context, parameters: {'key': key, 'value': value});
+  await RestClient.rpc(RPC.systemEnvironmentSet, parameters: {'key': key, 'value': value});
   if (context.mounted) displayInfo('New environment added', context);
-  navigatorKey.currentState!.pop();
+  Get.back();
 }
 
 Future<void> displayAddUpdateEnvironmentModal(BuildContext context) async {

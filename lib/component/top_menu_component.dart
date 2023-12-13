@@ -1,27 +1,26 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
-import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/service/storage_service.dart';
+import 'package:get/get.dart';
+import 'package:jos_ui/controller/authentication_controller.dart';
+import 'package:jos_ui/controller/page_controller.dart';
 
 class TopMenuComponent extends StatefulWidget {
-  final int selectedIndex;
-
-  const TopMenuComponent({super.key, required this.selectedIndex});
+  const TopMenuComponent({super.key});
 
   @override
-  State<TopMenuComponent> createState() => _HomePageState();
+  State<TopMenuComponent> createState() => _TopMenuComponentState();
 }
 
-class _HomePageState extends State<TopMenuComponent> {
+class _TopMenuComponentState extends State<TopMenuComponent> {
+  AuthenticationController authenticationController = Get.put(AuthenticationController());
+  JosPageController pageController = Get.put(JosPageController());
   int _hoverIndex = -1;
 
-  final menuConfigs = [
-    ['/home', Colors.blueAccent, Icons.dashboard],
-    ['/setting', Colors.blueAccent, Icons.settings],
+  final menuItems = [
+    ['/dashboard', Colors.blueAccent, Icons.dashboard],
+    ['/settings', Colors.blueAccent, Icons.settings],
     ['/network', Colors.blueAccent, Icons.lan_outlined],
-    ['/module', Colors.blueAccent, Icons.view_module],
-    ['/', Colors.redAccent, Icons.logout_outlined],
+    ['/modules', Colors.blueAccent, Icons.view_module],
+    ['/logout', Colors.redAccent, Icons.logout_outlined],
   ];
 
   @override
@@ -39,34 +38,23 @@ class _HomePageState extends State<TopMenuComponent> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: getTopMenuItems(),
         ),
-        menuItem(4)
+        menuItem(menuItems.length - 1)
       ],
     );
   }
 
-  List<Widget> getTopMenuItems() => List.generate(4, (index) => menuItem(index));
+  List<Widget> getTopMenuItems() => List.generate(menuItems.length - 1, (index) => menuItem(index));
 
   Widget menuItem(int index) {
-    var routePath = menuConfigs[index][0] as String;
-    var menuColor = menuConfigs[index][1] as Color;
-    var menuIcon = menuConfigs[index][2] as IconData;
+    var currentRoute = Get.routing.current;
+    var routePath = menuItems[index][0] as String;
+    var menuColor = menuItems[index][1] as Color;
+    var menuIcon = menuItems[index][2] as IconData;
     return MouseRegion(
       onExit: (_) => setState(() => _hoverIndex = -1),
       child: InkWell(
         onHover: (_) => setState(() => _hoverIndex = index),
-        onTap: () {
-          setState(() {
-            if (routePath == '/setting') {
-              navigatorKey.currentState?.pushReplacementNamed(routePath, arguments: 0);
-            } else if (routePath == '/') {
-              StorageService.removeItem('token');
-              navigatorKey.currentState?.pushReplacementNamed(routePath);
-              developer.log('Logout called');
-            } else {
-              navigatorKey.currentState?.pushReplacementNamed(routePath);
-            }
-          });
-        },
+        onTap: () => navigate(routePath),
         child: Padding(
           padding: EdgeInsets.only(right: routePath == '/' ? 0 : 8),
           child: AnimatedContainer(
@@ -74,23 +62,16 @@ class _HomePageState extends State<TopMenuComponent> {
               border: Border.all(
                   color: _hoverIndex == index
                       ? Colors.white
-                      : widget.selectedIndex == index
+                      : currentRoute == routePath
                           ? Colors.transparent
                           : Colors.white38),
-              color: widget.selectedIndex == index ? menuColor : Colors.transparent,
+              color: currentRoute.startsWith(routePath) ? menuColor : Colors.transparent,
             ),
             width: 80,
             height: 80,
             duration: Duration(milliseconds: 200),
             child: Stack(
               children: [
-                // Visibility(
-                //   visible: _displayJvmRestartBadge && routePath == '/home',
-                //   child: Align(
-                //     alignment: Alignment.topRight,
-                //     child: Icon(Icons.restart_alt, color: Colors.red),
-                //   ),
-                // ),
                 Align(
                   alignment: Alignment.center,
                   child: Icon(menuIcon,
@@ -99,7 +80,7 @@ class _HomePageState extends State<TopMenuComponent> {
                           ? routePath == '/logout'
                               ? Colors.red
                               : Colors.white
-                          : widget.selectedIndex == index
+                          : currentRoute.startsWith(routePath)
                               ? Colors.white
                               : Colors.white38),
                 )
@@ -109,5 +90,15 @@ class _HomePageState extends State<TopMenuComponent> {
         ),
       ),
     );
+  }
+
+  void navigate(String routePath) {
+    if (routePath == '/settings') {
+      Get.offNamed('$routePath/0');
+    } else if (routePath == '/logout') {
+      authenticationController.logout();
+    } else {
+      Get.offNamed(routePath);
+    }
   }
 }

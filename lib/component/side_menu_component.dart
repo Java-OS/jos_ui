@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:jos_ui/component/basic_component.dart';
+import 'package:jos_ui/component/date_time_component.dart';
+import 'package:jos_ui/component/environment_component.dart';
+import 'package:jos_ui/component/user_management_component.dart';
 import 'package:jos_ui/constant.dart';
 
 class SideMenuComponent extends StatefulWidget {
-  final int indexTab;
-
-  const SideMenuComponent({super.key, required this.indexTab});
+  const SideMenuComponent({super.key});
 
   @override
-  State<SideMenuComponent> createState() => _HomePageState();
+  State<SideMenuComponent> createState() => _SideMenuComponentState();
 }
 
-class _HomePageState extends State<SideMenuComponent> {
+class _SideMenuComponentState extends State<SideMenuComponent> {
   int _hoverIndex = -1;
 
-  final menuConfigs = [
-    [componentBackgroundColor, Icons.info_outline_rounded],
-    [componentBackgroundColor, Icons.date_range],
-    [componentBackgroundColor, Icons.join_right],
-    [componentBackgroundColor, Icons.groups_sharp],
+  final menuItems = [
+    [BasicComponent(), Icons.info_outline_rounded],
+    [DateTimeComponent(), Icons.date_range],
+    [EnvironmentComponent(), Icons.join_right],
+    [UserManagementComponent(), Icons.groups_sharp],
   ];
 
   @override
@@ -25,47 +28,35 @@ class _HomePageState extends State<SideMenuComponent> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
-      children: getTopMenuItems(),
+      children: getSideMenuItems(),
     );
   }
 
-  List<Widget> getTopMenuItems() => List.generate(4, (index) => menuItem(index));
+  List<Widget> getSideMenuItems() => List.generate(menuItems.length, (index) => menuItem(index));
 
   Widget menuItem(int index) {
-    var menuColor = menuConfigs[index][0] as Color;
-    var menuIcon = menuConfigs[index][1] as IconData;
+    var currentParameter = int.parse(Get.parameters['index'] ?? '0');
+    var mi = menuItems[index];
     return MouseRegion(
-      onExit: (_) {
-        setState(() {
-          _hoverIndex = -1;
-        });
-      },
+      onExit: (_) => setState(() => _hoverIndex = -1),
       child: InkWell(
-        onHover: (_) {
-          setState(() {
-            _hoverIndex = index;
-          });
-        },
-        onTap: () {
-          setState(() {
-            navigatorKey.currentState?.pushReplacementNamed('/setting', arguments: index);
-          });
-        },
+        onHover: (_) => setState(() => _hoverIndex = index),
+        onTap: () => Get.toNamed('/settings/$index'),
         child: Padding(
           padding: const EdgeInsets.only(bottom: 2.0),
           child: AnimatedContainer(
             decoration: BoxDecoration(
-              color: widget.indexTab == index ? menuColor : Colors.white10,
+              color: currentParameter == index ? componentBackgroundColor : Colors.white10,
             ),
             width: 80,
             height: 50,
             duration: Duration(milliseconds: 200),
             child: Center(
-              child: Icon(menuIcon,
+              child: Icon(mi[1] as IconData,
                   size: 22,
                   color: _hoverIndex == index
                       ? Colors.blue
-                      : widget.indexTab == index
+                      : currentParameter == index
                           ? Colors.blue
                           : Colors.white38),
             ),

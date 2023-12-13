@@ -1,63 +1,62 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:jos_ui/component/basic_component.dart';
 import 'package:jos_ui/component/date_time_component.dart';
 import 'package:jos_ui/component/environment_component.dart';
-import 'package:jos_ui/component/network_component.dart';
 import 'package:jos_ui/component/side_menu_component.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
 import 'package:jos_ui/component/user_management_component.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page_base_content.dart';
 
-class SettingPage extends StatefulWidget {
-  final int tabIndex;
-
-  const SettingPage({super.key, required this.tabIndex});
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
 
   @override
-  State<SettingPage> createState() => _SystemPageState();
+  State<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _SystemPageState extends State<SettingPage> {
-  @override
-  Widget build(BuildContext context) {
-    return getPageContent(child: _pageContent());
-  }
-
+class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
   }
 
-  Widget _pageContent() {
-    return Center(
-      child: SizedBox(
-        width: 600,
-        height: 500,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TopMenuComponent(selectedIndex: 1),
-            SizedBox(height: 8),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SideMenuComponent(indexTab: widget.tabIndex),
-                  chooseTargetTab(),
-                ],
+  @override
+  Widget build(BuildContext context) {
+    return getPageContent(
+      child: Center(
+        child: SizedBox(
+          width: 600,
+          height: 500,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TopMenuComponent(),
+              SizedBox(height: 8),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SideMenuComponent(),
+                    chooseTargetTab(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget chooseTargetTab() {
-    switch (widget.tabIndex) {
+    var tabIndex = Get.parameters['index'] ?? '0';
+    switch (int.parse(tabIndex)) {
       case 0:
         return displayBasicSettings();
       case 1:

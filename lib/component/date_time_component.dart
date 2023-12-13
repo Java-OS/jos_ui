@@ -4,7 +4,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:jos_ui/modal/message_modal.dart';
 import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/rest_api_service.dart';
+import 'package:jos_ui/service/RpcProvider.dart';
 
 class DateTimeComponent extends StatefulWidget {
   const DateTimeComponent({super.key});
@@ -178,7 +178,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
 
   void _fetchNtpInfo() async {
     developer.log('Fetch NTP Information called');
-    var result = await RestClient.rpc(RPC.ntpInformation, context);
+    var result = await RestClient.rpc(RPC.ntpInformation);
     if (result != null) {
       var json = jsonDecode(result);
       bool serverNtpIsActive = json['result']['activate'];
@@ -198,7 +198,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
 
   void _fetchSystemDateTime() async {
     developer.log('Fetch system date time called');
-    var result = await RestClient.rpc(RPC.dateTimeInformation, context);
+    var result = await RestClient.rpc(RPC.dateTimeInformation);
     if (result != null) {
       var json = jsonDecode(result);
       setState(() {
@@ -211,13 +211,13 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
   void _updateDateTime() {
     developer.log('Update date time called');
     String param = '$_serverDate $_serverTime';
-    RestClient.rpc(RPC.systemSetDateTime, context, parameters: {'dateTime': param});
+    RestClient.rpc(RPC.systemSetDateTime, parameters: {'dateTime': param});
     displayInfo('System date & time updated', context);
   }
 
   Future<void> _activateNtp() async {
     developer.log('Activate NTP called');
-    await RestClient.rpc(RPC.ntpActivate, context, parameters: {'activate': _isNtpActive});
+    await RestClient.rpc(RPC.ntpActivate, parameters: {'activate': _isNtpActive});
     String activeMessage = 'NTP client activated';
     String disabledMessage = 'NTP client disabled';
     if (context.mounted && _isNtpActive) displayInfo(_isNtpActive ? activeMessage : disabledMessage, context);
@@ -226,13 +226,13 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
   Future<void> _setNtpConfiguration() async {
     developer.log('Set NTP configuration called');
     var params = {'server': _ntpServer.text, 'interval': int.parse(_ntpInterval.text)};
-    await RestClient.rpc(RPC.ntpServerName, context, parameters: params);
+    await RestClient.rpc(RPC.ntpServerName, parameters: params);
     if (context.mounted) displayInfo('NTP configuration updated', context);
   }
 
   Future<void> _syncNTP() async {
     developer.log('Sync NTP Called');
-    var result = await RestClient.rpc(RPC.ntpSync, context);
+    var result = await RestClient.rpc(RPC.ntpSync);
     if (result != null) {
       var json = jsonDecode(result);
       setState(() {
@@ -255,12 +255,12 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
 
   Future<void> _hcToSys() async {
     developer.log('Hardware clock to sys called');
-    await RestClient.rpc(RPC.dateTimeSyncHctosys, context);
+    await RestClient.rpc(RPC.dateTimeSyncHctosys);
   }
 
   Future<void> _sysToHc() async {
     developer.log('System to hardware clock called');
-    await RestClient.rpc(RPC.dateTimeSyncSystohc, context);
+    await RestClient.rpc(RPC.dateTimeSyncSystohc);
   }
 
   void _apply() async {

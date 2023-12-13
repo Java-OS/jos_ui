@@ -26,7 +26,7 @@ class _ModulePageState extends State<ModulePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TopMenuComponent(selectedIndex: 3),
+            TopMenuComponent(),
             SizedBox(height: 8),
             Expanded(
               child: Container(

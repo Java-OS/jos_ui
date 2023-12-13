@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/modal/network_routes_modal.dart';
 import 'package:jos_ui/model/ethernet.dart';
 import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/rest_api_service.dart';
+import 'package:jos_ui/service/RpcProvider.dart';
 
 class NetworkComponent extends StatefulWidget {
   const NetworkComponent({super.key});
@@ -88,7 +88,7 @@ class _NetworkComponentState extends State<NetworkComponent> {
   }
 
   Future<void> _fetchEthernets() async {
-    var response = await RestClient.rpc(RPC.networkEthernetInformation, context, parameters: {'ethernet': ''});
+    var response = await RestClient.rpc(RPC.networkEthernetInformation, parameters: {'ethernet': ''});
     if (response != null) {
       var json = jsonDecode(response);
       var result = json['result'] as List;

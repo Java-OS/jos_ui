@@ -27,7 +27,7 @@ class _NetworkPageState extends State<NetworkPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TopMenuComponent(selectedIndex: 2),
+            TopMenuComponent(),
             SizedBox(height: 8),
             Expanded(
               child: Container(
