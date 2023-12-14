@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
 import 'package:jos_ui/dialog/toast.dart';
@@ -7,6 +8,7 @@ import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rpc_provider.dart';
 
 class BasicController extends GetxController {
+  final TextEditingController hostnameEditingController = TextEditingController();
   var hostname = ''.obs;
 
   Future<void> fetchHostname() async {
@@ -14,6 +16,7 @@ class BasicController extends GetxController {
     var response = await RestClient.rpc(RPC.systemGetHostname);
     if (response.result != null) {
       hostname.value = response.result;
+      hostnameEditingController.text = response.result;
     } else {
       displayError('Failed to fetch hostname');
     }
@@ -23,7 +26,7 @@ class BasicController extends GetxController {
     developer.log('Change hostname called');
     bool accepted = await displayAlertModal('Warning', 'JVM immediately must be reset after change hostname.');
     if (accepted) {
-      var rpcResponse = await RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': hostname.value});
+      var rpcResponse = await RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': hostnameEditingController.text});
       if (rpcResponse.success) {
         displaySuccess('Hostname changed');
       } else {

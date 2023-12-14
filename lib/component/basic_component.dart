@@ -11,12 +11,11 @@ class BasicComponent extends StatefulWidget {
 
 class _BasicComponentState extends State<BasicComponent> {
   final BasicController basicController = Get.put(BasicController());
-  final TextEditingController _hostnameController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    basicController.fetchHostname().then((value) => _hostnameController.text = basicController.hostname.value);
+    basicController.fetchHostname();
   }
 
   @override
@@ -25,7 +24,7 @@ class _BasicComponentState extends State<BasicComponent> {
       child: Stack(
         children: [
           TextField(
-            controller: _hostnameController,
+            controller: basicController.hostnameEditingController,
             decoration: InputDecoration(
               label: Text('Hostname'),
             ),

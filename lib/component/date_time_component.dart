@@ -31,20 +31,22 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
                 children: [
                   Row(
                     children: [
-                      Checkbox(value: dateTimeController.isNtpActive.value, onChanged: (e) => switchToNtp(e!)),
+                      Obx(() => Checkbox(value: dateTimeController.isNtpActive.value, onChanged: (e) => switchToNtp(e!))),
                       SizedBox(width: 4),
                       Text('Set date and time automatically', style: TextStyle()),
                     ],
                   ),
                   Row(
                     children: [
-                      Visibility(
-                        visible: !dateTimeController.isNtpActive.value,
-                        child: Tooltip(
-                          message: 'Sync from hardware clock',
-                          preferBelow: false,
-                          verticalOffset: 22,
-                          child: OutlinedButton(onPressed: () => dateTimeController.hcToSys(), child: Icon(Icons.settings_backup_restore, size: 16, color: Colors.black)),
+                      Obx(
+                        () => Visibility(
+                          visible: !dateTimeController.isNtpActive.value,
+                          child: Tooltip(
+                            message: 'Sync from hardware clock',
+                            preferBelow: false,
+                            verticalOffset: 22,
+                            child: OutlinedButton(onPressed: () => dateTimeController.hcToSys(), child: Icon(Icons.settings_backup_restore, size: 16, color: Colors.black)),
+                          ),
                         ),
                       ),
                       SizedBox(width: 8),
@@ -59,10 +61,12 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
                 ],
               ),
               SizedBox(height: 4),
-              Visibility(
-                visible: dateTimeController.isNtpActive.value,
-                replacement: displayManualDateTimeComponent(),
-                child: displayNtpComponent(),
+              Obx(
+                () => Visibility(
+                  visible: dateTimeController.isNtpActive.value,
+                  replacement: displayManualDateTimeComponent(),
+                  child: displayNtpComponent(),
+                ),
               ),
             ],
           ),
@@ -73,54 +77,58 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
   }
 
   Widget displayManualDateTimeComponent() {
-    return Row(
-      children: [
-        OutlinedButton(onPressed: () => _showDatePicker(context), child: Text(dateTimeController.serverDate.value)),
-        SizedBox(width: 8),
-        OutlinedButton(onPressed: () => _showTimePicker(context), child: Text(dateTimeController.serverTime.value)),
-      ],
+    return Obx(
+      () => Row(
+        children: [
+          OutlinedButton(onPressed: () => _showDatePicker(context), child: Text(dateTimeController.serverDate.value)),
+          SizedBox(width: 8),
+          OutlinedButton(onPressed: () => _showTimePicker(context), child: Text(dateTimeController.serverTime.value)),
+        ],
+      ),
     );
   }
 
   Widget displayNtpComponent() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Flexible(child: TextField(controller: dateTimeController.ntpServerEditingController, decoration: InputDecoration(label: Text('NTP server')))),
-            SizedBox(width: 8),
-            Flexible(child: TextField(controller: dateTimeController.ntpIntervalEditingController, decoration: InputDecoration(label: Text('Time interval (milliseconds)')))),
-            SizedBox(width: 8),
-            Tooltip(
-              message: 'Sync from ntp server',
-              preferBelow: false,
-              verticalOffset: 22,
-              child: OutlinedButton(
-                onPressed: () => {dateTimeController.syncNTP(), displayInfo('Date & time synced from ${dateTimeController.referenceIdentifier.value}')},
-                child: Icon(Icons.sync, size: 16, color: Colors.black),
+    return Obx(
+      () => Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Flexible(child: TextField(controller: dateTimeController.ntpServerEditingController, decoration: InputDecoration(label: Text('NTP server')))),
+              SizedBox(width: 8),
+              Flexible(child: TextField(controller: dateTimeController.ntpIntervalEditingController, decoration: InputDecoration(label: Text('Time interval (milliseconds)')))),
+              SizedBox(width: 8),
+              Tooltip(
+                message: 'Sync from ntp server',
+                preferBelow: false,
+                verticalOffset: 22,
+                child: OutlinedButton(
+                  onPressed: () => {dateTimeController.syncNTP(), displayInfo('Synchronize Date & time by ${dateTimeController.referenceIdentifier.value}')},
+                  child: Icon(Icons.sync, size: 16, color: Colors.black),
+                ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: 8),
-        Text('Version: ${dateTimeController.version.value}'),
-        Text('Mode: ${dateTimeController.mode.value}'),
-        Text('Reference Identifier: ${dateTimeController.referenceIdentifier.value}'),
-        Text('Poll: ${dateTimeController.poll.value}'),
-        Text('Stratum: ${dateTimeController.stratum.value}'),
-        Text('Leap Indicator: ${dateTimeController.leapIndicator.value}'),
-        Text('Precision: ${dateTimeController.precision.value}'),
-        Text('Root Delay: ${dateTimeController.rootDelay.value}'),
-        Text('Root Dispersion: ${dateTimeController.rootDispersion.value}'),
-        Text('Reference Timestamp: ${dateTimeController.referenceTimestamp.value}'),
-        Text('Originate Timestamp: ${dateTimeController.originateTimestamp.value}'),
-        Text('Receive Timestamp: ${dateTimeController.receiveTimestamp.value}'),
-        Text('Transmit Timestamp: ${dateTimeController.transmitTimestamp.value}'),
-      ],
+            ],
+          ),
+          SizedBox(height: 8),
+          Text('Version: ${dateTimeController.version.value}'),
+          Text('Mode: ${dateTimeController.mode.value}'),
+          Text('Reference Identifier: ${dateTimeController.referenceIdentifier.value}'),
+          Text('Poll: ${dateTimeController.poll.value}'),
+          Text('Stratum: ${dateTimeController.stratum.value}'),
+          Text('Leap Indicator: ${dateTimeController.leapIndicator.value}'),
+          Text('Precision: ${dateTimeController.precision.value}'),
+          Text('Root Delay: ${dateTimeController.rootDelay.value}'),
+          Text('Root Dispersion: ${dateTimeController.rootDispersion.value}'),
+          Text('Reference Timestamp: ${dateTimeController.referenceTimestamp.value}'),
+          Text('Originate Timestamp: ${dateTimeController.originateTimestamp.value}'),
+          Text('Receive Timestamp: ${dateTimeController.receiveTimestamp.value}'),
+          Text('Transmit Timestamp: ${dateTimeController.transmitTimestamp.value}'),
+        ],
+      ),
     );
   }
 
@@ -145,7 +153,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
   }
 
   void switchToNtp(bool e) {
-    setState(() => dateTimeController.isNtpActive.value = e);
+    dateTimeController.isNtpActive.value = e;
     if (e) {
       dateTimeController.fetchNtpInfo();
     } else {

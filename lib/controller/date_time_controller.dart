@@ -54,9 +54,8 @@ class DateTimeController extends GetxController {
     developer.log('Fetch system date time called');
     var result = await RestClient.rpc(RPC.dateTimeInformation);
     if (result.result != null) {
-      var json = jsonDecode(result.result);
-      serverDate = json['zonedDateTime'].split(' ')[0];
-      serverTime = json['zonedDateTime'].split(' ')[1];
+      serverDate.value = result.result['zonedDateTime'].split(' ')[0];
+      serverTime.value = result.result['zonedDateTime'].split(' ')[1];
     }
   }
 
