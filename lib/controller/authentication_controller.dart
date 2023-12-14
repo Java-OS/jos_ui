@@ -2,23 +2,21 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/modal/toast.dart';
-import 'package:jos_ui/service/RpcProvider.dart';
+import 'package:jos_ui/dialog/toast.dart';
+import 'package:jos_ui/service/rpc_provider.dart';
 import 'package:jos_ui/service/storage_service.dart';
 
 class AuthenticationController extends GetxController {
   final TextEditingController usernameEditingController = TextEditingController();
   final TextEditingController passwordEditingController = TextEditingController();
 
-  void login(BuildContext context) async {
+  void login() async {
     developer.log('Login called');
-    var username = usernameEditingController.text;
-    var password = passwordEditingController.text;
-    var success = await RestClient.login(username, password);
+    var success = await RestClient.login(usernameEditingController.text, passwordEditingController.text);
     if (success) {
       Get.offAllNamed('/dashboard');
     } else {
-      if (context.mounted) displayError('Login failed');
+      displayError('Login failed');
     }
   }
 

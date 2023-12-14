@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
                       labelText: 'Username',
                       labelStyle: TextStyle(color: Colors.white38),
                     ),
-                    onSubmitted: (_) => authenticationController.login(context),
+                    onSubmitted: (_) => authenticationController.login(),
                   ),
                   SizedBox(height: 20),
                   TextField(
@@ -54,13 +54,13 @@ class _LoginPageState extends State<LoginPage> {
                       labelText: 'Password',
                       labelStyle: TextStyle(color: Colors.white38),
                     ),
-                    onSubmitted: (_) => authenticationController.login(context),
+                    onSubmitted: (_) => authenticationController.login(),
                   ),
                   SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
-                    child: ElevatedButton(onPressed: () => authenticationController.login(context), child: Text('Login')),
+                    child: ElevatedButton(onPressed: () => authenticationController.login(_usernameEditingController.text, _passwordEditingController.text), child: Text('Login')),
                   )
                 ],
               ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jos_ui/constant.dart';
 
+var fToast = FToast();
+
 enum MessageType {
   info(Icons.info_outline_rounded, Colors.blue, 'Information'),
   warning(Icons.warning_amber_outlined, Colors.orange, 'Warning'),
@@ -14,8 +16,6 @@ enum MessageType {
 
   const MessageType(this.icon, this.color, this.title);
 }
-
-var fToast = FToast();
 
 void _showMessage(String message, MessageType messageType, int timeout) {
   fToast.init(navigatorKey.currentState!.context);

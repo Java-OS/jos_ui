@@ -8,7 +8,6 @@ import 'package:jos_ui/page/module_page.dart';
 import 'package:jos_ui/page/network_page.dart';
 import 'package:jos_ui/page/settings_page.dart';
 import 'package:jos_ui/page/wait_page.dart';
-import 'package:jos_ui/service/navigation_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

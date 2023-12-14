@@ -3,9 +3,9 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/modal/toast.dart';
+import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/RpcProvider.dart';
+import 'package:jos_ui/service/rpc_provider.dart';
 
 final TextEditingController keyController = TextEditingController();
 final TextEditingController valueController = TextEditingController();

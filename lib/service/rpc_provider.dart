@@ -3,6 +3,8 @@ import 'dart:developer' as developer;
 
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/dialog/toast.dart';
+import 'package:jos_ui/model/RpcResponse.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/storage_service.dart';
 
@@ -59,7 +61,7 @@ class RestClient {
     return false;
   }
 
-  static Future<String?> rpc(RPC rpc, {Map<String, dynamic>? parameters}) async {
+  static Future<RpcResponse> rpc(RPC rpc, {Map<String, dynamic>? parameters}) async {
     developer.log('Request call rpc: [$rpc] [$parameters] [${_baseLoginUrl()}]');
     var token = StorageService.getItem('token');
     if (token == null) Get.toNamed('/');
@@ -76,21 +78,23 @@ class RestClient {
       storeJvmNeedRestart(response.headers);
       storeToken(response.headers);
       if (statusCode == 200) {
-        return response.data;
+        return RpcResponse.toObject(response.data);
       } else if (statusCode == 204) {
-        return null;
+        return RpcResponse(true, null, null, null);
+      } else if (statusCode == 401) {
+        Get.offAllNamed('/');
       } else {
         String msg = jsonDecode(response.data)['message'];
-        // if (context.mounted) displayWarning(msg, context, timeout: 5);
+        displayWarning(msg, timeout: 5);
       }
     } catch (e) {
       if (rpc == RPC.systemReboot || rpc == RPC.jvmRestart || rpc == RPC.systemShutdown) {
-        developer.log('Normal error by dio , The jvm shutdown before sending response');
+        developer.log('Normal error by dio , The jvm going to shutdown before sending response');
       } else {
         developer.log('[Dio Error] $rpc ${e.toString()}');
       }
     }
-    return null;
+    return RpcResponse(false, null, null, null);
   }
 
   static void storeToken(Headers headers) {

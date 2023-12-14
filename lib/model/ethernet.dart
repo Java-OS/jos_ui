@@ -10,8 +10,8 @@ class Ethernet {
 
   factory Ethernet.fromJson(Map<String, dynamic> jsonObject) {
     var ethernetStatistic = EthernetStatistic.fromJson(jsonObject['statistic']);
-    return Ethernet(
-        iface: jsonObject['iface'], mac: jsonObject['mac'], ip: jsonObject['ip'], netmask: jsonObject['netmask'], cidr: jsonObject['cidr'].toString(), statistic: ethernetStatistic);
+    var cidr = jsonObject['cidr'] != null ? jsonObject['cidr'].toString() : '';
+    return Ethernet(iface: jsonObject['iface'], mac: jsonObject['mac'], ip: jsonObject['ip'], netmask: jsonObject['netmask'], cidr: cidr, statistic: ethernetStatistic);
   }
 }
 

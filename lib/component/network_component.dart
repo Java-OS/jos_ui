@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:jos_ui/modal/network_routes_modal.dart';
+import 'package:get/get.dart';
+import 'package:jos_ui/controller/network_controller.dart';
+import 'package:jos_ui/dialog/network_routes_dialog.dart';
 import 'package:jos_ui/model/ethernet.dart';
-import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/RpcProvider.dart';
 
 class NetworkComponent extends StatefulWidget {
   const NetworkComponent({super.key});
@@ -14,12 +12,12 @@ class NetworkComponent extends StatefulWidget {
 }
 
 class _NetworkComponentState extends State<NetworkComponent> {
-  List<Ethernet> ethernetList = [];
+  final NetworkController networkController = Get.put(NetworkController());
 
   @override
   void initState() {
     super.initState();
-    _fetchEthernets();
+    networkController.fetchEthernets();
   }
 
   @override
@@ -74,7 +72,7 @@ class _NetworkComponentState extends State<NetworkComponent> {
   }
 
   List<DataRow> getEthernetsRows() {
-    return ethernetList.map((e) => _mapEthernetToDataRow(e)).toList();
+    return networkController.ethernetList.map((e) => _mapEthernetToDataRow(e)).toList();
   }
 
   DataRow _mapEthernetToDataRow(Ethernet ethernet) {
@@ -85,16 +83,5 @@ class _NetworkComponentState extends State<NetworkComponent> {
       DataCell(Text(ethernet.netmask ?? '', style: TextStyle(fontSize: 12))),
       DataCell(Text(ethernet.cidr ?? '', style: TextStyle(fontSize: 12))),
     ]);
-  }
-
-  Future<void> _fetchEthernets() async {
-    var response = await RestClient.rpc(RPC.networkEthernetInformation, parameters: {'ethernet': ''});
-    if (response != null) {
-      var json = jsonDecode(response);
-      var result = json['result'] as List;
-      setState(() {
-        ethernetList = result.map((item) => Ethernet.fromJson(item)).toList();
-      });
-    }
   }
 }

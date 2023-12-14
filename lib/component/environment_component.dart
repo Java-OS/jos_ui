@@ -1,12 +1,8 @@
-import 'dart:convert';
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/modal/environment_modal.dart';
-import 'package:jos_ui/modal/toast.dart';
-import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/RpcProvider.dart';
+import 'package:jos_ui/controller/environment_controller.dart';
+import 'package:jos_ui/dialog/environment_dialog.dart';
 
 class EnvironmentComponent extends StatefulWidget {
   const EnvironmentComponent({super.key});
@@ -16,12 +12,12 @@ class EnvironmentComponent extends StatefulWidget {
 }
 
 class EnvironmentComponentState extends State<EnvironmentComponent> {
-  Map<String, String> _environments = {};
+  final EnvironmentController environmentController = Get.put(EnvironmentController());
 
   @override
   void initState() {
     super.initState();
-    _fetchSystemEnvironments();
+    environmentController.fetchSystemEnvironments();
   }
 
   @override
@@ -62,7 +58,7 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
 
   List<DataRow> getEnvironmentRows() {
     var listItems = <DataRow>[];
-    _environments.forEach((key, value) {
+    environmentController.environments.forEach((key, value) {
       var row = DataRow(cells: [
         DataCell(Text(truncateWithEllipsis(15, key), style: TextStyle(fontSize: 12))),
         DataCell(Text(truncateWithEllipsis(30, value), style: TextStyle(fontSize: 12))),
@@ -73,7 +69,7 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
               width: 80,
               child: Row(
                 children: [
-                  IconButton(onPressed: () => _deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(Icons.delete, size: 16, color: Colors.black)),
+                  IconButton(onPressed: () => environmentController.deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(Icons.delete, size: 16, color: Colors.black)),
                   IconButton(onPressed: () {}, splashRadius: 12, icon: Icon(Icons.edit, size: 16, color: Colors.black)),
                 ],
               ),
@@ -84,20 +80,5 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
       listItems.add(row);
     });
     return listItems;
-  }
-
-  Future<void> _fetchSystemEnvironments() async {
-    developer.log('Fetch System Environments called');
-    var response = await RestClient.rpc(RPC.systemEnvironmentList);
-    if (response != null) {
-      var json = jsonDecode(response);
-      setState(() => _environments = Map.from(json['result']));
-    }
-  }
-
-  Future<void> _deleteSystemEnvironment(String key) async {
-    developer.log('Delete System Environments called');
-    await RestClient.rpc(RPC.systemEnvironmentUnset, parameters: {'key': key}).then((value) => _fetchSystemEnvironments());
-    if (context.mounted) displayInfo('delete environment %s');
   }
 }

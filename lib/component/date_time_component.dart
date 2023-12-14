@@ -1,10 +1,7 @@
-import 'dart:convert';
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
-import 'package:jos_ui/modal/toast.dart';
-import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/RpcProvider.dart';
+import 'package:get/get.dart';
+import 'package:jos_ui/controller/date_time_controller.dart';
+import 'package:jos_ui/dialog/toast.dart';
 
 class DateTimeComponent extends StatefulWidget {
   const DateTimeComponent({super.key});
@@ -14,32 +11,12 @@ class DateTimeComponent extends StatefulWidget {
 }
 
 class _DateTimeComponentState extends State<DateTimeComponent> {
-  bool _isNtpActive = false;
-  final TextEditingController _ntpServer = TextEditingController();
-  final TextEditingController _ntpInterval = TextEditingController();
-
-  String _serverDate = '';
-  String _serverTime = '';
-
-  /* NTP sync parameters */
-  String _leapIndicator = '';
-  String _version = '';
-  String _mode = '';
-  String _stratum = '';
-  String _poll = '';
-  String _precision = '';
-  String _rootDelay = '';
-  String _rootDispersion = '';
-  String _referenceIdentifier = '';
-  String _referenceTimestamp = '';
-  String _originateTimestamp = '';
-  String _receiveTimestamp = '';
-  String _transmitTimestamp = '';
+  final DateTimeController dateTimeController = Get.put(DateTimeController());
 
   @override
   void initState() {
     super.initState();
-    _fetchNtpInfo();
+    dateTimeController.fetchNtpInfo();
   }
 
   @override
@@ -54,7 +31,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
                 children: [
                   Row(
                     children: [
-                      Checkbox(value: _isNtpActive, onChanged: (e) => switchToNtp(e!)),
+                      Checkbox(value: dateTimeController.isNtpActive.value, onChanged: (e) => switchToNtp(e!)),
                       SizedBox(width: 4),
                       Text('Set date and time automatically', style: TextStyle()),
                     ],
@@ -62,12 +39,12 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
                   Row(
                     children: [
                       Visibility(
-                        visible: !_isNtpActive,
+                        visible: !dateTimeController.isNtpActive.value,
                         child: Tooltip(
                           message: 'Sync from hardware clock',
                           preferBelow: false,
                           verticalOffset: 22,
-                          child: OutlinedButton(onPressed: () => _hcToSys(), child: Icon(Icons.settings_backup_restore, size: 16, color: Colors.black)),
+                          child: OutlinedButton(onPressed: () => dateTimeController.hcToSys(), child: Icon(Icons.settings_backup_restore, size: 16, color: Colors.black)),
                         ),
                       ),
                       SizedBox(width: 8),
@@ -75,7 +52,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
                         message: 'Update hardware clock',
                         preferBelow: false,
                         verticalOffset: 22,
-                        child: OutlinedButton(onPressed: () => _sysToHc(), child: Icon(Icons.commit_rounded, size: 16, color: Colors.black)),
+                        child: OutlinedButton(onPressed: () => dateTimeController.sysToHc(), child: Icon(Icons.commit_rounded, size: 16, color: Colors.black)),
                       ),
                     ],
                   )
@@ -83,13 +60,13 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
               ),
               SizedBox(height: 4),
               Visibility(
-                visible: _isNtpActive,
+                visible: dateTimeController.isNtpActive.value,
                 replacement: displayManualDateTimeComponent(),
                 child: displayNtpComponent(),
               ),
             ],
           ),
-          Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => _apply(), child: Text('Apply')))
+          Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => dateTimeController.apply(), child: Text('Apply')))
         ],
       ),
     );
@@ -98,9 +75,9 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
   Widget displayManualDateTimeComponent() {
     return Row(
       children: [
-        OutlinedButton(onPressed: () => _showDatePicker(context), child: Text(_serverDate)),
+        OutlinedButton(onPressed: () => _showDatePicker(context), child: Text(dateTimeController.serverDate.value)),
         SizedBox(width: 8),
-        OutlinedButton(onPressed: () => _showTimePicker(context), child: Text(_serverTime)),
+        OutlinedButton(onPressed: () => _showTimePicker(context), child: Text(dateTimeController.serverTime.value)),
       ],
     );
   }
@@ -114,160 +91,65 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Flexible(child: TextField(controller: _ntpServer, decoration: InputDecoration(label: Text('NTP server')))),
+            Flexible(child: TextField(controller: dateTimeController.ntpServerEditingController, decoration: InputDecoration(label: Text('NTP server')))),
             SizedBox(width: 8),
-            Flexible(child: TextField(controller: _ntpInterval, decoration: InputDecoration(label: Text('Time interval (milliseconds)')))),
+            Flexible(child: TextField(controller: dateTimeController.ntpIntervalEditingController, decoration: InputDecoration(label: Text('Time interval (milliseconds)')))),
             SizedBox(width: 8),
             Tooltip(
               message: 'Sync from ntp server',
               preferBelow: false,
               verticalOffset: 22,
               child: OutlinedButton(
-                onPressed: () => {_syncNTP(), displayInfo('Date & time synced from $_referenceIdentifier')},
+                onPressed: () => {dateTimeController.syncNTP(), displayInfo('Date & time synced from ${dateTimeController.referenceIdentifier.value}')},
                 child: Icon(Icons.sync, size: 16, color: Colors.black),
               ),
             ),
           ],
         ),
         SizedBox(height: 8),
-        Text('Version: $_version'),
-        Text('Mode: $_mode'),
-        Text('Reference Identifier: $_referenceIdentifier'),
-        Text('Poll: $_poll'),
-        Text('Stratum: $_stratum'),
-        Text('Leap Indicator: $_leapIndicator'),
-        Text('Precision: $_precision'),
-        Text('Root Delay: $_rootDelay'),
-        Text('Root Dispersion: $_rootDispersion'),
-        Text('Reference Timestamp: $_referenceTimestamp'),
-        Text('Originate Timestamp: $_originateTimestamp'),
-        Text('Receive Timestamp: $_receiveTimestamp'),
-        Text('Transmit Timestamp: $_transmitTimestamp'),
+        Text('Version: ${dateTimeController.version.value}'),
+        Text('Mode: ${dateTimeController.mode.value}'),
+        Text('Reference Identifier: ${dateTimeController.referenceIdentifier.value}'),
+        Text('Poll: ${dateTimeController.poll.value}'),
+        Text('Stratum: ${dateTimeController.stratum.value}'),
+        Text('Leap Indicator: ${dateTimeController.leapIndicator.value}'),
+        Text('Precision: ${dateTimeController.precision.value}'),
+        Text('Root Delay: ${dateTimeController.rootDelay.value}'),
+        Text('Root Dispersion: ${dateTimeController.rootDispersion.value}'),
+        Text('Reference Timestamp: ${dateTimeController.referenceTimestamp.value}'),
+        Text('Originate Timestamp: ${dateTimeController.originateTimestamp.value}'),
+        Text('Receive Timestamp: ${dateTimeController.receiveTimestamp.value}'),
+        Text('Transmit Timestamp: ${dateTimeController.transmitTimestamp.value}'),
       ],
     );
   }
 
   void _showDatePicker(BuildContext context) {
-    var now = DateTime.parse(_serverDate);
+    var now = DateTime.parse(dateTimeController.serverDate.value);
     var first = now.copyWith(year: now.year - 8);
     var last = now.copyWith(year: now.year + 9);
     showDatePicker(
       context: context,
-      initialDate: DateTime.parse(_serverDate),
+      initialDate: DateTime.parse(dateTimeController.serverDate.value),
       firstDate: first,
       lastDate: last,
-    ).then((value) => setState(() => {if (value != null) _serverDate = '${value.year}-${value.month}-${value.day.toString().padLeft(2, '0')}'}));
+    ).then((value) => setState(() => {if (value != null) dateTimeController.serverDate.value = '${value.year}-${value.month}-${value.day.toString().padLeft(2, '0')}'}));
   }
 
   void _showTimePicker(BuildContext context) {
-    var timeOfDay = TimeOfDay(hour: int.parse(_serverTime.split(':')[0]), minute: int.parse(_serverTime.split(':')[1]));
+    var timeOfDay = TimeOfDay(hour: int.parse(dateTimeController.serverTime.value.split(':')[0]), minute: int.parse(dateTimeController.serverTime.value.split(':')[1]));
     showTimePicker(
       context: context,
       initialTime: timeOfDay,
-    ).then((value) => setState(() => _serverTime = '${value!.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}:00'));
+    ).then((value) => setState(() => dateTimeController.serverTime.value = '${value!.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}:00'));
   }
 
   void switchToNtp(bool e) {
-    setState(() => _isNtpActive = e);
+    setState(() => dateTimeController.isNtpActive.value = e);
     if (e) {
-      _fetchNtpInfo();
+      dateTimeController.fetchNtpInfo();
     } else {
-      _fetchSystemDateTime();
-    }
-  }
-
-  void _fetchNtpInfo() async {
-    developer.log('Fetch NTP Information called');
-    var result = await RestClient.rpc(RPC.ntpInformation);
-    if (result != null) {
-      var json = jsonDecode(result);
-      bool serverNtpIsActive = json['result']['activate'];
-      setState(() {
-        _ntpServer.text = json['result']['server'];
-        _ntpInterval.text = json['result']['interval'].toString();
-
-        if (!serverNtpIsActive) {
-          _fetchSystemDateTime();
-        } else {
-          _isNtpActive = serverNtpIsActive;
-          _syncNTP();
-        }
-      });
-    }
-  }
-
-  void _fetchSystemDateTime() async {
-    developer.log('Fetch system date time called');
-    var result = await RestClient.rpc(RPC.dateTimeInformation);
-    if (result != null) {
-      var json = jsonDecode(result);
-      setState(() {
-        _serverDate = json['result']['zonedDateTime'].split(' ')[0];
-        _serverTime = json['result']['zonedDateTime'].split(' ')[1];
-      });
-    }
-  }
-
-  void _updateDateTime() {
-    developer.log('Update date time called');
-    String param = '$_serverDate $_serverTime';
-    RestClient.rpc(RPC.systemSetDateTime, parameters: {'dateTime': param});
-    displayInfo('System date & time updated');
-  }
-
-  Future<void> _activateNtp() async {
-    developer.log('Activate NTP called');
-    await RestClient.rpc(RPC.ntpActivate, parameters: {'activate': _isNtpActive});
-    String activeMessage = 'NTP client activated';
-    String disabledMessage = 'NTP client disabled';
-    if (context.mounted && _isNtpActive) displayInfo(_isNtpActive ? activeMessage : disabledMessage);
-  }
-
-  Future<void> _setNtpConfiguration() async {
-    developer.log('Set NTP configuration called');
-    var params = {'server': _ntpServer.text, 'interval': int.parse(_ntpInterval.text)};
-    await RestClient.rpc(RPC.ntpServerName, parameters: params);
-    if (context.mounted) displayInfo('NTP configuration updated');
-  }
-
-  Future<void> _syncNTP() async {
-    developer.log('Sync NTP Called');
-    var result = await RestClient.rpc(RPC.ntpSync);
-    if (result != null) {
-      var json = jsonDecode(result);
-      setState(() {
-        _leapIndicator = json['result']['leapIndicator'].toString();
-        _version = json['result']['version'].toString();
-        _mode = json['result']['mode'].toString();
-        _stratum = json['result']['stratum'].toString();
-        _poll = json['result']['poll'].toString();
-        _precision = json['result']['precision'].toString();
-        _rootDelay = json['result']['rootDelay'].toString();
-        _rootDispersion = json['result']['rootDispersion'].toString();
-        _referenceIdentifier = json['result']['referenceIdentifier'].toString();
-        _referenceTimestamp = json['result']['referenceTimestamp'].toString();
-        _originateTimestamp = json['result']['originateTimestamp'].toString();
-        _receiveTimestamp = json['result']['receiveTimestamp'].toString();
-        _transmitTimestamp = json['result']['transmitTimestamp'].toString();
-      });
-    }
-  }
-
-  Future<void> _hcToSys() async {
-    developer.log('Hardware clock to sys called');
-    await RestClient.rpc(RPC.dateTimeSyncHctosys);
-  }
-
-  Future<void> _sysToHc() async {
-    developer.log('System to hardware clock called');
-    await RestClient.rpc(RPC.dateTimeSyncSystohc);
-  }
-
-  void _apply() async {
-    if (_isNtpActive) {
-      _activateNtp().then((value) => _setNtpConfiguration()).then((value) => _syncNTP());
-    } else {
-      _activateNtp().then((value) => _updateDateTime()).then((value) => _fetchSystemDateTime());
+      dateTimeController.fetchSystemDateTime();
     }
   }
 }

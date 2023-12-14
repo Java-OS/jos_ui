@@ -14,35 +14,33 @@ class ModulePage extends StatefulWidget {
 class _ModulePageState extends State<ModulePage> {
   @override
   Widget build(BuildContext context) {
-    return getPageContent(child: _pageContent());
-  }
-
-  Widget _pageContent() {
-    return Center(
-      child: SizedBox(
-        width: 600,
-        height: 500,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TopMenuComponent(),
-            SizedBox(height: 8),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                color: componentBackgroundColor,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [Text('Modules', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)), Divider(), ModuleComponent()],
+    return getPageContent(
+      child: Center(
+        child: SizedBox(
+          width: 600,
+          height: 500,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TopMenuComponent(),
+              SizedBox(height: 8),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  color: componentBackgroundColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [Text('Modules', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)), Divider(), ModuleComponent()],
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
