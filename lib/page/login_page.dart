@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     width: double.infinity,
                     height: 50,
-                    child: ElevatedButton(onPressed: () => authenticationController.login(_usernameEditingController.text, _passwordEditingController.text), child: Text('Login')),
+                    child: ElevatedButton(onPressed: () => authenticationController.login(), child: Text('Login')),
                   )
                 ],
               ),
