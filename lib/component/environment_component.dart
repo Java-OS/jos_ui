@@ -28,18 +28,20 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           OutlinedButton(onPressed: () => displayAddUpdateEnvironmentModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
-          SizedBox(width: 8),
+          SizedBox(width  : 8),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: SizedBox(
                 width: double.infinity,
-                child: DataTable(
-                  dataRowMinHeight: 12,
-                  dataRowMaxHeight: 28,
-                  columnSpacing: 0,
-                  columns: getEnvironmentColumns(),
-                  rows: getEnvironmentRows(),
+                child: Obx(
+                  () => DataTable(
+                    dataRowMinHeight: 12,
+                    dataRowMaxHeight: 28,
+                    columnSpacing: 0,
+                    columns: getEnvironmentColumns(),
+                    rows: getEnvironmentRows(),
+                  ),
                 ),
               ),
             ),
