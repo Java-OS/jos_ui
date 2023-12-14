@@ -33,18 +33,20 @@ void _showMessage(String message, MessageType messageType, int timeout) {
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
             child: Icon(messageType.icon, color: messageType.color),
           ),
-          SizedBox(width: 10),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                messageType.title,
-                style: TextStyle(color: messageType.color, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(message),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(left: 5.0, right: 22.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  messageType.title,
+                  style: TextStyle(color: messageType.color, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Text(message),
+              ],
+            ),
           )
         ],
       ),
