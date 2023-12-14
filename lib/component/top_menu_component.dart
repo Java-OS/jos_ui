@@ -59,7 +59,7 @@ class _TopMenuComponentState extends State<TopMenuComponent> {
             decoration: BoxDecoration(
               border: Border.all(
                   color: _hoverIndex == index
-                      ? Colors.white
+                      ? routePath == '/logout' ? Colors.red : Colors.white
                       : currentRoute == routePath
                           ? Colors.transparent
                           : Colors.white38),
