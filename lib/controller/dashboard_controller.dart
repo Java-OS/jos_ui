@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/modal/message_modal.dart';
+import 'package:jos_ui/modal/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/RpcProvider.dart';
 
@@ -50,12 +50,12 @@ class DashboardController extends GetxController {
   void callJvmGarbageCollector(BuildContext context) {
     developer.log('JVM Garbage Collector called');
     RestClient.rpc(RPC.jvmGc).then((value) => fetchSystemInformation());
-    displaySuccess('CleanUp JVM Heap Space', context);
+    displaySuccess('CleanUp JVM Heap Space');
   }
 
   void callJvmRestart(BuildContext context) {
     developer.log('JVM restart called');
     RestClient.rpc(RPC.jvmRestart);
-    displaySuccess('Restarting JVM, please wait ...', context);
+    displaySuccess('Restarting JVM, please wait ...');
   }
 }

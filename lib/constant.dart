@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 /// Colors
 const componentBackgroundColor = Color.fromRGBO(236, 226, 226, 1.0);
 const dashboardMosaicBackgroundColor = Color.fromRGBO(80, 100, 80, 0.5);
+final navigatorKey = GlobalKey<NavigatorState>();
 
 Widget getModalHeader(String title) {
   return Container(

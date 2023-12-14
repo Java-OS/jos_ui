@@ -4,7 +4,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/modal/environment_modal.dart';
-import 'package:jos_ui/modal/message_modal.dart';
+import 'package:jos_ui/modal/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/RpcProvider.dart';
 
@@ -98,6 +98,6 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
   Future<void> _deleteSystemEnvironment(String key) async {
     developer.log('Delete System Environments called');
     await RestClient.rpc(RPC.systemEnvironmentUnset, parameters: {'key': key}).then((value) => _fetchSystemEnvironments());
-    if (context.mounted) displayInfo('delete environment %s', context);
+    if (context.mounted) displayInfo('delete environment %s');
   }
 }

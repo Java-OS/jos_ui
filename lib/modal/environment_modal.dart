@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/modal/message_modal.dart';
+import 'package:jos_ui/modal/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/RpcProvider.dart';
 
@@ -16,7 +16,7 @@ Future<void> _setSystemEnvironment(BuildContext context) async {
   var value = valueController.text;
 
   await RestClient.rpc(RPC.systemEnvironmentSet, parameters: {'key': key, 'value': value});
-  if (context.mounted) displayInfo('New environment added', context);
+  if (context.mounted) displayInfo('New environment added');
   Get.back();
 }
 

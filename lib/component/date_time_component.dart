@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
-import 'package:jos_ui/modal/message_modal.dart';
+import 'package:jos_ui/modal/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/RpcProvider.dart';
 
@@ -123,7 +123,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
               preferBelow: false,
               verticalOffset: 22,
               child: OutlinedButton(
-                onPressed: () => {_syncNTP(), displayInfo('Date & time synced from $_referenceIdentifier', context)},
+                onPressed: () => {_syncNTP(), displayInfo('Date & time synced from $_referenceIdentifier')},
                 child: Icon(Icons.sync, size: 16, color: Colors.black),
               ),
             ),
@@ -212,7 +212,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
     developer.log('Update date time called');
     String param = '$_serverDate $_serverTime';
     RestClient.rpc(RPC.systemSetDateTime, parameters: {'dateTime': param});
-    displayInfo('System date & time updated', context);
+    displayInfo('System date & time updated');
   }
 
   Future<void> _activateNtp() async {
@@ -220,14 +220,14 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
     await RestClient.rpc(RPC.ntpActivate, parameters: {'activate': _isNtpActive});
     String activeMessage = 'NTP client activated';
     String disabledMessage = 'NTP client disabled';
-    if (context.mounted && _isNtpActive) displayInfo(_isNtpActive ? activeMessage : disabledMessage, context);
+    if (context.mounted && _isNtpActive) displayInfo(_isNtpActive ? activeMessage : disabledMessage);
   }
 
   Future<void> _setNtpConfiguration() async {
     developer.log('Set NTP configuration called');
     var params = {'server': _ntpServer.text, 'interval': int.parse(_ntpInterval.text)};
     await RestClient.rpc(RPC.ntpServerName, parameters: params);
-    if (context.mounted) displayInfo('NTP configuration updated', context);
+    if (context.mounted) displayInfo('NTP configuration updated');
   }
 
   Future<void> _syncNTP() async {

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 
-Future<bool> displayAlertModal(String title, String message, BuildContext context) async {
+Future<bool> displayAlertModal(String title, String message) async {
   var result = await showDialog<bool>(
-    context: context,
+    context: Get.context!,
     builder: (BuildContext context) {
       return AlertDialog(
         title: getModalHeader(title),

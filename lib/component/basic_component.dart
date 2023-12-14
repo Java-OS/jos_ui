@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:jos_ui/modal/alert_modal.dart';
-import 'package:jos_ui/modal/message_modal.dart';
+import 'package:jos_ui/modal/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/RpcProvider.dart';
 
@@ -53,15 +53,15 @@ class _BasicComponentState extends State<BasicComponent> {
         _hostnameController.text = _hostname;
       });
     } else {
-      if (context.mounted) displayError('Failed to fetch hostname', context);
+      if (context.mounted) displayError('Failed to fetch hostname');
     }
   }
 
   Future<void> _changeHostname() async {
     developer.log('Change hostname called');
-    bool accepted = await displayAlertModal('Warning', 'JVM immediately must be reset after change hostname.', context);
+    bool accepted = await displayAlertModal('Warning', 'JVM immediately must be reset after change hostname.');
     if (accepted && context.mounted) {
-      RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': _hostnameController.text}).then((value) => displaySuccess('Hostname changed', context));
+      RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': _hostnameController.text}).then((value) => displaySuccess('Hostname changed'));
     }
   }
 }

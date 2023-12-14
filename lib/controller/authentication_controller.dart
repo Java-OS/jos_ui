@@ -2,7 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/modal/message_modal.dart';
+import 'package:jos_ui/modal/toast.dart';
 import 'package:jos_ui/service/RpcProvider.dart';
 import 'package:jos_ui/service/storage_service.dart';
 
@@ -18,7 +18,7 @@ class AuthenticationController extends GetxController {
     if (success) {
       Get.offAllNamed('/dashboard');
     } else {
-      if (context.mounted) displayError('Login failed', context);
+      if (context.mounted) displayError('Login failed');
     }
   }
 
