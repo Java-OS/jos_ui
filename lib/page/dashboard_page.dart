@@ -16,7 +16,7 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final dashboardController = Get.put(DashboardController());
+  final DashboardController dashboardController = Get.put(DashboardController());
 
   bool _mouseHoverOnBasicBox = false;
   bool _mouseHoverOnJVMBox = false;
