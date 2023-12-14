@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/authentication_controller.dart';
-import 'package:jos_ui/controller/page_controller.dart';
 
 class TopMenuComponent extends StatefulWidget {
   const TopMenuComponent({super.key});
@@ -12,7 +11,6 @@ class TopMenuComponent extends StatefulWidget {
 
 class _TopMenuComponentState extends State<TopMenuComponent> {
   AuthenticationController authenticationController = Get.put(AuthenticationController());
-  JosPageController pageController = Get.put(JosPageController());
   int _hoverIndex = -1;
 
   final menuItems = [
