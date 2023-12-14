@@ -1,12 +1,14 @@
 import 'dart:developer' as developer;
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rpc_provider.dart';
+import 'package:jos_ui/service/storage_service.dart';
 
 class DashboardController extends GetxController {
+  final JvmController jvmController = Get.put(JvmController());
   var osUsername = ''.obs;
   var osType = ''.obs;
   var osVersion = ''.obs;
@@ -46,15 +48,16 @@ class DashboardController extends GetxController {
     }
   }
 
-  void callJvmGarbageCollector(BuildContext context) {
+  void callJvmGarbageCollector() {
     developer.log('JVM Garbage Collector called');
     RestClient.rpc(RPC.jvmGc).then((value) => fetchSystemInformation());
     displaySuccess('CleanUp JVM Heap Space');
   }
 
-  void callJvmRestart(BuildContext context) {
+  void callJvmRestart() {
     developer.log('JVM restart called');
     RestClient.rpc(RPC.jvmRestart);
+    jvmController.disableRestartJvm();
     displaySuccess('Restarting JVM, please wait ...');
   }
 }

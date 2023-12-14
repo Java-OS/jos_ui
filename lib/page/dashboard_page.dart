@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
@@ -5,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/dashboard_controller.dart';
+import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/page_base_content.dart';
 import 'package:jos_ui/utils.dart';
 
@@ -15,8 +18,10 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
+class _DashboardPageState extends State<DashboardPage> with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController = AnimationController(duration: Duration(seconds: 2), vsync: this)..repeat();
   final DashboardController dashboardController = Get.put(DashboardController());
+  final JvmController jvmController = Get.put(JvmController());
 
   bool _mouseHoverOnBasicBox = false;
   bool _mouseHoverOnJVMBox = false;
@@ -81,17 +86,17 @@ class _DashboardPageState extends State<DashboardPage> {
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.power_settings_new, 'System PowerOff', Colors.redAccent, dashboardController.callJvmGarbageCollector),
+                child: actionButton(Icons.power_settings_new, 'System PowerOff', Colors.redAccent, dashboardController.callJvmGarbageCollector, false),
               ),
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.autorenew_rounded, 'JVM Restart', Colors.white, dashboardController.callJvmRestart),
+                child: actionButton(Icons.autorenew_rounded, 'JVM Restart', Colors.white, dashboardController.callJvmRestart, jvmController.jvmNeedRestart.isTrue),
               ),
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.recycling_outlined, 'JVM GC', Colors.white, dashboardController.callJvmGarbageCollector),
+                child: actionButton(Icons.recycling_outlined, 'JVM GC', Colors.white, dashboardController.callJvmGarbageCollector, false),
               ),
             ],
           ),
@@ -206,7 +211,7 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget actionButton(IconData icon, String tooltipMessage, Color hoverColor, Function(BuildContext context) action) {
+  Widget actionButton(IconData icon, String tooltipMessage, Color hoverColor, Function action, bool rotateIcon) {
     return Tooltip(
       preferBelow: false,
       verticalOffset: 45,
@@ -230,8 +235,17 @@ class _DashboardPageState extends State<DashboardPage> {
             },
           ),
         ),
-        onPressed: () => action(context),
-        child: Icon(icon, size: 40),
+        onPressed: () => action(),
+        // child: Icon(icon, size: 40),
+        child: Visibility(
+          visible: rotateIcon,
+          replacement: Icon(icon, size: 40),
+          child: AnimatedBuilder(
+            animation: _animationController,
+            builder: (_, child) => Transform.rotate(angle: _animationController.value * 2 * math.pi, child: child),
+            child: Icon(icon, size: 40),
+          ),
+        ),
       ),
     );
   }

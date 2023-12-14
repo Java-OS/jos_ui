@@ -14,7 +14,7 @@ class AuthenticationController extends GetxController {
     developer.log('Login called');
     var success = await RestClient.login(usernameEditingController.text, passwordEditingController.text);
     if (success) {
-      Get.offAllNamed('/dashboard');
+      Get.offNamed('/dashboard');
     } else {
       displayError('Login failed');
     }
@@ -23,23 +23,23 @@ class AuthenticationController extends GetxController {
   void logout() {
     developer.log('Logout called');
     StorageService.removeItem('token');
-    Get.toNamed('/');
+    Get.offAllNamed('/login');
   }
 
   void checkLogin() async {
     developer.log('Check Login called');
-    var item = StorageService.getItem('token');
-    if (item != null) {
+    var tokenExists = StorageService.exists('token');
+    if (tokenExists) {
       var isLogin = await RestClient.checkLogin();
       if (isLogin) {
-        Get.toNamed('/dashboard');
+        Get.offAllNamed('/dashboard');
       } else {
         StorageService.removeItem('token');
-        Get.toNamed('/login');
+        Get.offAllNamed('/login');
       }
     } else {
       StorageService.removeItem('token');
-      Get.toNamed('/login');
+      Get.offAllNamed('/login');
     }
   }
 }

@@ -3,12 +3,14 @@ import 'dart:developer' as developer;
 
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/RpcResponse.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/storage_service.dart';
 
 class RestClient {
+  static final JvmController jvmController = Get.put(JvmController());
   static final _dio = Dio();
 
   static String _baseLoginUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/login";
@@ -24,9 +26,9 @@ class RestClient {
     try {
       var response = await _dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
       var statusCode = response.statusCode;
+      storeJvmNeedRestart(response.headers);
       if (statusCode == 204) {
         storeToken(response.headers);
-        storeJvmNeedRestart(response.headers);
         developer.log('Login success');
         return true;
       }
@@ -48,10 +50,10 @@ class RestClient {
     try {
       var response = await _dio.get(_baseLoginUrl(), options: Options(headers: header, responseType: ResponseType.json, validateStatus: (_) => true));
       var statusCode = response.statusCode;
+      storeJvmNeedRestart(response.headers);
       if (statusCode == 204) {
         developer.log('Token is valid');
         storeToken(response.headers);
-        storeJvmNeedRestart(response.headers);
         return true;
       }
       developer.log('Invalid token');
@@ -108,7 +110,8 @@ class RestClient {
   static void storeJvmNeedRestart(Headers headers) {
     var jvmNeedRestart = headers['X-Jvm-Restart'];
     if (jvmNeedRestart != null) {
-      developer.log('Receive header X-Jvm-Restart');
+      developer.log('Receive header X-Jvm-Restart with value: [${jvmNeedRestart.first}]');
+      jvmNeedRestart.first == 'true' ? jvmController.enableRestartJvm() : jvmController.disableRestartJvm();
     }
   }
 }

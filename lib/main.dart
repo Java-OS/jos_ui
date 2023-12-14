@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/page/dashboard_page.dart';
 import 'package:jos_ui/page/login_page.dart';
 import 'package:jos_ui/page/module_page.dart';
 import 'package:jos_ui/page/network_page.dart';
 import 'package:jos_ui/page/settings_page.dart';
 import 'package:jos_ui/page/wait_page.dart';
+import 'package:jos_ui/service/injection_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  InjectionProvider.init();
   runApp(const MyApp());
 }
 
