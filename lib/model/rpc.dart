@@ -92,15 +92,14 @@ enum RPC {
   /*
    * user
    * */
-  userList(700),
-  userAdd(701),
-  userRemove(702),
-  userPasswd(703),
-  userLock(704),
-  userUnlock(705),
-  userRoleAdd(706),
-  userRoleRemove(707),
-  userRealmList(707);
+  userList(800),
+  userAdd(801),
+  userRemove(802),
+  userPasswd(803),
+  userLock(804),
+  userUnlock(805),
+  userUpdateRole(806),
+  userRealmList(808);
 
   final num value;
 

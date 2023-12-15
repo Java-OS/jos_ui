@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:jos_ui/controller/user_controller.dart';
+import 'package:jos_ui/dialog/user_dialog.dart';
 
 class UserManagementComponent extends StatefulWidget {
   const UserManagementComponent({super.key});
@@ -8,33 +11,13 @@ class UserManagementComponent extends StatefulWidget {
 }
 
 class _UserManagementComponentState extends State<UserManagementComponent> {
-  final _listUsers = [
-    {'id': 1, 'username': 'admin', 'realmBit': 1023, 'lock': false},
-    {'id': 2, 'username': 'mah454', 'realmBit': 64, 'lock': false},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-    {'id': 3, 'username': 'javad', 'realmBit': 891, 'lock': true},
-  ];
+  final UserController userController = Get.put(UserController());
+
+  @override
+  void initState() {
+    userController.fetchUsers();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +26,14 @@ class _UserManagementComponentState extends State<UserManagementComponent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          OutlinedButton(onPressed: () {}, child: Icon(Icons.add, size: 16, color: Colors.black)),
+          OutlinedButton(onPressed: () => displayAddUser(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
           SizedBox(width: 8),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: SizedBox(
                 width: double.infinity,
-                child: DataTable(dataRowMinHeight: 12, dataRowMaxHeight: 28, columnSpacing: 0, columns: getUserTableColumns(), rows: getUserTableRows()),
+                child: Obx(() => DataTable(dataRowMinHeight: 12, dataRowMaxHeight: 28, columnSpacing: 10, columns: getUserTableColumns(), rows: getUserTableRows())),
               ),
             ),
           )
@@ -62,35 +45,28 @@ class _UserManagementComponentState extends State<UserManagementComponent> {
   List<DataColumn> getUserTableColumns() {
     var idColumn = DataColumn(label: Text('id', style: TextStyle(fontWeight: FontWeight.bold)));
     var usernameColumn = DataColumn(label: Text('Username', style: TextStyle(fontWeight: FontWeight.bold)));
-    var realmBitColumn = DataColumn(label: Text('Realm Bit', style: TextStyle(fontWeight: FontWeight.bold)));
-    var lockColumn = DataColumn(label: Text('lock', style: TextStyle(fontWeight: FontWeight.bold)));
-    var actionColumn = DataColumn(label: Expanded(child: SizedBox.shrink()));
-    return [idColumn, usernameColumn, realmBitColumn, lockColumn, actionColumn];
+    var actionColumn = DataColumn(label: SizedBox.shrink());
+    return [idColumn, usernameColumn, actionColumn];
   }
 
   List<DataRow> getUserTableRows() {
     final resultList = <DataRow>[];
-    for (final user in _listUsers) {
-      var id = user['id'].toString();
-      var username = user['username'].toString();
-      var realmBit = user['realmBit'].toString();
-      var lock = user['lock'].toString();
+    for (final user in userController.userList) {
+      var id = user.id.toString();
+      var username = user.username.toString();
       var row = DataRow(cells: [
         DataCell(Text(id, style: TextStyle(fontSize: 12))),
         DataCell(Text(username, style: TextStyle(fontSize: 12))),
-        DataCell(Text(realmBit, style: TextStyle(fontSize: 12))),
-        DataCell(Text(lock, style: TextStyle(fontSize: 12))),
         DataCell(
           Align(
-            alignment: Alignment.centerRight,
-            child: SizedBox(
-              width: 80,
-              child: Row(
-                children: [
-                  IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
-                  IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16))
-                ],
-              ),
+            alignment: Alignment.centerLeft,
+            child: Row(
+              children: [
+                IconButton(onPressed: username == 'admin' ? null :  () => displayUpdateRoles(user, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.security_outlined, size: 16)),
+                IconButton(onPressed: username == 'admin' ? null :  () => userController.lockOrUnlockUser(user), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(user.lock ? Icons.lock : Icons.lock_open, size: 16)),
+                IconButton(onPressed: () => displayUpdatePassword(user, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.password_outlined, size: 16)),
+                IconButton(onPressed: username == 'admin' ? null : () => userController.deleteUser(user), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete_rounded, size: 16))
+              ],
             ),
           ),
         ),
