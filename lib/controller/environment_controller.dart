@@ -47,4 +47,19 @@ class EnvironmentController extends GetxController {
       displayError('Failed to delete environment $key');
     }
   }
+
+  Future<void> updateEnvironment() async {
+    var key = keyEditingController.text;
+    var value = valueEditingController.text;
+    var response = await RestClient.rpc(RPC.systemEnvironmentUpdate, parameters: {'key': key, 'value': value});
+    if (response.success) {
+      keyEditingController.clear();
+      valueEditingController.clear();
+      await fetchSystemEnvironments();
+      displayInfo('Environment updated [$key]');
+      Get.back();
+    } else {
+      displayError('Failed to update environment [$key]');
+    }
+  }
 }

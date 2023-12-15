@@ -5,7 +5,17 @@ import 'package:jos_ui/controller/environment_controller.dart';
 
 EnvironmentController _environmentController = Get.put(EnvironmentController());
 
-Future<void> displayAddUpdateEnvironmentModal(BuildContext context) async {
+Future<void> addEnvironment(BuildContext context) async {
+  _displayModal(context, _environmentController.setSystemEnvironment);
+}
+
+Future<void> updateEnvironment(String key, String value, BuildContext context) async {
+  _environmentController.keyEditingController.text = key;
+  _environmentController.valueEditingController.text = value;
+  _displayModal(context, _environmentController.updateEnvironment);
+}
+
+Future<void> _displayModal(BuildContext context, Function execute) async {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -22,7 +32,7 @@ Future<void> displayAddUpdateEnvironmentModal(BuildContext context) async {
               TextField(controller: _environmentController.keyEditingController, decoration: InputDecoration(label: Text('Key'), hintStyle: TextStyle(fontSize: 12))),
               TextField(controller: _environmentController.valueEditingController, decoration: InputDecoration(label: Text('Value'), hintStyle: TextStyle(fontSize: 12))),
               SizedBox(height: 20),
-              Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _environmentController.setSystemEnvironment(), child: Text('Apply')))
+              Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => execute(), child: Text('Apply')))
             ],
           )
         ],

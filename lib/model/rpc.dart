@@ -19,6 +19,8 @@ enum RPC {
   systemSetDateTime(14),
   systemSetTimezone(15),
   systemFullInformation(16),
+  systemEnvironmentUpdate(17),
+
   jvmVersion(100),
   jvmVendor(101),
   jvmTotalHeapSize(102),

@@ -27,8 +27,8 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          OutlinedButton(onPressed: () => displayAddUpdateEnvironmentModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
-          SizedBox(width  : 8),
+          OutlinedButton(onPressed: () => addEnvironment(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
+          SizedBox(width: 8),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -72,7 +72,7 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
               child: Row(
                 children: [
                   IconButton(onPressed: () => environmentController.deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(Icons.delete, size: 16, color: Colors.black)),
-                  IconButton(onPressed: () {}, splashRadius: 12, icon: Icon(Icons.edit, size: 16, color: Colors.black)),
+                  IconButton(onPressed: () => updateEnvironment(key,value,context), splashRadius: 12, icon: Icon(Icons.edit, size: 16, color: Colors.black)),
                 ],
               ),
             ),
