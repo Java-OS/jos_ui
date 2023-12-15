@@ -1,14 +1,15 @@
 import 'dart:developer' as developer;
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/controller/jvm_controller.dart';
+import 'package:jos_ui/dialog/alert_dialog.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rpc_provider.dart';
-import 'package:jos_ui/service/storage_service.dart';
 
-class DashboardController extends GetxController {
-  final JvmController jvmController = Get.put(JvmController());
+class SystemController extends GetxController {
+  final TextEditingController hostnameEditingController = TextEditingController();
+
   var osUsername = ''.obs;
   var osType = ''.obs;
   var osVersion = ''.obs;
@@ -24,6 +25,30 @@ class DashboardController extends GetxController {
   var jvmTotalHeapSize = 0.obs;
   var jvmUsedHeapSize = 0.obs;
   var dateTimeZone = ''.obs;
+
+  Future<void> fetchHostname() async {
+    developer.log('Fetch hostname called');
+    var response = await RestClient.rpc(RPC.systemGetHostname);
+    if (response.result != null) {
+      osHostname.value = response.result;
+      hostnameEditingController.text = response.result;
+    } else {
+      displayError('Failed to fetch hostname');
+    }
+  }
+
+  Future<void> changeHostname() async {
+    developer.log('Change hostname called');
+    bool accepted = await displayAlertModal('Warning', 'JVM immediately must be reset after change hostname.');
+    if (accepted) {
+      var rpcResponse = await RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': hostnameEditingController.text});
+      if (rpcResponse.success) {
+        displaySuccess('Hostname changed');
+      } else {
+        displayWarning('Failed to change hostname');
+      }
+    }
+  }
 
   void fetchSystemInformation() async {
     developer.log('Fetch System Full Information');
@@ -46,18 +71,5 @@ class DashboardController extends GetxController {
       jvmTotalHeapSize.value = json['jvm_total_heap_size'];
       jvmUsedHeapSize.value = json['jvm_used_heap_size'];
     }
-  }
-
-  void callJvmGarbageCollector() {
-    developer.log('JVM Garbage Collector called');
-    RestClient.rpc(RPC.jvmGc).then((value) => fetchSystemInformation());
-    displaySuccess('CleanUp JVM Heap Space');
-  }
-
-  void callJvmRestart() {
-    developer.log('JVM restart called');
-    RestClient.rpc(RPC.jvmRestart);
-    jvmController.disableRestartJvm();
-    displaySuccess('Restarting JVM, please wait ...');
   }
 }

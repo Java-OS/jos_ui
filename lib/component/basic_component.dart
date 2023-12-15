@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/controller/basic_controller.dart';
+import 'package:jos_ui/controller/system_controller.dart';
 
 class BasicComponent extends StatefulWidget {
   const BasicComponent({super.key});
@@ -10,12 +10,12 @@ class BasicComponent extends StatefulWidget {
 }
 
 class _BasicComponentState extends State<BasicComponent> {
-  final BasicController basicController = Get.put(BasicController());
+  final SystemController systemController = Get.put(SystemController());
 
   @override
   void initState() {
     super.initState();
-    basicController.fetchHostname();
+    systemController.fetchHostname();
   }
 
   @override
@@ -24,13 +24,13 @@ class _BasicComponentState extends State<BasicComponent> {
       child: Stack(
         children: [
           TextField(
-            controller: basicController.hostnameEditingController,
+            controller: systemController.hostnameEditingController,
             decoration: InputDecoration(
               label: Text('Hostname'),
             ),
-            onSubmitted: (_) => basicController.changeHostname(),
+            onSubmitted: (_) => systemController.changeHostname(),
           ),
-          Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => basicController.changeHostname(), child: Text('Apply')))
+          Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => systemController.changeHostname(), child: Text('Apply')))
         ],
       ),
     );

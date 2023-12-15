@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/controller/dashboard_controller.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
+import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/page_base_content.dart';
 import 'package:jos_ui/utils.dart';
 
@@ -20,7 +20,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController = AnimationController(duration: Duration(seconds: 2), vsync: this)..repeat();
-  final DashboardController dashboardController = Get.put(DashboardController());
+  final SystemController systemController = Get.put(SystemController());
   final JvmController jvmController = Get.put(JvmController());
 
   bool _mouseHoverOnBasicBox = false;
@@ -31,7 +31,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    dashboardController.fetchSystemInformation();
+    systemController.fetchSystemInformation();
   }
 
   @override
@@ -86,17 +86,17 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.power_settings_new, 'System PowerOff', Colors.redAccent, dashboardController.callJvmGarbageCollector, false),
+                child: actionButton(Icons.power_settings_new, 'System PowerOff', Colors.redAccent, jvmController.callJvmGarbageCollector, false),
               ),
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.autorenew_rounded, 'JVM Restart', Colors.white, dashboardController.callJvmRestart, jvmController.jvmNeedRestart.isTrue),
+                child: actionButton(Icons.autorenew_rounded, 'JVM Restart', Colors.white, jvmController.callJvmRestart, jvmController.jvmNeedRestart.isTrue),
               ),
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.recycling_outlined, 'JVM GC', Colors.white, dashboardController.callJvmGarbageCollector, false),
+                child: actionButton(Icons.recycling_outlined, 'JVM GC', Colors.white, jvmController.callJvmGarbageCollector, false),
               ),
             ],
           ),
@@ -122,10 +122,10 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('JVM Vendor', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(dashboardController.jvmVendor.value, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(systemController.jvmVendor.value, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
                   SizedBox(height: 12),
                   Text('JVM Version', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(dashboardController.jvmVersion.value, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(systemController.jvmVersion.value, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
                 ],
               ),
               SizedBox(width: 60),
@@ -134,13 +134,13 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('JVM Xmx', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(formatSize(dashboardController.jvmMaxHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(formatSize(systemController.jvmMaxHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
                   SizedBox(height: 8),
                   Text('JVM Xms', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(formatSize(dashboardController.jvmTotalHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(formatSize(systemController.jvmTotalHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
                   SizedBox(height: 8),
                   Text('JVM used heap', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(formatSize(dashboardController.jvmUsedHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
+                  Text(formatSize(systemController.jvmUsedHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
                 ],
               ),
             ],
@@ -163,16 +163,16 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('CPU Model', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(dashboardController.hwCpuInfo.value, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(systemController.hwCpuInfo.value, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('CPU Cores', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(dashboardController.hwCpuCount.value, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(systemController.hwCpuCount.value, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('Total RAM', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(formatSize(dashboardController.hwTotalMemory.value), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(formatSize(systemController.hwTotalMemory.value), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('Used RAM', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(formatSize(dashboardController.hwUsedMemory.value), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(formatSize(systemController.hwUsedMemory.value), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
             ],
           ),
         ),
@@ -193,17 +193,17 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('OS', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text('${dashboardController.osType.value} ${dashboardController.osVersion.value}',
+              Text('${systemController.osType.value} ${systemController.osVersion.value}',
                   style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('Hostname', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(dashboardController.osHostname.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(systemController.osHostname.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('Username', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(dashboardController.osUsername.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(systemController.osUsername.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
               SizedBox(height: 12),
               Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(dashboardController.dateTimeZone.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
+              Text(systemController.dateTimeZone.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
             ],
           ),
         ),
