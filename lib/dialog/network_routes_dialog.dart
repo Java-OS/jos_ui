@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/controller/network_controller.dart';
+
+NetworkController _networkController = Get.put(NetworkController());
 
 Future<void> displayNetworkRoutesModal(BuildContext context) async {
+  _networkController.fetchRoutes();
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -15,8 +20,25 @@ Future<void> displayNetworkRoutesModal(BuildContext context) async {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              OutlinedButton(onPressed: () => displayAddNewRouteModal(context), child: Icon(Icons.route_outlined, size: 16, color: Colors.black)),
-              SizedBox(width: double.infinity, child: DataTable(dataRowMinHeight: 22, dataRowMaxHeight: 32, columns: _getNetworkRouteColumns(), rows: _getNetworkRouteRows())),
+              OutlinedButton(
+                onPressed: () => displayAddNewRouteModal(context),
+                child: Icon(Icons.route_outlined, size: 16, color: Colors.black),
+              ),
+              SizedBox(
+                width: double.infinity,
+                height: 400,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Obx(
+                    () => DataTable(
+                      dataRowMinHeight: 22,
+                      dataRowMaxHeight: 32,
+                      columns: _getNetworkRouteColumns(),
+                      rows: _getNetworkRouteRows(),
+                    ),
+                  ),
+                ),
+              ),
             ],
           )
         ],
@@ -39,35 +61,26 @@ List<DataColumn> _getNetworkRouteColumns() {
 }
 
 List<DataRow> _getNetworkRouteRows() {
-  var eth0Info = DataRow(cells: [
-    DataCell(Text('1', style: TextStyle(fontSize: 12))),
-    DataCell(Text('0.0.0.0', style: TextStyle(fontSize: 12))),
-    DataCell(Text('0.0.0.0', style: TextStyle(fontSize: 12))),
-    DataCell(Text('172.17.0.1', style: TextStyle(fontSize: 12))),
-    DataCell(Text('eth0', style: TextStyle(fontSize: 12))),
-    DataCell(Text('UG', style: TextStyle(fontSize: 12))),
-    DataCell(Text('0', style: TextStyle(fontSize: 12))),
-    DataCell(Text('0', style: TextStyle(fontSize: 12))),
-    DataCell(Row(children: [
-      IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
-      IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16))
-    ])),
-  ]);
-  var wlan0Info = DataRow(cells: [
-    DataCell(Text('2', style: TextStyle(fontSize: 12))),
-    DataCell(Text('172.17.0.0', style: TextStyle(fontSize: 12))),
-    DataCell(Text('255.255.0.0', style: TextStyle(fontSize: 12))),
-    DataCell(Text('0.0.0.0', style: TextStyle(fontSize: 12))),
-    DataCell(Text('eth0', style: TextStyle(fontSize: 12))),
-    DataCell(Text('U', style: TextStyle(fontSize: 12))),
-    DataCell(Text('0', style: TextStyle(fontSize: 12))),
-    DataCell(Text('0', style: TextStyle(fontSize: 12))),
-    DataCell(Row(children: [
-      IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
-      IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16))
-    ])),
-  ]);
-  return [eth0Info, wlan0Info];
+  var dataRowList = <DataRow>[];
+  var list = _networkController.routeList.value;
+  for (var item in list) {
+    var row = DataRow(cells: [
+      DataCell(Text(item.id.toString(), style: TextStyle(fontSize: 12))),
+      DataCell(Text(item.destination, style: TextStyle(fontSize: 12))),
+      DataCell(Text(item.netmask, style: TextStyle(fontSize: 12))),
+      DataCell(Text(item.gateway, style: TextStyle(fontSize: 12))),
+      DataCell(Text(item.iface, style: TextStyle(fontSize: 12))),
+      DataCell(Text(item.flags, style: TextStyle(fontSize: 12))),
+      DataCell(Text(item.metrics.toString(), style: TextStyle(fontSize: 12))),
+      DataCell(Text(item.mtu.toString(), style: TextStyle(fontSize: 12))),
+      DataCell(Row(children: [
+        IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
+        IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16))
+      ])),
+    ]);
+    dataRowList.add(row);
+  }
+  return dataRowList;
 }
 
 Future<void> displayAddNewRouteModal(BuildContext context) async {

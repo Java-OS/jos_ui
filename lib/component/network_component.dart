@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/network_controller.dart';
 import 'package:jos_ui/dialog/network_routes_dialog.dart';
-import 'package:jos_ui/model/ethernet.dart';
+import 'package:jos_ui/model/network/ethernet.dart';
 
 class NetworkComponent extends StatefulWidget {
   const NetworkComponent({super.key});
