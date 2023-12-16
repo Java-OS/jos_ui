@@ -110,13 +110,12 @@ class UserController extends GetxController {
     var lock = user.lock;
     var response = await RestClient.rpc(lock ? RPC.userUnlock : RPC.userLock, parameters: reqParams);
     if (response.success) {
-      displaySuccess('User ${user.username} ');
+      displaySuccess(lock ? 'User ${user.username} unlocked' : 'User ${user.username} locked');
       await fetchUsers();
       clearTextEditingControllers();
       Get.back();
     } else {
-      String state = lock ? 'unlock' : 'lock';
-      displayWarning('Failed to $state user ${user.username}');
+      displayWarning(lock ? 'Failed to unlock ${user.username}' : 'Failed to lock ${user.username}');
     }
   }
 
