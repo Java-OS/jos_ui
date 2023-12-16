@@ -27,32 +27,21 @@ class _NetworkComponentState extends State<NetworkComponent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  OutlinedButton(onPressed: () {}, child: Icon(Icons.add, size: 16, color: Colors.black)),
-                  SizedBox(width: 8),
-                  OutlinedButton(onPressed: () {}, child: Icon(Icons.delete, size: 16, color: Colors.black)),
-                  SizedBox(width: 8),
-                ],
-              ),
-              OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.alt_route_rounded, size: 16, color: Colors.black)),
-            ],
-          ),
+          OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.alt_route_rounded, size: 16, color: Colors.black)),
           SizedBox(height: 8),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: SizedBox(
                 width: double.infinity,
-                child: DataTable(
-                  dataRowMinHeight: 12,
-                  dataRowMaxHeight: 28,
-                  columnSpacing: 0,
-                  columns: getNetworkInterfacesColumns(),
-                  rows: getEthernetsRows(),
+                child: Obx(
+                  () => DataTable(
+                    dataRowMinHeight: 12,
+                    dataRowMaxHeight: 28,
+                    columnSpacing: 0,
+                    columns: getNetworkInterfacesColumns(),
+                    rows: getEthernetsRows(),
+                  ),
                 ),
               ),
             ),
