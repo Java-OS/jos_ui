@@ -110,6 +110,7 @@ class UserController extends GetxController {
     var lock = user.lock;
     var response = await RestClient.rpc(lock ? RPC.userUnlock : RPC.userLock, parameters: reqParams);
     if (response.success) {
+      displaySuccess('User ${user.username} ');
       await fetchUsers();
       clearTextEditingControllers();
       Get.back();
@@ -137,5 +138,7 @@ class UserController extends GetxController {
     usernameEditingController.clear();
     passwordEditingController.clear();
     passwordConfirmationEditingController.clear();
+    selectedRealms.value = [];
+    realmBit.value = 0;
   }
 }

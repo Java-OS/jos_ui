@@ -41,7 +41,7 @@ class _SideMenuComponentState extends State<SideMenuComponent> {
       onExit: (_) => setState(() => _hoverIndex = -1),
       child: InkWell(
         onHover: (_) => setState(() => _hoverIndex = index),
-        onTap: () => Get.toNamed('/settings/$index'),
+        onTap: () => Get.offAllNamed('/settings/$index'),
         child: Padding(
           padding: const EdgeInsets.only(bottom: 2.0),
           child: AnimatedContainer(

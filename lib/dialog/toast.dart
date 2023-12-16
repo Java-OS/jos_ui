@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jos_ui/constant.dart';
-
-var fToast = FToast();
+import 'package:toastification/toastification.dart';
 
 enum MessageType {
   info(Icons.info_outline_rounded, Colors.blue, 'Information'),
@@ -18,41 +16,36 @@ enum MessageType {
 }
 
 void _showMessage(String message, MessageType messageType, int timeout) {
-  fToast.init(navigatorKey.currentState!.context);
-
-  fToast.showToast(
-    child: Container(
-      color: Colors.white,
-      constraints: BoxConstraints(minWidth: 300),
-      height: 60,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(width: 5, height: 60, color: messageType.color),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
-            child: Icon(messageType.icon, color: messageType.color),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 5.0, right: 22.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  messageType.title,
-                  style: TextStyle(color: messageType.color, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-                Text(message),
-              ],
-            ),
-          )
-        ],
-      ),
-    ),
-    gravity: ToastGravity.TOP_RIGHT,
-    toastDuration: Duration(seconds: timeout),
+  _showToast(
+    context: navigatorKey.currentState!.context,
+    type: ToastificationType.success,
+    style: ToastificationStyle.minimal,
+    autoCloseDuration: const Duration(seconds: 3),
+    title: messageType.title,
+    description: message,
+    alignment: Alignment.topRight,
+    direction: TextDirection.ltr,
+    animationDuration: const Duration(milliseconds: 300),
+    icon: Icon(messageType.icon, color: messageType.color),
+    primaryColor: Colors.green,
+    backgroundColor: Colors.white,
+    foregroundColor: Colors.black,
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    borderRadius: BorderRadius.zero,
+    boxShadow: const [
+      BoxShadow(
+        color: Color(0x07000000),
+        blurRadius: 16,
+        offset: Offset(0, 16),
+        spreadRadius: 0,
+      )
+    ],
+    showProgressBar: true,
+    closeButtonShowType: CloseButtonShowType.onHover,
+    closeOnClick: false,
+    pauseOnHover: true,
+    dragToClose: true,
   );
 }
 
@@ -63,3 +56,65 @@ void displayWarning(String message, {timeout}) => _showMessage(message, MessageT
 void displaySuccess(String message, {timeout}) => _showMessage(message, MessageType.success, timeout ?? 3);
 
 void displayError(String message, {timeout}) => _showMessage(message, MessageType.error, timeout ?? 3);
+
+ToastificationItem _showToast({
+  required BuildContext context,
+  AlignmentGeometry? alignment,
+  Duration? autoCloseDuration,
+  ToastificationAnimationBuilder? animationBuilder,
+  ToastificationType? type,
+  ToastificationStyle? style,
+  required String title,
+  Duration? animationDuration,
+  String? description,
+  Widget? icon,
+  Color? primaryColor,
+  Color? backgroundColor,
+  Color? foregroundColor,
+  EdgeInsetsGeometry? padding,
+  EdgeInsetsGeometry? margin,
+  BorderRadiusGeometry? borderRadius,
+  List<BoxShadow>? boxShadow,
+  TextDirection? direction,
+  bool? showProgressBar,
+  ProgressIndicatorThemeData? progressBarTheme,
+  CloseButtonShowType? closeButtonShowType,
+  bool? closeOnClick,
+  bool? dragToClose,
+  bool? pauseOnHover,
+  ToastificationCallbacks callbacks = const ToastificationCallbacks(),
+}) {
+  return toastification.showWithNavigatorState(
+    navigator: navigatorKey.currentState!,
+    alignment: alignment,
+    autoCloseDuration: autoCloseDuration,
+    animationBuilder: animationBuilder,
+    animationDuration: animationDuration,
+    callbacks: callbacks,
+    builder: (context, holder) {
+      return BuiltInBuilder(
+        item: holder,
+        type: type,
+        style: style,
+        title: title,
+        description: description,
+        icon: icon,
+        primaryColor: primaryColor,
+        backgroundColor: backgroundColor,
+        foregroundColor: foregroundColor,
+        padding: padding,
+        margin: margin,
+        borderRadius: borderRadius,
+        boxShadow: boxShadow,
+        direction: direction,
+        showProgressBar: showProgressBar,
+        progressBarTheme: progressBarTheme,
+        closeButtonShowType: closeButtonShowType,
+        closeOnClick: closeOnClick,
+        dragToClose: dragToClose,
+        pauseOnHover: pauseOnHover,
+        callbacks: callbacks,
+      );
+    },
+  );
+}

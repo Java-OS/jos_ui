@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/page/dashboard_page.dart';
 import 'package:jos_ui/page/login_page.dart';
 import 'package:jos_ui/page/module_page.dart';
@@ -23,7 +21,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      builder: FToastBuilder(),
       theme: ThemeData.light(useMaterial3: false),
       debugShowCheckedModeBanner: false,
       title: 'JOS',

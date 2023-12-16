@@ -36,18 +36,16 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    return getPageContent(child: _pageContent());
-  }
-
-  Widget _pageContent() {
-    return Center(
-      child: SizedBox(
-        width: 600,
-        height: 500,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [TopMenuComponent(), SizedBox(height: 8), Obx(() => mosaicView())],
+    return getPageContent(
+      child: Center(
+        child: SizedBox(
+          width: 600,
+          height: 500,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [TopMenuComponent(), SizedBox(height: 8), Obx(() => mosaicView())],
+          ),
         ),
       ),
     );
