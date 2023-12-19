@@ -27,7 +27,8 @@ class _NetworkComponentState extends State<NetworkComponent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.alt_route_rounded, size: 16, color: Colors.black)),
+          // OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.alt_route_rounded, size: 16, color: Colors.black)),
+          OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.directions_outlined, size: 16, color: Colors.black)),
           SizedBox(height: 8),
           Expanded(
             child: SingleChildScrollView(

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/network_controller.dart';
+import 'package:jos_ui/model/network/ethernet.dart';
+import 'package:jos_ui/widget/drop_down_widget.dart';
+import 'package:jos_ui/widget/tab_widget.dart';
+import 'package:jos_ui/widget/text_box_widget.dart';
 
 NetworkController _networkController = Get.put(NetworkController());
 
@@ -22,7 +26,7 @@ Future<void> displayNetworkRoutesModal(BuildContext context) async {
             children: [
               OutlinedButton(
                 onPressed: () => displayAddNewRouteModal(context),
-                child: Icon(Icons.route_outlined, size: 16, color: Colors.black),
+                child: Icon(Icons.add, size: 16, color: Colors.black),
               ),
               SizedBox(
                 width: double.infinity,
@@ -56,26 +60,26 @@ List<DataColumn> _getNetworkRouteColumns() {
   var flagsColumn = DataColumn(label: Expanded(child: Text('Flags', style: TextStyle(fontWeight: FontWeight.bold))));
   var metricsColumn = DataColumn(label: Expanded(child: Text('Metrics', style: TextStyle(fontWeight: FontWeight.bold))));
   var mtuColumn = DataColumn(label: Expanded(child: Text('MTU', style: TextStyle(fontWeight: FontWeight.bold))));
-  var actionColumn = DataColumn(label: Expanded(child: Text('actions', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))));
+  var actionColumn = DataColumn(label: SizedBox.shrink());
   return [indexColumn, destinationColumn, netmaskColumn, gatewayColumn, interfaceColumn, flagsColumn, metricsColumn, mtuColumn, actionColumn];
 }
 
 List<DataRow> _getNetworkRouteRows() {
   var dataRowList = <DataRow>[];
-  var list = _networkController.routeList.value;
+  var list = _networkController.routeList;
   for (var item in list) {
+    var isLock = item.isLock;
     var row = DataRow(cells: [
-      DataCell(Text(item.id.toString(), style: TextStyle(fontSize: 12))),
-      DataCell(Text(item.destination, style: TextStyle(fontSize: 12))),
-      DataCell(Text(item.netmask, style: TextStyle(fontSize: 12))),
-      DataCell(Text(item.gateway, style: TextStyle(fontSize: 12))),
-      DataCell(Text(item.iface, style: TextStyle(fontSize: 12))),
-      DataCell(Text(item.flags, style: TextStyle(fontSize: 12))),
-      DataCell(Text(item.metrics.toString(), style: TextStyle(fontSize: 12))),
-      DataCell(Text(item.mtu.toString(), style: TextStyle(fontSize: 12))),
+      DataCell(Text(item.index.toString(), style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.destination, style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.netmask, style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.gateway, style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.iface, style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.flags, style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.metrics.toString(), style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.mtu.toString(), style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
       DataCell(Row(children: [
-        IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
-        IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16))
+        IconButton(onPressed: isLock ? null : () => _networkController.deleteRoute(item.index), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16))
       ])),
     ]);
     dataRowList.add(row);
@@ -90,34 +94,23 @@ Future<void> displayAddNewRouteModal(BuildContext context) async {
       return AlertDialog(
         title: getModalHeader('Add new route'),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        contentPadding: EdgeInsets.all(14),
+        contentPadding: EdgeInsets.zero,
         titlePadding: EdgeInsets.zero,
-        content: DefaultTabController(
-          initialIndex: 0,
-          length: 3,
-          child: SizedBox(
-            width: 550,
-            height: 190,
-            child: Scaffold(
-              body: Column(
-                children: [
-                  TabBar(tabs: const [
-                    Tab(child: Row(children: [Icon(Icons.double_arrow, color: Colors.black), SizedBox(width: 8), Text('Default Gateway', style: TextStyle(color: Colors.black))])),
-                    Tab(child: Row(children: [Icon(Icons.computer, color: Colors.black), SizedBox(width: 8), Text('Host', style: TextStyle(color: Colors.black))])),
-                    Tab(child: Row(children: [Icon(Icons.account_tree_outlined, color: Colors.black), SizedBox(width: 8), Text('Network', style: TextStyle(color: Colors.black))])),
-                  ]),
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        defaultGatewayTab(),
-                        hostTab(),
-                        networkTab(),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
+        backgroundColor: componentBackgroundColor,
+        scrollable: true,
+        content: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: TabBox(
+            tabs: const [
+              TabItem(text: 'Default Gateway', icon: Icons.double_arrow, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
+              TabItem(text: 'Host', icon: Icons.computer, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
+              TabItem(text: 'Network', icon: Icons.account_tree_outlined, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
+            ],
+            contents: [
+              defaultGatewayTab(),
+              hostTab(),
+              networkTab(),
+            ],
           ),
         ),
       );
@@ -130,9 +123,9 @@ Widget defaultGatewayTab() {
     padding: EdgeInsets.all(14.0),
     child: Column(
       children: [
-        TextField(decoration: InputDecoration(label: Text('Address'), hintStyle: TextStyle(fontSize: 12))),
+        TextBox(controller: _networkController.gatewayEditingController, label: 'Gateway'),
         SizedBox(height: 30),
-        Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () {}, child: Text('Apply')))
+        Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _networkController.addDefaultGateway(), child: Text('Apply')))
       ],
     ),
   );
@@ -142,16 +135,25 @@ Widget hostTab() {
   return Padding(
     padding: EdgeInsets.all(14.0),
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: const [
-            Flexible(child: TextField(decoration: InputDecoration(label: Text('Address'), hintStyle: TextStyle(fontSize: 12)))),
-            SizedBox(width: 8),
-            Flexible(child: TextField(decoration: InputDecoration(label: Text('metrics'), hintStyle: TextStyle(fontSize: 12)))),
-          ],
+        TextBox(controller: _networkController.addressEditingController, label: 'Address'),
+        SizedBox(height: 8),
+        TextBox(controller: _networkController.gatewayEditingController, label: 'Gateway'),
+        SizedBox(height: 8),
+        Obx(
+          () => DropDownMenu<Ethernet>(
+            value: _networkController.routeSelectedEthernet.value,
+            hint: Text('Interface'),
+            items: _networkController.ethernetList.map((e) => DropdownMenuItem<Ethernet>(value: e, child: Text(e.iface))).toList(),
+            onChanged: (value) => _networkController.routeSelectedEthernet.value = value,
+          ),
         ),
-        SizedBox(height: 30),
-        Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () {}, child: Text('Apply')))
+        SizedBox(height: 8),
+        TextBox(controller: _networkController.metricsEditingController, label: 'metrics (optional [default: 600])'),
+        SizedBox(height: 20),
+        Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => _networkController.addHostRoute(), child: Text('Apply')))
       ],
     ),
   );
@@ -161,18 +163,27 @@ Widget networkTab() {
   return Padding(
     padding: EdgeInsets.all(14.0),
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: const [
-            Flexible(child: TextField(decoration: InputDecoration(label: Text('network'), hintStyle: TextStyle(fontSize: 12)))),
-            SizedBox(width: 8),
-            Flexible(child: TextField(decoration: InputDecoration(label: Text('netmask'), hintStyle: TextStyle(fontSize: 12)))),
-            SizedBox(width: 8),
-            Flexible(child: TextField(decoration: InputDecoration(label: Text('metrics'), hintStyle: TextStyle(fontSize: 12)))),
-          ],
+        TextBox(controller: _networkController.networkEditingController, label: 'Network'),
+        SizedBox(height: 8),
+        TextBox(controller: _networkController.netmaskEditingController, label: 'Netmask'),
+        SizedBox(height: 8),
+        TextBox(controller: _networkController.gatewayEditingController, label: 'Gateway'),
+        SizedBox(height: 8),
+        Obx(
+          () => DropDownMenu<Ethernet>(
+            value: _networkController.routeSelectedEthernet.value,
+            hint: Text('Interface'),
+            items: _networkController.ethernetList.map((e) => DropdownMenuItem<Ethernet>(value: e, child: Text(e.iface))).toList(),
+            onChanged: (value) => _networkController.routeSelectedEthernet.value = value,
+          ),
         ),
-        SizedBox(height: 30),
-        Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () {}, child: Text('Apply')))
+        SizedBox(height: 8),
+        TextBox(controller: _networkController.metricsEditingController, label: 'metrics (optional [default: 600])'),
+        SizedBox(height: 20),
+        Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => _networkController.addNetworkRoute(), child: Text('Apply')))
       ],
     ),
   );

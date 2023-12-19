@@ -1,7 +1,7 @@
 import 'package:jos_ui/model/network/route_flag.dart';
 
 class Route {
-  int id;
+  int index;
   String destination;
   String netmask;
   String gateway;
@@ -9,8 +9,9 @@ class Route {
   String flags;
   int metrics;
   int mtu;
+  bool isLock;
 
-  Route(this.id, this.destination, this.netmask, this.gateway, this.iface, this.flags, this.metrics, this.mtu);
+  Route(this.index, this.destination, this.netmask, this.gateway, this.iface, this.flags, this.metrics, this.mtu,this.isLock);
 
   factory Route.fromJson(Map<String, dynamic> jsonObject) {
     var flagBit = jsonObject['flags'];
@@ -23,6 +24,7 @@ class Route {
       RouteFlag.getFlagStr(flagBit),
       jsonObject['metrics'],
       jsonObject['mtu'],
+      jsonObject['locked'],
     );
   }
 }

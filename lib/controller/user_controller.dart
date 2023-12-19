@@ -48,7 +48,7 @@ class UserController extends GetxController {
     if (response.success) {
       await fetchUsers();
       Get.back();
-      clearTextEditingControllers();
+      clear();
     } else {
       displayWarning('Failed to add user $username');
     }
@@ -59,7 +59,7 @@ class UserController extends GetxController {
     var response = await RestClient.rpc(RPC.userUpdateRole, parameters: reqParams);
     if (response.success) {
       await fetchUsers();
-      clearTextEditingControllers();
+      clear();
       Get.back();
     } else {
       displayWarning('Failed to update roles of ${usernameEditingController.text}');
@@ -80,7 +80,7 @@ class UserController extends GetxController {
     var response = await RestClient.rpc(RPC.userPasswd, parameters: reqParams);
     if (response.success) {
       Get.back();
-      clearTextEditingControllers();
+      clear();
     } else {
       displayWarning('Failed to change password $username');
     }
@@ -97,7 +97,7 @@ class UserController extends GetxController {
       var response = await RestClient.rpc(RPC.userRemove, parameters: reqParams);
       if (response.success) {
         await fetchUsers();
-        clearTextEditingControllers();
+        clear();
         Get.back();
       } else {
         displayWarning('Failed to delete user ${user.username}');
@@ -112,7 +112,7 @@ class UserController extends GetxController {
     if (response.success) {
       displaySuccess(lock ? 'User ${user.username} unlocked' : 'User ${user.username} locked');
       await fetchUsers();
-      clearTextEditingControllers();
+      clear();
       Get.back();
     } else {
       displayWarning(lock ? 'Failed to unlock ${user.username}' : 'Failed to lock ${user.username}');
@@ -133,7 +133,7 @@ class UserController extends GetxController {
     }
   }
 
-  void clearTextEditingControllers() {
+  void clear() {
     usernameEditingController.clear();
     passwordEditingController.clear();
     passwordConfirmationEditingController.clear();
