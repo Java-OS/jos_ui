@@ -4,6 +4,7 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/user_controller.dart';
 import 'package:jos_ui/model/realm.dart';
 import 'package:jos_ui/model/user.dart';
+import 'package:jos_ui/widget/text_box_widget.dart';
 
 UserController _userController = Get.put(UserController());
 
@@ -21,33 +22,12 @@ Future<void> displayAddUser(BuildContext context) async {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextField(
-                controller: _userController.usernameEditingController,
-                decoration: InputDecoration(
-                  label: Text('Username'),
-                  hintStyle: TextStyle(fontSize: 12),
-                ),
-              ),
-              TextField(
-                controller: _userController.passwordEditingController,
-                decoration: InputDecoration(
-                  label: Text('Password'),
-                  hintStyle: TextStyle(fontSize: 12),
-                ),
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-              ),
-              TextField(
-                controller: _userController.passwordConfirmationEditingController,
-                decoration: InputDecoration(
-                  label: Text('Confirm password'),
-                  hintStyle: TextStyle(fontSize: 12),
-                ),
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-              ),
+              SizedBox(height: 4),
+              TextBox(controller: _userController.usernameEditingController, label: 'Username'),
+              SizedBox(height: 8),
+              TextBox(controller: _userController.passwordEditingController, label: 'Password', isPassword: true),
+              SizedBox(height: 8),
+              TextBox(controller: _userController.passwordEditingController, label: 'Confirm password', isPassword: true),
               SizedBox(height: 20),
               Row(
                 children: [
@@ -88,30 +68,20 @@ Future<void> displayUpdatePassword(User user, BuildContext context) async {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                  width: double.infinity,
-                  height: 33,
-                  color: Colors.grey[200],
-                  child: Center(child: Text(user.username, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))),
-              TextField(
-                controller: _userController.passwordEditingController,
-                decoration: InputDecoration(
-                  label: Text('Password'),
-                  hintStyle: TextStyle(fontSize: 12),
+                width: double.infinity,
+                height: 33,
+                color: Colors.grey[200],
+                child: Center(
+                  child: Text(
+                    user.username,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
                 ),
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
               ),
-              TextField(
-                controller: _userController.passwordConfirmationEditingController,
-                decoration: InputDecoration(
-                  label: Text('Confirm password'),
-                  hintStyle: TextStyle(fontSize: 12),
-                ),
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-              ),
+              SizedBox(height: 8),
+              TextBox(controller: _userController.passwordEditingController, label: 'Password', isPassword: true),
+              SizedBox(height: 8),
+              TextBox(controller: _userController.passwordConfirmationEditingController, label: 'Confirm password', isPassword: true),
               SizedBox(height: 20),
               Align(
                 alignment: Alignment.centerRight,
@@ -155,7 +125,7 @@ Future<void> displayUpdateRoles(User user, BuildContext context) async {
                   children: [
                     Text(user.username, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                     SizedBox(width: 8),
-                    Obx(() => Text('${_userController.realmBit}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18,color: Colors.black45))),
+                    Obx(() => Text('${_userController.realmBit}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black45))),
                   ],
                 ),
               ),

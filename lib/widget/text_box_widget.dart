@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 class TextBox extends StatefulWidget {
   final TextEditingController controller;
   final String? label;
+  final Function(String)? onSubmit;
+  final bool isPassword;
 
-  const TextBox({super.key, required this.controller, this.label});
+  const TextBox({super.key, required this.controller, this.label, this.onSubmit, this.isPassword = false});
 
   @override
   State<TextBox> createState() => _TextBoxState();
@@ -19,9 +21,13 @@ class _TextBoxState extends State<TextBox> {
       alignment: Alignment.center,
       children: [
         TextField(
+          onSubmitted: (e) => widget.onSubmit!(e),
           controller: widget.controller,
           style: TextStyle(fontSize: 14),
           maxLines: 1,
+          obscureText: widget.isPassword ? true : false,
+          enableSuggestions: widget.isPassword ? false : true,
+          autocorrect: widget.isPassword ? false : true,
           decoration: InputDecoration(
             label: Text(widget.label ?? ''),
             border: OutlineInputBorder(),

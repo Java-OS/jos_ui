@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/environment_controller.dart';
+import 'package:jos_ui/widget/text_box_widget.dart';
 
 EnvironmentController _environmentController = Get.put(EnvironmentController());
 
@@ -29,8 +30,9 @@ Future<void> _displayModal(BuildContext context, Function execute) async {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextField(controller: _environmentController.keyEditingController, decoration: InputDecoration(label: Text('Key'), hintStyle: TextStyle(fontSize: 12))),
-              TextField(controller: _environmentController.valueEditingController, decoration: InputDecoration(label: Text('Value'), hintStyle: TextStyle(fontSize: 12))),
+              TextBox(controller: _environmentController.keyEditingController, label: 'Key'),
+              SizedBox(height: 8),
+              TextBox(controller: _environmentController.valueEditingController, label: 'Value'),
               SizedBox(height: 20),
               Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => execute(), child: Text('Apply')))
             ],

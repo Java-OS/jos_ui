@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/system_controller.dart';
+import 'package:jos_ui/widget/text_box_widget.dart';
 
 class BasicComponent extends StatefulWidget {
   const BasicComponent({super.key});
@@ -23,12 +24,11 @@ class _BasicComponentState extends State<BasicComponent> {
     return Expanded(
       child: Stack(
         children: [
-          TextField(
+          TextBox(
+            isPassword: false,
             controller: systemController.hostnameEditingController,
-            decoration: InputDecoration(
-              label: Text('Hostname'),
-            ),
-            onSubmitted: (_) => systemController.changeHostname(),
+            label: 'Hostname',
+            onSubmit: (_) => systemController.changeHostname(),
           ),
           Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => systemController.changeHostname(), child: Text('Apply')))
         ],
