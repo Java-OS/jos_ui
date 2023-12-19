@@ -62,8 +62,8 @@ class _UserManagementComponentState extends State<UserManagementComponent> {
             alignment: Alignment.centerLeft,
             child: Row(
               children: [
-                IconButton(onPressed: username == 'admin' ? null :  () => displayUpdateRoles(user, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.security_outlined, size: 16)),
-                IconButton(onPressed: username == 'admin' ? null :  () => userController.lockOrUnlockUser(user), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(user.lock ? Icons.lock : Icons.lock_open, size: 16)),
+                IconButton(onPressed: username == 'admin' ? null :  () => displayUpdateRoles(user, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.security, size: 16)),
+                IconButton(onPressed: username == 'admin' ? null :  () => userController.lockOrUnlockUser(user), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(user.lock ? Icons.person_off_outlined : Icons.person, size: 16)),
                 IconButton(onPressed: () => displayUpdatePassword(user, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.password_outlined, size: 16)),
                 IconButton(onPressed: username == 'admin' ? null : () => userController.deleteUser(user), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete_rounded, size: 16))
               ],

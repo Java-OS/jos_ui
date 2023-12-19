@@ -110,12 +110,12 @@ class UserController extends GetxController {
     var lock = user.lock;
     var response = await RestClient.rpc(lock ? RPC.userUnlock : RPC.userLock, parameters: reqParams);
     if (response.success) {
-      displaySuccess(lock ? 'User ${user.username} unlocked' : 'User ${user.username} locked');
+      displaySuccess(lock ? 'User ${user.username} activated' : 'User ${user.username} disabled');
       await fetchUsers();
       clear();
       Get.back();
     } else {
-      displayWarning(lock ? 'Failed to unlock ${user.username}' : 'Failed to lock ${user.username}');
+      displayWarning(lock ? 'Failed to activate ${user.username}' : 'Failed to disable ${user.username}');
     }
   }
 
