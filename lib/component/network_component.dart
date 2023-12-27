@@ -27,9 +27,13 @@ class _NetworkComponentState extends State<NetworkComponent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.alt_route_rounded, size: 16, color: Colors.black)),
-          OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.directions_outlined, size: 16, color: Colors.black)),
-          SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
+              OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.directions_outlined, size: 16, color: Colors.black)),
+            ],
+          ),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -53,12 +57,11 @@ class _NetworkComponentState extends State<NetworkComponent> {
   }
 
   List<DataColumn> getNetworkInterfacesColumns() {
-    var interfaceColumn = DataColumn(label: Expanded(child: Text('Iface', style: TextStyle(fontWeight: FontWeight.bold))));
+    var interfaceColumn = DataColumn(label: Expanded(child: Text('Interface', style: TextStyle(fontWeight: FontWeight.bold))));
     var macColumn = DataColumn(label: Expanded(child: Text('Mac', style: TextStyle(fontWeight: FontWeight.bold))));
-    var ipColumn = DataColumn(label: Expanded(child: Text('Ip', style: TextStyle(fontWeight: FontWeight.bold))));
-    var netmaskColumn = DataColumn(label: Expanded(child: Text('Netmask', style: TextStyle(fontWeight: FontWeight.bold))));
-    var cidrColumn = DataColumn(label: Expanded(child: Text('CIDR', style: TextStyle(fontWeight: FontWeight.bold))));
-    return [interfaceColumn, macColumn, ipColumn, netmaskColumn, cidrColumn];
+    var ipColumn = DataColumn(label: Expanded(child: Text('Ip/cidr', style: TextStyle(fontWeight: FontWeight.bold))));
+    var actionColumn = DataColumn(label: Expanded(child: SizedBox.shrink()));
+    return [interfaceColumn, macColumn, ipColumn, actionColumn];
   }
 
   List<DataRow> getEthernetsRows() {
@@ -66,12 +69,21 @@ class _NetworkComponentState extends State<NetworkComponent> {
   }
 
   DataRow _mapEthernetToDataRow(Ethernet ethernet) {
-    return DataRow(cells: [
-      DataCell(Text(ethernet.iface, style: TextStyle(fontSize: 12))),
-      DataCell(Text(ethernet.mac ?? '', style: TextStyle(fontSize: 12))),
-      DataCell(Text(ethernet.ip ?? '', style: TextStyle(fontSize: 12))),
-      DataCell(Text(ethernet.netmask ?? '', style: TextStyle(fontSize: 12))),
-      DataCell(Text(ethernet.cidr ?? '', style: TextStyle(fontSize: 12))),
-    ]);
+    var ipCidr = ethernet.ip != null ? '${ethernet.ip}/${ethernet.cidr}' : '';
+    return DataRow(
+      cells: [
+        DataCell(Text(ethernet.iface, style: TextStyle(fontSize: 12))),
+        DataCell(Text(ethernet.mac ?? '', style: TextStyle(fontSize: 12))),
+        DataCell(Text(ipCidr, style: TextStyle(fontSize: 12))),
+        DataCell(
+          Row(
+            children: [
+              IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
+              IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16)),
+            ],
+          ),
+        )
+      ],
+    );
   }
 }
