@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/toast.dart';
@@ -5,6 +7,7 @@ import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/model/network/route.dart' as route;
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rpc_provider.dart';
+import 'dart:developer' as developer;
 
 class NetworkController extends GetxController {
   final TextEditingController gatewayEditingController = TextEditingController();
@@ -39,7 +42,6 @@ class NetworkController extends GetxController {
   Future<void> addDefaultGateway() async {
     var response = await RestClient.rpc(RPC.networkRouteDefaultGateway, parameters: {'gateway': gatewayEditingController.text});
     if (response.success) {
-      displaySuccess('Add default gateway ${gatewayEditingController.text}');
       await fetchRoutes();
       Get.back();
     }
@@ -56,7 +58,6 @@ class NetworkController extends GetxController {
     };
     var response = await RestClient.rpc(RPC.networkRouteAdd, parameters: reqParam);
     if (response.success) {
-      displaySuccess('Add default gateway ${gatewayEditingController.text}');
       await fetchRoutes();
       Get.back();
       clear();
@@ -73,7 +74,6 @@ class NetworkController extends GetxController {
     };
     var response = await RestClient.rpc(RPC.networkRouteAdd, parameters: reqParam);
     if (response.success) {
-      displaySuccess('Add default gateway ${gatewayEditingController.text}');
       await fetchRoutes();
       Get.back();
       clear();
@@ -84,10 +84,57 @@ class NetworkController extends GetxController {
   Future<void> deleteRoute(int index) async {
     var response = await RestClient.rpc(RPC.networkRouteDelete, parameters: {'index': index});
     if (response.success) {
-      displaySuccess('Route index $index deleted');
       await fetchRoutes();
     }
     clear();
+  }
+
+  Future<void> setIp(String iface) async {
+    var reqParam = {
+      'ethernet': iface,
+      'ipAddress': addressEditingController.text,
+      'netmask': netmaskEditingController.text,
+    };
+
+    var response = await RestClient.rpc(RPC.networkEthernetSetIp, parameters: reqParam);
+    if (response.success) {
+      await fetchEthernets();
+      Get.back();
+      clear();
+    }
+  }
+
+  Future<void> ifDown(String iface) async {
+    var reqParam = {
+      'ethernet': iface
+      };
+    var response = await RestClient.rpc(RPC.networkEthernetDown, parameters: reqParam);
+    if (response.success) {
+      await fetchEthernets();
+      clear();
+    }
+  }
+
+  Future<void> ifUp(String iface) async {
+    var reqParam = {
+      'ethernet': iface
+    };
+    var response = await RestClient.rpc(RPC.networkEthernetUp, parameters: reqParam);
+    if (response.success) {
+      await fetchEthernets();
+      clear();
+    }
+  }
+
+  Future<void> flush(String iface) async {
+    var reqParam = {
+      'ethernet': iface
+    };
+    var response = await RestClient.rpc(RPC.networkEthernetFlush, parameters: reqParam);
+    if (response.success) {
+      await fetchEthernets();
+      clear();
+    }
   }
 
   void clear() {

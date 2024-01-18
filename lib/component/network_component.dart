@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/network_controller.dart';
+import 'package:jos_ui/dialog/network_ethernet_dialog.dart';
 import 'package:jos_ui/dialog/network_routes_dialog.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
+import 'package:jos_ui/widget/char_button.dart';
 
 class NetworkComponent extends StatefulWidget {
   const NetworkComponent({super.key});
@@ -12,12 +14,12 @@ class NetworkComponent extends StatefulWidget {
 }
 
 class _NetworkComponentState extends State<NetworkComponent> {
-  final NetworkController networkController = Get.put(NetworkController());
+  final NetworkController _networkController = Get.put(NetworkController());
 
   @override
   void initState() {
     super.initState();
-    networkController.fetchEthernets();
+    _networkController.fetchEthernets();
   }
 
   @override
@@ -30,8 +32,13 @@ class _NetworkComponentState extends State<NetworkComponent> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
-              OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.directions_outlined, size: 16, color: Colors.black)),
+              OutlinedButton(
+                  onPressed: () => displayNetworkRoutesModal(context),
+                  child: Icon(Icons.add, size: 16, color: Colors.black)),
+              OutlinedButton(
+                  onPressed: () => displayNetworkRoutesModal(context),
+                  child: Icon(Icons.directions_outlined,
+                      size: 16, color: Colors.black)),
             ],
           ),
           Expanded(
@@ -57,15 +64,25 @@ class _NetworkComponentState extends State<NetworkComponent> {
   }
 
   List<DataColumn> getNetworkInterfacesColumns() {
-    var interfaceColumn = DataColumn(label: Expanded(child: Text('Interface', style: TextStyle(fontWeight: FontWeight.bold))));
-    var macColumn = DataColumn(label: Expanded(child: Text('Mac', style: TextStyle(fontWeight: FontWeight.bold))));
-    var ipColumn = DataColumn(label: Expanded(child: Text('Ip/cidr', style: TextStyle(fontWeight: FontWeight.bold))));
+    var interfaceColumn = DataColumn(
+        label: Expanded(
+            child: Text('Interface',
+                style: TextStyle(fontWeight: FontWeight.bold))));
+    var macColumn = DataColumn(
+        label: Expanded(
+            child: Text('Mac', style: TextStyle(fontWeight: FontWeight.bold))));
+    var ipColumn = DataColumn(
+        label: Expanded(
+            child: Text('Ip/cidr',
+                style: TextStyle(fontWeight: FontWeight.bold))));
     var actionColumn = DataColumn(label: Expanded(child: SizedBox.shrink()));
     return [interfaceColumn, macColumn, ipColumn, actionColumn];
   }
 
   List<DataRow> getEthernetsRows() {
-    return networkController.ethernetList.map((e) => _mapEthernetToDataRow(e)).toList();
+    return _networkController.ethernetList
+        .map((e) => _mapEthernetToDataRow(e))
+        .toList();
   }
 
   DataRow _mapEthernetToDataRow(Ethernet ethernet) {
@@ -78,8 +95,30 @@ class _NetworkComponentState extends State<NetworkComponent> {
         DataCell(
           Row(
             children: [
-              IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
-              IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16)),
+              Visibility(
+                visible: ethernet.isUp,
+                replacement: CharButton(
+                    char: 'E',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                    toolTip: 'Click to enable',
+                    onPressed: () => _networkController.ifUp(ethernet.iface)),
+                child: CharButton(
+                    char: 'D',
+                    toolTip: 'Click to disable',
+                    onPressed: () => _networkController.ifDown(ethernet.iface)),
+              ),
+              SizedBox(width: 4),
+              CharButton(
+                  char: 'F',
+                  toolTip: 'Click to flush',
+                  onPressed: () => _networkController.flush(ethernet.iface)),
+              IconButton(
+                  onPressed: () =>
+                      displayEthernetConfig(ethernet.iface, context),
+                  splashRadius: 14,
+                  splashColor: Colors.transparent,
+                  icon: Icon(Icons.edit, size: 16)),
             ],
           ),
         )
