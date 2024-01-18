@@ -30,7 +30,8 @@ class _TabBoxState extends State<TabBox> {
       var tabItem = widget.tabs[i];
       var p = Padding(
         padding: const EdgeInsets.only(right: 4.0),
-        child: GestureDetector(
+        child: InkWell(
+          mouseCursor: SystemMouseCursors.click,
           onTap: () => setState(() => selectedTabIndex = i),
           child: Container(
             constraints: BoxConstraints(minWidth: 70),
