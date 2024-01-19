@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:jos_ui/controller/module_controller.dart';
 
 class ModuleComponent extends StatefulWidget {
   const ModuleComponent({super.key});
@@ -8,12 +10,12 @@ class ModuleComponent extends StatefulWidget {
 }
 
 class _ModuleComponentState extends State<ModuleComponent> {
-  final _listUsers = [
-    {'moduleName': 'm1:0.1', 'enable': true, 'lock': true,'active':true},
-    {'moduleName': 'm2:2.1', 'enable': true, 'lock': true,'active':true},
-    {'moduleName': 'm3:0.2', 'enable': true, 'lock': false,'active':false},
-    {'moduleName': 'm4:0.5', 'enable': true, 'lock': false,'active':true},
-  ];
+  final ModuleController _moduleController = Get.put(ModuleController());
+
+  @override
+  void initState() {
+    _moduleController.fetchModules();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class _ModuleComponentState extends State<ModuleComponent> {
               scrollDirection: Axis.vertical,
               child: SizedBox(
                 width: double.infinity,
-                child: DataTable(dataRowMinHeight: 12, dataRowMaxHeight: 28, columnSpacing: 0, columns: getUserTableColumns(), rows: getUserTableRows()),
+                child: Obx(() => DataTable(dataRowMinHeight: 12, dataRowMaxHeight: 28, columnSpacing: 0, columns: getUserTableColumns(), rows: getUserTableRows())),
               ),
             ),
           )
@@ -39,37 +41,33 @@ class _ModuleComponentState extends State<ModuleComponent> {
   }
 
   List<DataColumn> getUserTableColumns() {
-    var idColumn = DataColumn(label: Text('Module Name', style: TextStyle(fontWeight: FontWeight.bold)));
-    var usernameColumn = DataColumn(label: Text('Enable', style: TextStyle(fontWeight: FontWeight.bold)));
-    var realmBitColumn = DataColumn(label: Text('Lock', style: TextStyle(fontWeight: FontWeight.bold)));
-    var lockColumn = DataColumn(label: Text('Active', style: TextStyle(fontWeight: FontWeight.bold)));
+    var nameColumn = DataColumn(label: Text('Name', style: TextStyle(fontWeight: FontWeight.bold)));
+    var versionColumn = DataColumn(label: Text('version', style: TextStyle(fontWeight: FontWeight.bold)));
     var actionColumn = DataColumn(label: Expanded(child: SizedBox.shrink()));
-    return [idColumn, usernameColumn, realmBitColumn, lockColumn, actionColumn];
+    return [nameColumn, versionColumn, actionColumn];
   }
 
   List<DataRow> getUserTableRows() {
     final resultList = <DataRow>[];
-    for (final user in _listUsers) {
-      var moduleName = user['moduleName'].toString();
-      var enable = user['enable'] as bool;
-      var lock = user['lock'] as bool;
-      var active = user['active'] as bool;
+    for (final module in _moduleController.moduleList) {
+      var name = module.name;
+      var version = module.version;
+      var isLock = module.lock;
+      var isEnable = module.enable;
+      var isActiveService = module.activeService;
+      var containService = module.containService;
       var row = DataRow(cells: [
-        DataCell(Text(moduleName, style: TextStyle(fontSize: 12))),
-        DataCell(IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(lock ? Icons.remove_circle_outline : Icons.done_all, size: 16))),
-        DataCell(Icon(lock ? Icons.lock : Icons.lock_open, size: 16)),
-        DataCell(IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(active ? Icons.pause : Icons.play_arrow, size: 16))),
+        DataCell(Text(name, style: TextStyle(fontSize: 12))),
+        DataCell(Text(version, style: TextStyle(fontSize: 12))),
         DataCell(
-          Align(
-            alignment: Alignment.centerRight,
-            child: SizedBox(
-              width: 80,
-              child: Row(
-                children: [
-                  IconButton(onPressed: () {}, splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16))
-                ],
-              ),
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              getLinkButton(name, version, isEnable, isLock, containService, isActiveService),
+              getServiceButton(name, version, isActiveService, containService, isEnable),
+              getDeleteButton(name, version, isLock),
+            ],
           ),
         ),
       ]);
@@ -77,5 +75,32 @@ class _ModuleComponentState extends State<ModuleComponent> {
     }
 
     return resultList;
+  }
+
+  Widget getDeleteButton(String moduleName, String version, bool isLock) {
+    return IconButton(
+      onPressed: isLock ? null : () => _moduleController.removeModule(moduleName, version),
+      splashRadius: 10,
+      splashColor: Colors.transparent,
+      icon: Icon(Icons.delete, size: 16),
+    );
+  }
+
+  Widget getServiceButton(String moduleName, String version, bool isActiveService, bool containService, bool isEnable) {
+    return IconButton(
+      onPressed: !isEnable || !containService ? null : () => isActiveService ? _moduleController.stopService(moduleName, version) : _moduleController.startService(moduleName, version),
+      splashRadius: 10,
+      splashColor: Colors.transparent,
+      icon: Icon(isActiveService ? Icons.pause : Icons.play_arrow, size: 16),
+    );
+  }
+
+  Widget getLinkButton(String moduleName, String version, bool isEnable, bool isLock, bool containService, bool isActiveService) {
+    return IconButton(
+      onPressed: (containService && isActiveService) || (isLock && isEnable) ? null : () => isEnable ? _moduleController.disableModule(moduleName, version) : _moduleController.enableModule(moduleName, version),
+      splashRadius: 10,
+      splashColor: Colors.transparent,
+      icon: Icon(isEnable ? Icons.link_outlined : Icons.link_off_outlined, size: 16),
+    );
   }
 }

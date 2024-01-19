@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/toast.dart';
@@ -7,7 +5,6 @@ import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/model/network/route.dart' as route;
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rpc_provider.dart';
-import 'dart:developer' as developer;
 
 class NetworkController extends GetxController {
   final TextEditingController gatewayEditingController = TextEditingController();
