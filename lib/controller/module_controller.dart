@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/module.dart';
@@ -19,7 +20,7 @@ class ModuleController extends GetxController {
     }
   }
 
-  Future<void> removeModule(String moduleName,String version) async {
+  Future<void> removeModule(String moduleName, String version) async {
     var fullName = '$moduleName:$version';
     developer.log('try to remove module $fullName');
     var reqParam = {
@@ -31,7 +32,7 @@ class ModuleController extends GetxController {
     }
   }
 
-  Future<void> enableModule(String moduleName,String version) async {
+  Future<void> enableModule(String moduleName, String version) async {
     var fullName = '$moduleName:$version';
     developer.log('try to enable module $fullName');
     var reqParam = {
@@ -43,7 +44,7 @@ class ModuleController extends GetxController {
     }
   }
 
-  Future<void> disableModule(String moduleName,String version) async {
+  Future<void> disableModule(String moduleName, String version) async {
     var fullName = '$moduleName:$version';
     developer.log('try to disable module $fullName');
     var reqParam = {
@@ -55,7 +56,7 @@ class ModuleController extends GetxController {
     }
   }
 
-  Future<void> startService(String moduleName,String version) async {
+  Future<void> startService(String moduleName, String version) async {
     var fullName = '$moduleName:$version';
     developer.log('try to start module service $fullName');
     var reqParam = {
@@ -67,7 +68,7 @@ class ModuleController extends GetxController {
     }
   }
 
-  Future<void> stopService(String moduleName,String version) async {
+  Future<void> stopService(String moduleName, String version) async {
     var fullName = '$moduleName:$version';
     developer.log('try to stop module service $fullName');
     var reqParam = {
@@ -76,6 +77,14 @@ class ModuleController extends GetxController {
     var response = await RestClient.rpc(RPC.moduleStop, parameters: reqParam);
     if (response.success) {
       await fetchModules();
+    }
+  }
+
+  Future<void> uploadModule() async {
+    var picked = await FilePickerWeb.platform.pickFiles();
+    if (picked != null) {
+      var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name);
+      if (uploaded) fetchModules();
     }
   }
 }

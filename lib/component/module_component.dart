@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/module_controller.dart';
+import 'package:jos_ui/widget/upload_file_button.dart';
 
 class ModuleComponent extends StatefulWidget {
   const ModuleComponent({super.key});
@@ -24,7 +25,7 @@ class _ModuleComponentState extends State<ModuleComponent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          OutlinedButton(onPressed: () {}, child: Icon(Icons.add, size: 16, color: Colors.black)),
+          OutlinedButton(onPressed: () => _moduleController.uploadModule(), child: Icon(Icons.add, size: 16, color: Colors.black)),
           SizedBox(width: 8),
           Expanded(
             child: SingleChildScrollView(

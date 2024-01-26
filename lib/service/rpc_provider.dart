@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart' as getx;
 import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/RpcResponse.dart';
@@ -10,12 +13,14 @@ import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/storage_service.dart';
 
 class RestClient {
-  static final JvmController jvmController = Get.put(JvmController());
+  static final JvmController jvmController = getx.Get.put(JvmController());
   static final _dio = Dio();
 
   static String _baseLoginUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/login";
 
   static String _baseRpcUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/rpc";
+
+  static String _baseUploadUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/upload";
 
   static Future<bool> login(String username, String password) async {
     developer.log('Login request [$username] [$password] [${_baseLoginUrl()}]');
@@ -66,7 +71,7 @@ class RestClient {
   static Future<RpcResponse> rpc(RPC rpc, {Map<String, dynamic>? parameters}) async {
     developer.log('Request call rpc: [$rpc] [$parameters] [${_baseLoginUrl()}]');
     var token = StorageService.getItem('token');
-    if (token == null) Get.toNamed('/');
+    if (token == null) getx.Get.toNamed('/');
     var header = {
       'authorization': 'Bearer $token',
       'x-rpc-code': '${rpc.value}',
@@ -84,7 +89,7 @@ class RestClient {
       } else if (statusCode == 204) {
         return RpcResponse(true, null, null, null);
       } else if (statusCode == 401) {
-        Get.offAllNamed('/');
+        getx.Get.offAllNamed('/');
       } else {
         String msg = jsonDecode(response.data)['message'];
         displayWarning(msg, timeout: 5);
@@ -113,5 +118,21 @@ class RestClient {
       developer.log('Receive header X-Jvm-Restart with value: [${jvmNeedRestart.first}]');
       jvmNeedRestart.first == 'true' ? jvmController.enableRestartJvm() : jvmController.disableRestartJvm();
     }
+  }
+
+  static Future<bool> upload(Uint8List bytes,String fileName) async {
+    developer.log('selected file: $fileName');
+
+    var token = StorageService.getItem('token');
+    var header = {
+      'authorization': 'Bearer $token',
+    };
+
+    var formMap = {
+      'file': MultipartFile.fromBytes(bytes, filename: fileName),
+    };
+    final formData = FormData.fromMap(formMap);
+    final response = await _dio.post(_baseUploadUrl(), data: formData, options: Options(headers: header, responseType: ResponseType.plain, validateStatus: (_) => true));
+    return response.statusCode == 200;
   }
 }
