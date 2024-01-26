@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/module_controller.dart';
-import 'package:jos_ui/widget/upload_file_button.dart';
 
 class ModuleComponent extends StatefulWidget {
   const ModuleComponent({super.key});
