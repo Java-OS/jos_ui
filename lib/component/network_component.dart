@@ -29,17 +29,9 @@ class _NetworkComponentState extends State<NetworkComponent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              OutlinedButton(
-                  onPressed: () => displayNetworkRoutesModal(context),
-                  child: Icon(Icons.add, size: 16, color: Colors.black)),
-              OutlinedButton(
-                  onPressed: () => displayNetworkRoutesModal(context),
-                  child: Icon(Icons.directions_outlined,
-                      size: 16, color: Colors.black)),
-            ],
+          OutlinedButton(
+            onPressed: () => displayNetworkRoutesModal(context),
+            child: Icon(Icons.directions_outlined, size: 16, color: Colors.black),
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -64,25 +56,15 @@ class _NetworkComponentState extends State<NetworkComponent> {
   }
 
   List<DataColumn> getNetworkInterfacesColumns() {
-    var interfaceColumn = DataColumn(
-        label: Expanded(
-            child: Text('Interface',
-                style: TextStyle(fontWeight: FontWeight.bold))));
-    var macColumn = DataColumn(
-        label: Expanded(
-            child: Text('Mac', style: TextStyle(fontWeight: FontWeight.bold))));
-    var ipColumn = DataColumn(
-        label: Expanded(
-            child: Text('Ip/cidr',
-                style: TextStyle(fontWeight: FontWeight.bold))));
+    var interfaceColumn = DataColumn(label: Expanded(child: Text('Interface', style: TextStyle(fontWeight: FontWeight.bold))));
+    var macColumn = DataColumn(label: Expanded(child: Text('Mac', style: TextStyle(fontWeight: FontWeight.bold))));
+    var ipColumn = DataColumn(label: Expanded(child: Text('Ip/cidr', style: TextStyle(fontWeight: FontWeight.bold))));
     var actionColumn = DataColumn(label: Expanded(child: SizedBox.shrink()));
     return [interfaceColumn, macColumn, ipColumn, actionColumn];
   }
 
   List<DataRow> getEthernetsRows() {
-    return _networkController.ethernetList
-        .map((e) => _mapEthernetToDataRow(e))
-        .toList();
+    return _networkController.ethernetList.map((e) => _mapEthernetToDataRow(e)).toList();
   }
 
   DataRow _mapEthernetToDataRow(Ethernet ethernet) {
@@ -97,28 +79,12 @@ class _NetworkComponentState extends State<NetworkComponent> {
             children: [
               Visibility(
                 visible: ethernet.isUp,
-                replacement: CharButton(
-                    char: 'E',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 11,
-                    toolTip: 'Click to enable',
-                    onPressed: () => _networkController.ifUp(ethernet.iface)),
-                child: CharButton(
-                    char: 'D',
-                    toolTip: 'Click to disable',
-                    onPressed: () => _networkController.ifDown(ethernet.iface)),
+                replacement: CharButton(char: 'E', fontWeight: FontWeight.bold, fontSize: 11, toolTip: 'Click to enable', onPressed: () => _networkController.ifUp(ethernet.iface)),
+                child: CharButton(char: 'D', toolTip: 'Click to disable', onPressed: () => _networkController.ifDown(ethernet.iface)),
               ),
               SizedBox(width: 4),
-              CharButton(
-                  char: 'F',
-                  toolTip: 'Click to flush',
-                  onPressed: () => _networkController.flush(ethernet.iface)),
-              IconButton(
-                  onPressed: () =>
-                      displayEthernetConfig(ethernet.iface, context),
-                  splashRadius: 14,
-                  splashColor: Colors.transparent,
-                  icon: Icon(Icons.edit, size: 16)),
+              CharButton(char: 'F', toolTip: 'Click to flush', onPressed: () => _networkController.flush(ethernet.iface)),
+              IconButton(onPressed: () => displayEthernetConfig(ethernet.iface, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
             ],
           ),
         )

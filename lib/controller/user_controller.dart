@@ -7,7 +7,7 @@ import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/realm.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/model/user.dart';
-import 'package:jos_ui/service/rpc_provider.dart';
+import 'package:jos_ui/service/rest_client.dart';
 
 class UserController extends GetxController {
   final TextEditingController usernameEditingController = TextEditingController();

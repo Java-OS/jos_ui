@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/rpc_provider.dart';
+import 'package:jos_ui/service/rest_client.dart';
 
 class SystemController extends GetxController {
   final TextEditingController hostnameEditingController = TextEditingController();

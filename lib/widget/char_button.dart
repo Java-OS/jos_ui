@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class CharButton extends StatelessWidget {
   final String char;
-  final Color? color;
+  final Color? textColor;
+  final Color? backgroundColor;
   final double? size;
   final double? fontSize;
   final FontWeight? fontWeight;
@@ -11,12 +12,13 @@ class CharButton extends StatelessWidget {
 
   const CharButton({super.key,
     required this.char,
-    this.color = Colors.black,
+    this.textColor = Colors.black,
     this.size = 20,
     this.fontSize = 11,
     this.fontWeight = FontWeight.normal,
     this.onPressed,
-    this.toolTip});
+    this.toolTip,
+    this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class CharButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
+          backgroundColor: backgroundColor,
           padding: EdgeInsets.zero,
         ),
         child: toolTip == null ? getText() : getTextWithTooltip(),
@@ -36,7 +39,7 @@ class CharButton extends StatelessWidget {
   Widget getText() {
     return Text(char,
         style: TextStyle(
-            fontWeight: fontWeight, fontSize: fontSize, color: color));
+            fontWeight: fontWeight, fontSize: fontSize, color: textColor));
   }
 
   Widget getTextWithTooltip() {

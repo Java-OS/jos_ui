@@ -5,8 +5,9 @@ class DropDownMenu<T> extends StatefulWidget {
   final Text hint;
   final List<DropdownMenuItem<T>> items;
   final Function(dynamic) onChanged;
+  final bool displayClearButton;
 
-  const DropDownMenu({super.key, required this.value, required this.hint, required this.items, required this.onChanged});
+  const DropDownMenu({super.key, required this.value, required this.hint, required this.items, required this.onChanged, this.displayClearButton = true});
 
   @override
   State<DropDownMenu> createState() => _DropDownMenuState();
@@ -34,7 +35,7 @@ class _DropDownMenuState extends State<DropDownMenu> {
           onChanged: (value) => callOnChangeFunction(value),
         ),
         Visibility(
-          visible: isClearButtonVisible,
+          visible: widget.displayClearButton && isClearButtonVisible,
           child: Align(
             alignment: Alignment.centerRight,
             child: Padding(

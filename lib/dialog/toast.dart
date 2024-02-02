@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:toastification/toastification.dart';
+import 'package:toastification/src/widget/built_in/built_in_builder.dart';
 
 enum MessageType {
   info(Icons.info_outline_rounded, Colors.blue, 'Information'),
@@ -53,8 +54,8 @@ ToastificationItem _showToast({
         item: holder,
         type: type,
         style: style,
-        title: title,
-        description: description,
+        title: Text(title),
+        description: Text(description ?? ''),
         icon: icon,
         primaryColor: primaryColor,
         backgroundColor: backgroundColor,

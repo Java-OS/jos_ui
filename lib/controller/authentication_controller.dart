@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/toast.dart';
-import 'package:jos_ui/service/rpc_provider.dart';
+import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/service/storage_service.dart';
 
 class AuthenticationController extends GetxController {

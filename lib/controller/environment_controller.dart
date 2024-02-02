@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/rpc_provider.dart';
+import 'package:jos_ui/service/rest_client.dart';
 
 class EnvironmentController extends GetxController {
   final TextEditingController keyEditingController = TextEditingController();

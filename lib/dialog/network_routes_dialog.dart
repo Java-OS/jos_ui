@@ -70,17 +70,15 @@ List<DataRow> _getNetworkRouteRows() {
   for (var item in list) {
     var isLock = item.isLock;
     var row = DataRow(cells: [
-      DataCell(Text(item.index.toString(), style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
-      DataCell(Text(item.destination, style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
-      DataCell(Text(item.netmask, style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
-      DataCell(Text(item.gateway, style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
-      DataCell(Text(item.iface, style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
-      DataCell(Text(item.flags, style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
-      DataCell(Text(item.metrics.toString(), style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
-      DataCell(Text(item.mtu.toString(), style: TextStyle(fontSize: 12,color: isLock ? Colors.grey : Colors.black))),
-      DataCell(Row(children: [
-        IconButton(onPressed: isLock ? null : () => _networkController.deleteRoute(item.index), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16))
-      ])),
+      DataCell(Text(item.index.toString(), style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.destination, style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.netmask, style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.gateway, style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.iface, style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.flags, style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.metrics.toString(), style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Text(item.mtu.toString(), style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
+      DataCell(Row(children: [IconButton(onPressed: isLock ? null : () => _networkController.deleteRoute(item.index), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16))])),
     ]);
     dataRowList.add(row);
   }
@@ -122,11 +120,7 @@ Widget defaultGatewayTab() {
   return Padding(
     padding: EdgeInsets.all(14.0),
     child: Column(
-      children: [
-        TextBox(controller: _networkController.gatewayEditingController, label: 'Gateway'),
-        SizedBox(height: 30),
-        Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _networkController.addDefaultGateway(), child: Text('Apply')))
-      ],
+      children: [TextBox(controller: _networkController.gatewayEditingController, label: 'Gateway'), SizedBox(height: 30), Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _networkController.addDefaultGateway(), child: Text('Apply')))],
     ),
   );
 }

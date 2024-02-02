@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/module_controller.dart';
+import 'package:jos_ui/dialog/log_dialog.dart';
 
 class ModuleComponent extends StatefulWidget {
   const ModuleComponent({super.key});
@@ -24,8 +25,13 @@ class _ModuleComponentState extends State<ModuleComponent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          OutlinedButton(onPressed: () => _moduleController.uploadModule(), child: Icon(Icons.add, size: 16, color: Colors.black)),
-          SizedBox(width: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              OutlinedButton(onPressed: () => _moduleController.uploadModule(), child: Icon(Icons.add, size: 16, color: Colors.black)),
+              OutlinedButton(onPressed: () => displayLoggerModal(context), child: Icon(Icons.description_outlined, size: 16, color: Colors.black)),
+            ],
+          ),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,

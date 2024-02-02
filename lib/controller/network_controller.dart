@@ -4,7 +4,7 @@ import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/model/network/route.dart' as route;
 import 'package:jos_ui/model/rpc.dart';
-import 'package:jos_ui/service/rpc_provider.dart';
+import 'package:jos_ui/service/rest_client.dart';
 
 class NetworkController extends GetxController {
   final TextEditingController gatewayEditingController = TextEditingController();
