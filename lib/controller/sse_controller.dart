@@ -64,6 +64,6 @@ class SSEController extends GetxController {
 
   Future<void> changeLevel(LogLevel level) async {
     logLevel.value = level;
-    connect();
+    if (isConnected.isTrue) connect();
   }
 }
