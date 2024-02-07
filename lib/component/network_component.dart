@@ -84,7 +84,7 @@ class _NetworkComponentState extends State<NetworkComponent> {
               ),
               SizedBox(width: 4),
               CharButton(char: 'F', toolTip: 'Click to flush', onPressed: () => _networkController.flush(ethernet.iface)),
-              IconButton(onPressed: () => displayEthernetConfig(ethernet.iface, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
+              IconButton(onPressed: () => displayEthernetConfig(ethernet, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
             ],
           ),
         )
