@@ -20,7 +20,6 @@ enum RPC {
   systemSetTimezone(15),
   systemFullInformation(16),
   systemEnvironmentUpdate(17),
-
   jvmVersion(100),
   jvmVendor(101),
   jvmTotalHeapSize(102),
@@ -99,7 +98,14 @@ enum RPC {
   userLock(804),
   userUnlock(805),
   userUpdateRole(806),
-  userRealmList(808);
+  userRealmList(808),
+
+  /*
+  * Logger
+  * */
+  logAppenderList(900),
+  logAppenderAdd(901),
+  logAppenderRemove(902);
 
   final num value;
 

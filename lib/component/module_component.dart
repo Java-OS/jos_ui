@@ -29,7 +29,7 @@ class _ModuleComponentState extends State<ModuleComponent> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               OutlinedButton(onPressed: () => _moduleController.uploadModule(), child: Icon(Icons.add, size: 16, color: Colors.black)),
-              OutlinedButton(onPressed: () => displayLoggerModal(context), child: Icon(Icons.description_outlined, size: 16, color: Colors.black)),
+              OutlinedButton(onPressed: () => displayLoggerModal(context), child: Icon(Icons.assignment_outlined, size: 16, color: Colors.black)),
             ],
           ),
           Expanded(
@@ -107,6 +107,15 @@ class _ModuleComponentState extends State<ModuleComponent> {
       splashRadius: 10,
       splashColor: Colors.transparent,
       icon: Icon(isEnable ? Icons.link_outlined : Icons.link_off_outlined, size: 16),
+    );
+  }
+
+  Widget getLogButton() {
+    return IconButton(
+      onPressed: () => displayLoggerModal(context),
+      splashRadius: 10,
+      splashColor: Colors.transparent,
+      icon: Icon(Icons.assignment_outlined, size: 16),
     );
   }
 }

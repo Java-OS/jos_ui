@@ -9,7 +9,7 @@ import 'package:get/get.dart' as getx;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jos_ui/controller/jvm_controller.dart';
-import 'package:jos_ui/controller/sse_controller.dart';
+import 'package:jos_ui/controller/log_controller.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/RpcResponse.dart';
 import 'package:jos_ui/model/log_level.dart';
@@ -19,7 +19,7 @@ import 'package:jos_ui/service/storage_service.dart';
 class RestClient {
   static final JvmController jvmController = getx.Get.put(JvmController());
   static final _http = http.Client();
-  static final SSEController _sseController = Get.put(SSEController());
+  static final LogController _sseController = Get.put(LogController());
   static String _baseLoginUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/login";
 
   static String _baseRpcUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/rpc";

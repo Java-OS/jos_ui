@@ -14,7 +14,7 @@ class Log {
   factory Log.fromText(String str) {
     Map<String, dynamic> jsonObject = jsonDecode(str);
     var dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(jsonObject['timestamp']));
-    var level = LogLevel.getRealm(jsonObject['level']);
+    var level = LogLevel.getValue(jsonObject['level']);
     var thread = jsonObject['thread'];
     var logger = jsonObject['logger'];
     var message = jsonObject['message'];

@@ -6,7 +6,7 @@ enum LogLevel {
   trace,
   all;
 
-  static LogLevel getRealm(String str) {
+  static LogLevel getValue(String str) {
     return LogLevel.values.singleWhere((element) => element.name.toUpperCase() == str.toUpperCase());
   }
 }

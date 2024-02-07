@@ -5,7 +5,7 @@ import 'package:jos_ui/controller/environment_controller.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/controller/module_controller.dart';
 import 'package:jos_ui/controller/network_controller.dart';
-import 'package:jos_ui/controller/sse_controller.dart';
+import 'package:jos_ui/controller/log_controller.dart';
 import 'package:jos_ui/controller/system_controller.dart';
 
 class InjectionProvider {
@@ -18,6 +18,6 @@ class InjectionProvider {
     Get.put(JvmController());
     Get.put(NetworkController());
     Get.put(ModuleController());
-    Get.put(SSEController());
+    Get.put(LogController());
   }
 }
