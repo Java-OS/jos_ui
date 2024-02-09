@@ -1,14 +1,14 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/basic_component.dart';
 import 'package:jos_ui/component/date_time_component.dart';
 import 'package:jos_ui/component/environment_component.dart';
+import 'package:jos_ui/component/filesystem_component.dart';
 import 'package:jos_ui/component/side_menu_component.dart';
 import 'package:jos_ui/component/top_menu_component.dart';
 import 'package:jos_ui/component/user_management_component.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/page_base_content.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -19,6 +19,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final SystemController _systemController = Get.put(SystemController());
+
   @override
   void initState() {
     super.initState();
@@ -65,6 +67,8 @@ class _SettingsPageState extends State<SettingsPage> {
         return displayEnvironmentsContent();
       case 3:
         return displayUserManagementContent();
+      case 4:
+        return displayFilesystemContent();
       default:
         return displayBasicSettings();
     }
@@ -121,6 +125,26 @@ class _SettingsPageState extends State<SettingsPage> {
           Text('Environment Variables', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
           Divider(),
           EnvironmentComponent(),
+        ],
+      ),
+    );
+  }
+
+  Widget displayFilesystemContent() {
+    return basicContent(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Filesystem', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+              OutlinedButton(onPressed: () => _systemController.fetchFilesystems(), child: Icon(Icons.refresh_rounded, size: 16, color: Colors.black)),
+            ],
+          ),
+          Divider(),
+          FilesystemComponent(),
         ],
       ),
     );

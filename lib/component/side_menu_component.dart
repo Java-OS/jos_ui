@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/basic_component.dart';
 import 'package:jos_ui/component/date_time_component.dart';
 import 'package:jos_ui/component/environment_component.dart';
+import 'package:jos_ui/component/filesystem_component.dart';
 import 'package:jos_ui/component/user_management_component.dart';
 import 'package:jos_ui/constant.dart';
 
@@ -17,10 +18,11 @@ class _SideMenuComponentState extends State<SideMenuComponent> {
   int _hoverIndex = -1;
 
   final menuItems = [
-    [BasicComponent(), Icons.info_outline_rounded],
-    [DateTimeComponent(), Icons.date_range],
-    [EnvironmentComponent(), Icons.join_right],
-    [UserManagementComponent(), Icons.groups_sharp],
+    Icons.info_outline_rounded,
+    Icons.date_range,
+    Icons.join_right,
+    Icons.groups_sharp,
+    Icons.save,
   ];
 
   @override
@@ -52,7 +54,7 @@ class _SideMenuComponentState extends State<SideMenuComponent> {
             height: 50,
             duration: Duration(milliseconds: 200),
             child: Center(
-              child: Icon(mi[1] as IconData,
+              child: Icon(mi,
                   size: 22,
                   color: _hoverIndex == index
                       ? Colors.blue

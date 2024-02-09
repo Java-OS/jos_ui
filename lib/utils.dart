@@ -24,3 +24,7 @@ String formatSize(int size) {
     return '${(size / EB).toStringAsFixed(2)} EB';
   }
 }
+
+String truncateWithEllipsis(int length, String myString) {
+  return (myString.length <= length) ? myString : '${myString.substring(0, length)}...';
+}

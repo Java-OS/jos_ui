@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 const componentBackgroundColor = Color.fromRGBO(247, 247, 247, 1);
 const dashboardMosaicBackgroundColor = Color.fromRGBO(80, 100, 80, 0.5);
 final navigatorKey = GlobalKey<NavigatorState>();
+final globalKey = GlobalKey();
 
 Widget getModalHeader(String title) {
   return Container(
@@ -23,8 +24,4 @@ Widget getModalHeader(String title) {
       ),
     ),
   );
-}
-
-String truncateWithEllipsis(int length, String myString) {
-  return (myString.length <= length) ? myString : '${myString.substring(0, length)}...';
 }

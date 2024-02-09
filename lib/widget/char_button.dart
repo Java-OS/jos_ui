@@ -4,7 +4,8 @@ class CharButton extends StatelessWidget {
   final String char;
   final Color? textColor;
   final Color? backgroundColor;
-  final double? size;
+  final double? width;
+  final double? height;
   final double? fontSize;
   final FontWeight? fontWeight;
   final VoidCallback? onPressed;
@@ -13,7 +14,8 @@ class CharButton extends StatelessWidget {
   const CharButton({super.key,
     required this.char,
     this.textColor = Colors.black,
-    this.size = 20,
+    this.width = 20,
+    this.height = 20,
     this.fontSize = 11,
     this.fontWeight = FontWeight.normal,
     this.onPressed,
@@ -23,8 +25,8 @@ class CharButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: size,
-      height: size,
+      width: width,
+      height: height,
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(

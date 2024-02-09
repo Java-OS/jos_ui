@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/environment_controller.dart';
 import 'package:jos_ui/dialog/environment_dialog.dart';
+import 'package:jos_ui/utils.dart';
 
 class EnvironmentComponent extends StatefulWidget {
   const EnvironmentComponent({super.key});

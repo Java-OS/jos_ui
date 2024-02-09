@@ -5,8 +5,9 @@ class TextBox extends StatefulWidget {
   final String? label;
   final Function(String)? onSubmit;
   final bool isPassword;
+  final bool? isEnable;
 
-  const TextBox({super.key, required this.controller, this.label, this.onSubmit, this.isPassword = false});
+  const TextBox({super.key, required this.controller, this.label, this.onSubmit, this.isPassword = false, this.isEnable = true});
 
   @override
   State<TextBox> createState() => _TextBoxState();
@@ -21,6 +22,7 @@ class _TextBoxState extends State<TextBox> {
       alignment: Alignment.center,
       children: [
         TextField(
+          enabled: widget.isEnable,
           onSubmitted: (e) => widget.onSubmit!(e),
           controller: widget.controller,
           style: TextStyle(fontSize: 14),

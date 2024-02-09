@@ -4,11 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
 import 'package:jos_ui/dialog/toast.dart';
+import 'package:jos_ui/model/filesystem.dart';
+import 'package:jos_ui/model/filesystem_type.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
 
 class SystemController extends GetxController {
   final TextEditingController hostnameEditingController = TextEditingController();
+  final TextEditingController partitionEditingController = TextEditingController();
+  final TextEditingController mountPointEditingController = TextEditingController();
 
   var osUsername = ''.obs;
   var osType = ''.obs;
@@ -25,6 +29,9 @@ class SystemController extends GetxController {
   var jvmTotalHeapSize = 0.obs;
   var jvmUsedHeapSize = 0.obs;
   var dateTimeZone = ''.obs;
+  var filesystems = <HDDPartition>[].obs;
+  var filesystemType = FilesystemType.ext4.obs;
+  var mountOnStartUp = false.obs;
 
   Future<void> fetchHostname() async {
     developer.log('Fetch hostname called');
@@ -71,5 +78,53 @@ class SystemController extends GetxController {
       jvmTotalHeapSize.value = json['jvm_total_heap_size'];
       jvmUsedHeapSize.value = json['jvm_used_heap_size'];
     }
+  }
+
+  Future<void> fetchFilesystems() async {
+    developer.log('Fetch filesystems');
+    var response = await RestClient.rpc(RPC.filesystemList);
+    if (response.success) {
+      var result = response.result as List;
+      filesystems.value = result.map((e) => HDDPartition.fromJson(e)).toList();
+    } else {
+      displayError('Failed to fetch filesystems');
+    }
+  }
+
+  void mountFilesystem() async {
+    var partition = partitionEditingController.text;
+    var mountPoint = mountPointEditingController.text;
+    var fsType = filesystemType.value.name.toUpperCase();
+    var reqParam = {
+      'partition': partition,
+      'type': fsType,
+      'mountPoint': mountPoint,
+      'mountOnStartUp': mountOnStartUp.value,
+    };
+    var response = await RestClient.rpc(RPC.filesystemMount, parameters: reqParam);
+    if (response.success) {
+      await fetchFilesystems();
+      clear();
+      Get.back();
+      displayInfo('Filesystem successfully mounted on \\n [ $mountPoint ]');
+    }
+  }
+
+  void umountFilesystem() async {
+    var mountPoint = mountPointEditingController.text;
+    var reqParam = {
+      'mountPoint': mountPoint,
+    };
+    var response = await RestClient.rpc(RPC.filesystemUmount, parameters: reqParam);
+    if (response.success) {
+      await fetchFilesystems();
+      Get.back();
+      displayInfo('Filesystem successfully disconnected');
+    }
+  }
+
+  void clear() {
+    partitionEditingController.clear();
+    mountPointEditingController.clear();
   }
 }

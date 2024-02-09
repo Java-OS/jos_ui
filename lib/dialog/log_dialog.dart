@@ -58,7 +58,8 @@ Future<void> displayTailLoggerModal(LogInfo? logInfo) async {
                   SizedBox(width: 8),
                   Obx(
                     () => CharButton(
-                      size: 36,
+                      width: 36,
+                      height: 36,
                       backgroundColor: _logController.isConnected.isFalse ? Colors.white : Colors.grey[500],
                       textColor: _logController.isConnected.isFalse ? Colors.black : Colors.white,
                       char: _logController.isConnected.isFalse ? 'Start' : 'Stop',
@@ -68,7 +69,8 @@ Future<void> displayTailLoggerModal(LogInfo? logInfo) async {
                   SizedBox(width: 8),
                   Obx(
                     () => CharButton(
-                      size: 36,
+                      width: 36,
+                      height: 36,
                       backgroundColor: _logController.isTail.isFalse ? Colors.white : Colors.grey[500],
                       textColor: _logController.isTail.isFalse ? Colors.black : Colors.white,
                       char: _logController.isTail.isFalse ? 'Tail' : 'Scroll',
@@ -77,7 +79,8 @@ Future<void> displayTailLoggerModal(LogInfo? logInfo) async {
                   ),
                   SizedBox(width: 8),
                   CharButton(
-                    size: 36,
+                    width: 36,
+                    height: 36,
                     char: 'Clear',
                     onPressed: () => _logController.queue.clear(),
                   )
