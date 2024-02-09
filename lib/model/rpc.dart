@@ -20,6 +20,12 @@ enum RPC {
   systemSetTimezone(15),
   systemFullInformation(16),
   systemEnvironmentUpdate(17),
+  filesystemList(18),
+  filesystemMount(19),
+  filesystemUmount(20),
+  /*
+  * JVM
+  * */
   jvmVersion(100),
   jvmVendor(101),
   jvmTotalHeapSize(102),

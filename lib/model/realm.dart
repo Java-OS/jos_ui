@@ -8,7 +8,9 @@ enum Realm {
   host(64, 'Host'),
   module(128, 'Modules'),
   network(256, 'Network'),
-  user(512, 'Users');
+  user(512, 'Users'),
+  log(1024, 'Log'),
+  filesystem(2048, 'Filesystem');
 
   final int bit;
   final String displayName;
