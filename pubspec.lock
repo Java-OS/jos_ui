@@ -119,6 +119,15 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_fancy_tree_view:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: c5ac639681bedaa7ed537d882ded54c85b68b060
+      url: "https://github.com/baumths/flutter_tree_view"
+    source: git
+    version: "1.4.1"
   flutter_lints:
     dependency: "direct dev"
     description:

@@ -23,6 +23,7 @@ enum RPC {
   filesystemList(18),
   filesystemMount(19),
   filesystemUmount(20),
+  filesystemDirectoryTree(21),
   /*
   * JVM
   * */

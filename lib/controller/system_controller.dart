@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/filesystem.dart';
-import 'package:jos_ui/model/filesystem_type.dart';
+import 'package:jos_ui/model/filesystem_tree.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
 
@@ -13,6 +13,7 @@ class SystemController extends GetxController {
   final TextEditingController hostnameEditingController = TextEditingController();
   final TextEditingController partitionEditingController = TextEditingController();
   final TextEditingController mountPointEditingController = TextEditingController();
+  final TextEditingController filesystemTypeEditingController = TextEditingController();
 
   var osUsername = ''.obs;
   var osType = ''.obs;
@@ -30,8 +31,8 @@ class SystemController extends GetxController {
   var jvmUsedHeapSize = 0.obs;
   var dateTimeZone = ''.obs;
   var filesystems = <HDDPartition>[].obs;
-  var filesystemType = FilesystemType.ext4.obs;
   var mountOnStartUp = false.obs;
+  var filesystemTree = Rxn<FilesystemTree>();
 
   Future<void> fetchHostname() async {
     developer.log('Fetch hostname called');
@@ -92,11 +93,11 @@ class SystemController extends GetxController {
   }
 
   void mountFilesystem() async {
-    var partition = partitionEditingController.text;
     var mountPoint = mountPointEditingController.text;
-    var fsType = filesystemType.value.name.toUpperCase();
+    var fsType = filesystemTypeEditingController.text;
+    var partition = filesystems.firstWhere((element) => element.partition == partitionEditingController.text);
     var reqParam = {
-      'partition': partition,
+      'uuid': partition.uuid,
       'type': fsType,
       'mountPoint': mountPoint,
       'mountOnStartUp': mountOnStartUp.value,
@@ -120,6 +121,17 @@ class SystemController extends GetxController {
       await fetchFilesystems();
       Get.back();
       displayInfo('Filesystem successfully disconnected');
+    }
+  }
+
+  Future<void> fetchFilesystemTree() async {
+    var mountPoint = mountPointEditingController.text;
+    var reqParam = {
+      'rootDir': mountPoint,
+    };
+    var response = await RestClient.rpc(RPC.filesystemDirectoryTree, parameters: reqParam);
+    if (response.success) {
+      filesystemTree.value = FilesystemTree.fromJson(response.result);
     }
   }
 

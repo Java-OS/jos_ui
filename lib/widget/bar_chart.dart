@@ -9,40 +9,53 @@ class BarChart extends StatefulWidget {
   final Color? main;
   final Color? warn;
   final double? height;
+  final Function onClick;
 
-  const BarChart({super.key, required this.total, this.current, this.text, this.main = Colors.blue, this.warn = Colors.red, this.height = 28, this.textStyle});
+  const BarChart({super.key, required this.total, this.current, this.text, this.main = Colors.blue, this.warn = Colors.red, this.height = 28, this.textStyle,required this.onClick});
 
   @override
   State<BarChart> createState() => _BarChartState();
 }
 
 class _BarChartState extends State<BarChart> {
+  var isMouseHover = false;
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         var usedPercentage = (widget.current ?? 0) * 100 / widget.total;
         var used = constraints.maxWidth * usedPercentage / 100;
-        return Stack(
-          alignment: Alignment.centerLeft,
-          children: [
-            Container(
-              width: constraints.maxWidth,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 0.2),
-              ),
-              height: widget.height!,
+        return MouseRegion(
+          onHover: (_) => setState(() => isMouseHover = true),
+          onExit: (_) => setState(() => isMouseHover = false),
+          cursor: SystemMouseCursors.click,
+          child: InkWell(
+            onTap: () => widget.onClick(),
+            child: Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                AnimatedContainer(
+                  width: constraints.maxWidth,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: isMouseHover ? Colors.blue : Colors.black, width: 0.2),
+                  ),
+                  height: widget.height!,
+                  duration: Duration(milliseconds: 200),
+                ),
+                AnimatedContainer(
+                  width: used.isNaN ? 0 : used,
+                  color: usedPercentage < 80 ? (isMouseHover ? widget.main?.withAlpha(900) : widget.main) : (isMouseHover ? widget.warn?.withAlpha(900) : widget.warn),
+                  height: widget.height,
+                  duration: Duration(milliseconds: 200),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 12.0),
+                  child: Text(parseText(), style: widget.textStyle),
+                ),
+              ],
             ),
-            Container(
-              width: used ,
-              color: usedPercentage < 80 ? widget.main : widget.warn ,
-              height: widget.height,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0),
-              child: Text(parseText(), style: widget.textStyle),
-            ),
-          ],
+          ),
         );
       },
     );
