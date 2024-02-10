@@ -30,7 +30,8 @@ class SystemController extends GetxController {
   var jvmTotalHeapSize = 0.obs;
   var jvmUsedHeapSize = 0.obs;
   var dateTimeZone = ''.obs;
-  var filesystems = <HDDPartition>[].obs;
+  var partitions = <HDDPartition>[].obs;
+  var selectedPartition = Rxn<HDDPartition>();
   var mountOnStartUp = false.obs;
   var filesystemTree = Rxn<FilesystemTree>();
 
@@ -81,46 +82,76 @@ class SystemController extends GetxController {
     }
   }
 
-  Future<void> fetchFilesystems() async {
+  Future<void> fetchPartitions() async {
     developer.log('Fetch filesystems');
     var response = await RestClient.rpc(RPC.filesystemList);
     if (response.success) {
       var result = response.result as List;
-      filesystems.value = result.map((e) => HDDPartition.fromJson(e)).toList();
+      partitions.value = result.map((e) => HDDPartition.fromJson(e)).toList();
     } else {
       displayError('Failed to fetch filesystems');
     }
   }
 
-  void mountFilesystem() async {
+  void mount() async {
     var mountPoint = mountPointEditingController.text;
     var fsType = filesystemTypeEditingController.text;
-    var partition = filesystems.firstWhere((element) => element.partition == partitionEditingController.text);
+    var partition = partitions.firstWhere((element) => element.partition == partitionEditingController.text);
     var reqParam = {
       'uuid': partition.uuid,
       'type': fsType,
       'mountPoint': mountPoint,
       'mountOnStartUp': mountOnStartUp.value,
     };
+
+    developer.log('$reqParam');
     var response = await RestClient.rpc(RPC.filesystemMount, parameters: reqParam);
     if (response.success) {
-      await fetchFilesystems();
+      await fetchPartitions();
       clear();
       Get.back();
-      displayInfo('Filesystem successfully mounted on \\n [ $mountPoint ]');
+      displayInfo('Successfully mounted on [$mountPoint]');
     }
   }
 
-  void umountFilesystem() async {
-    var mountPoint = mountPointEditingController.text;
+  void umount(HDDPartition partition) async {
+    developer.log('Umount partition ${partition.partition}');
     var reqParam = {
-      'mountPoint': mountPoint,
+      'uuid': partition.uuid,
     };
+    developer.log('$reqParam');
     var response = await RestClient.rpc(RPC.filesystemUmount, parameters: reqParam);
     if (response.success) {
-      await fetchFilesystems();
-      Get.back();
-      displayInfo('Filesystem successfully disconnected');
+      await fetchPartitions();
+      displayInfo('Successfully disconnected');
+    }
+  }
+
+  void swapOn(HDDPartition partition) async {
+    developer.log('SwapOn ${partition.type}   ${partition.uuid}');
+    var reqParam = {
+      'uuid': partition.uuid,
+    };
+    developer.log('$reqParam');
+    var response = await RestClient.rpc(RPC.filesystemSwapOn, parameters: reqParam);
+    if (response.success) {
+      await fetchPartitions();
+    } else {
+      displayWarning('Failed to activate swap ${partition.partition}');
+    }
+  }
+
+  void swapOff(HDDPartition partition) async {
+    developer.log('SwapOff ${partition.type}   ${partition.uuid}');
+    var reqParam = {
+      'uuid': partition.uuid,
+    };
+    developer.log('$reqParam');
+    var response = await RestClient.rpc(RPC.filesystemSwapOff, parameters: reqParam);
+    if (response.success) {
+      await fetchPartitions();
+    } else {
+      displayWarning('Failed to deactivate swap ${partition.partition}');
     }
   }
 
@@ -137,6 +168,8 @@ class SystemController extends GetxController {
 
   void clear() {
     partitionEditingController.clear();
+    mountPointEditingController.clear();
+    hostnameEditingController.clear();
     mountPointEditingController.clear();
   }
 }

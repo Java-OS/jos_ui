@@ -2,25 +2,23 @@ import 'package:flutter/material.dart';
 
 class CharButton extends StatelessWidget {
   final String char;
-  final Color? textColor;
+  final TextStyle? textStyle;
   final Color? backgroundColor;
   final double? width;
   final double? height;
-  final double? fontSize;
-  final FontWeight? fontWeight;
   final VoidCallback? onPressed;
   final String? toolTip;
 
-  const CharButton({super.key,
+  const CharButton({
+    super.key,
     required this.char,
-    this.textColor = Colors.black,
     this.width = 20,
     this.height = 20,
-    this.fontSize = 11,
-    this.fontWeight = FontWeight.normal,
     this.onPressed,
     this.toolTip,
-    this.backgroundColor});
+    this.backgroundColor,
+    this.textStyle ,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,15 +31,9 @@ class CharButton extends StatelessWidget {
           backgroundColor: backgroundColor,
           padding: EdgeInsets.zero,
         ),
-        child: toolTip == null ? getText() : getTextWithTooltip(),
+        child: toolTip == null ? Text(char, style: textStyle) : getTextWithTooltip(),
       ),
     );
-  }
-
-  Widget getText() {
-    return Text(char,
-        style: TextStyle(
-            fontWeight: fontWeight, fontSize: fontSize, color: textColor));
   }
 
   Widget getTextWithTooltip() {
@@ -49,7 +41,7 @@ class CharButton extends StatelessWidget {
       message: toolTip,
       preferBelow: false,
       verticalOffset: 22,
-      child: getText(),
+      child: Text(char, style: textStyle),
     );
   }
 }

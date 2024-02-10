@@ -79,11 +79,26 @@ class _NetworkComponentState extends State<NetworkComponent> {
             children: [
               Visibility(
                 visible: ethernet.isUp,
-                replacement: CharButton(char: 'E', fontWeight: FontWeight.bold, fontSize: 11, toolTip: 'Click to enable', onPressed: () => _networkController.ifUp(ethernet.iface)),
-                child: CharButton(char: 'D', toolTip: 'Click to disable', onPressed: () => _networkController.ifDown(ethernet.iface)),
+                replacement: CharButton(
+                  char: 'E',
+                  textStyle: TextStyle(color: Colors.black, fontSize: 11),
+                  toolTip: 'Click to enable',
+                  onPressed: () => _networkController.ifUp(ethernet.iface),
+                ),
+                child: CharButton(
+                  char: 'D',
+                  toolTip: 'Click to disable',
+                  onPressed: () => _networkController.ifDown(ethernet.iface),
+                  textStyle: TextStyle(color: Colors.black, fontSize: 11),
+                ),
               ),
               SizedBox(width: 4),
-              CharButton(char: 'F', toolTip: 'Click to flush', onPressed: () => _networkController.flush(ethernet.iface)),
+              CharButton(
+                char: 'F',
+                toolTip: 'Click to flush',
+                onPressed: () => _networkController.flush(ethernet.iface),
+                textStyle: TextStyle(color: Colors.black, fontSize: 11),
+              ),
               IconButton(onPressed: () => displayEthernetConfig(ethernet, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
             ],
           ),

@@ -23,7 +23,7 @@ Future<void> displayMountFilesystemModal(BuildContext context) async {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 4),
-              TextBox(label: 'Filesystem', controller: _systemController.partitionEditingController, isEnable: false),
+              TextBox(label: 'Partition', controller: _systemController.partitionEditingController, isEnable: false),
               SizedBox(height: 8),
               TextBox(controller: _systemController.mountPointEditingController, label: 'Mount Point'),
               SizedBox(height: 8),
@@ -39,7 +39,7 @@ Future<void> displayMountFilesystemModal(BuildContext context) async {
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
-                  onPressed: () => _systemController.mountFilesystem(),
+                  onPressed: () => _systemController.mount(),
                   child: Text('Mount'),
                 ),
               )

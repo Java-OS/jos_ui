@@ -10,8 +10,9 @@ class BarChart extends StatefulWidget {
   final Color? warn;
   final double? height;
   final Function onClick;
+  final bool disabled;
 
-  const BarChart({super.key, required this.total, this.current, this.text, this.main = Colors.blue, this.warn = Colors.red, this.height = 28, this.textStyle,required this.onClick});
+  const BarChart({super.key, required this.total, this.current, this.text, this.main = Colors.blue, this.warn = Colors.red, this.height = 28, this.textStyle, required this.onClick, this.disabled = false});
 
   @override
   State<BarChart> createState() => _BarChartState();
@@ -27,10 +28,10 @@ class _BarChartState extends State<BarChart> {
         var usedPercentage = (widget.current ?? 0) * 100 / widget.total;
         var used = constraints.maxWidth * usedPercentage / 100;
         return MouseRegion(
-          onHover: (_) => setState(() => isMouseHover = true),
           onExit: (_) => setState(() => isMouseHover = false),
-          cursor: SystemMouseCursors.click,
+          onHover: (_) => setState(() => isMouseHover = true),
           child: InkWell(
+            mouseCursor: widget.disabled ? SystemMouseCursors.basic : SystemMouseCursors.click,
             onTap: () => widget.onClick(),
             child: Stack(
               alignment: Alignment.centerLeft,

@@ -140,7 +140,7 @@ class _SettingsPageState extends State<SettingsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Filesystem', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-              OutlinedButton(onPressed: () => _systemController.fetchFilesystems(), child: Icon(Icons.refresh_rounded, size: 16, color: Colors.black)),
+              OutlinedButton(onPressed: () => _systemController.fetchPartitions(), child: Icon(Icons.refresh_rounded, size: 16, color: Colors.black)),
             ],
           ),
           Divider(),
