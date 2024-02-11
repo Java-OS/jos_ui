@@ -4,7 +4,7 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/user_controller.dart';
 import 'package:jos_ui/model/realm.dart';
 import 'package:jos_ui/model/user.dart';
-import 'package:jos_ui/widget/text_box_widget.dart';
+import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 UserController _userController = Get.put(UserController());
 
@@ -23,11 +23,11 @@ Future<void> displayAddUser(BuildContext context) async {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 4),
-              TextBox(controller: _userController.usernameEditingController, label: 'Username'),
+              TextFieldBox(controller: _userController.usernameEditingController, label: 'Username'),
               SizedBox(height: 8),
-              TextBox(controller: _userController.passwordEditingController, label: 'Password', isPassword: true),
+              TextFieldBox(controller: _userController.passwordEditingController, label: 'Password', isPassword: true),
               SizedBox(height: 8),
-              TextBox(controller: _userController.passwordEditingController, label: 'Confirm password', isPassword: true),
+              TextFieldBox(controller: _userController.passwordEditingController, label: 'Confirm password', isPassword: true),
               SizedBox(height: 20),
               Row(
                 children: [
@@ -79,9 +79,9 @@ Future<void> displayUpdatePassword(User user, BuildContext context) async {
                 ),
               ),
               SizedBox(height: 8),
-              TextBox(controller: _userController.passwordEditingController, label: 'Password', isPassword: true),
+              TextFieldBox(controller: _userController.passwordEditingController, label: 'Password', isPassword: true),
               SizedBox(height: 8),
-              TextBox(controller: _userController.passwordConfirmationEditingController, label: 'Confirm password', isPassword: true),
+              TextFieldBox(controller: _userController.passwordConfirmationEditingController, label: 'Confirm password', isPassword: true),
               SizedBox(height: 20),
               Align(
                 alignment: Alignment.centerRight,

@@ -88,7 +88,8 @@ enum RPC {
   networkRouteAdd(606),
   networkRouteDelete(607),
   networkRouteDefaultGateway(608),
-  networkDnsNameserver(609),
+  networkSetDnsNameserver(609),
+  networkGetDnsNameserver(610),
 
   /*
    * hosts

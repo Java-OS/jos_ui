@@ -7,7 +7,7 @@ import 'package:jos_ui/model/log_level.dart';
 import 'package:jos_ui/widget/char_button.dart';
 import 'package:jos_ui/widget/drop_down_widget.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
-import 'package:jos_ui/widget/text_box_widget.dart';
+import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 final LogController _logController = Get.put(LogController());
 final ScrollController _scrollController = ScrollController();
@@ -35,7 +35,7 @@ Future<void> displayTailLoggerModal(LogInfo? logInfo) async {
                 children: [
                   SizedBox(
                     width: 300,
-                    child: TextBox(
+                    child: TextFieldBox(
                       controller: _logController.packageEditingController,
                       label: 'package name',
                       onSubmit: (e) => _logController.connect(),
@@ -350,9 +350,9 @@ Future<void> displayFileLogAppender(LogInfo? logInfo) async {
             padding: EdgeInsets.all(4.0),
             child: Column(
               children: [
-                TextBox(controller: _logController.packageEditingController, label: 'Package'),
+                TextFieldBox(controller: _logController.packageEditingController, label: 'Package'),
                 SizedBox(height: 8),
-                TextBox(controller: _logController.patternEditingController, label: 'Pattern'),
+                TextFieldBox(controller: _logController.patternEditingController, label: 'Pattern'),
                 SizedBox(height: 8),
                 Obx(
                   () => DropDownMenu<LogLevel>(
@@ -364,11 +364,11 @@ Future<void> displayFileLogAppender(LogInfo? logInfo) async {
                   ),
                 ),
                 SizedBox(height: 8),
-                TextBox(controller: _logController.fileMaxSizeEditingController, label: 'File max size'),
+                TextFieldBox(controller: _logController.fileMaxSizeEditingController, label: 'File max size'),
                 SizedBox(height: 8),
-                TextBox(controller: _logController.fileTotalSizeEditingController, label: 'File total history'),
+                TextFieldBox(controller: _logController.fileTotalSizeEditingController, label: 'File total history'),
                 SizedBox(height: 8),
-                TextBox(controller: _logController.fileMaxHistoryEditingController, label: 'History count'),
+                TextFieldBox(controller: _logController.fileMaxHistoryEditingController, label: 'History count'),
                 SizedBox(height: 30),
                 Align(
                   alignment: Alignment.centerRight,
@@ -409,9 +409,9 @@ Future<void> displaySysLogAppender(LogInfo? logInfo) async {
             padding: EdgeInsets.all(4.0),
             child: Column(
               children: [
-                TextBox(controller: _logController.packageEditingController, label: 'Package'),
+                TextFieldBox(controller: _logController.packageEditingController, label: 'Package'),
                 SizedBox(height: 8),
-                TextBox(controller: _logController.patternEditingController, label: 'Pattern'),
+                TextFieldBox(controller: _logController.patternEditingController, label: 'Pattern'),
                 SizedBox(height: 8),
                 Obx(
                   () => DropDownMenu<LogLevel>(
@@ -423,11 +423,11 @@ Future<void> displaySysLogAppender(LogInfo? logInfo) async {
                   ),
                 ),
                 SizedBox(height: 8),
-                TextBox(controller: _logController.syslogHostEditingController, label: 'Syslog host'),
+                TextFieldBox(controller: _logController.syslogHostEditingController, label: 'Syslog host'),
                 SizedBox(height: 8),
-                TextBox(controller: _logController.syslogPortEditingController, label: 'Syslog port'),
+                TextFieldBox(controller: _logController.syslogPortEditingController, label: 'Syslog port'),
                 SizedBox(height: 8),
-                TextBox(controller: _logController.syslogFacilityEditingController, label: 'Syslog facility'),
+                TextFieldBox(controller: _logController.syslogFacilityEditingController, label: 'Syslog facility'),
                 SizedBox(height: 30),
                 Align(
                   alignment: Alignment.centerRight,

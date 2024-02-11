@@ -6,11 +6,16 @@ import 'package:jos_ui/dialog/alert_dialog.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/filesystem.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
+import 'package:jos_ui/model/host.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
 
 class SystemController extends GetxController {
   final TextEditingController hostnameEditingController = TextEditingController();
+  final TextEditingController hostHostnameEditingController = TextEditingController();
+  final TextEditingController hostIpEditingController = TextEditingController();
+  final TextEditingController hostAliasesEditingController = TextEditingController();
+  final TextEditingController dnsEditingController = TextEditingController();
   final TextEditingController partitionEditingController = TextEditingController();
   final TextEditingController mountPointEditingController = TextEditingController();
   final TextEditingController filesystemTypeEditingController = TextEditingController();
@@ -34,6 +39,7 @@ class SystemController extends GetxController {
   var selectedPartition = Rxn<HDDPartition>();
   var mountOnStartUp = false.obs;
   var filesystemTree = Rxn<FilesystemTree>();
+  var hosts = <Host>[].obs;
 
   Future<void> fetchHostname() async {
     developer.log('Fetch hostname called');
@@ -53,6 +59,7 @@ class SystemController extends GetxController {
       var response = await RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': hostnameEditingController.text});
       if (response.success) {
         displaySuccess('Hostname changed');
+        Get.back();
       } else {
         displayWarning('Failed to change hostname');
       }
@@ -163,6 +170,42 @@ class SystemController extends GetxController {
     var response = await RestClient.rpc(RPC.filesystemDirectoryTree, parameters: reqParam);
     if (response.success) {
       filesystemTree.value = FilesystemTree.fromJson(response.result);
+    }
+  }
+
+  Future<void> fetchDnsNameserver() async {
+    developer.log('fetch dns nameserver');
+    var response = await RestClient.rpc(RPC.networkGetDnsNameserver);
+    if (response.success) {
+      dnsEditingController.text = response.result;
+    } else {
+      displayWarning('Failed to fetch dns nameserver');
+    }
+  }
+
+  void setDnsNameserver() async {
+    var dns = dnsEditingController.text;
+    developer.log('Set dns nameserver  $dns');
+    var reqParam = {
+      'ip': dns,
+    };
+    var response = await RestClient.rpc(RPC.filesystemSwapOff, parameters: reqParam);
+    if (response.success) {
+      await fetchDnsNameserver();
+    } else {
+      displayWarning('Failed to change nameserver');
+    }
+  }
+
+  Future<void> fetchHosts() async {
+    developer.log('fetch hosts');
+    var response = await RestClient.rpc(RPC.hostsList);
+    if (response.success) {
+      var result = response.result as List;
+      hosts.value = result.map((e) => Host.fromJson(e)).toList();
+      hosts.sort((a,b) => a.ip.compareTo(b.ip));
+    } else {
+      displayWarning('Failed to fetch hosts');
     }
   }
 

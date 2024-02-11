@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/network_controller.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
-import 'package:jos_ui/widget/text_box_widget.dart';
+import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 NetworkController _networkController = Get.put(NetworkController());
 
@@ -23,9 +23,9 @@ Future<void> displayEthernetConfig(Ethernet eth, BuildContext context) async {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextBox(controller: _networkController.addressEditingController, label: 'Ip Address'),
+              TextFieldBox(controller: _networkController.addressEditingController, label: 'Ip Address'),
               SizedBox(height: 8),
-              TextBox(controller: _networkController.netmaskEditingController, label: 'Netmask'),
+              TextFieldBox(controller: _networkController.netmaskEditingController, label: 'Netmask'),
               SizedBox(height: 8),
               Align(
                 alignment: Alignment.bottomRight,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/date_time_controller.dart';
 import 'package:jos_ui/dialog/toast.dart';
-import 'package:jos_ui/widget/text_box_widget.dart';
+import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 class DateTimeComponent extends StatefulWidget {
   const DateTimeComponent({super.key});
@@ -99,9 +99,9 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Flexible(child: TextBox(controller: dateTimeController.ntpServerEditingController, label: 'NTP server')),
+              Flexible(child: TextFieldBox(controller: dateTimeController.ntpServerEditingController, label: 'NTP server')),
               SizedBox(width: 8),
-              Flexible(child: TextBox(controller: dateTimeController.ntpIntervalEditingController, label: 'Time interval (milliseconds)')),
+              Flexible(child: TextFieldBox(controller: dateTimeController.ntpIntervalEditingController, label: 'Time interval (milliseconds)')),
               SizedBox(width: 8),
               Tooltip(
                 message: 'Sync from ntp server',

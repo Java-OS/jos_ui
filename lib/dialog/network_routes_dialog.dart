@@ -5,7 +5,7 @@ import 'package:jos_ui/controller/network_controller.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/widget/drop_down_widget.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
-import 'package:jos_ui/widget/text_box_widget.dart';
+import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 NetworkController _networkController = Get.put(NetworkController());
 
@@ -120,7 +120,7 @@ Widget defaultGatewayTab() {
   return Padding(
     padding: EdgeInsets.all(14.0),
     child: Column(
-      children: [TextBox(controller: _networkController.gatewayEditingController, label: 'Gateway'), SizedBox(height: 30), Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _networkController.addDefaultGateway(), child: Text('Apply')))],
+      children: [TextFieldBox(controller: _networkController.gatewayEditingController, label: 'Gateway'), SizedBox(height: 30), Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _networkController.addDefaultGateway(), child: Text('Apply')))],
     ),
   );
 }
@@ -132,9 +132,9 @@ Widget hostTab() {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        TextBox(controller: _networkController.addressEditingController, label: 'Address'),
+        TextFieldBox(controller: _networkController.addressEditingController, label: 'Address'),
         SizedBox(height: 8),
-        TextBox(controller: _networkController.gatewayEditingController, label: 'Gateway'),
+        TextFieldBox(controller: _networkController.gatewayEditingController, label: 'Gateway'),
         SizedBox(height: 8),
         Obx(
           () => DropDownMenu<Ethernet>(
@@ -145,7 +145,7 @@ Widget hostTab() {
           ),
         ),
         SizedBox(height: 8),
-        TextBox(controller: _networkController.metricsEditingController, label: 'metrics (optional [default: 600])'),
+        TextFieldBox(controller: _networkController.metricsEditingController, label: 'metrics (optional [default: 600])'),
         SizedBox(height: 20),
         Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => _networkController.addHostRoute(), child: Text('Apply')))
       ],
@@ -160,11 +160,11 @@ Widget networkTab() {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        TextBox(controller: _networkController.networkEditingController, label: 'Network'),
+        TextFieldBox(controller: _networkController.networkEditingController, label: 'Network'),
         SizedBox(height: 8),
-        TextBox(controller: _networkController.netmaskEditingController, label: 'Netmask'),
+        TextFieldBox(controller: _networkController.netmaskEditingController, label: 'Netmask'),
         SizedBox(height: 8),
-        TextBox(controller: _networkController.gatewayEditingController, label: 'Gateway'),
+        TextFieldBox(controller: _networkController.gatewayEditingController, label: 'Gateway'),
         SizedBox(height: 8),
         Obx(
           () => DropDownMenu<Ethernet>(
@@ -175,7 +175,7 @@ Widget networkTab() {
           ),
         ),
         SizedBox(height: 8),
-        TextBox(controller: _networkController.metricsEditingController, label: 'metrics (optional [default: 600])'),
+        TextFieldBox(controller: _networkController.metricsEditingController, label: 'metrics (optional [default: 600])'),
         SizedBox(height: 20),
         Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => _networkController.addNetworkRoute(), child: Text('Apply')))
       ],
