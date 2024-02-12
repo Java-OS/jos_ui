@@ -128,6 +128,6 @@ class _FilesystemComponentState extends State<FilesystemComponent> {
 
   fetchTreeAndDisplay(HDDPartition partition) {
     _systemController.mountPointEditingController.text = partition.mountPoint!;
-    _systemController.fetchFilesystemTree().then((value) => displayFilesystemTree(context));
+    _systemController.fetchFilesystemTree().then((value) => displayFilesystemTree());
   }
 }

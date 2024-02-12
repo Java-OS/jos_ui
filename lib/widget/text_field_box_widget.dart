@@ -48,7 +48,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
                   textAlign: TextAlign.start,
                   textAlignVertical: TextAlignVertical.top,
                   textInputAction: TextInputAction.none,
-                  maxLines: widget.maxLines,
+                  maxLines: widget.isPassword ? 1 : widget.maxLines,
                   maxLength: widget.maxLines,
                   decoration: InputDecoration(
                     label: Text(widget.label ?? ''),

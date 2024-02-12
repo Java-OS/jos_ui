@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/log_controller.dart';
+import 'package:jos_ui/controller/system_controller.dart';
+import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
 import 'package:jos_ui/widget/char_button.dart';
@@ -10,6 +12,7 @@ import 'package:jos_ui/widget/tab_widget.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 final LogController _logController = Get.put(LogController());
+final SystemController _systemController = Get.put(SystemController());
 final ScrollController _scrollController = ScrollController();
 
 Future<void> displayTailLoggerModal(LogInfo? logInfo) async {
@@ -61,7 +64,7 @@ Future<void> displayTailLoggerModal(LogInfo? logInfo) async {
                       width: 36,
                       height: 36,
                       backgroundColor: _logController.isConnected.isFalse ? Colors.white : Colors.grey[500],
-                      textStyle: TextStyle(color: _logController.isConnected.isFalse ? Colors.black : Colors.white,fontSize: 11),
+                      textStyle: TextStyle(color: _logController.isConnected.isFalse ? Colors.black : Colors.white, fontSize: 11),
                       char: _logController.isConnected.isFalse ? 'Start' : 'Stop',
                       onPressed: () => _logController.isConnected.isFalse ? _logController.connect() : _logController.disconnect(false, false),
                     ),
@@ -72,7 +75,7 @@ Future<void> displayTailLoggerModal(LogInfo? logInfo) async {
                       width: 36,
                       height: 36,
                       backgroundColor: _logController.isTail.isFalse ? Colors.white : Colors.grey[500],
-                      textStyle: TextStyle(color: _logController.isTail.isFalse ? Colors.black : Colors.white,fontSize: 11),
+                      textStyle: TextStyle(color: _logController.isTail.isFalse ? Colors.black : Colors.white, fontSize: 11),
                       char: _logController.isTail.isFalse ? 'Tail' : 'Scroll',
                       onPressed: () => _logController.isTail.value = !_logController.isTail.value,
                     ),
@@ -82,7 +85,7 @@ Future<void> displayTailLoggerModal(LogInfo? logInfo) async {
                     width: 36,
                     height: 36,
                     char: 'Clear',
-                    textStyle: TextStyle(fontSize: 11,color: Colors.black),
+                    textStyle: TextStyle(fontSize: 11, color: Colors.black),
                     onPressed: () => _logController.queue.clear(),
                   )
                 ],
@@ -314,6 +317,7 @@ List<DataRow> _getLogInfoRows(String type) {
               children: [
                 IconButton(onPressed: () => displayFileLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
                 IconButton(onPressed: () => displayTailLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
+                IconButton(onPressed: () => fetchTreeAndDisplay(logInfo.packageName), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.folder_open, size: 16)),
                 IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16)),
               ],
             ),
@@ -325,6 +329,11 @@ List<DataRow> _getLogInfoRows(String type) {
     }
   }
   return dataRowList;
+}
+
+fetchTreeAndDisplay(String package) {
+  _systemController.mountPointEditingController.text = '/logs/$package';
+  _systemController.fetchFilesystemTree().then((value) => displayFilesystemTree());
 }
 
 Future<void> displayFileLogAppender(LogInfo? logInfo) async {
