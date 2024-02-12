@@ -11,12 +11,12 @@ import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
 
 class SystemController extends GetxController {
-  final TextEditingController hostnameEditingController = TextEditingController();
-  final TextEditingController hostHostnameEditingController = TextEditingController();
-  final TextEditingController hostIpEditingController = TextEditingController();
   final TextEditingController dnsEditingController = TextEditingController();
+  final TextEditingController hostIpEditingController = TextEditingController();
+  final TextEditingController hostnameEditingController = TextEditingController();
   final TextEditingController partitionEditingController = TextEditingController();
   final TextEditingController mountPointEditingController = TextEditingController();
+  final TextEditingController hostHostnameEditingController = TextEditingController();
   final TextEditingController filesystemTypeEditingController = TextEditingController();
 
   var osUsername = ''.obs;
@@ -186,11 +186,12 @@ class SystemController extends GetxController {
     var dns = dnsEditingController.text;
     developer.log('Set dns nameserver  $dns');
     var reqParam = {
-      'ip': dns,
+      'ips': dns,
     };
-    var response = await RestClient.rpc(RPC.filesystemSwapOff, parameters: reqParam);
+    var response = await RestClient.rpc(RPC.networkSetDnsNameserver, parameters: reqParam);
     if (response.success) {
-      await fetchDnsNameserver();
+      clear();
+      Get.back();
     } else {
       displayWarning('Failed to change nameserver');
     }
@@ -240,9 +241,12 @@ class SystemController extends GetxController {
   }
 
   void clear() {
+    dnsEditingController.clear();
+    hostIpEditingController.clear();
+    hostnameEditingController.clear();
     partitionEditingController.clear();
     mountPointEditingController.clear();
-    hostnameEditingController.clear();
-    mountPointEditingController.clear();
+    hostHostnameEditingController.clear();
+    filesystemTypeEditingController.clear();
   }
 }

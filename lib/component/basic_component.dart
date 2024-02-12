@@ -41,7 +41,7 @@ class _BasicComponentState extends State<BasicComponent> {
             TextFieldBox(
               isEnable: false,
               isPassword: false,
-              label: 'DNS Nameserver',
+              label: 'DNS Nameserver (Max 3 ip, Comma delimited)',
               controller: systemController.dnsEditingController,
               onClick: () => displayDNSNameserverModal(context),
             ),
