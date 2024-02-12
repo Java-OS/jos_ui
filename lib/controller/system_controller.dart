@@ -14,7 +14,6 @@ class SystemController extends GetxController {
   final TextEditingController hostnameEditingController = TextEditingController();
   final TextEditingController hostHostnameEditingController = TextEditingController();
   final TextEditingController hostIpEditingController = TextEditingController();
-  final TextEditingController hostAliasesEditingController = TextEditingController();
   final TextEditingController dnsEditingController = TextEditingController();
   final TextEditingController partitionEditingController = TextEditingController();
   final TextEditingController mountPointEditingController = TextEditingController();
@@ -203,9 +202,40 @@ class SystemController extends GetxController {
     if (response.success) {
       var result = response.result as List;
       hosts.value = result.map((e) => Host.fromJson(e)).toList();
-      hosts.sort((a,b) => a.ip.compareTo(b.ip));
+      hosts.sort((a, b) => a.ip.compareTo(b.ip));
     } else {
       displayWarning('Failed to fetch hosts');
+    }
+  }
+
+  void addHost() async {
+    var ip = hostIpEditingController.text;
+    var hostname = hostHostnameEditingController.text;
+    developer.log('Add new host: $ip $hostname');
+    var reqParam = {
+      'ip': ip,
+      'hostname': hostname,
+    };
+    var response = await RestClient.rpc(RPC.hostsAdd, parameters: reqParam);
+    if (response.success) {
+      await fetchHosts();
+      clear();
+      Get.back();
+    } else {
+      displayWarning('Failed to change nameserver');
+    }
+  }
+
+  void removeHost(int id) async {
+    developer.log('Remove host: $id');
+    var reqParam = {
+      'id': id,
+    };
+    var response = await RestClient.rpc(RPC.hostsDelete, parameters: reqParam);
+    if (response.success) {
+      await fetchHosts();
+    } else {
+      displayWarning('Failed to change nameserver');
     }
   }
 

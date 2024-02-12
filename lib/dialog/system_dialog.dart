@@ -56,12 +56,12 @@ Future<void> displayDNSNameserverModal(BuildContext context) async {
   ).then((value) => _systemController.fetchDnsNameserver());
 }
 
-Future<void> displayHostsModal(BuildContext context) async {
+Future<void> displayHostModal(BuildContext context) async {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return SimpleDialog(
-        title: getModalHeader('Change hostname'),
+        title: getModalHeader('Host'),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         contentPadding: EdgeInsets.all(14),
         titlePadding: EdgeInsets.zero,
@@ -70,13 +70,11 @@ Future<void> displayHostsModal(BuildContext context) async {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              TextFieldBox(controller: _systemController.hostIpEditingController, label: 'Ip address'),
+              SizedBox(height: 8),
               TextFieldBox(controller: _systemController.hostHostnameEditingController, label: 'Hostname'),
-              SizedBox(height: 8),
-              TextFieldBox(controller: _systemController.hostIpEditingController, label: 'Hostname'),
-              SizedBox(height: 8),
-              TextFieldBox(controller: _systemController.hostAliasesEditingController, label: 'Hostname'),
               SizedBox(height: 10),
-              Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _systemController.changeHostname(), child: Text('Apply')))
+              Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _systemController.addHost(), child: Text('Apply')))
             ],
           )
         ],

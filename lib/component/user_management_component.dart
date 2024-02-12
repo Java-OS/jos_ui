@@ -51,8 +51,10 @@ class _UserManagementComponentState extends State<UserManagementComponent> {
 
   List<DataRow> getUserTableRows() {
     final resultList = <DataRow>[];
-    for (final user in userController.userList) {
-      var id = user.id.toString();
+    var users = userController.userList;
+    for (var i = 0; i < users.length; i++) {
+      var user = users[i];
+      var id = (i + 1).toString();
       var username = user.username.toString();
       var row = DataRow(cells: [
         DataCell(Text(id, style: TextStyle(fontSize: 12))),
