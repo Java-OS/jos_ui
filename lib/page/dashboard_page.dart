@@ -247,4 +247,9 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+  }
 }
