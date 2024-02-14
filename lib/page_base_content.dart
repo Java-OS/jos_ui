@@ -19,7 +19,7 @@ Widget getPageContent({Widget? child}) {
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 3,sigmaY: 3),
             child: Container(
-              color: Color.fromARGB(200, 0, 0, 0),
+              color: Color.fromARGB(150, 0, 0, 0),
               width: double.infinity,
               height: double.infinity,
               child: Stack(children: [child ?? emptyContentMessage()]),

@@ -119,7 +119,8 @@ class RestClient {
   }
 
   static void storeJvmNeedRestart(Map<String, String> headers) {
-    var jvmNeedRestart = headers['X-Jvm-Restart'];
+    debugPrint('$headers');
+    var jvmNeedRestart = headers['x-jvm-restart'];
     if (jvmNeedRestart != null) {
       developer.log('Receive header X-Jvm-Restart with value: [$jvmNeedRestart]');
       jvmNeedRestart == 'true' ? jvmController.enableRestartJvm() : jvmController.disableRestartJvm();

@@ -27,7 +27,7 @@ Future<void> displayAddUser(BuildContext context) async {
               SizedBox(height: 8),
               TextFieldBox(controller: _userController.passwordEditingController, label: 'Password', isPassword: true),
               SizedBox(height: 8),
-              TextFieldBox(controller: _userController.passwordEditingController, label: 'Confirm password', isPassword: true),
+              TextFieldBox(controller: _userController.passwordConfirmationEditingController, label: 'Confirm password', isPassword: true),
               SizedBox(height: 20),
               Row(
                 children: [

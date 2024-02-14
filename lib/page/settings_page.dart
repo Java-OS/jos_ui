@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/backup_component.dart';
 import 'package:jos_ui/component/basic_component.dart';
 import 'package:jos_ui/component/date_time_component.dart';
 import 'package:jos_ui/component/environment_component.dart';
@@ -69,6 +70,8 @@ class _SettingsPageState extends State<SettingsPage> {
         return displayUserManagementContent();
       case 4:
         return displayFilesystemContent();
+      case 5:
+        return displayBackupSettings();
       default:
         return displayBasicSettings();
     }
@@ -83,6 +86,20 @@ class _SettingsPageState extends State<SettingsPage> {
           Text('Basic Settings', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
           Divider(),
           BasicComponent(),
+        ],
+      ),
+    );
+  }
+
+  Widget displayBackupSettings() {
+    return basicContent(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const [
+          Text('Backup', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+          Divider(),
+          BackupComponent(),
         ],
       ),
     );

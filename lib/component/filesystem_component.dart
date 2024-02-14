@@ -55,8 +55,8 @@ class _FilesystemComponentState extends State<FilesystemComponent> {
                   text: getPartitionText(fs),
                   warn: fs.type == 'LVM2_member' ? Colors.grey : Colors.red,
                   textStyle: TextStyle(fontSize: 12),
-                  onClick: () => fs.type == 'LVM2_member' ? null : fetchTreeAndDisplay(fs),
-                  disabled: fs.type == 'LVM2_member',
+                  onClick: () => (fs.type == 'LVM2_member' || fs.type == 'swap') ? null : fetchTreeAndDisplay(fs),
+                  disabled: (fs.type == 'LVM2_member' || fs.type == 'swap'),
                 ),
               ),
               SizedBox(width: 8),
@@ -77,7 +77,6 @@ class _FilesystemComponentState extends State<FilesystemComponent> {
   }
 
   void actionButton(HDDPartition partition) {
-    print('Type ${partition.type}   ${partition.total}');
     if (partition.type == 'swap') {
       partition.total == 0 ? _systemController.swapOn(partition) : _systemController.swapOff(partition);
     } else if (partition.mountPoint == null || partition.mountPoint!.isEmpty) {
