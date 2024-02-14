@@ -51,10 +51,10 @@ Future<void> displayMountFilesystemModal(BuildContext context) async {
   );
 }
 
-Future<void> displayFilesystemTree() async {
-  final treeController = TreeController<FilesystemTree>(roots: _systemController.filesystemTree.value!.childs, childrenProvider: (FilesystemTree node) => node.childs);
+Future<void> displayFilesystemTree(BuildContext context) async {
+  final treeController = TreeController<FilesystemTree>(roots: _systemController.filesystemTree.value!.childs ?? [], childrenProvider: (FilesystemTree node) => node.childs ?? []);
   showDialog(
-    context: Get.context!,
+    context: context,
     builder: (BuildContext context) {
       return SimpleDialog(
         title: getModalHeader('Filesystem directory tree'),
@@ -68,16 +68,16 @@ Future<void> displayFilesystemTree() async {
             child: AnimatedTreeView(
               treeController: treeController,
               nodeBuilder: (BuildContext context, TreeEntry<FilesystemTree> entry) {
+                _systemController.dateTimeZone;
                 return InkWell(
-                  onTap: () => treeController.toggleExpansion(entry.node),
+                  onTap: () => {
+                    if (!entry.node.isFile) {_systemController.fetchFilesystemTree(entry.node.fullPath), treeController.toggleExpansion(entry.node)}
+                  },
                   child: TreeIndentation(
                     entry: entry,
                     child: Row(
                       children: [
-                        FolderButton(
-                          isOpen: entry.hasChildren ? entry.isExpanded : null,
-                          // onPressed: entry.hasChildren ? onTap : null,
-                        ),
+                        FolderButton(isOpen: !entry.node.isFile ? entry.isExpanded : null),
                         Text(entry.node.name, style: TextStyle(fontSize: 12)),
                       ],
                     ),
@@ -89,5 +89,5 @@ Future<void> displayFilesystemTree() async {
         ],
       );
     },
-  );
+  ).then((value) => _systemController.clear());
 }

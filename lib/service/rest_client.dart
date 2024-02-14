@@ -45,8 +45,7 @@ class RestClient {
       }
       developer.log('Login Failed');
     } catch (e) {
-      // displayError('Failed connect to server');
-      developer.log('[Dio Error] $rpc ${e.toString()}');
+      developer.log('[Http Error] $rpc ${e.toString()}');
     }
     return false;
   }
@@ -69,7 +68,7 @@ class RestClient {
       }
       developer.log('Invalid token');
     } catch (e) {
-      developer.log('[Dio Error] $rpc ${e.toString()}');
+      developer.log('[Http Error] $rpc ${e.toString()}');
     }
     return false;
   }
@@ -91,7 +90,8 @@ class RestClient {
       storeJvmNeedRestart(response.headers);
       storeToken(response.headers);
       if (statusCode == 200) {
-        return RpcResponse.toObject(response.body);
+        var utf8Body = utf8.decode(response.bodyBytes);
+        return RpcResponse.toObject(utf8Body);
       } else if (statusCode == 204) {
         return RpcResponse(true, null, null, null);
       } else if (statusCode == 401) {
@@ -102,9 +102,9 @@ class RestClient {
       }
     } catch (e) {
       if (rpc == RPC.systemReboot || rpc == RPC.jvmRestart || rpc == RPC.systemShutdown) {
-        developer.log('Normal error by dio , The jvm going to shutdown before sending response');
+        developer.log('Normal error by http , The jvm going to shutdown before sending response');
       } else {
-        developer.log('[Dio Error] $rpc ${e.toString()}');
+        developer.log('[Http Error] $rpc ${e.toString()}');
       }
     }
     return RpcResponse(false, null, null, null);

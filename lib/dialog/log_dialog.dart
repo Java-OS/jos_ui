@@ -191,8 +191,8 @@ Future<void> displayLoggerModal(BuildContext context) async {
                     TabItem(text: 'Syslog', icon: Icons.terminal_rounded, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
                   ],
                   contents: [
-                    Obx(() => fileLoggerTab()),
-                    Obx(() => syslogLoggerTab()),
+                    Obx(() => fileLoggerTab(context)),
+                    Obx(() => syslogLoggerTab(context)),
                   ],
                 ),
               ),
@@ -202,7 +202,7 @@ Future<void> displayLoggerModal(BuildContext context) async {
       );
 }
 
-Widget fileLoggerTab() {
+Widget fileLoggerTab(BuildContext context) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -219,7 +219,7 @@ Widget fileLoggerTab() {
             dataRowMaxHeight: 32,
             columnSpacing: 4,
             columns: _getLogInfoColumns('FILE'),
-            rows: _getLogInfoRows('FILE'),
+            rows: _getLogInfoRows('FILE', context),
           ),
         ),
       ),
@@ -227,7 +227,7 @@ Widget fileLoggerTab() {
   );
 }
 
-Widget syslogLoggerTab() {
+Widget syslogLoggerTab(BuildContext context) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -244,7 +244,7 @@ Widget syslogLoggerTab() {
             dataRowMaxHeight: 32,
             columnSpacing: 4,
             columns: _getLogInfoColumns('SYSLOG'),
-            rows: _getLogInfoRows('SYSLOG'),
+            rows: _getLogInfoRows('SYSLOG', context),
           ),
         ),
       ),
@@ -276,7 +276,7 @@ List<DataColumn> _getLogInfoColumns(String type) {
   return columns;
 }
 
-List<DataRow> _getLogInfoRows(String type) {
+List<DataRow> _getLogInfoRows(String type, BuildContext context) {
   var dataRowList = <DataRow>[];
   var list = _logController.logAppenders.where((item) => item.type == type).toList();
   for (var logInfo in list) {
@@ -317,7 +317,7 @@ List<DataRow> _getLogInfoRows(String type) {
               children: [
                 IconButton(onPressed: () => displayFileLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
                 IconButton(onPressed: () => displayTailLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
-                IconButton(onPressed: () => fetchTreeAndDisplay(logInfo.packageName), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.folder_open, size: 16)),
+                IconButton(onPressed: () => fetchTreeAndDisplay(logInfo.packageName, context), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.folder_open, size: 16)),
                 IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16)),
               ],
             ),
@@ -331,9 +331,8 @@ List<DataRow> _getLogInfoRows(String type) {
   return dataRowList;
 }
 
-fetchTreeAndDisplay(String package) {
-  _systemController.mountPointEditingController.text = '/logs/$package';
-  _systemController.fetchFilesystemTree().then((value) => displayFilesystemTree());
+fetchTreeAndDisplay(String package, BuildContext context) {
+  _systemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(context));
 }
 
 Future<void> displayFileLogAppender(LogInfo? logInfo) async {

@@ -161,14 +161,38 @@ class SystemController extends GetxController {
     }
   }
 
-  Future<void> fetchFilesystemTree() async {
-    var mountPoint = mountPointEditingController.text;
+  Future<void> fetchFilesystemTree(String rootPath) async {
     var reqParam = {
-      'rootDir': mountPoint,
+      'rootDir': rootPath,
     };
     var response = await RestClient.rpc(RPC.filesystemDirectoryTree, parameters: reqParam);
     if (response.success) {
-      filesystemTree.value = FilesystemTree.fromJson(response.result);
+        var tree = FilesystemTree.fromJson(response.result);
+      if (filesystemTree.value == null) {
+        filesystemTree.value = tree;
+      } else {
+        var foundedTree = walkToFindFilesystemTree(filesystemTree.value!, rootPath);
+        if (foundedTree != null && foundedTree.childs!.isEmpty) {
+          foundedTree.childs!.addAll(tree.childs!);
+        }
+      }
+    }
+  }
+
+  FilesystemTree? walkToFindFilesystemTree(FilesystemTree tree,String absolutePath) {
+    if (tree.fullPath == absolutePath) {
+      return tree ;
+    }
+    var dirList = tree.childs!.where((element) => !element.isFile).toList();
+    if (dirList.isEmpty) return null;
+    for (FilesystemTree child in dirList){
+      if (child.fullPath == absolutePath) {
+        return child;
+      } else {
+        var w = walkToFindFilesystemTree(child, absolutePath);
+        if (w == null) continue;
+        return w;
+      }
     }
   }
 
@@ -248,5 +272,6 @@ class SystemController extends GetxController {
     mountPointEditingController.clear();
     hostHostnameEditingController.clear();
     filesystemTypeEditingController.clear();
+    filesystemTree = Rxn<FilesystemTree>();
   }
 }
