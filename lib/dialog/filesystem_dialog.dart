@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/controller/log_controller.dart';
 import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 SystemController _systemController = Get.put(SystemController());
+LogController _logController = Get.put(LogController());
 
 Future<void> displayMountFilesystemModal(BuildContext context) async {
   showDialog(
@@ -51,7 +53,7 @@ Future<void> displayMountFilesystemModal(BuildContext context) async {
   );
 }
 
-Future<void> displayFilesystemTree(BuildContext context) async {
+Future<void> displayFilesystemTree(BuildContext context, bool enableDownloadFiles) async {
   final treeController = TreeController<FilesystemTree>(roots: _systemController.filesystemTree.value!.childs ?? [], childrenProvider: (FilesystemTree node) => node.childs ?? []);
   showDialog(
     context: context,
@@ -63,12 +65,13 @@ Future<void> displayFilesystemTree(BuildContext context) async {
         titlePadding: EdgeInsets.zero,
         children: [
           SizedBox(
-            width: 900,
-            height: 400,
+            width: 600,
+            height: 300,
             child: AnimatedTreeView(
               treeController: treeController,
               nodeBuilder: (BuildContext context, TreeEntry<FilesystemTree> entry) {
                 _systemController.dateTimeZone;
+                var fullPath = entry.node.fullPath;
                 return InkWell(
                   onTap: () => {
                     if (!entry.node.isFile) {_systemController.fetchFilesystemTree(entry.node.fullPath), treeController.toggleExpansion(entry.node)}
@@ -76,9 +79,27 @@ Future<void> displayFilesystemTree(BuildContext context) async {
                   child: TreeIndentation(
                     entry: entry,
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        FolderButton(isOpen: !entry.node.isFile ? entry.isExpanded : null),
-                        Text(entry.node.name, style: TextStyle(fontSize: 12)),
+                        Row(
+                          children: [
+                            FolderButton(isOpen: !entry.node.isFile ? entry.isExpanded : null),
+                            Text(entry.node.name, style: TextStyle(fontSize: 12)),
+                          ],
+                        ),
+                        Visibility(
+                          visible: enableDownloadFiles,
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 20),
+                            child: OutlinedButton(
+                              onPressed: () => _logController.downloadLog(fullPath.split('/')[2], fullPath.split('/')[3]),
+                              child: Icon(
+                                Icons.file_download,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),

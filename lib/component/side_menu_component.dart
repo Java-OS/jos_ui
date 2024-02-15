@@ -23,7 +23,7 @@ class _SideMenuComponentState extends State<SideMenuComponent> {
     Icons.join_right,
     Icons.groups_sharp,
     Icons.save,
-    Icons.backup_outlined,
+    Icons.copy_sharp,
   ];
 
   @override

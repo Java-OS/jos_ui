@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
+import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:fetch_client/fetch_client.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' as getx;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -16,10 +17,16 @@ import 'package:jos_ui/model/log_level.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/storage_service.dart';
 
+enum UploadType {
+  module,
+  config;
+}
+
 class RestClient {
   static final JvmController jvmController = getx.Get.put(JvmController());
   static final _http = http.Client();
   static final LogController _sseController = Get.put(LogController());
+
   static String _baseLoginUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/login";
 
   static String _baseRpcUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/rpc";
@@ -27,6 +34,8 @@ class RestClient {
   static String _baseUploadUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/upload";
 
   static String _baseSseUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/sse";
+
+  static String _baseDownloadUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/download";
 
   static Future<bool> login(String username, String password) async {
     developer.log('Login request [$username] [$password] [${_baseLoginUrl()}]');
@@ -119,7 +128,6 @@ class RestClient {
   }
 
   static void storeJvmNeedRestart(Map<String, String> headers) {
-    debugPrint('$headers');
     var jvmNeedRestart = headers['x-jvm-restart'];
     if (jvmNeedRestart != null) {
       developer.log('Receive header X-Jvm-Restart with value: [$jvmNeedRestart]');
@@ -127,7 +135,7 @@ class RestClient {
     }
   }
 
-  static Future<bool> upload(Uint8List bytes, String fileName) async {
+  static Future<bool> upload(Uint8List bytes, String fileName, UploadType type) async {
     developer.log('selected file: $fileName');
 
     var token = StorageService.getItem('token');
@@ -135,29 +143,69 @@ class RestClient {
       'authorization': 'Bearer $token',
     };
 
-    var request = http.MultipartRequest('POST', Uri.parse(_baseUploadUrl()));
-    request.headers.addAll(headers);
-    var fileOrder = http.MultipartFile.fromBytes('file', bytes, filename: fileName);
-    request.files.add(fileOrder);
-    var response = await request.send();
-    return response.statusCode == 200;
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse('${_baseUploadUrl()}/${type.name}'));
+      request.headers.addAll(headers);
+      var fileOrder = http.MultipartFile.fromBytes('file', bytes, filename: fileName);
+      request.files.add(fileOrder);
+      var response = await request.send();
+      return response.statusCode == 200;
+    } catch (e) {
+        displayError('Invalid ${type.name} file');
+        return false;
+    }
   }
 
-  static Future<FetchResponse> sse(String packageName,LogLevel logLevel) async {
+  static Future<FetchResponse> sse(String packageName, LogLevel logLevel) async {
     developer.log('Start SSE Client [$packageName] [${logLevel.name}]');
     var token = StorageService.getItem('token');
-    var header = {
-      'authorization': 'Bearer $token',
-      'Connection': 'keep-alive',
-      'Content-type': 'text/event-stream',
-      'x-log-package': packageName,
-      'x-log-level': logLevel.name.toUpperCase()
-    };
+    var header = {'authorization': 'Bearer $token', 'Connection': 'keep-alive', 'Content-type': 'text/event-stream', 'x-log-package': packageName, 'x-log-level': logLevel.name.toUpperCase()};
 
     var request = http.Request('GET', Uri.parse(_baseSseUrl()));
     request.headers.addAll(header);
 
     final FetchClient fetchClient = FetchClient(mode: RequestMode.cors);
     return fetchClient.send(request);
+  }
+
+  static Future<void> download(Map<String, String> parameters) async {
+    developer.log('Download file: ');
+    var token = StorageService.getItem('token');
+    if (token == null) getx.Get.toNamed('/');
+    var headers = {
+      'Authorization': 'Bearer $token',
+    };
+    developer.log('Credential send: [$headers]');
+
+    try {
+      var uri = Uri.parse(_baseDownloadUrl()).replace(queryParameters: parameters);
+
+      final anchor = AnchorElement(href: '#')
+        ..setAttribute('download', '')
+        ..style.display = 'none';
+      document.body!.append(anchor);
+
+      // final request = await http.head(uri, headers: headers);
+      final request = http.Request('GET', uri);
+      request.headers.addAll(headers);
+      final client = http.Client();
+      final streamedResponse = await client.send(request);
+      final response = await http.Response.fromStream(streamedResponse);
+      final blob = Blob([response.bodyBytes]);
+      final urlObject = Url.createObjectUrlFromBlob(blob);
+
+      final contentDisposition = response.headers['content-disposition'];
+      final filename = contentDisposition?.split('filename=')[1].replaceAll('"', '');
+
+      anchor.href = urlObject;
+      anchor.download = filename;
+      anchor.click();
+      anchor.remove();
+      Url.revokeObjectUrl(urlObject);
+
+      client.close();
+    } catch (e) {
+      developer.log('[Http Error] $rpc ${e.toString()}');
+    }
   }
 }

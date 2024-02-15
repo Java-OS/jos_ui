@@ -53,7 +53,7 @@ class SystemController extends GetxController {
 
   Future<void> changeHostname() async {
     developer.log('Change hostname called');
-    bool accepted = await displayAlertModal('Warning', 'JVM immediately must be reset after change hostname.');
+    bool accepted = await displayAlertModal('Warning', 'JVM should be restarted for the changes to take effect');
     if (accepted) {
       var response = await RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': hostnameEditingController.text});
       if (response.success) {

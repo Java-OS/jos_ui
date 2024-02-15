@@ -332,7 +332,7 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
 }
 
 fetchTreeAndDisplay(String package, BuildContext context) {
-  _systemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(context));
+  _systemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(context, true));
 }
 
 Future<void> displayFileLogAppender(LogInfo? logInfo) async {
