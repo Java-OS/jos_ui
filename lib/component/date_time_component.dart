@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:jos_ui/controller/date_time_controller.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
+import 'package:searchfield/searchfield.dart';
+import 'package:timezone/browser.dart' as tz;
 
 class DateTimeComponent extends StatefulWidget {
   const DateTimeComponent({super.key});
@@ -14,10 +16,25 @@ class DateTimeComponent extends StatefulWidget {
 class _DateTimeComponentState extends State<DateTimeComponent> {
   final DateTimeController dateTimeController = Get.put(DateTimeController());
 
+  late List<String> locations = [];
+  bool mouseHoverTimeZone = false;
+
+  String convertOffsetToTimeDifference(int offset) {
+    final hours = offset ~/ 3600000;
+    final minutes = (offset % 3600000) ~/ 60000;
+    return '$hours:$minutes';
+  }
+
   @override
   void initState() {
     super.initState();
     dateTimeController.fetchNtpInfo();
+    var map = tz.timeZoneDatabase.locations;
+    for (String x in map.keys) {
+      var name = map[x]!.name;
+      var td = convertOffsetToTimeDifference(map[x]!.currentTimeZone.offset);
+      locations.add('$name\t($td)');
+    }
   }
 
   @override
@@ -25,56 +42,100 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
     return Expanded(
       child: Stack(
         children: [
-          Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Obx(() => Checkbox(value: dateTimeController.isNtpActive.value, onChanged: (e) => switchToNtp(e!))),
-                      SizedBox(width: 4),
-                      Text('Set date and time automatically', style: TextStyle()),
-                    ],
+          SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              children: [
+                MouseRegion(
+                  onHover: (_) => setState(() => mouseHoverTimeZone = true),
+                  onExit: (_) => setState(() => mouseHoverTimeZone = false),
+                  child: Material(
+                    elevation: mouseHoverTimeZone ? 3 : 0,
+                    shadowColor: Colors.black,
+                    child: SearchField(
+                      autofocus: true,
+                      suggestions: getCountries(),
+                      controller: dateTimeController.timeZoneEditingController,
+                      hint: 'Select timezone',
+                      onSubmit: (e) => dateTimeController.updateTimezone(e),
+                      onSuggestionTap: (e) => dateTimeController.updateTimezone(e.searchKey),
+                      searchInputDecoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintStyle: TextStyle(fontSize: 12),
+                        isDense: true,
+                        contentPadding: EdgeInsets.all(14),
+                      ),
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Obx(
-                        () => Visibility(
-                          visible: !dateTimeController.isNtpActive.value,
-                          child: Tooltip(
-                            message: 'Sync from hardware clock',
-                            preferBelow: false,
-                            verticalOffset: 22,
-                            child: OutlinedButton(onPressed: () => dateTimeController.hcToSys(), child: Icon(Icons.settings_backup_restore, size: 16, color: Colors.black)),
+                ),
+                Divider(),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Obx(() => Checkbox(value: dateTimeController.isNtpActive.value, onChanged: (e) => switchToNtp(e!))),
+                        SizedBox(width: 4),
+                        Text('Set date and time automatically', style: TextStyle()),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Obx(
+                          () => Visibility(
+                            visible: !dateTimeController.isNtpActive.value,
+                            child: Tooltip(
+                              message: 'Sync from hardware clock',
+                              preferBelow: false,
+                              verticalOffset: 22,
+                              child: OutlinedButton(onPressed: () => dateTimeController.hcToSys(), child: Icon(Icons.settings_backup_restore, size: 16, color: Colors.black)),
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Tooltip(
-                        message: 'Update hardware clock',
-                        preferBelow: false,
-                        verticalOffset: 22,
-                        child: OutlinedButton(onPressed: () => dateTimeController.sysToHc(), child: Icon(Icons.commit_rounded, size: 16, color: Colors.black)),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              SizedBox(height: 4),
-              Obx(
-                () => Visibility(
-                  visible: dateTimeController.isNtpActive.value,
-                  replacement: displayManualDateTimeComponent(),
-                  child: displayNtpComponent(),
+                        SizedBox(width: 8),
+                        Tooltip(
+                          message: 'Update hardware clock',
+                          preferBelow: false,
+                          verticalOffset: 22,
+                          child: OutlinedButton(onPressed: () => dateTimeController.sysToHc(), child: Icon(Icons.commit_rounded, size: 16, color: Colors.black)),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
-              ),
-            ],
+                SizedBox(height: 4),
+                Obx(
+                  () => Visibility(
+                    visible: dateTimeController.isNtpActive.value,
+                    replacement: displayManualDateTimeComponent(),
+                    child: displayNtpComponent(),
+                  ),
+                ),
+              ],
+            ),
           ),
           Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => dateTimeController.apply(), child: Text('Apply')))
         ],
       ),
     );
+  }
+
+  List<SearchFieldListItem<dynamic>> getCountries() {
+    return locations
+        .map(
+          (e) => SearchFieldListItem(
+            e,
+            child: Padding(
+              padding: EdgeInsets.only(left: 8, right: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [Text(e.split('\t')[0]), Text(e.split('\t')[1])],
+              ),
+            ),
+          ),
+        )
+        .toList();
   }
 
   Widget displayManualDateTimeComponent() {

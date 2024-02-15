@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
@@ -10,6 +9,7 @@ import 'package:jos_ui/service/rest_client.dart';
 class DateTimeController extends GetxController {
   final TextEditingController ntpServerEditingController = TextEditingController();
   final TextEditingController ntpIntervalEditingController = TextEditingController();
+  final TextEditingController timeZoneEditingController = TextEditingController();
 
   var isNtpActive = false.obs;
 
@@ -116,6 +116,17 @@ class DateTimeController extends GetxController {
       activateNtp().then((value) => setNtpConfiguration()).then((value) => syncNTP());
     } else {
       activateNtp().then((value) => updateDateTime()).then((value) => fetchSystemDateTime());
+    }
+  }
+
+  Future<void> updateTimezone(String zone) async {
+    var reqParam = {'timezone': zone.split('\t')[0]};
+    var response = await RestClient.rpc(RPC.systemSetTimezone, parameters: reqParam);
+    if (response.success) {
+      displayInfo('Timezone successfully updated');
+      if (isNtpActive.isTrue) {
+        fetchNtpInfo();
+      }
     }
   }
 }
