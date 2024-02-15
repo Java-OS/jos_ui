@@ -68,7 +68,7 @@ class BackupComponentState extends State<BackupComponent> {
                       ),
                       duration: Duration(milliseconds: 500),
                       child: ListTile(
-                        leading: CircleAvatar(radius: 12, child: Text(index.toString(), style: TextStyle(fontSize: 12))),
+                        leading: effectStatement ? null : CircleAvatar(radius: 12, child: Text(index.toString(), style: TextStyle(fontSize: 12))),
                         title: Text(title, style: TextStyle(fontSize: 14)),
                         trailing: SizedBox(
                           width: 80,
