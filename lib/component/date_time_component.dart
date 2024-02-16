@@ -53,7 +53,6 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
                     elevation: mouseHoverTimeZone ? 3 : 0,
                     shadowColor: Colors.black,
                     child: SearchField(
-                      autofocus: true,
                       suggestions: getCountries(),
                       controller: dateTimeController.timeZoneEditingController,
                       hint: 'Select timezone',

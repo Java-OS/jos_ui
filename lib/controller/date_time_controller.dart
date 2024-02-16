@@ -16,6 +16,7 @@ class DateTimeController extends GetxController {
   /* Server date & time*/
   var serverDate = ''.obs;
   var serverTime = ''.obs;
+  var serverTimeZone = ''.obs;
 
   /* NTP sync parameters */
   var leapIndicator = ''.obs;
@@ -56,6 +57,8 @@ class DateTimeController extends GetxController {
     if (result.result != null) {
       serverDate.value = result.result['zonedDateTime'].split(' ')[0];
       serverTime.value = result.result['zonedDateTime'].split(' ')[1];
+      serverTimeZone.value = result.result['zonedDateTime'].split(' ')[2];
+      timeZoneEditingController.text = serverTimeZone.value;
     }
   }
 
