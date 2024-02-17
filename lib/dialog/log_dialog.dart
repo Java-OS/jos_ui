@@ -15,7 +15,7 @@ final LogController _logController = Get.put(LogController());
 final SystemController _systemController = Get.put(SystemController());
 final ScrollController _scrollController = ScrollController();
 
-Future<void> displayTailLoggerModal(LogInfo? logInfo) async {
+Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
   if (logInfo != null) {
     _logController.packageEditingController.text = logInfo.packageName;
     _logController.patternEditingController.text = logInfo.pattern;
@@ -70,16 +70,16 @@ Future<void> displayTailLoggerModal(LogInfo? logInfo) async {
                     ),
                   ),
                   SizedBox(width: 8),
-                  Obx(
-                    () => CharButton(
-                      width: 36,
-                      height: 36,
-                      backgroundColor: _logController.isTail.isFalse ? Colors.white : Colors.grey[500],
-                      textStyle: TextStyle(color: _logController.isTail.isFalse ? Colors.black : Colors.white, fontSize: 11),
-                      char: _logController.isTail.isFalse ? 'Tail' : 'Scroll',
-                      onPressed: () => _logController.isTail.value = !_logController.isTail.value,
-                    ),
-                  ),
+                  // Obx(
+                  //   () => CharButton(
+                  //     width: 36,
+                  //     height: 36,
+                  //     backgroundColor: _logController.isTail.isFalse ? Colors.white : Colors.grey[500],
+                  //     textStyle: TextStyle(color: _logController.isTail.isFalse ? Colors.black : Colors.white, fontSize: 11),
+                  //     char: _logController.isTail.isFalse ? 'Tail' : 'Scroll',
+                  //     onPressed: () => _logController.isTail.value = !_logController.isTail.value,
+                  //   ),
+                  // ),
                   SizedBox(width: 8),
                   CharButton(
                     width: 36,
@@ -294,7 +294,7 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
             Row(
               children: [
                 IconButton(onPressed: () => displaySysLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
-                IconButton(onPressed: () => displayTailLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
+                IconButton(onPressed: () => displayLiveLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
                 IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16)),
               ],
             ),
@@ -316,7 +316,7 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
             Row(
               children: [
                 IconButton(onPressed: () => displayFileLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
-                IconButton(onPressed: () => displayTailLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
+                IconButton(onPressed: () => displayLiveLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
                 IconButton(onPressed: () => fetchTreeAndDisplay(logInfo.packageName, context), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.folder_open, size: 16)),
                 IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16)),
               ],
