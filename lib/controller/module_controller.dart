@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:file_picker/_internal/file_picker_web.dart';
@@ -11,9 +12,10 @@ class ModuleController extends GetxController {
   var moduleList = <Module>[].obs;
 
   Future<void> fetchModules() async {
-    var response = await RestClient.rpc(RPC.moduleList);
-    if (response.success) {
-      var result = response.result as List;
+    var payload = await RestClient.rpc(RPC.moduleList);
+    if (payload.success) {
+      var json = jsonDecode(payload.data);
+      var result = json as List;
       moduleList.value = result.map((item) => Module.fromJson(item)).toList();
     } else {
       displayError('Failed to fetch network interfaces');

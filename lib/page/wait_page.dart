@@ -19,7 +19,7 @@ class _WaitPageState extends State<WaitPage> {
   AuthenticationController authenticationController = Get.put(AuthenticationController());
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => authenticationController.checkLogin());
+    // WidgetsBinding.instance.addPostFrameCallback((_) => authenticationController.checkLogin());
     super.initState();
   }
 

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
@@ -35,12 +36,13 @@ class DateTimeController extends GetxController {
 
   void fetchNtpInfo() async {
     developer.log('Fetch NTP Information called');
-    var response = await RestClient.rpc(RPC.ntpInformation);
-    if (response.result != null) {
-      bool serverNtpIsActive = response.result['activate'];
+    var payload = await RestClient.rpc(RPC.ntpInformation);
+    if (payload.success) {
+      var json = jsonDecode(payload.data);
+      bool serverNtpIsActive = json['activate'];
 
-      ntpServerEditingController.text = response.result['server'];
-      ntpIntervalEditingController.text = response.result['interval'].toString();
+      ntpServerEditingController.text = json['server'];
+      ntpIntervalEditingController.text = json['interval'].toString();
 
       if (!serverNtpIsActive) {
         fetchSystemDateTime();
@@ -53,11 +55,12 @@ class DateTimeController extends GetxController {
 
   void fetchSystemDateTime() async {
     developer.log('Fetch system date time called');
-    var result = await RestClient.rpc(RPC.dateTimeInformation);
-    if (result.result != null) {
-      serverDate.value = result.result['zonedDateTime'].split(' ')[0];
-      serverTime.value = result.result['zonedDateTime'].split(' ')[1];
-      serverTimeZone.value = result.result['zonedDateTime'].split(' ')[2];
+    var payload = await RestClient.rpc(RPC.dateTimeInformation);
+    if (payload.success) {
+      var json = jsonDecode(payload.data);
+      serverDate.value = json['zonedDateTime'].split(' ')[0];
+      serverTime.value = json['zonedDateTime'].split(' ')[1];
+      serverTimeZone.value = json['zonedDateTime'].split(' ')[2];
       timeZoneEditingController.text = serverTimeZone.value;
     }
   }
@@ -86,21 +89,22 @@ class DateTimeController extends GetxController {
 
   Future<void> syncNTP() async {
     developer.log('Sync NTP Called');
-    var response = await RestClient.rpc(RPC.ntpSync);
-    if (response.result != null) {
-      leapIndicator.value = response.result['leapIndicator'].toString();
-      version.value = response.result['version'].toString();
-      mode.value = response.result['mode'].toString();
-      stratum.value = response.result['stratum'].toString();
-      poll.value = response.result['poll'].toString();
-      precision.value = response.result['precision'].toString();
-      rootDelay.value = response.result['rootDelay'].toString();
-      rootDispersion.value = response.result['rootDispersion'].toString();
-      referenceIdentifier.value = response.result['referenceIdentifier'].toString();
-      referenceTimestamp.value = response.result['referenceTimestamp'].toString();
-      originateTimestamp.value = response.result['originateTimestamp'].toString();
-      receiveTimestamp.value = response.result['receiveTimestamp'].toString();
-      transmitTimestamp.value = response.result['transmitTimestamp'].toString();
+    var payload = await RestClient.rpc(RPC.ntpSync);
+    if (payload.success) {
+      var json = jsonDecode(payload.data);
+      leapIndicator.value = json['leapIndicator'].toString();
+      version.value = json['version'].toString();
+      mode.value = json['mode'].toString();
+      stratum.value = json['stratum'].toString();
+      poll.value = json['poll'].toString();
+      precision.value = json['precision'].toString();
+      rootDelay.value = json['rootDelay'].toString();
+      rootDispersion.value = json['rootDispersion'].toString();
+      referenceIdentifier.value = json['referenceIdentifier'].toString();
+      referenceTimestamp.value = json['referenceTimestamp'].toString();
+      originateTimestamp.value = json['originateTimestamp'].toString();
+      receiveTimestamp.value = json['receiveTimestamp'].toString();
+      transmitTimestamp.value = json['transmitTimestamp'].toString();
     }
   }
 

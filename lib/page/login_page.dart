@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jos_ui/controller/authentication_controller.dart';
 import 'package:jos_ui/page_base_content.dart';
+import 'package:jos_ui/service/rest_client.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,14 +16,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   AuthenticationController authenticationController = Get.put(AuthenticationController());
+  Image? captchaImage;
+
+  @override
+  void initState() {
+    requestPublicKey();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return getPageContent(
       child: Center(
         child: SizedBox(
-          width: 310,
-          height: 310,
+          width: 280,
+          height: 400,
           child: Card(
             color: Colors.transparent,
             shadowColor: Colors.transparent,
@@ -32,16 +42,19 @@ class _LoginPageState extends State<LoginPage> {
                   Center(child: Text('JOS', style: GoogleFonts.smoochSans(letterSpacing: 3, color: Colors.white, fontSize: 55, fontWeight: FontWeight.bold))),
                   TextField(
                     controller: authenticationController.usernameEditingController,
+                    enableSuggestions: false,
+                    autocorrect: false,
                     style: TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
                       enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
                       labelText: 'Username',
-                      labelStyle: TextStyle(color: Colors.white38),
+                      labelStyle: TextStyle(color: Colors.white38, fontSize: 12),
+                      contentPadding: EdgeInsets.all(14),
                     ),
                     onSubmitted: (_) => authenticationController.login(),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
                   TextField(
                     controller: authenticationController.passwordEditingController,
                     obscureText: true,
@@ -52,16 +65,57 @@ class _LoginPageState extends State<LoginPage> {
                       focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
                       enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
                       labelText: 'Password',
-                      labelStyle: TextStyle(color: Colors.white38),
+                      labelStyle: TextStyle(color: Colors.white38, fontSize: 12),
+                      contentPadding: EdgeInsets.all(14),
                     ),
                     onSubmitted: (_) => authenticationController.login(),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 10),
+                  SizedBox(
+                    height: 50,
+                    width: double.infinity,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 50,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [captchaWidget()],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: OutlinedButton(onPressed: () => requestPublicKey(), child: Icon(Icons.refresh, size: 16, color: Colors.blue)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: authenticationController.captchaEditingController,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+                      labelText: 'Captcha',
+                      labelStyle: TextStyle(color: Colors.white38, fontSize: 12),
+                      contentPadding: EdgeInsets.all(14),
+                    ),
+                    onSubmitted: (_) => authenticationController.login(),
+                  ),
+                  SizedBox(height: 10),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(onPressed: () => authenticationController.login(), child: Text('Login')),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -69,5 +123,18 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  Widget captchaWidget() {
+    return Visibility(
+      visible: captchaImage != null,
+      replacement: SizedBox(width: 16, height: 16, child: CircularProgressIndicator()),
+      child: ClipRRect(borderRadius: BorderRadius.circular(3), child: captchaImage),
+    );
+  }
+
+  Future<void> requestPublicKey() async {
+    var result = await RestClient.sendEcdhPublicKey();
+    setState(() => captchaImage = result != null ? Image.memory(base64Decode(result)) : null);
   }
 }

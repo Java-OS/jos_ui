@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package jos;
+
+option java_package = "ir.moke.jos.daemon.http.protobuf";
+option java_multiple_files = true;
+
+message Packet {
+  bytes iv = 1;
+  bytes hash = 2;
+  bytes content = 3;
+}
+
+message  Payload {
+  bool success = 1;
+  int32 rpc = 2;
+  int32 error = 3;
+  string message = 4;
+  string data = 5;
+  bool needRestart = 6;
+  string logPackage = 7;
+  string logLevel = 8;
+}

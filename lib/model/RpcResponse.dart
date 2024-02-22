@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-class RpcResponse {
+class ResponseDTO {
   bool success = false;
   int? error = -1;
   String? message = '';
   dynamic result;
 
-  RpcResponse(this.success, this.error, this.message, this.result);
+  ResponseDTO(this.success, this.error, this.message, this.result);
 
-  factory RpcResponse.toObject(String response) {
+  factory ResponseDTO.toObject(String response) {
     var json = jsonDecode(response);
-    return RpcResponse(json['success'], json['error'], json['message'], json['result']);
+    return ResponseDTO(json['success'], json['error'], json['message'], json['result']);
   }
 
   String toJson() {

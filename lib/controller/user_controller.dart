@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
@@ -25,9 +26,9 @@ class UserController extends GetxController {
 
   Future<void> fetchUsers() async {
     developer.log('Fetch users called');
-    var response = await RestClient.rpc(RPC.userList);
-    if (response.success) {
-      userList.value = (response.result as List).map((e) => User.fromJson(e)).toList();
+    var payload = await RestClient.rpc(RPC.userList);
+    if (payload.success) {
+      userList.value = (jsonDecode(payload.data) as List).map((e) => User.fromJson(e)).toList();
     } else {
       displayWarning('Failed to fetch users');
     }

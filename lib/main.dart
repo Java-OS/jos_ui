@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       navigatorKey: navigatorKey,
       getPages: [
-        GetPage(name: '/', page: () => WaitPage(), transition: Transition.fadeIn, transitionDuration: Duration(milliseconds: 500)),
+        GetPage(name: '/', page: () => LoginPage(), transition: Transition.fadeIn, transitionDuration: Duration(milliseconds: 500)),
         GetPage(name: '/login', page: () => LoginPage(), transition: Transition.fadeIn, transitionDuration: Duration(milliseconds: 500)),
         GetPage(name: '/dashboard', page: () => DashboardPage(), transition: Transition.fadeIn, transitionDuration: Duration(milliseconds: 500)),
         GetPage(name: '/settings/:index', page: () => SettingsPage(), transition: Transition.fadeIn, transitionDuration: Duration(milliseconds: 500)),

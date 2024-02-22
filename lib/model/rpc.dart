@@ -117,7 +117,7 @@ enum RPC {
   logAppenderAdd(901),
   logAppenderRemove(902);
 
-  final num value;
+  final int value;
 
   const RPC(this.value);
 }

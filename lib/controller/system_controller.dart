@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
@@ -42,10 +43,11 @@ class SystemController extends GetxController {
 
   Future<void> fetchHostname() async {
     developer.log('Fetch hostname called');
-    var response = await RestClient.rpc(RPC.systemGetHostname);
-    if (response.result != null) {
-      osHostname.value = response.result;
-      hostnameEditingController.text = response.result;
+    var payload = await RestClient.rpc(RPC.systemGetHostname);
+    if (payload.success) {
+      var json = jsonDecode(payload.data);
+      osHostname.value = json;
+      hostnameEditingController.text = json;
     } else {
       displayError('Failed to fetch hostname');
     }
@@ -67,9 +69,9 @@ class SystemController extends GetxController {
 
   void fetchSystemInformation() async {
     developer.log('Fetch System Full Information');
-    var response = await RestClient.rpc(RPC.systemFullInformation);
-    if (response.result != null) {
-      var json = response.result;
+    var payload = await RestClient.rpc(RPC.systemFullInformation);
+    if (payload.success) {
+      var json = jsonDecode(payload.data);
       dateTimeZone.value = json['os_date_time_zone'].toString();
       osUsername.value = json['os_username'].toString();
       osVersion.value = json['os_version'].toString();
@@ -90,9 +92,9 @@ class SystemController extends GetxController {
 
   Future<void> fetchPartitions() async {
     developer.log('Fetch filesystems');
-    var response = await RestClient.rpc(RPC.filesystemList);
-    if (response.success) {
-      var result = response.result as List;
+    var payload = await RestClient.rpc(RPC.filesystemList);
+    if (payload.success) {
+      var result = jsonDecode(payload.data) as List;
       partitions.value = result.map((e) => HDDPartition.fromJson(e)).toList();
     } else {
       displayError('Failed to fetch filesystems');
@@ -165,9 +167,10 @@ class SystemController extends GetxController {
     var reqParam = {
       'rootDir': rootPath,
     };
-    var response = await RestClient.rpc(RPC.filesystemDirectoryTree, parameters: reqParam);
-    if (response.success) {
-        var tree = FilesystemTree.fromJson(response.result);
+    var payload = await RestClient.rpc(RPC.filesystemDirectoryTree, parameters: reqParam);
+    if (payload.success) {
+      var json = jsonDecode(payload.data);
+        var tree = FilesystemTree.fromJson(json);
       if (filesystemTree.value == null) {
         filesystemTree.value = tree;
       } else {
@@ -198,9 +201,10 @@ class SystemController extends GetxController {
 
   Future<void> fetchDnsNameserver() async {
     developer.log('fetch dns nameserver');
-    var response = await RestClient.rpc(RPC.networkGetDnsNameserver);
-    if (response.success) {
-      dnsEditingController.text = response.result;
+    var payload = await RestClient.rpc(RPC.networkGetDnsNameserver);
+    if (payload.success) {
+      var json = jsonDecode(payload.data);
+      dnsEditingController.text = json;
     } else {
       displayWarning('Failed to fetch dns nameserver');
     }
@@ -223,9 +227,9 @@ class SystemController extends GetxController {
 
   Future<void> fetchHosts() async {
     developer.log('fetch hosts');
-    var response = await RestClient.rpc(RPC.hostsList);
-    if (response.success) {
-      var result = response.result as List;
+    var payload = await RestClient.rpc(RPC.hostsList);
+    if (payload.success) {
+      var result = jsonDecode(payload.data) as List;
       hosts.value = result.map((e) => Host.fromJson(e)).toList();
       hosts.sort((a, b) => a.ip.compareTo(b.ip));
     } else {

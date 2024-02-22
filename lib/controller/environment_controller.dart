@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
@@ -14,9 +15,10 @@ class EnvironmentController extends GetxController {
 
   Future<void> fetchSystemEnvironments() async {
     developer.log('Fetch System Environments called');
-    var response = await RestClient.rpc(RPC.systemEnvironmentList);
-    if (response.result != null) {
-      environments.value = Map.from(response.result);
+    var payload = await RestClient.rpc(RPC.systemEnvironmentList);
+    if (payload.success) {
+      var json = jsonDecode(payload.data) as Map;
+      environments.value = Map.from(json); //TODO , check me ...
     }
   }
 

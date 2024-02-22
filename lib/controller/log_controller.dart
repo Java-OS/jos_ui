@@ -84,9 +84,10 @@ class LogController extends GetxController {
   }
 
   Future<void> fetchAppenders() async {
-    var response = await RestClient.rpc(RPC.logAppenderList);
-    if (response.success) {
-      logAppenders.value = (response.result as List).map((e) => LogInfo.fromJson(e)).toList();
+    var payload = await RestClient.rpc(RPC.logAppenderList);
+    if (payload.success) {
+      var json = jsonDecode(payload.data);
+      logAppenders.value = (json as List).map((e) => LogInfo.fromJson(e)).toList();
     } else {
       displayWarning('Failed to fetch log appenders');
     }

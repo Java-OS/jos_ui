@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/toast.dart';
@@ -17,9 +19,9 @@ class NetworkController extends GetxController {
   var routeSelectedEthernet = Rxn<Ethernet>();
 
   Future<void> fetchEthernets() async {
-    var response = await RestClient.rpc(RPC.networkEthernetInformation, parameters: {'ethernet': ''});
-    if (response.success) {
-      var result = response.result as List;
+    var payload = await RestClient.rpc(RPC.networkEthernetInformation, parameters: {'ethernet': ''});
+    if (payload.success) {
+      var result = jsonDecode(payload.data) as List;
       ethernetList.value = result.map((item) => Ethernet.fromJson(item)).toList();
     } else {
       displayError('Failed to fetch network interfaces');
@@ -27,9 +29,10 @@ class NetworkController extends GetxController {
   }
 
   Future<void> fetchRoutes() async {
-    var response = await RestClient.rpc(RPC.networkRouteList);
-    if (response.success) {
-      var result = response.result as List;
+    var payload = await RestClient.rpc(RPC.networkRouteList);
+    if (payload.success) {
+      var json = jsonDecode(payload.data);
+      var result = json as List;
       routeList.value = result.map((item) => route.Route.fromJson(item)).toList();
     } else {
       displayError('failed to fetch network routes');

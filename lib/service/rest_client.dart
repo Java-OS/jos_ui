@@ -5,27 +5,30 @@ import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:fetch_client/fetch_client.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' as getx;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jos_ui/controller/jvm_controller.dart';
-import 'package:jos_ui/controller/log_controller.dart';
 import 'package:jos_ui/dialog/toast.dart';
-import 'package:jos_ui/model/RpcResponse.dart';
 import 'package:jos_ui/model/log_level.dart';
 import 'package:jos_ui/model/rpc.dart';
+import 'package:jos_ui/protobuf/message-buffer.pb.dart';
+import 'package:jos_ui/service/h5proto.dart';
 import 'package:jos_ui/service/storage_service.dart';
 
 enum UploadType {
   module,
-  config;
+  config,
+  ssl;
 }
 
 class RestClient {
   static final JvmController jvmController = getx.Get.put(JvmController());
   static final _http = http.Client();
-  static final LogController _sseController = Get.put(LogController());
+  static final _h5Proto = H5Proto.init();
+
+  static String _baseH5ProtoUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/h5proto";
 
   static String _baseLoginUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/login";
 
@@ -37,72 +40,102 @@ class RestClient {
 
   static String _baseDownloadUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/download";
 
-  static Future<bool> login(String username, String password) async {
-    developer.log('Login request [$username] [$password] [${_baseLoginUrl()}]');
-    String authB64 = base64Encode(utf8.encode('$username:$password'));
-    var headers = {'authorization': 'Basic $authB64'};
-    developer.log('Credential send: [$headers]');
+  static Future<String?> sendEcdhPublicKey() async {
+    developer.log('Request to send ecdh public key');
+    _h5Proto.storePrivateKey();
+    var publicKey = _h5Proto.exportPublicKey();
 
     try {
-      var response = await _http.get(Uri.parse(_baseLoginUrl()), headers: headers);
+      Payload payload = Payload();
+      payload.data = publicKey;
+      var packet = Packet();
+      packet.content = payload.writeToBuffer();
+      var uri = Uri.parse(_baseH5ProtoUrl());
+      var response = await _http.post(uri, body: packet.writeToBuffer());
       var statusCode = response.statusCode;
-      storeJvmNeedRestart(response.headers);
+      if (statusCode == 200) {
+        packet = Packet.fromBuffer(response.bodyBytes);
+        var responsePayload = Payload.fromBuffer(packet.content);
+        var serverPublicKey = jsonDecode(responsePayload.data)['public-key'];
+        var captcha = jsonDecode(responsePayload.data)['captcha'];
+        developer.log('Server public key $serverPublicKey');
+        developer.log('Captcha $captcha');
+        var publicKey = _h5Proto.bytesToPublicKey(base64Decode(serverPublicKey));
+        _h5Proto.makeSharedSecret(publicKey);
+        _h5Proto.removePrivateKey();
+
+        storeToken(response.headers);
+        developer.log('public key exchanged successful');
+        return captcha;
+      } else {
+        developer.log('Exchange public key failed');
+      }
+    } catch (e) {
+      developer.log('[Http Error] $rpc ${e.toString()}');
+    }
+  }
+
+  static Future<bool> login(String username, String password, String salt) async {
+    developer.log('Login request [$username] [$password] [${_baseLoginUrl()}]');
+    StorageService.addItem('activation-key', salt);
+    var data = {
+      'username': username,
+      'password': password,
+    };
+
+    var token = StorageService.getItem('token');
+    var headers = {'authorization': 'Bearer $token'};
+    developer.log('Header send: [$headers]');
+
+    var packet = await _h5Proto.encode(Payload(data: jsonEncode(data)));
+
+    try {
+      var response = await _http.post(Uri.parse(_baseLoginUrl()), body: packet.writeToBuffer(), headers: headers);
+      var statusCode = response.statusCode;
       if (statusCode == 204) {
         storeToken(response.headers);
         developer.log('Login success');
         return true;
       }
+      StorageService.removeItem('activation-key');
       developer.log('Login Failed');
     } catch (e) {
       developer.log('[Http Error] $rpc ${e.toString()}');
+      StorageService.removeItem('activation-key');
     }
     return false;
   }
 
-  static Future<bool> checkLogin() async {
-    developer.log('Check login [${_baseLoginUrl()}]');
-    var token = StorageService.getItem('token');
-    if (token == null) return false;
-    var headers = {'authorization': 'Bearer $token'};
-    developer.log('Credential send: [$headers]');
-
-    try {
-      var response = await _http.get(Uri.parse(_baseLoginUrl()), headers: headers);
-      var statusCode = response.statusCode;
-      storeJvmNeedRestart(response.headers);
-      if (statusCode == 204) {
-        developer.log('Token is valid');
-        storeToken(response.headers);
-        return true;
-      }
-      developer.log('Invalid token');
-    } catch (e) {
-      developer.log('[Http Error] $rpc ${e.toString()}');
-    }
-    return false;
-  }
-
-  static Future<RpcResponse> rpc(RPC rpc, {Map<String, dynamic>? parameters}) async {
+  static Future<Payload> rpc(RPC rpc, {Map<String, dynamic>? parameters}) async {
     developer.log('Request call rpc: [$rpc] [$parameters] [${_baseLoginUrl()}]');
     var token = StorageService.getItem('token');
-    if (token == null) getx.Get.toNamed('/');
-    var headers = {
-      'Authorization': 'Bearer $token',
-      'x-rpc-code': '${rpc.value}',
-    };
-    developer.log('Credential send: [$headers]');
+    if (token == null) getx.Get.toNamed('/login');
+    var headers = {'Authorization': 'Bearer $token'};
+    developer.log('Header send: [$headers]');
+
+    var data = parameters != null ? jsonEncode(parameters) : null;
+    var packet = await _h5Proto.encode(Payload(data: data, rpc: rpc.value));
+
+    // debugPrint('Parameters : ${jsonEncode(parameters)}');
+    // debugPrint('IV : ${base64Encode(packet.iv)}');
+    // debugPrint('Hash : ${base64Encode(packet.hash)}');
+    // debugPrint('Content : ${base64Encode(packet.content)}');
 
     try {
-      var response = await _http.post(Uri.parse(_baseRpcUrl()), headers: headers, body: jsonEncode(parameters));
+      var response = await _http.post(Uri.parse(_baseRpcUrl()), body: packet.writeToBuffer(), headers: headers);
       var statusCode = response.statusCode;
       developer.log('Response received with http code: $statusCode');
-      storeJvmNeedRestart(response.headers);
+
       storeToken(response.headers);
       if (statusCode == 200) {
-        var utf8Body = utf8.decode(response.bodyBytes);
-        return RpcResponse.toObject(utf8Body);
+        var bodyBytes = response.bodyBytes;
+
+        var packet = Packet.fromBuffer(bodyBytes);
+        var iv = Uint8List.fromList(packet.iv);
+        var content = Uint8List.fromList(packet.content);
+        return await _h5Proto.decode(content, iv);
       } else if (statusCode == 204) {
-        return RpcResponse(true, null, null, null);
+        return Payload(success: true);
       } else if (statusCode == 401) {
         getx.Get.offAllNamed('/');
       } else {
@@ -116,7 +149,7 @@ class RestClient {
         developer.log('[Http Error] $rpc ${e.toString()}');
       }
     }
-    return RpcResponse(false, null, null, null);
+    return Payload(success: false);
   }
 
   static void storeToken(Map<String, String> headers) {
@@ -151,8 +184,8 @@ class RestClient {
       var response = await request.send();
       return response.statusCode == 200;
     } catch (e) {
-        displayError('Invalid ${type.name} file');
-        return false;
+      displayError('Invalid ${type.name} file');
+      return false;
     }
   }
 

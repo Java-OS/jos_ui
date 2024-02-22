@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:file_picker/_internal/file_picker_web.dart';
@@ -13,8 +14,8 @@ class BackupController extends GetxController {
   Future<void> fetchBackups() async {
     developer.log('Fetch system backups called');
     var response = await RestClient.rpc(RPC.configBackupList);
-    if (response.result != null) {
-      var mappedItems = (response.result as List).map((e) => e.toString()).toList();
+    if (response.success) {
+      var mappedItems = (jsonDecode(response.data) as List).map((e) => e.toString()).toList();
       backupList.assignAll(mappedItems);
     } else {
       displayWarning('Failed to fetch backups');
