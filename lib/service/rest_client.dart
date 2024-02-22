@@ -192,9 +192,21 @@ class RestClient {
   static Future<FetchResponse> sse(String packageName, LogLevel logLevel) async {
     developer.log('Start SSE Client [$packageName] [${logLevel.name}]');
     var token = StorageService.getItem('token');
-    var header = {'authorization': 'Bearer $token', 'Connection': 'keep-alive', 'Content-type': 'text/event-stream', 'x-log-package': packageName, 'x-log-level': logLevel.name.toUpperCase()};
+    if (token == null) getx.Get.toNamed('/login');
 
-    var request = http.Request('GET', Uri.parse(_baseSseUrl()));
+    // var header = {'authorization': 'Bearer $token', 'Connection': 'keep-alive', 'Content-type': 'text/event-stream', 'x-log-package': packageName, 'x-log-level': logLevel.name.toUpperCase()};
+    var header = {
+      'authorization': 'Bearer $token',
+      'Connection': 'keep-alive',
+      'Content-type': 'text/event-stream',
+    };
+
+    developer.log('Header send: [$header]');
+
+    var packet = await _h5Proto.encode(Payload(logLevel: logLevel.name.toUpperCase(),logPackage: packageName));
+
+    var request = http.Request('POST', Uri.parse(_baseSseUrl()));
+    request.bodyBytes = packet.writeToBuffer();
     request.headers.addAll(header);
 
     final FetchClient fetchClient = FetchClient(mode: RequestMode.cors);
