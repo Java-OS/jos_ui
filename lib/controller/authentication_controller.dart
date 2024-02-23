@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
@@ -11,6 +12,8 @@ class AuthenticationController extends GetxController {
   final TextEditingController passwordEditingController = TextEditingController();
   final TextEditingController captchaEditingController = TextEditingController();
 
+  var captchaImage = Rxn<Image>();
+
   void login() async {
     developer.log('Login called');
     var success = await RestClient.login(usernameEditingController.text, passwordEditingController.text, captchaEditingController.text);
@@ -18,6 +21,7 @@ class AuthenticationController extends GetxController {
       Get.offNamed('/dashboard');
     } else {
       displayError('Login failed');
+      requestPublicKey();
     }
   }
 
@@ -25,5 +29,12 @@ class AuthenticationController extends GetxController {
     developer.log('Logout called');
     StorageService.removeItem('token');
     Get.offAllNamed('/login');
+  }
+
+  Future<void> requestPublicKey() async {
+    var result = await RestClient.sendEcdhPublicKey();
+    if (result != null) {
+      captchaImage.value = Image.memory(base64Decode(result));
+    }
   }
 }

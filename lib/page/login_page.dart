@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jos_ui/controller/authentication_controller.dart';
 import 'package:jos_ui/page_base_content.dart';
-import 'package:jos_ui/service/rest_client.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,11 +13,10 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   AuthenticationController authenticationController = Get.put(AuthenticationController());
-  Image? captchaImage;
 
   @override
   void initState() {
-    requestPublicKey();
+    authenticationController.requestPublicKey();
     super.initState();
   }
 
@@ -83,14 +79,14 @@ class _LoginPageState extends State<LoginPage> {
                             height: 50,
                             child: Stack(
                               alignment: Alignment.center,
-                              children: [captchaWidget()],
+                              children: [Obx(() => captchaWidget())],
                             ),
                           ),
                         ),
                         SizedBox(
                           width: 50,
                           height: 50,
-                          child: OutlinedButton(onPressed: () => requestPublicKey(), child: Icon(Icons.refresh, size: 16, color: Colors.blue)),
+                          child: OutlinedButton(onPressed: () => authenticationController.requestPublicKey(), child: Icon(Icons.refresh, size: 16, color: Colors.blue)),
                         ),
                       ],
                     ),
@@ -127,14 +123,9 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget captchaWidget() {
     return Visibility(
-      visible: captchaImage != null,
+      visible: authenticationController.captchaImage.value != null,
       replacement: SizedBox(width: 16, height: 16, child: CircularProgressIndicator()),
-      child: ClipRRect(borderRadius: BorderRadius.circular(3), child: captchaImage),
+      child: ClipRRect(borderRadius: BorderRadius.circular(3), child: authenticationController.captchaImage.value),
     );
-  }
-
-  Future<void> requestPublicKey() async {
-    var result = await RestClient.sendEcdhPublicKey();
-    setState(() => captchaImage = result != null ? Image.memory(base64Decode(result)) : null);
   }
 }
