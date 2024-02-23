@@ -157,6 +157,7 @@ class _SettingsPageState extends State<SettingsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Filesystem', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+              /* Refresh component [NO NOT MOVE THIS TO FilesystemComponent]*/
               OutlinedButton(onPressed: () => _systemController.fetchPartitions(), child: Icon(Icons.refresh_rounded, size: 16, color: Colors.black)),
             ],
           ),
