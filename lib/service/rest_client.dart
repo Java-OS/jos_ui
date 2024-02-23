@@ -5,7 +5,6 @@ import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:fetch_client/fetch_client.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart' as getx;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -47,7 +46,7 @@ class RestClient {
 
     try {
       Payload payload = Payload();
-      payload.data = publicKey;
+      payload.postJson = publicKey;
       var packet = Packet();
       packet.content = payload.writeToBuffer();
       var uri = Uri.parse(_baseH5ProtoUrl());
@@ -56,8 +55,8 @@ class RestClient {
       if (statusCode == 200) {
         packet = Packet.fromBuffer(response.bodyBytes);
         var responsePayload = Payload.fromBuffer(packet.content);
-        var serverPublicKey = jsonDecode(responsePayload.data)['public-key'];
-        var captcha = jsonDecode(responsePayload.data)['captcha'];
+        var serverPublicKey = jsonDecode(responsePayload.postJson)['public-key'];
+        var captcha = jsonDecode(responsePayload.postJson)['captcha'];
         developer.log('Server public key $serverPublicKey');
         developer.log('Captcha $captcha');
         var publicKey = _h5Proto.bytesToPublicKey(base64Decode(serverPublicKey));
@@ -87,7 +86,7 @@ class RestClient {
     var headers = {'authorization': 'Bearer $token'};
     developer.log('Header send: [$headers]');
 
-    var packet = await _h5Proto.encode(Payload(data: jsonEncode(data)));
+    var packet = await _h5Proto.encode(Payload(postJson: jsonEncode(data)));
 
     try {
       var response = await _http.post(Uri.parse(_baseLoginUrl()), body: packet.writeToBuffer(), headers: headers);
@@ -114,7 +113,7 @@ class RestClient {
     developer.log('Header send: [$headers]');
 
     var data = parameters != null ? jsonEncode(parameters) : null;
-    var packet = await _h5Proto.encode(Payload(data: data, rpc: rpc.value));
+    var packet = await _h5Proto.encode(Payload(postJson: data, metadata: Metadata(rpc: rpc.value)));
 
     // debugPrint('Parameters : ${jsonEncode(parameters)}');
     // debugPrint('IV : ${base64Encode(packet.iv)}');
@@ -135,7 +134,7 @@ class RestClient {
         var content = Uint8List.fromList(packet.content);
         return await _h5Proto.decode(content, iv);
       } else if (statusCode == 204) {
-        return Payload(success: true);
+        return Payload(metadata: Metadata(success: true));
       } else if (statusCode == 401) {
         getx.Get.offAllNamed('/');
       } else {
@@ -149,7 +148,7 @@ class RestClient {
         developer.log('[Http Error] $rpc ${e.toString()}');
       }
     }
-    return Payload(success: false);
+    return Payload(metadata: Metadata(success: true));
   }
 
   static void storeToken(Map<String, String> headers) {
@@ -194,7 +193,6 @@ class RestClient {
     var token = StorageService.getItem('token');
     if (token == null) getx.Get.toNamed('/login');
 
-    // var header = {'authorization': 'Bearer $token', 'Connection': 'keep-alive', 'Content-type': 'text/event-stream', 'x-log-package': packageName, 'x-log-level': logLevel.name.toUpperCase()};
     var header = {
       'authorization': 'Bearer $token',
       'Connection': 'keep-alive',
@@ -203,7 +201,7 @@ class RestClient {
 
     developer.log('Header send: [$header]');
 
-    var packet = await _h5Proto.encode(Payload(logLevel: logLevel.name.toUpperCase(),logPackage: packageName));
+    var packet = await _h5Proto.encode(Payload(metadata: Metadata(logLevel: logLevel.name.toUpperCase(), logPackage: packageName)));
 
     var request = http.Request('POST', Uri.parse(_baseSseUrl()));
     request.bodyBytes = packet.writeToBuffer();

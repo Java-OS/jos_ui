@@ -13,7 +13,7 @@ class AuthenticationController extends GetxController {
 
   void login() async {
     developer.log('Login called');
-    var success = await RestClient.login(usernameEditingController.text, passwordEditingController.text,captchaEditingController.text);
+    var success = await RestClient.login(usernameEditingController.text, passwordEditingController.text, captchaEditingController.text);
     if (success) {
       Get.offNamed('/dashboard');
     } else {

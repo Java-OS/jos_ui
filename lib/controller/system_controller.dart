@@ -44,8 +44,8 @@ class SystemController extends GetxController {
   Future<void> fetchHostname() async {
     developer.log('Fetch hostname called');
     var payload = await RestClient.rpc(RPC.systemGetHostname);
-    if (payload.success) {
-      var json = jsonDecode(payload.data);
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.postJson);
       osHostname.value = json;
       hostnameEditingController.text = json;
     } else {
@@ -57,8 +57,8 @@ class SystemController extends GetxController {
     developer.log('Change hostname called');
     bool accepted = await displayAlertModal('Warning', 'JVM should be restarted for the changes to take effect');
     if (accepted) {
-      var response = await RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': hostnameEditingController.text});
-      if (response.success) {
+      var payload = await RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': hostnameEditingController.text});
+      if (payload.metadata.success) {
         displaySuccess('Hostname changed');
         Get.back();
       } else {
@@ -70,8 +70,8 @@ class SystemController extends GetxController {
   void fetchSystemInformation() async {
     developer.log('Fetch System Full Information');
     var payload = await RestClient.rpc(RPC.systemFullInformation);
-    if (payload.success) {
-      var json = jsonDecode(payload.data);
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.postJson);
       dateTimeZone.value = json['os_date_time_zone'].toString();
       osUsername.value = json['os_username'].toString();
       osVersion.value = json['os_version'].toString();
@@ -93,8 +93,8 @@ class SystemController extends GetxController {
   Future<void> fetchPartitions() async {
     developer.log('Fetch filesystems');
     var payload = await RestClient.rpc(RPC.filesystemList);
-    if (payload.success) {
-      var result = jsonDecode(payload.data) as List;
+    if (payload.metadata.success) {
+      var result = jsonDecode(payload.postJson) as List;
       partitions.value = result.map((e) => HDDPartition.fromJson(e)).toList();
     } else {
       displayError('Failed to fetch filesystems');
@@ -113,8 +113,8 @@ class SystemController extends GetxController {
     };
 
     developer.log('$reqParam');
-    var response = await RestClient.rpc(RPC.filesystemMount, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.filesystemMount, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchPartitions();
       clear();
       Get.back();
@@ -128,8 +128,8 @@ class SystemController extends GetxController {
       'uuid': partition.uuid,
     };
     developer.log('$reqParam');
-    var response = await RestClient.rpc(RPC.filesystemUmount, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.filesystemUmount, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchPartitions();
       displayInfo('Successfully disconnected');
     }
@@ -141,8 +141,8 @@ class SystemController extends GetxController {
       'uuid': partition.uuid,
     };
     developer.log('$reqParam');
-    var response = await RestClient.rpc(RPC.filesystemSwapOn, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.filesystemSwapOn, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchPartitions();
     } else {
       displayWarning('Failed to activate swap ${partition.partition}');
@@ -155,8 +155,8 @@ class SystemController extends GetxController {
       'uuid': partition.uuid,
     };
     developer.log('$reqParam');
-    var response = await RestClient.rpc(RPC.filesystemSwapOff, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.filesystemSwapOff, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchPartitions();
     } else {
       displayWarning('Failed to deactivate swap ${partition.partition}');
@@ -168,9 +168,9 @@ class SystemController extends GetxController {
       'rootDir': rootPath,
     };
     var payload = await RestClient.rpc(RPC.filesystemDirectoryTree, parameters: reqParam);
-    if (payload.success) {
-      var json = jsonDecode(payload.data);
-        var tree = FilesystemTree.fromJson(json);
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.postJson);
+      var tree = FilesystemTree.fromJson(json);
       if (filesystemTree.value == null) {
         filesystemTree.value = tree;
       } else {
@@ -182,13 +182,13 @@ class SystemController extends GetxController {
     }
   }
 
-  FilesystemTree? walkToFindFilesystemTree(FilesystemTree tree,String absolutePath) {
+  FilesystemTree? walkToFindFilesystemTree(FilesystemTree tree, String absolutePath) {
     if (tree.fullPath == absolutePath) {
-      return tree ;
+      return tree;
     }
     var dirList = tree.childs!.where((element) => !element.isFile).toList();
     if (dirList.isEmpty) return null;
-    for (FilesystemTree child in dirList){
+    for (FilesystemTree child in dirList) {
       if (child.fullPath == absolutePath) {
         return child;
       } else {
@@ -202,8 +202,8 @@ class SystemController extends GetxController {
   Future<void> fetchDnsNameserver() async {
     developer.log('fetch dns nameserver');
     var payload = await RestClient.rpc(RPC.networkGetDnsNameserver);
-    if (payload.success) {
-      var json = jsonDecode(payload.data);
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.postJson);
       dnsEditingController.text = json;
     } else {
       displayWarning('Failed to fetch dns nameserver');
@@ -216,8 +216,8 @@ class SystemController extends GetxController {
     var reqParam = {
       'ips': dns,
     };
-    var response = await RestClient.rpc(RPC.networkSetDnsNameserver, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.networkSetDnsNameserver, parameters: reqParam);
+    if (payload.metadata.success) {
       clear();
       Get.back();
     } else {
@@ -228,8 +228,8 @@ class SystemController extends GetxController {
   Future<void> fetchHosts() async {
     developer.log('fetch hosts');
     var payload = await RestClient.rpc(RPC.hostsList);
-    if (payload.success) {
-      var result = jsonDecode(payload.data) as List;
+    if (payload.metadata.success) {
+      var result = jsonDecode(payload.postJson) as List;
       hosts.value = result.map((e) => Host.fromJson(e)).toList();
       hosts.sort((a, b) => a.ip.compareTo(b.ip));
     } else {
@@ -245,8 +245,8 @@ class SystemController extends GetxController {
       'ip': ip,
       'hostname': hostname,
     };
-    var response = await RestClient.rpc(RPC.hostsAdd, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.hostsAdd, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchHosts();
       clear();
       Get.back();
@@ -260,8 +260,8 @@ class SystemController extends GetxController {
     var reqParam = {
       'id': id,
     };
-    var response = await RestClient.rpc(RPC.hostsDelete, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.hostsDelete, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchHosts();
     } else {
       displayWarning('Failed to change nameserver');

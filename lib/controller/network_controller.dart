@@ -20,8 +20,8 @@ class NetworkController extends GetxController {
 
   Future<void> fetchEthernets() async {
     var payload = await RestClient.rpc(RPC.networkEthernetInformation, parameters: {'ethernet': ''});
-    if (payload.success) {
-      var result = jsonDecode(payload.data) as List;
+    if (payload.metadata.success) {
+      var result = jsonDecode(payload.postJson) as List;
       ethernetList.value = result.map((item) => Ethernet.fromJson(item)).toList();
     } else {
       displayError('Failed to fetch network interfaces');
@@ -30,8 +30,8 @@ class NetworkController extends GetxController {
 
   Future<void> fetchRoutes() async {
     var payload = await RestClient.rpc(RPC.networkRouteList);
-    if (payload.success) {
-      var json = jsonDecode(payload.data);
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.postJson);
       var result = json as List;
       routeList.value = result.map((item) => route.Route.fromJson(item)).toList();
     } else {
@@ -40,8 +40,8 @@ class NetworkController extends GetxController {
   }
 
   Future<void> addDefaultGateway() async {
-    var response = await RestClient.rpc(RPC.networkRouteDefaultGateway, parameters: {'gateway': gatewayEditingController.text});
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.networkRouteDefaultGateway, parameters: {'gateway': gatewayEditingController.text});
+    if (payload.metadata.success) {
       await fetchRoutes();
       Get.back();
     }
@@ -53,11 +53,11 @@ class NetworkController extends GetxController {
       'host': addressEditingController.text,
       'netmask': '255.255.255.255',
       'gateway': gatewayEditingController.text,
-      'ethernet': routeSelectedEthernet.value?.iface ?? '' ,
-      'metrics': metricsEditingController.text.isNotEmpty ? int.parse(metricsEditingController.text)  : 600,
+      'ethernet': routeSelectedEthernet.value?.iface ?? '',
+      'metrics': metricsEditingController.text.isNotEmpty ? int.parse(metricsEditingController.text) : 600,
     };
-    var response = await RestClient.rpc(RPC.networkRouteAdd, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.networkRouteAdd, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchRoutes();
       Get.back();
       clear();
@@ -69,21 +69,20 @@ class NetworkController extends GetxController {
       'network': networkEditingController.text,
       'netmask': netmaskEditingController.text,
       'gateway': gatewayEditingController.text,
-      'ethernet': routeSelectedEthernet.value?.iface ?? '' ,
-      'metrics': metricsEditingController.text.isNotEmpty ? int.parse(metricsEditingController.text)  : 600,
+      'ethernet': routeSelectedEthernet.value?.iface ?? '',
+      'metrics': metricsEditingController.text.isNotEmpty ? int.parse(metricsEditingController.text) : 600,
     };
-    var response = await RestClient.rpc(RPC.networkRouteAdd, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.networkRouteAdd, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchRoutes();
       Get.back();
       clear();
     }
   }
 
-
   Future<void> deleteRoute(int index) async {
-    var response = await RestClient.rpc(RPC.networkRouteDelete, parameters: {'index': index});
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.networkRouteDelete, parameters: {'index': index});
+    if (payload.metadata.success) {
       await fetchRoutes();
     }
     clear();
@@ -96,8 +95,8 @@ class NetworkController extends GetxController {
       'netmask': netmaskEditingController.text,
     };
 
-    var response = await RestClient.rpc(RPC.networkEthernetSetIp, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.networkEthernetSetIp, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchEthernets();
       Get.back();
       clear();
@@ -105,33 +104,27 @@ class NetworkController extends GetxController {
   }
 
   Future<void> ifDown(String iface) async {
-    var reqParam = {
-      'ethernet': iface
-      };
-    var response = await RestClient.rpc(RPC.networkEthernetDown, parameters: reqParam);
-    if (response.success) {
+    var reqParam = {'ethernet': iface};
+    var payload = await RestClient.rpc(RPC.networkEthernetDown, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchEthernets();
       clear();
     }
   }
 
   Future<void> ifUp(String iface) async {
-    var reqParam = {
-      'ethernet': iface
-    };
-    var response = await RestClient.rpc(RPC.networkEthernetUp, parameters: reqParam);
-    if (response.success) {
+    var reqParam = {'ethernet': iface};
+    var payload = await RestClient.rpc(RPC.networkEthernetUp, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchEthernets();
       clear();
     }
   }
 
   Future<void> flush(String iface) async {
-    var reqParam = {
-      'ethernet': iface
-    };
-    var response = await RestClient.rpc(RPC.networkEthernetFlush, parameters: reqParam);
-    if (response.success) {
+    var reqParam = {'ethernet': iface};
+    var payload = await RestClient.rpc(RPC.networkEthernetFlush, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchEthernets();
       clear();
     }

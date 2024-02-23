@@ -16,8 +16,8 @@ class EnvironmentController extends GetxController {
   Future<void> fetchSystemEnvironments() async {
     developer.log('Fetch System Environments called');
     var payload = await RestClient.rpc(RPC.systemEnvironmentList);
-    if (payload.success) {
-      var json = jsonDecode(payload.data) as Map;
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.postJson) as Map;
       environments.value = Map.from(json); //TODO , check me ...
     }
   }
@@ -27,8 +27,8 @@ class EnvironmentController extends GetxController {
     var key = keyEditingController.text;
     var value = valueEditingController.text;
 
-    var response = await RestClient.rpc(RPC.systemEnvironmentSet, parameters: {'key': key, 'value': value});
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.systemEnvironmentSet, parameters: {'key': key, 'value': value});
+    if (payload.metadata.success) {
       keyEditingController.clear();
       valueEditingController.clear();
       await fetchSystemEnvironments();
@@ -41,8 +41,8 @@ class EnvironmentController extends GetxController {
 
   Future<void> deleteSystemEnvironment(String key) async {
     developer.log('Delete System Environments called');
-    var response = await RestClient.rpc(RPC.systemEnvironmentUnset, parameters: {'key': key});
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.systemEnvironmentUnset, parameters: {'key': key});
+    if (payload.metadata.success) {
       await fetchSystemEnvironments();
       displayInfo('Environment $key deleted');
     } else {
@@ -53,8 +53,8 @@ class EnvironmentController extends GetxController {
   Future<void> updateEnvironment() async {
     var key = keyEditingController.text;
     var value = valueEditingController.text;
-    var response = await RestClient.rpc(RPC.systemEnvironmentUpdate, parameters: {'key': key, 'value': value});
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.systemEnvironmentUpdate, parameters: {'key': key, 'value': value});
+    if (payload.metadata.success) {
       keyEditingController.clear();
       valueEditingController.clear();
       await fetchSystemEnvironments();

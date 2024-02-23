@@ -32,21 +32,33 @@ final $typed_data.Uint8List packetDescriptor = $convert.base64Decode(
 const Payload$json = {
   '1': 'Payload',
   '2': [
-    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
-    {'1': 'rpc', '3': 2, '4': 1, '5': 5, '10': 'rpc'},
-    {'1': 'error', '3': 3, '4': 1, '5': 5, '10': 'error'},
-    {'1': 'message', '3': 4, '4': 1, '5': 9, '10': 'message'},
-    {'1': 'data', '3': 5, '4': 1, '5': 9, '10': 'data'},
-    {'1': 'needRestart', '3': 6, '4': 1, '5': 8, '10': 'needRestart'},
-    {'1': 'logPackage', '3': 7, '4': 1, '5': 9, '10': 'logPackage'},
-    {'1': 'logLevel', '3': 8, '4': 1, '5': 9, '10': 'logLevel'},
+    {'1': 'metadata', '3': 1, '4': 1, '5': 11, '6': '.jos.Metadata', '10': 'metadata'},
+    {'1': 'post_json', '3': 2, '4': 1, '5': 9, '10': 'postJson'},
   ],
 };
 
 /// Descriptor for `Payload`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List payloadDescriptor = $convert.base64Decode(
-    'CgdQYXlsb2FkEhgKB3N1Y2Nlc3MYASABKAhSB3N1Y2Nlc3MSEAoDcnBjGAIgASgFUgNycGMSFA'
-    'oFZXJyb3IYAyABKAVSBWVycm9yEhgKB21lc3NhZ2UYBCABKAlSB21lc3NhZ2USEgoEZGF0YRgF'
-    'IAEoCVIEZGF0YRIgCgtuZWVkUmVzdGFydBgGIAEoCFILbmVlZFJlc3RhcnQSHgoKbG9nUGFja2'
-    'FnZRgHIAEoCVIKbG9nUGFja2FnZRIaCghsb2dMZXZlbBgIIAEoCVIIbG9nTGV2ZWw=');
+    'CgdQYXlsb2FkEikKCG1ldGFkYXRhGAEgASgLMg0uam9zLk1ldGFkYXRhUghtZXRhZGF0YRIbCg'
+    'lwb3N0X2pzb24YAiABKAlSCHBvc3RKc29u');
+
+@$core.Deprecated('Use metadataDescriptor instead')
+const Metadata$json = {
+  '1': 'Metadata',
+  '2': [
+    {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
+    {'1': 'rpc', '3': 2, '4': 1, '5': 5, '10': 'rpc'},
+    {'1': 'error', '3': 3, '4': 1, '5': 5, '10': 'error'},
+    {'1': 'need_restart', '3': 4, '4': 1, '5': 8, '10': 'needRestart'},
+    {'1': 'log_package', '3': 5, '4': 1, '5': 9, '10': 'logPackage'},
+    {'1': 'log_level', '3': 6, '4': 1, '5': 9, '10': 'logLevel'},
+  ],
+};
+
+/// Descriptor for `Metadata`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List metadataDescriptor = $convert.base64Decode(
+    'CghNZXRhZGF0YRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNzEhAKA3JwYxgCIAEoBVIDcnBjEh'
+    'QKBWVycm9yGAMgASgFUgVlcnJvchIhCgxuZWVkX3Jlc3RhcnQYBCABKAhSC25lZWRSZXN0YXJ0'
+    'Eh8KC2xvZ19wYWNrYWdlGAUgASgJUgpsb2dQYWNrYWdlEhsKCWxvZ19sZXZlbBgGIAEoCVIIbG'
+    '9nTGV2ZWw=');
 

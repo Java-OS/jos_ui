@@ -13,8 +13,8 @@ class ModuleController extends GetxController {
 
   Future<void> fetchModules() async {
     var payload = await RestClient.rpc(RPC.moduleList);
-    if (payload.success) {
-      var json = jsonDecode(payload.data);
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.postJson);
       var result = json as List;
       moduleList.value = result.map((item) => Module.fromJson(item)).toList();
     } else {
@@ -28,8 +28,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var response = await RestClient.rpc(RPC.moduleRemove, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.moduleRemove, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchModules();
     }
   }
@@ -40,8 +40,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var response = await RestClient.rpc(RPC.moduleEnable, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.moduleEnable, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchModules();
     }
   }
@@ -52,8 +52,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var response = await RestClient.rpc(RPC.moduleDisable, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.moduleDisable, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchModules();
     }
   }
@@ -64,8 +64,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var response = await RestClient.rpc(RPC.moduleStart, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.moduleStart, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchModules();
     }
   }
@@ -76,8 +76,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var response = await RestClient.rpc(RPC.moduleStop, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.moduleStop, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchModules();
     }
   }

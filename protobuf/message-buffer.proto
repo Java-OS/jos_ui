@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package jos;
 
-option java_package = "ir.moke.jos.daemon.http.protobuf";
+option java_package = "ir.moke.jos.api.protobuf";
 option java_multiple_files = true;
 
 message Packet {
@@ -12,12 +12,15 @@ message Packet {
 }
 
 message  Payload {
+  Metadata metadata = 1;
+  string post_json = 2;
+}
+
+message Metadata {
   bool success = 1;
   int32 rpc = 2;
   int32 error = 3;
-  string message = 4;
-  string data = 5;
-  bool needRestart = 6;
-  string logPackage = 7;
-  string logLevel = 8;
+  bool need_restart = 4;
+  string log_package = 5;
+  string log_level = 6;
 }

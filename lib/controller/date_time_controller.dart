@@ -37,8 +37,8 @@ class DateTimeController extends GetxController {
   void fetchNtpInfo() async {
     developer.log('Fetch NTP Information called');
     var payload = await RestClient.rpc(RPC.ntpInformation);
-    if (payload.success) {
-      var json = jsonDecode(payload.data);
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.postJson);
       bool serverNtpIsActive = json['activate'];
 
       ntpServerEditingController.text = json['server'];
@@ -56,8 +56,8 @@ class DateTimeController extends GetxController {
   void fetchSystemDateTime() async {
     developer.log('Fetch system date time called');
     var payload = await RestClient.rpc(RPC.dateTimeInformation);
-    if (payload.success) {
-      var json = jsonDecode(payload.data);
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.postJson);
       serverDate.value = json['zonedDateTime'].split(' ')[0];
       serverTime.value = json['zonedDateTime'].split(' ')[1];
       serverTimeZone.value = json['zonedDateTime'].split(' ')[2];
@@ -90,8 +90,8 @@ class DateTimeController extends GetxController {
   Future<void> syncNTP() async {
     developer.log('Sync NTP Called');
     var payload = await RestClient.rpc(RPC.ntpSync);
-    if (payload.success) {
-      var json = jsonDecode(payload.data);
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.postJson);
       leapIndicator.value = json['leapIndicator'].toString();
       version.value = json['version'].toString();
       mode.value = json['mode'].toString();
@@ -128,8 +128,8 @@ class DateTimeController extends GetxController {
 
   Future<void> updateTimezone(String zone) async {
     var reqParam = {'timezone': zone.split('\t')[0]};
-    var response = await RestClient.rpc(RPC.systemSetTimezone, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.systemSetTimezone, parameters: reqParam);
+    if (payload.metadata.success) {
       displayInfo('Timezone successfully updated');
       if (isNtpActive.isTrue) {
         fetchNtpInfo();

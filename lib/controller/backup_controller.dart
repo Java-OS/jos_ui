@@ -13,9 +13,9 @@ class BackupController extends GetxController {
 
   Future<void> fetchBackups() async {
     developer.log('Fetch system backups called');
-    var response = await RestClient.rpc(RPC.configBackupList);
-    if (response.success) {
-      var mappedItems = (jsonDecode(response.data) as List).map((e) => e.toString()).toList();
+    var payload = await RestClient.rpc(RPC.configBackupList);
+    if (payload.metadata.success) {
+      var mappedItems = (jsonDecode(payload.postJson) as List).map((e) => e.toString()).toList();
       backupList.assignAll(mappedItems);
     } else {
       displayWarning('Failed to fetch backups');
@@ -24,8 +24,8 @@ class BackupController extends GetxController {
 
   Future<void> createBackup() async {
     developer.log('Create system backup called');
-    var response = await RestClient.rpc(RPC.configBackupCreate);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.configBackupCreate);
+    if (payload.metadata.success) {
       await fetchBackups();
     } else {
       displayWarning('Failed to create system backup');
@@ -35,8 +35,8 @@ class BackupController extends GetxController {
   Future<void> deleteBackup(int index) async {
     developer.log('delete system backup called');
     var reqParam = {'id': index};
-    var response = await RestClient.rpc(RPC.configBackupDelete, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.configBackupDelete, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchBackups();
     }
   }
@@ -46,8 +46,8 @@ class BackupController extends GetxController {
     bool accepted = await displayAlertModal('Warning', 'JVM should be restarted for the changes to take effect');
     if (accepted) {
       var reqParam = {'id': index};
-      var response = await RestClient.rpc(RPC.configBackupRestore, parameters: reqParam);
-      if (response.success) {
+      var payload = await RestClient.rpc(RPC.configBackupRestore, parameters: reqParam);
+      if (payload.metadata.success) {
         await fetchBackups();
       }
     }

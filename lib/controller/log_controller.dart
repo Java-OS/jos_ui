@@ -85,8 +85,8 @@ class LogController extends GetxController {
 
   Future<void> fetchAppenders() async {
     var payload = await RestClient.rpc(RPC.logAppenderList);
-    if (payload.success) {
-      var json = jsonDecode(payload.data);
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.postJson);
       logAppenders.value = (json as List).map((e) => LogInfo.fromJson(e)).toList();
     } else {
       displayWarning('Failed to fetch log appenders');
@@ -104,8 +104,8 @@ class LogController extends GetxController {
       'fileTotalSize': int.parse(fileTotalSizeEditingController.text),
       'fileMaxHistory': int.parse(fileMaxHistoryEditingController.text),
     };
-    var response = await RestClient.rpc(RPC.logAppenderAdd, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.logAppenderAdd, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchAppenders();
       Get.back();
       clear();
@@ -125,8 +125,8 @@ class LogController extends GetxController {
       'syslogPort': int.parse(syslogPortEditingController.text),
       'syslogFacility': syslogFacilityEditingController.text,
     };
-    var response = await RestClient.rpc(RPC.logAppenderAdd, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.logAppenderAdd, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchAppenders();
       Get.back();
       clear();
@@ -137,8 +137,8 @@ class LogController extends GetxController {
 
   Future<void> removeAppender(int id) async {
     var reqParam = {'id': id};
-    var response = await RestClient.rpc(RPC.logAppenderRemove, parameters: reqParam);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.logAppenderRemove, parameters: reqParam);
+    if (payload.metadata.success) {
       await fetchAppenders();
       clear();
     } else {

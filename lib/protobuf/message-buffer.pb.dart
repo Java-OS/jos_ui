@@ -93,39 +93,15 @@ class Packet extends $pb.GeneratedMessage {
 
 class Payload extends $pb.GeneratedMessage {
   factory Payload({
-    $core.bool? success,
-    $core.int? rpc,
-    $core.int? error,
-    $core.String? message,
-    $core.String? data,
-    $core.bool? needRestart,
-    $core.String? logPackage,
-    $core.String? logLevel,
+    Metadata? metadata,
+    $core.String? postJson,
   }) {
     final $result = create();
-    if (success != null) {
-      $result.success = success;
+    if (metadata != null) {
+      $result.metadata = metadata;
     }
-    if (rpc != null) {
-      $result.rpc = rpc;
-    }
-    if (error != null) {
-      $result.error = error;
-    }
-    if (message != null) {
-      $result.message = message;
-    }
-    if (data != null) {
-      $result.data = data;
-    }
-    if (needRestart != null) {
-      $result.needRestart = needRestart;
-    }
-    if (logPackage != null) {
-      $result.logPackage = logPackage;
-    }
-    if (logLevel != null) {
-      $result.logLevel = logLevel;
+    if (postJson != null) {
+      $result.postJson = postJson;
     }
     return $result;
   }
@@ -134,14 +110,8 @@ class Payload extends $pb.GeneratedMessage {
   factory Payload.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Payload', package: const $pb.PackageName(_omitMessageNames ? '' : 'jos'), createEmptyInstance: create)
-    ..aOB(1, _omitFieldNames ? '' : 'success')
-    ..a<$core.int>(2, _omitFieldNames ? '' : 'rpc', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, _omitFieldNames ? '' : 'error', $pb.PbFieldType.O3)
-    ..aOS(4, _omitFieldNames ? '' : 'message')
-    ..aOS(5, _omitFieldNames ? '' : 'data')
-    ..aOB(6, _omitFieldNames ? '' : 'needRestart', protoName: 'needRestart')
-    ..aOS(7, _omitFieldNames ? '' : 'logPackage', protoName: 'logPackage')
-    ..aOS(8, _omitFieldNames ? '' : 'logLevel', protoName: 'logLevel')
+    ..aOM<Metadata>(1, _omitFieldNames ? '' : 'metadata', subBuilder: Metadata.create)
+    ..aOS(2, _omitFieldNames ? '' : 'postJson')
     ..hasRequiredFields = false
   ;
 
@@ -165,6 +135,92 @@ class Payload extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static Payload getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Payload>(create);
   static Payload? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  Metadata get metadata => $_getN(0);
+  @$pb.TagNumber(1)
+  set metadata(Metadata v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasMetadata() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearMetadata() => clearField(1);
+  @$pb.TagNumber(1)
+  Metadata ensureMetadata() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.String get postJson => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set postJson($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasPostJson() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearPostJson() => clearField(2);
+}
+
+class Metadata extends $pb.GeneratedMessage {
+  factory Metadata({
+    $core.bool? success,
+    $core.int? rpc,
+    $core.int? error,
+    $core.bool? needRestart,
+    $core.String? logPackage,
+    $core.String? logLevel,
+  }) {
+    final $result = create();
+    if (success != null) {
+      $result.success = success;
+    }
+    if (rpc != null) {
+      $result.rpc = rpc;
+    }
+    if (error != null) {
+      $result.error = error;
+    }
+    if (needRestart != null) {
+      $result.needRestart = needRestart;
+    }
+    if (logPackage != null) {
+      $result.logPackage = logPackage;
+    }
+    if (logLevel != null) {
+      $result.logLevel = logLevel;
+    }
+    return $result;
+  }
+  Metadata._() : super();
+  factory Metadata.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Metadata.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Metadata', package: const $pb.PackageName(_omitMessageNames ? '' : 'jos'), createEmptyInstance: create)
+    ..aOB(1, _omitFieldNames ? '' : 'success')
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'rpc', $pb.PbFieldType.O3)
+    ..a<$core.int>(3, _omitFieldNames ? '' : 'error', $pb.PbFieldType.O3)
+    ..aOB(4, _omitFieldNames ? '' : 'needRestart')
+    ..aOS(5, _omitFieldNames ? '' : 'logPackage')
+    ..aOS(6, _omitFieldNames ? '' : 'logLevel')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Metadata clone() => Metadata()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Metadata copyWith(void Function(Metadata) updates) => super.copyWith((message) => updates(message as Metadata)) as Metadata;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Metadata create() => Metadata._();
+  Metadata createEmptyInstance() => create();
+  static $pb.PbList<Metadata> createRepeated() => $pb.PbList<Metadata>();
+  @$core.pragma('dart2js:noInline')
+  static Metadata getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Metadata>(create);
+  static Metadata? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get success => $_getBF(0);
@@ -194,49 +250,31 @@ class Payload extends $pb.GeneratedMessage {
   void clearError() => clearField(3);
 
   @$pb.TagNumber(4)
-  $core.String get message => $_getSZ(3);
+  $core.bool get needRestart => $_getBF(3);
   @$pb.TagNumber(4)
-  set message($core.String v) { $_setString(3, v); }
+  set needRestart($core.bool v) { $_setBool(3, v); }
   @$pb.TagNumber(4)
-  $core.bool hasMessage() => $_has(3);
+  $core.bool hasNeedRestart() => $_has(3);
   @$pb.TagNumber(4)
-  void clearMessage() => clearField(4);
+  void clearNeedRestart() => clearField(4);
 
   @$pb.TagNumber(5)
-  $core.String get data => $_getSZ(4);
+  $core.String get logPackage => $_getSZ(4);
   @$pb.TagNumber(5)
-  set data($core.String v) { $_setString(4, v); }
+  set logPackage($core.String v) { $_setString(4, v); }
   @$pb.TagNumber(5)
-  $core.bool hasData() => $_has(4);
+  $core.bool hasLogPackage() => $_has(4);
   @$pb.TagNumber(5)
-  void clearData() => clearField(5);
+  void clearLogPackage() => clearField(5);
 
   @$pb.TagNumber(6)
-  $core.bool get needRestart => $_getBF(5);
+  $core.String get logLevel => $_getSZ(5);
   @$pb.TagNumber(6)
-  set needRestart($core.bool v) { $_setBool(5, v); }
+  set logLevel($core.String v) { $_setString(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasNeedRestart() => $_has(5);
+  $core.bool hasLogLevel() => $_has(5);
   @$pb.TagNumber(6)
-  void clearNeedRestart() => clearField(6);
-
-  @$pb.TagNumber(7)
-  $core.String get logPackage => $_getSZ(6);
-  @$pb.TagNumber(7)
-  set logPackage($core.String v) { $_setString(6, v); }
-  @$pb.TagNumber(7)
-  $core.bool hasLogPackage() => $_has(6);
-  @$pb.TagNumber(7)
-  void clearLogPackage() => clearField(7);
-
-  @$pb.TagNumber(8)
-  $core.String get logLevel => $_getSZ(7);
-  @$pb.TagNumber(8)
-  set logLevel($core.String v) { $_setString(7, v); }
-  @$pb.TagNumber(8)
-  $core.bool hasLogLevel() => $_has(7);
-  @$pb.TagNumber(8)
-  void clearLogLevel() => clearField(8);
+  void clearLogLevel() => clearField(6);
 }
 
 

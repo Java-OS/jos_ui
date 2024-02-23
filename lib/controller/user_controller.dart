@@ -27,8 +27,8 @@ class UserController extends GetxController {
   Future<void> fetchUsers() async {
     developer.log('Fetch users called');
     var payload = await RestClient.rpc(RPC.userList);
-    if (payload.success) {
-      userList.value = (jsonDecode(payload.data) as List).map((e) => User.fromJson(e)).toList();
+    if (payload.metadata.success) {
+      userList.value = (jsonDecode(payload.postJson) as List).map((e) => User.fromJson(e)).toList();
     } else {
       displayWarning('Failed to fetch users');
     }
@@ -45,8 +45,8 @@ class UserController extends GetxController {
     }
 
     var reqParams = {'username': username, 'password': password, 'realmBit': realmBit.value};
-    var response = await RestClient.rpc(RPC.userAdd, parameters: reqParams);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.userAdd, parameters: reqParams);
+    if (payload.metadata.success) {
       await fetchUsers();
       Get.back();
       clear();
@@ -57,8 +57,8 @@ class UserController extends GetxController {
 
   Future<void> updateUserRoles() async {
     var reqParams = {'username': usernameEditingController.text, 'realmBit': realmBit.value};
-    var response = await RestClient.rpc(RPC.userUpdateRole, parameters: reqParams);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.userUpdateRole, parameters: reqParams);
+    if (payload.metadata.success) {
       await fetchUsers();
       clear();
       Get.back();
@@ -78,8 +78,8 @@ class UserController extends GetxController {
     }
 
     var reqParams = {'username': username, 'password': password};
-    var response = await RestClient.rpc(RPC.userPasswd, parameters: reqParams);
-    if (response.success) {
+    var payload = await RestClient.rpc(RPC.userPasswd, parameters: reqParams);
+    if (payload.metadata.success) {
       Get.back();
       clear();
     } else {
@@ -95,8 +95,8 @@ class UserController extends GetxController {
     var isTrue = await displayAlertModal('Delete user', 'You want to delete user ${user.username}.\n\nAre you sure ?');
     if (isTrue) {
       var reqParams = {'username': user.username};
-      var response = await RestClient.rpc(RPC.userRemove, parameters: reqParams);
-      if (response.success) {
+      var payload = await RestClient.rpc(RPC.userRemove, parameters: reqParams);
+      if (payload.metadata.success) {
         await fetchUsers();
         clear();
         Get.back();
@@ -109,8 +109,8 @@ class UserController extends GetxController {
   Future<void> lockOrUnlockUser(User user) async {
     var reqParams = {'username': user.username};
     var lock = user.lock;
-    var response = await RestClient.rpc(lock ? RPC.userUnlock : RPC.userLock, parameters: reqParams);
-    if (response.success) {
+    var payload = await RestClient.rpc(lock ? RPC.userUnlock : RPC.userLock, parameters: reqParams);
+    if (payload.metadata.success) {
       displaySuccess(lock ? 'User ${user.username} activated' : 'User ${user.username} disabled');
       await fetchUsers();
       clear();
