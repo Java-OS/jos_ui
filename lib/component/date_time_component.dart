@@ -29,6 +29,7 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
   void initState() {
     super.initState();
     dateTimeController.fetchNtpInfo();
+    dateTimeController.fetchSystemDateTime();
     var map = tz.timeZoneDatabase.locations;
     for (String x in map.keys) {
       var name = map[x]!.name;
@@ -52,17 +53,19 @@ class _DateTimeComponentState extends State<DateTimeComponent> {
                   child: Material(
                     elevation: mouseHoverTimeZone ? 3 : 0,
                     shadowColor: Colors.black,
-                    child: SearchField(
-                      suggestions: getCountries(),
-                      controller: dateTimeController.timeZoneEditingController,
-                      hint: 'Select timezone',
-                      onSubmit: (e) => dateTimeController.updateTimezone(e),
-                      onSuggestionTap: (e) => dateTimeController.updateTimezone(e.searchKey),
-                      searchInputDecoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintStyle: TextStyle(fontSize: 12),
-                        isDense: true,
-                        contentPadding: EdgeInsets.all(14),
+                    child: Obx(
+                      () => SearchField(
+                        suggestions: getCountries(),
+                        controller: dateTimeController.timeZoneEditingController,
+                        hint: dateTimeController.serverTimeZone.isEmpty ? 'Select timezone' : dateTimeController.serverTimeZone.value,
+                        onSubmit: (e) => dateTimeController.updateTimezone(e),
+                        onSuggestionTap: (e) => dateTimeController.updateTimezone(e.searchKey),
+                        searchInputDecoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintStyle: TextStyle(fontSize: 12),
+                          isDense: true,
+                          contentPadding: EdgeInsets.all(14),
+                        ),
                       ),
                     ),
                   ),

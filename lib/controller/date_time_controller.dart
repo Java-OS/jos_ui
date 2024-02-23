@@ -61,7 +61,6 @@ class DateTimeController extends GetxController {
       serverDate.value = json['zonedDateTime'].split(' ')[0];
       serverTime.value = json['zonedDateTime'].split(' ')[1];
       serverTimeZone.value = json['zonedDateTime'].split(' ')[2];
-      timeZoneEditingController.text = serverTimeZone.value;
     }
   }
 
