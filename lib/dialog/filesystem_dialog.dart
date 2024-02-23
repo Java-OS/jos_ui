@@ -91,11 +91,13 @@ Future<void> displayFilesystemTree(BuildContext context, bool enableDownloadFile
                           visible: enableDownloadFiles,
                           child: Padding(
                             padding: EdgeInsets.only(right: 20),
-                            child: OutlinedButton(
+                            child: IconButton(
                               onPressed: () => _logController.downloadLog(fullPath.split('/')[2], fullPath.split('/')[3]),
-                              child: Icon(
+                              splashRadius: 16,
+                              icon: Icon(
                                 Icons.file_download,
                                 color: Colors.black,
+                                size: 16,
                               ),
                             ),
                           ),
