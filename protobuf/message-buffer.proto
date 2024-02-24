@@ -23,4 +23,5 @@ message Metadata {
   bool need_restart = 4;
   string log_package = 5;
   string log_level = 6;
+  string  message = 7;
 }

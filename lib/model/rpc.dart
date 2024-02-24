@@ -92,13 +92,12 @@ enum RPC {
   networkRouteDefaultGateway(608),
   networkSetDnsNameserver(609),
   networkGetDnsNameserver(610),
-
-  /*
-   * hosts
-   * */
-  hostsAdd(700),
-  hostsDelete(701),
-  hostsList(702),
+  networkHostAdd(611),
+  networkHostDelete(612),
+  networkHostList(613),
+  networkNetworkAdd(614),
+  networkNetworkDelete(615),
+  networkNetworkList(616),
 
   /*
    * user

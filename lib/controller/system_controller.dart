@@ -7,17 +7,14 @@ import 'package:jos_ui/dialog/alert_dialog.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/filesystem.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
-import 'package:jos_ui/model/host.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
 
 class SystemController extends GetxController {
   final TextEditingController dnsEditingController = TextEditingController();
-  final TextEditingController hostIpEditingController = TextEditingController();
   final TextEditingController hostnameEditingController = TextEditingController();
   final TextEditingController partitionEditingController = TextEditingController();
   final TextEditingController mountPointEditingController = TextEditingController();
-  final TextEditingController hostHostnameEditingController = TextEditingController();
   final TextEditingController filesystemTypeEditingController = TextEditingController();
 
   var osUsername = ''.obs;
@@ -39,7 +36,6 @@ class SystemController extends GetxController {
   var selectedPartition = Rxn<HDDPartition>();
   var mountOnStartUp = false.obs;
   var filesystemTree = Rxn<FilesystemTree>();
-  var hosts = <Host>[].obs;
 
   Future<void> fetchHostname() async {
     developer.log('Fetch hostname called');
@@ -225,56 +221,11 @@ class SystemController extends GetxController {
     }
   }
 
-  Future<void> fetchHosts() async {
-    developer.log('fetch hosts');
-    var payload = await RestClient.rpc(RPC.hostsList);
-    if (payload.metadata.success) {
-      var result = jsonDecode(payload.postJson) as List;
-      hosts.value = result.map((e) => Host.fromJson(e)).toList();
-      hosts.sort((a, b) => a.ip.compareTo(b.ip));
-    } else {
-      displayWarning('Failed to fetch hosts');
-    }
-  }
-
-  void addHost() async {
-    var ip = hostIpEditingController.text;
-    var hostname = hostHostnameEditingController.text;
-    developer.log('Add new host: $ip $hostname');
-    var reqParam = {
-      'ip': ip,
-      'hostname': hostname,
-    };
-    var payload = await RestClient.rpc(RPC.hostsAdd, parameters: reqParam);
-    if (payload.metadata.success) {
-      await fetchHosts();
-      clear();
-      Get.back();
-    } else {
-      displayWarning('Failed to change nameserver');
-    }
-  }
-
-  void removeHost(int id) async {
-    developer.log('Remove host: $id');
-    var reqParam = {
-      'id': id,
-    };
-    var payload = await RestClient.rpc(RPC.hostsDelete, parameters: reqParam);
-    if (payload.metadata.success) {
-      await fetchHosts();
-    } else {
-      displayWarning('Failed to change nameserver');
-    }
-  }
-
   void clear() {
     dnsEditingController.clear();
-    hostIpEditingController.clear();
     hostnameEditingController.clear();
     partitionEditingController.clear();
     mountPointEditingController.clear();
-    hostHostnameEditingController.clear();
     filesystemTypeEditingController.clear();
     filesystemTree = Rxn<FilesystemTree>();
   }

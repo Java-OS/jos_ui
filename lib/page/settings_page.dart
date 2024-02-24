@@ -22,6 +22,15 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final SystemController _systemController = Get.put(SystemController());
 
+  static final menuItems = [
+    Icons.info_outline_rounded,
+    Icons.date_range,
+    Icons.join_right,
+    Icons.groups_sharp,
+    Icons.save,
+    Icons.copy_sharp,
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +54,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SideMenuComponent(),
+                    SideMenuComponent(menuItems: menuItems, baseMenuPath: 'settings'),
                     chooseTargetTab(),
                   ],
                 ),

@@ -165,6 +165,7 @@ class Metadata extends $pb.GeneratedMessage {
     $core.bool? needRestart,
     $core.String? logPackage,
     $core.String? logLevel,
+    $core.String? message,
   }) {
     final $result = create();
     if (success != null) {
@@ -185,6 +186,9 @@ class Metadata extends $pb.GeneratedMessage {
     if (logLevel != null) {
       $result.logLevel = logLevel;
     }
+    if (message != null) {
+      $result.message = message;
+    }
     return $result;
   }
   Metadata._() : super();
@@ -198,6 +202,7 @@ class Metadata extends $pb.GeneratedMessage {
     ..aOB(4, _omitFieldNames ? '' : 'needRestart')
     ..aOS(5, _omitFieldNames ? '' : 'logPackage')
     ..aOS(6, _omitFieldNames ? '' : 'logLevel')
+    ..aOS(7, _omitFieldNames ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
@@ -275,6 +280,15 @@ class Metadata extends $pb.GeneratedMessage {
   $core.bool hasLogLevel() => $_has(5);
   @$pb.TagNumber(6)
   void clearLogLevel() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.String get message => $_getSZ(6);
+  @$pb.TagNumber(7)
+  set message($core.String v) { $_setString(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasMessage() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearMessage() => clearField(7);
 }
 
 

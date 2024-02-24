@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/basic_component.dart';
-import 'package:jos_ui/component/date_time_component.dart';
-import 'package:jos_ui/component/environment_component.dart';
-import 'package:jos_ui/component/filesystem_component.dart';
-import 'package:jos_ui/component/user_management_component.dart';
 import 'package:jos_ui/constant.dart';
 
 class SideMenuComponent extends StatefulWidget {
-  const SideMenuComponent({super.key});
+  final List<IconData> menuItems;
+  final String baseMenuPath;
+  const SideMenuComponent({super.key, required this.menuItems, required this.baseMenuPath});
 
   @override
   State<SideMenuComponent> createState() => _SideMenuComponentState();
@@ -16,15 +13,6 @@ class SideMenuComponent extends StatefulWidget {
 
 class _SideMenuComponentState extends State<SideMenuComponent> {
   int _hoverIndex = -1;
-
-  final menuItems = [
-    Icons.info_outline_rounded,
-    Icons.date_range,
-    Icons.join_right,
-    Icons.groups_sharp,
-    Icons.save,
-    Icons.copy_sharp,
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +23,16 @@ class _SideMenuComponentState extends State<SideMenuComponent> {
     );
   }
 
-  List<Widget> getSideMenuItems() => List.generate(menuItems.length, (index) => menuItem(index));
+  List<Widget> getSideMenuItems() => List.generate(widget.menuItems.length, (index) => menuItem(index));
 
   Widget menuItem(int index) {
     var currentParameter = int.parse(Get.parameters['index'] ?? '0');
-    var mi = menuItems[index];
+    var mi = widget.menuItems[index];
     return MouseRegion(
       onExit: (_) => setState(() => _hoverIndex = -1),
       child: InkWell(
         onHover: (_) => setState(() => _hoverIndex = index),
-        onTap: () => Get.offAllNamed('/settings/$index'),
+        onTap: () => Get.offAllNamed('/${widget.baseMenuPath}/$index'),
         child: Padding(
           padding: const EdgeInsets.only(bottom: 2.0),
           child: AnimatedContainer(

@@ -106,7 +106,7 @@ class RestClient {
   }
 
   static Future<Payload> rpc(RPC rpc, {Map<String, dynamic>? parameters}) async {
-    developer.log('Request call rpc: [$rpc] [$parameters] [${_baseLoginUrl()}]');
+    developer.log('Request call rpc: [$rpc] [$parameters] [${_baseRpcUrl()}]');
     var token = StorageService.getItem('token');
     if (token == null) getx.Get.toNamed('/login');
     var headers = {'Authorization': 'Bearer $token'};
@@ -127,19 +127,14 @@ class RestClient {
 
       storeToken(response.headers);
       if (statusCode == 200) {
-        var bodyBytes = response.bodyBytes;
-
-        var packet = Packet.fromBuffer(bodyBytes);
-        var iv = Uint8List.fromList(packet.iv);
-        var content = Uint8List.fromList(packet.content);
-        return await _h5Proto.decode(content, iv);
+        return await decodeResponsePayload(response);
       } else if (statusCode == 204) {
-        return Payload(metadata: Metadata(success: true));
+        return await decodeResponsePayload(response);
       } else if (statusCode == 401) {
         getx.Get.offAllNamed('/');
       } else {
-        String msg = jsonDecode(response.body)['message'];
-        displayWarning(msg, timeout: 5);
+        var payload = await decodeResponsePayload(response);
+        displayWarning(payload.metadata.message, timeout: 5);
       }
     } catch (e) {
       if (rpc == RPC.systemReboot || rpc == RPC.jvmRestart || rpc == RPC.systemShutdown) {
@@ -250,5 +245,13 @@ class RestClient {
     } catch (e) {
       developer.log('[Http Error] $rpc ${e.toString()}');
     }
+  }
+
+  static Future<Payload> decodeResponsePayload(http.Response response) async {
+    var bodyBytes = response.bodyBytes;
+    var packet = Packet.fromBuffer(bodyBytes);
+    var iv = Uint8List.fromList(packet.iv);
+    var content = Uint8List.fromList(packet.content);
+    return await _h5Proto.decode(content, iv);
   }
 }

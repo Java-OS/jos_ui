@@ -55,30 +55,3 @@ Future<void> displayDNSNameserverModal(BuildContext context) async {
     },
   ).then((value) => _systemController.fetchDnsNameserver());
 }
-
-Future<void> displayHostModal(BuildContext context) async {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return SimpleDialog(
-        title: getModalHeader('Host'),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        contentPadding: EdgeInsets.all(14),
-        titlePadding: EdgeInsets.zero,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFieldBox(controller: _systemController.hostIpEditingController, label: 'Ip address'),
-              SizedBox(height: 8),
-              TextFieldBox(controller: _systemController.hostHostnameEditingController, label: 'Hostname'),
-              SizedBox(height: 10),
-              Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _systemController.addHost(), child: Text('Apply')))
-            ],
-          )
-        ],
-      );
-    },
-  ).then((value) => _systemController.fetchHosts());
-}

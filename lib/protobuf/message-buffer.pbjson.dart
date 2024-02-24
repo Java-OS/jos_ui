@@ -52,6 +52,7 @@ const Metadata$json = {
     {'1': 'need_restart', '3': 4, '4': 1, '5': 8, '10': 'needRestart'},
     {'1': 'log_package', '3': 5, '4': 1, '5': 9, '10': 'logPackage'},
     {'1': 'log_level', '3': 6, '4': 1, '5': 9, '10': 'logLevel'},
+    {'1': 'message', '3': 7, '4': 1, '5': 9, '10': 'message'},
   ],
 };
 
@@ -60,5 +61,5 @@ final $typed_data.Uint8List metadataDescriptor = $convert.base64Decode(
     'CghNZXRhZGF0YRIYCgdzdWNjZXNzGAEgASgIUgdzdWNjZXNzEhAKA3JwYxgCIAEoBVIDcnBjEh'
     'QKBWVycm9yGAMgASgFUgVlcnJvchIhCgxuZWVkX3Jlc3RhcnQYBCABKAhSC25lZWRSZXN0YXJ0'
     'Eh8KC2xvZ19wYWNrYWdlGAUgASgJUgpsb2dQYWNrYWdlEhsKCWxvZ19sZXZlbBgGIAEoCVIIbG'
-    '9nTGV2ZWw=');
+    '9nTGV2ZWwSGAoHbWVzc2FnZRgHIAEoCVIHbWVzc2FnZQ==');
 

@@ -39,7 +39,7 @@ class BackupComponentState extends State<BackupComponent> {
                 ),
               ),
               Tooltip(
-                message: 'Make backup',
+                message: 'Upload backup',
                 preferBelow: false,
                 child: OutlinedButton(
                   onPressed: () => _backupController.uploadBackup(),
