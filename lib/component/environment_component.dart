@@ -78,7 +78,7 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
           Tooltip(
             preferBelow: false,
             message: key,
-            child: Text(truncateWithEllipsis(20, key), style: TextStyle(fontSize: 12)),
+            child: Text(truncateWithEllipsis(10, key), style: TextStyle(fontSize: 12)),
           ),
         ),
         DataCell(
