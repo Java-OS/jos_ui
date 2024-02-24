@@ -50,7 +50,7 @@ Future<void> displayBatchEnvironment(ClipboardData? clipboard, BuildContext cont
         titlePadding: EdgeInsets.zero,
         children: [
           Container(
-            constraints: BoxConstraints(maxHeight: 200, maxWidth: 300),
+            constraints: BoxConstraints(maxHeight: 200, maxWidth: 450),
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: DataTable(
@@ -99,12 +99,14 @@ List<DataRow> getEnvironmentRows(String clipboard) {
       cells: [
         DataCell(
           Tooltip(
+            preferBelow: false,
             message: key,
-            child: Text(truncateWithEllipsis(50, key), style: TextStyle(fontSize: 12)),
+            child: Text(truncateWithEllipsis(20, key), style: TextStyle(fontSize: 12)),
           ),
         ),
         DataCell(
           Tooltip(
+            preferBelow: false,
             message: value,
             child: Text(truncateWithEllipsis(50, value), style: TextStyle(fontSize: 12)),
           ),

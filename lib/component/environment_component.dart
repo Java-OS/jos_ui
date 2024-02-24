@@ -74,8 +74,20 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
     var listItems = <DataRow>[];
     environmentController.environments.forEach((key, value) {
       var row = DataRow(cells: [
-        DataCell(Text(truncateWithEllipsis(15, key), style: TextStyle(fontSize: 12))),
-        DataCell(Text(truncateWithEllipsis(30, value), style: TextStyle(fontSize: 12))),
+        DataCell(
+          Tooltip(
+            preferBelow: false,
+            message: key,
+            child: Text(truncateWithEllipsis(20, key), style: TextStyle(fontSize: 12)),
+          ),
+        ),
+        DataCell(
+          Tooltip(
+            preferBelow: false,
+            message: value,
+            child: Text(truncateWithEllipsis(50, value), style: TextStyle(fontSize: 12)),
+          ),
+        ),
         DataCell(
           Align(
             alignment: Alignment.centerLeft,
