@@ -48,7 +48,7 @@ class EnvironmentController extends GetxController {
     if (payload.metadata.success) {
       batchEditingController.clear();
       await fetchSystemEnvironments();
-      displayError('Successfully set batch environments');
+      displayInfo('Successfully set batch environments');
       Get.back();
     } else {
       displayError('Failed to set batch environments');
