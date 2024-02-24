@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/environment_controller.dart';
 import 'package:jos_ui/dialog/environment_dialog.dart';
@@ -27,7 +28,18 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          OutlinedButton(onPressed: () => addEnvironment(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              OutlinedButton(onPressed: () => addEnvironment(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
+              Tooltip(
+                message: 'Paste from clipboard',
+                preferBelow: false,
+                verticalOffset: 22,
+                child: OutlinedButton(onPressed: () => pasteFromClipboard(), child: Icon(Icons.paste, size: 16, color: Colors.black)),
+              ),
+            ],
+          ),
           SizedBox(width: 8),
           Expanded(
             child: SingleChildScrollView(
@@ -72,7 +84,7 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
               child: Row(
                 children: [
                   IconButton(onPressed: () => environmentController.deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(Icons.delete, size: 16, color: Colors.black)),
-                  IconButton(onPressed: () => updateEnvironment(key,value,context), splashRadius: 12, icon: Icon(Icons.edit, size: 16, color: Colors.black)),
+                  IconButton(onPressed: () => updateEnvironment(value, context), splashRadius: 12, icon: Icon(Icons.edit, size: 16, color: Colors.black)),
                 ],
               ),
             ),
@@ -82,5 +94,9 @@ class EnvironmentComponentState extends State<EnvironmentComponent> {
       listItems.add(row);
     });
     return listItems;
+  }
+
+  void pasteFromClipboard() {
+    Clipboard.getData(Clipboard.kTextPlain).then((value) => displayBatchEnvironment(value,context));
   }
 }

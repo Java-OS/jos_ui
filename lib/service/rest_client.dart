@@ -143,7 +143,7 @@ class RestClient {
         developer.log('[Http Error] $rpc ${e.toString()}');
       }
     }
-    return Payload(metadata: Metadata(success: true));
+    return Payload(metadata: Metadata(success: false));
   }
 
   static void storeToken(Map<String, String> headers) {

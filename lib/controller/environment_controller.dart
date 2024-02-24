@@ -10,6 +10,7 @@ import 'package:jos_ui/service/rest_client.dart';
 class EnvironmentController extends GetxController {
   final TextEditingController keyEditingController = TextEditingController();
   final TextEditingController valueEditingController = TextEditingController();
+  final TextEditingController batchEditingController = TextEditingController();
 
   var environments = {}.obs;
 
@@ -23,7 +24,7 @@ class EnvironmentController extends GetxController {
   }
 
   Future<void> setSystemEnvironment() async {
-    developer.log('Add System Environments called');
+    developer.log('Add system environments called');
     var key = keyEditingController.text;
     var value = valueEditingController.text;
 
@@ -36,6 +37,21 @@ class EnvironmentController extends GetxController {
       Get.back();
     } else {
       displayError('Failed to add environment [$key]');
+    }
+  }
+
+  Future<void> setSystemBatchEnvironment() async {
+    developer.log('Add system batch environments called');
+    var batch = batchEditingController.text;
+
+    var payload = await RestClient.rpc(RPC.systemEnvironmentBatchSet, parameters: {'batch': batch});
+    if (payload.metadata.success) {
+      batchEditingController.clear();
+      await fetchSystemEnvironments();
+      displayError('Successfully set batch environments');
+      Get.back();
+    } else {
+      displayError('Failed to set batch environments');
     }
   }
 

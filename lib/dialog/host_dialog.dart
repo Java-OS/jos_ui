@@ -19,7 +19,13 @@ Future<void> displayHostModal(BuildContext context) async {
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [TextFieldBox(controller: _networkController.hostIpEditingController, label: 'Ip address'), SizedBox(height: 8), TextFieldBox(controller: _networkController.hostHostnameEditingController, label: 'Hostname'), SizedBox(height: 10), Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _networkController.addHost(), child: Text('Apply')))],
+            children: [
+              TextFieldBox(controller: _networkController.hostIpEditingController, label: 'Ip address'),
+              SizedBox(height: 8),
+              TextFieldBox(controller: _networkController.hostHostnameEditingController, label: 'Hostname'),
+              SizedBox(height: 10),
+              Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _networkController.addHost(), child: Text('Apply'))),
+            ],
           )
         ],
       );

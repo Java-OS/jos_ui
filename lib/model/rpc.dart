@@ -26,8 +26,8 @@ enum RPC {
   filesystemDirectoryTree(21),
   filesystemSwapOn(22),
   filesystemSwapOff(23),
-  filesystemFileDownload(24),
-  filesystemFileUpload(25),
+  systemEnvironmentBatchSet(24),
+
   /*
   * JVM
   * */
