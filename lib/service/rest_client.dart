@@ -5,7 +5,6 @@ import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:fetch_client/fetch_client.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart' as getx;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -155,15 +154,12 @@ class RestClient {
     }
   }
 
-  static void storeJvmNeedRestart(Map<String, String> headers) {
-    var jvmNeedRestart = headers['x-jvm-restart'];
-    if (jvmNeedRestart != null) {
-      developer.log('Receive header X-Jvm-Restart with value: [$jvmNeedRestart]');
-      jvmNeedRestart == 'true' ? jvmController.enableRestartJvm() : jvmController.disableRestartJvm();
-    }
+  static void storeJvmNeedRestart(bool doJvmRestart) {
+    developer.log('Receive header X-Jvm-Restart with value: [$doJvmRestart]');
+    doJvmRestart ? jvmController.enableRestartJvm() : jvmController.disableRestartJvm();
   }
 
-  static Future<bool> upload(Uint8List bytes, String fileName, UploadType type) async {
+  static Future<bool> upload(Uint8List bytes, String fileName, UploadType type, String? password) async {
     developer.log('selected file: $fileName');
 
     var token = StorageService.getItem('token');
@@ -176,6 +172,7 @@ class RestClient {
       request.headers.addAll(headers);
       var fileOrder = http.MultipartFile.fromBytes('file', bytes, filename: fileName);
       request.files.add(fileOrder);
+      if (password != null) request.fields['password'] = password;
       var response = await request.send();
       return response.statusCode == 200;
     } catch (e) {
@@ -258,6 +255,9 @@ class RestClient {
     var packet = Packet.fromBuffer(bodyBytes);
     var iv = Uint8List.fromList(packet.iv);
     var content = Uint8List.fromList(packet.content);
-    return await _h5Proto.decode(content, iv);
+    var payload = await _h5Proto.decode(content, iv);
+    var metadata = payload.metadata;
+    storeJvmNeedRestart(metadata.needRestart);
+    return payload;
   }
 }

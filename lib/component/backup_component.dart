@@ -1,3 +1,4 @@
+import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/backup_controller.dart';
@@ -43,7 +44,7 @@ class BackupComponentState extends State<BackupComponent> {
                 message: 'Upload backup',
                 preferBelow: false,
                 child: OutlinedButton(
-                  onPressed: () => _backupController.uploadBackup(),
+                  onPressed: () => chooseConfigFile(),
                   child: Icon(Icons.upload_file_outlined, size: 16, color: Colors.black),
                 ),
               ),
@@ -115,10 +116,19 @@ class BackupComponentState extends State<BackupComponent> {
   Row getTilButtons(int index) {
     return Row(
       children: [
-        IconButton(onPressed: () => displayDownloadModal(index, context), icon: Icon(Icons.file_download_outlined, size: 16, color: Colors.black), splashRadius: 20),
+        IconButton(onPressed: () => displayDownloadConfigModal(index, context), icon: Icon(Icons.file_download_outlined, size: 16, color: Colors.black), splashRadius: 20),
         Visibility(visible: index != 0, child: IconButton(onPressed: () => _backupController.restoreBackup(index), icon: Icon(Icons.restore, size: 16, color: Colors.black), splashRadius: 20)),
         Visibility(visible: index != 0, child: IconButton(onPressed: () => _backupController.deleteBackup(index), icon: Icon(Icons.delete, size: 16, color: Colors.black), splashRadius: 20)),
       ],
     );
+  }
+
+  Future<void> chooseConfigFile() async {
+    var picked = await FilePickerWeb.platform.pickFiles();
+    if (picked != null) {
+      var bytes = picked.files.single.bytes!;
+      var name = picked.files.single.name;
+      if (context.mounted) displayUploadConfigModal(name, bytes, context);
+    }
   }
 }

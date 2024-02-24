@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
+import 'dart:typed_data';
 
-import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
@@ -65,11 +65,13 @@ class BackupController extends GetxController {
     Get.back();
   }
 
-  Future<void> uploadBackup() async {
-    var picked = await FilePickerWeb.platform.pickFiles();
-    if (picked != null) {
-      var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.config);
-      if (uploaded) fetchBackups();
+  Future<void> uploadBackup(Uint8List bytes, String name) async {
+    var success = await RestClient.upload(bytes, name, UploadType.config, passwordEditingController.text);
+    if (success) {
+      fetchBackups();
+      Get.back();
+    } else {
+      displayWarning('Failed to upload config file');
     }
   }
 }
