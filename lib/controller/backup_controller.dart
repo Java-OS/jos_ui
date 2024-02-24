@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:file_picker/_internal/file_picker_web.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
 import 'package:jos_ui/dialog/toast.dart';
@@ -9,6 +10,7 @@ import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
 
 class BackupController extends GetxController {
+  final TextEditingController passwordEditingController = TextEditingController();
   var backupList = <String>[].obs;
 
   Future<void> fetchBackups() async {
@@ -54,7 +56,13 @@ class BackupController extends GetxController {
   }
 
   Future<void> downloadBackup(int id) async {
-    await RestClient.download({'type': 'config', 'id': id.toString()});
+    var params = {
+      'type': 'config',
+      'id': id.toString(),
+      'password': passwordEditingController.text,
+    };
+    await RestClient.download(params);
+    Get.back();
   }
 
   Future<void> uploadBackup() async {

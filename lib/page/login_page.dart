@@ -86,7 +86,11 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(
                           width: 50,
                           height: 50,
-                          child: OutlinedButton(onPressed: () => authenticationController.requestPublicKey(), child: Icon(Icons.refresh, size: 16, color: Colors.blue)),
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(padding: EdgeInsets.zero,side: BorderSide(color: Colors.white30)),
+                            onPressed: () => authenticationController.requestPublicKey(),
+                            child: Icon(Icons.refresh, size: 28, color: Colors.blue),
+                          ),
                         ),
                       ],
                     ),

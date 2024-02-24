@@ -41,7 +41,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
                   onSubmitted: (e) => widget.onSubmit!(e),
                   controller: widget.controller,
                   style: TextStyle(fontSize: 14,color: widget.isEnable! ? Colors.black :Colors.black.withAlpha(150) ),
-                  obscureText: widget.isPassword ? true : false,
+                  obscureText: widget.isPassword,
                   enableSuggestions: widget.isPassword ? false : true,
                   autocorrect: widget.isPassword ? false : true,
                   keyboardType: (widget.maxLines == null || widget.maxLines! > 1) ? TextInputType.multiline : TextInputType.text ,

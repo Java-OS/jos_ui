@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/backup_controller.dart';
+import 'package:jos_ui/dialog/upload_download_dialog.dart';
 
 class BackupComponent extends StatefulWidget {
   const BackupComponent({super.key});
@@ -114,7 +115,7 @@ class BackupComponentState extends State<BackupComponent> {
   Row getTilButtons(int index) {
     return Row(
       children: [
-        IconButton(onPressed: () => _backupController.downloadBackup(index), icon: Icon(Icons.file_download_outlined, size: 16, color: Colors.black), splashRadius: 20),
+        IconButton(onPressed: () => displayDownloadModal(index, context), icon: Icon(Icons.file_download_outlined, size: 16, color: Colors.black), splashRadius: 20),
         Visibility(visible: index != 0, child: IconButton(onPressed: () => _backupController.restoreBackup(index), icon: Icon(Icons.restore, size: 16, color: Colors.black), splashRadius: 20)),
         Visibility(visible: index != 0, child: IconButton(onPressed: () => _backupController.deleteBackup(index), icon: Icon(Icons.delete, size: 16, color: Colors.black), splashRadius: 20)),
       ],

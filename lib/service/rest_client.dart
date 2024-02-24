@@ -5,6 +5,7 @@ import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:fetch_client/fetch_client.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' as getx;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -76,7 +77,7 @@ class RestClient {
 
   static Future<bool> login(String username, String password, String salt) async {
     developer.log('Login request [$username] [$password] [${_baseLoginUrl()}]');
-    StorageService.addItem('activation-key', salt);
+    StorageService.addItem('activation-key', salt.toUpperCase());
     var data = {
       'username': username,
       'password': password,
@@ -216,7 +217,10 @@ class RestClient {
     developer.log('Credential send: [$headers]');
 
     try {
-      var uri = Uri.parse(_baseDownloadUrl()).replace(queryParameters: parameters);
+      var data = jsonEncode(parameters);
+      var packet = await _h5Proto.encode(Payload(postJson: data));
+
+      var uri = Uri.parse(_baseDownloadUrl());
 
       final anchor = AnchorElement(href: '#')
         ..setAttribute('download', '')
@@ -224,8 +228,10 @@ class RestClient {
       document.body!.append(anchor);
 
       // final request = await http.head(uri, headers: headers);
-      final request = http.Request('GET', uri);
+      final request = http.Request('POST', uri);
       request.headers.addAll(headers);
+      request.bodyBytes = packet.writeToBuffer();
+
       final client = http.Client();
       final streamedResponse = await client.send(request);
       final response = await http.Response.fromStream(streamedResponse);
