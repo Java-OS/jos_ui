@@ -63,6 +63,7 @@ class BackupController extends GetxController {
     };
     await RestClient.download(params);
     Get.back();
+    passwordEditingController.clear();
   }
 
   Future<void> uploadBackup(Uint8List bytes, String name) async {
@@ -70,6 +71,7 @@ class BackupController extends GetxController {
     if (success) {
       fetchBackups();
       Get.back();
+      passwordEditingController.clear();
     } else {
       displayWarning('Failed to upload config file');
     }
