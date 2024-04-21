@@ -221,6 +221,24 @@ class SystemController extends GetxController {
     }
   }
 
+  void systemReboot() async {
+    var payload = await RestClient.rpc(RPC.systemReboot);
+    if (payload.metadata.success) {
+      displayInfo('Reboot success');
+    } else {
+      displayError('Reboot failed');
+    }
+  }
+
+  void systemShutdown() async {
+    var payload = await RestClient.rpc(RPC.systemShutdown);
+    if (payload.metadata.success) {
+      displayInfo('The system was completely shutdown');
+    } else {
+      displayError('Shutdown failed');
+    }
+  }
+
   void clear() {
     dnsEditingController.clear();
     hostnameEditingController.clear();

@@ -21,6 +21,7 @@ class AuthenticationController extends GetxController {
       Get.offNamed('/dashboard');
     } else {
       displayError('Login failed');
+      captchaEditingController.clear();
       requestPublicKey();
     }
   }

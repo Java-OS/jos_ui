@@ -8,6 +8,7 @@ import 'package:jos_ui/component/top_menu_component.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/controller/system_controller.dart';
+import 'package:jos_ui/dialog/power_dialog.dart';
 import 'package:jos_ui/page_base_content.dart';
 import 'package:jos_ui/utils.dart';
 
@@ -84,12 +85,13 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.power_settings_new, 'System PowerOff', Colors.redAccent, jvmController.callJvmGarbageCollector, false),
+                // child: actionButton(Icons.power_settings_new, 'System PowerOff', Colors.redAccent, systemController.systemShutdown, false),
+                child: actionButton(Icons.settings_power_outlined, 'System Power', Colors.redAccent, displayPowerModal, false),
               ),
               SizedBox(
                 width: 80,
                 height: 80,
-                child: actionButton(Icons.autorenew_rounded, 'JVM Restart', Colors.white, jvmController.callJvmRestart, jvmController.jvmNeedRestart.isTrue),
+                child: actionButton(Icons.refresh, 'JVM Restart', Colors.white, jvmController.callJvmRestart, jvmController.jvmNeedRestart.isTrue),
               ),
               SizedBox(
                 width: 80,
