@@ -27,17 +27,17 @@ class RestClient {
   static final _http = http.Client();
   static final _h5Proto = H5Proto.init();
 
-  static String _baseH5ProtoUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/h5proto";
+  static String _baseH5ProtoUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/h5proto";
 
-  static String _baseLoginUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/login";
+  static String _baseLoginUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/login";
 
-  static String _baseRpcUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/rpc";
+  static String _baseRpcUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/rpc";
 
-  static String _baseUploadUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/upload";
+  static String _baseUploadUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/upload";
 
-  static String _baseSseUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/sse";
+  static String _baseSseUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/sse";
 
-  static String _baseDownloadUrl() => "${StorageService.getItem('base_address') ?? 'http://127.0.0.1:7080'}/api/download";
+  static String _baseDownloadUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/download";
 
   static Future<String?> sendEcdhPublicKey() async {
     developer.log('Request to send ecdh public key');

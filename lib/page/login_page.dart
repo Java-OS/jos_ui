@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:jos_ui/controller/authentication_controller.dart';
 import 'package:jos_ui/page_base_content.dart';
 
@@ -35,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.all(14.0),
               child: Column(
                 children: [
-                  Center(child: Text('JOS', style: GoogleFonts.smoochSans(letterSpacing: 3, color: Colors.white, fontSize: 55, fontWeight: FontWeight.bold))),
+                  Center(child: Text('JOS', style: TextStyle(fontFamily: 'smooch', letterSpacing: 3, color: Colors.white, fontSize: 55, fontWeight: FontWeight.bold))),
                   TextField(
                     controller: authenticationController.usernameEditingController,
                     enableSuggestions: false,
@@ -87,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                           width: 50,
                           height: 50,
                           child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(padding: EdgeInsets.zero,side: BorderSide(color: Colors.white30)),
+                            style: OutlinedButton.styleFrom(padding: EdgeInsets.zero, side: BorderSide(color: Colors.white30)),
                             onPressed: () => authenticationController.requestPublicKey(),
                             child: Icon(Icons.refresh, size: 28, color: Colors.blue),
                           ),

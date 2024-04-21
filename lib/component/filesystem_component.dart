@@ -55,8 +55,8 @@ class _FilesystemComponentState extends State<FilesystemComponent> {
                   text: getPartitionText(fs),
                   warn: fs.type == 'LVM2_member' ? Colors.grey : Colors.red,
                   textStyle: TextStyle(fontSize: 12),
-                  onClick: () => (fs.type == 'LVM2_member' || fs.type == 'swap') ? null : fetchTreeAndDisplay(fs),
-                  disabled: (fs.type == 'LVM2_member' || fs.type == 'swap'),
+                  onClick: (fs.type == 'LVM2_member' || fs.type.isEmpty) ? null : () => fetchTreeAndDisplay(fs),
+                  disabled: (fs.type == 'LVM2_member' || fs.type.isEmpty),
                 ),
               ),
               SizedBox(width: 8),
@@ -65,7 +65,7 @@ class _FilesystemComponentState extends State<FilesystemComponent> {
                 height: 30,
                 char: getButtonName(fs),
                 textStyle: getButtonTextStyle(fs),
-                onPressed: () => fs.type == 'LVM2_member' ? null : actionButton(fs),
+                onPressed: fs.type == 'LVM2_member' || fs.type.isEmpty ? null : () => actionButton(fs),
               ),
             ],
           ),
@@ -118,7 +118,7 @@ class _FilesystemComponentState extends State<FilesystemComponent> {
   String getButtonName(HDDPartition fs) {
     if (fs.type == 'swap') {
       return fs.total == 0 ? 'swap on' : 'swap off';
-    } else if (fs.type == 'LVM2_member') {
+    } else if (fs.type == 'LVM2_member' || fs.type.isEmpty) {
       return ' - ';
     } else {
       return (fs.mountPoint == null || fs.mountPoint!.isEmpty) ? 'Mount' : 'Disconnect';
@@ -126,6 +126,6 @@ class _FilesystemComponentState extends State<FilesystemComponent> {
   }
 
   fetchTreeAndDisplay(HDDPartition partition) {
-    _systemController.fetchFilesystemTree(partition.mountPoint!).then((value) => displayFilesystemTree(context,false));
+    _systemController.fetchFilesystemTree(partition.mountPoint!).then((value) => displayFilesystemTree(context, false));
   }
 }
