@@ -11,11 +11,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  AuthenticationController authenticationController = Get.put(AuthenticationController());
+  final _authenticationController = Get.put(AuthenticationController());
 
   @override
   void initState() {
-    authenticationController.requestPublicKey();
+    _authenticationController.requestPublicKey();
     super.initState();
   }
 
@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Center(child: Text('JOS', style: TextStyle(fontFamily: 'smooch', letterSpacing: 3, color: Colors.white, fontSize: 55, fontWeight: FontWeight.bold))),
                   TextField(
-                    controller: authenticationController.usernameEditingController,
+                    controller: _authenticationController.usernameEditingController,
                     enableSuggestions: false,
                     autocorrect: false,
                     style: TextStyle(color: Colors.white),
@@ -47,11 +47,11 @@ class _LoginPageState extends State<LoginPage> {
                       labelStyle: TextStyle(color: Colors.white38, fontSize: 12),
                       contentPadding: EdgeInsets.all(14),
                     ),
-                    onSubmitted: (_) => authenticationController.login(),
+                    onSubmitted: (_) => _authenticationController.login(),
                   ),
                   SizedBox(height: 10),
                   TextField(
-                    controller: authenticationController.passwordEditingController,
+                    controller: _authenticationController.passwordEditingController,
                     obscureText: true,
                     enableSuggestions: false,
                     autocorrect: false,
@@ -63,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                       labelStyle: TextStyle(color: Colors.white38, fontSize: 12),
                       contentPadding: EdgeInsets.all(14),
                     ),
-                    onSubmitted: (_) => authenticationController.login(),
+                    onSubmitted: (_) => _authenticationController.login(),
                   ),
                   SizedBox(height: 10),
                   SizedBox(
@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                           height: 50,
                           child: OutlinedButton(
                             style: OutlinedButton.styleFrom(padding: EdgeInsets.zero, side: BorderSide(color: Colors.white30)),
-                            onPressed: () => authenticationController.requestPublicKey(),
+                            onPressed: () => _authenticationController.requestPublicKey(),
                             child: Icon(Icons.refresh, size: 28, color: Colors.blue),
                           ),
                         ),
@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 10),
                   TextField(
-                    controller: authenticationController.captchaEditingController,
+                    controller: _authenticationController.captchaEditingController,
                     enableSuggestions: false,
                     autocorrect: false,
                     style: TextStyle(color: Colors.white),
@@ -107,13 +107,13 @@ class _LoginPageState extends State<LoginPage> {
                       labelStyle: TextStyle(color: Colors.white38, fontSize: 12),
                       contentPadding: EdgeInsets.all(14),
                     ),
-                    onSubmitted: (_) => authenticationController.login(),
+                    onSubmitted: (_) => _authenticationController.login(),
                   ),
                   SizedBox(height: 10),
                   SizedBox(
                     width: double.infinity,
                     height: 50,
-                    child: ElevatedButton(onPressed: () => authenticationController.login(), child: Text('Login')),
+                    child: ElevatedButton(onPressed: () => _authenticationController.login(), child: Text('Login')),
                   ),
                 ],
               ),
@@ -126,9 +126,9 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget captchaWidget() {
     return Visibility(
-      visible: authenticationController.captchaImage.value != null,
+      visible: _authenticationController.captchaImage.value != null,
       replacement: SizedBox(width: 16, height: 16, child: CircularProgressIndicator()),
-      child: ClipRRect(borderRadius: BorderRadius.circular(3), child: authenticationController.captchaImage.value),
+      child: ClipRRect(borderRadius: BorderRadius.circular(3), child: _authenticationController.captchaImage.value),
     );
   }
 }

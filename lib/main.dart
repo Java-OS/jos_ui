@@ -6,12 +6,10 @@ import 'package:jos_ui/page/login_page.dart';
 import 'package:jos_ui/page/module_page.dart';
 import 'package:jos_ui/page/network_page.dart';
 import 'package:jos_ui/page/settings_page.dart';
-import 'package:jos_ui/service/injection_provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  InjectionProvider.init();
   tz.initializeTimeZones();
   runApp(const MyApp());
 }

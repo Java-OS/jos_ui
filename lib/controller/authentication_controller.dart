@@ -14,6 +14,13 @@ class AuthenticationController extends GetxController {
 
   var captchaImage = Rxn<Image>();
 
+  Future<void> requestPublicKey() async {
+    var result = await RestClient.sendEcdhPublicKey();
+    if (result != null) {
+      captchaImage.value = Image.memory(base64Decode(result));
+    }
+  }
+
   void login() async {
     developer.log('Login called');
     var success = await RestClient.login(usernameEditingController.text, passwordEditingController.text, captchaEditingController.text);
@@ -21,9 +28,10 @@ class AuthenticationController extends GetxController {
       Get.offNamed('/dashboard');
     } else {
       displayError('Login failed');
-      captchaEditingController.clear();
       requestPublicKey();
     }
+
+    clean();
   }
 
   void logout() {
@@ -32,10 +40,9 @@ class AuthenticationController extends GetxController {
     Get.offAllNamed('/login');
   }
 
-  Future<void> requestPublicKey() async {
-    var result = await RestClient.sendEcdhPublicKey();
-    if (result != null) {
-      captchaImage.value = Image.memory(base64Decode(result));
-    }
+  void clean() {
+    usernameEditingController.clear();
+    passwordEditingController.clear();
+    captchaEditingController.clear();
   }
 }
