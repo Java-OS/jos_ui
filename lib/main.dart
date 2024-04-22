@@ -6,7 +6,6 @@ import 'package:jos_ui/page/login_page.dart';
 import 'package:jos_ui/page/module_page.dart';
 import 'package:jos_ui/page/network_page.dart';
 import 'package:jos_ui/page/settings_page.dart';
-import 'package:jos_ui/page/wait_page.dart';
 import 'package:jos_ui/service/injection_provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -23,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      theme: ThemeData.light(useMaterial3: false),
+      theme: ThemeData(useMaterial3: false, fontFamily: 'Roboto'),
       debugShowCheckedModeBanner: false,
       title: 'JOS',
       initialRoute: '/',
