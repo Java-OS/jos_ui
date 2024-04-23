@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:jos_ui/component/top_menu_component.dart';
 
 Widget getPageContent({Widget? child}) {
   return SafeArea(
@@ -17,12 +18,26 @@ Widget getPageContent({Widget? child}) {
             ),
           ),
           BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 3,sigmaY: 3),
+            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
             child: Container(
               color: Color.fromARGB(150, 0, 0, 0),
               width: double.infinity,
               height: double.infinity,
-              child: Stack(children: [child ?? emptyContentMessage()]),
+              child: Center(
+                child: SizedBox(
+                  width: 600,
+                  height: 500,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TopMenuComponent(),
+                      SizedBox(height: 8),
+                      child ?? emptyContent(),
+                    ],
+                  ),
+                ),
+              ),
             ),
           )
         ],
@@ -31,4 +46,4 @@ Widget getPageContent({Widget? child}) {
   );
 }
 
-Widget emptyContentMessage() => Center(child: Text('Empty content', style: TextStyle(color: Colors.white, fontSize: 55)));
+Widget emptyContent() => Center(child: Text('Empty content', style: TextStyle(color: Colors.white, fontSize: 55)));

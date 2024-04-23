@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/network_controller.dart';
+import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/widget/drop_down_widget.dart';
 import 'package:jos_ui/widget/tab_widget.dart';

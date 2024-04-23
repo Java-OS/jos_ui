@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/log_controller.dart';
 import 'package:jos_ui/controller/system_controller.dart';
+import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 

@@ -60,6 +60,7 @@ class SystemController extends GetxController {
       } else {
         displayWarning('Failed to change hostname');
       }
+      await fetchHostname();
     }
   }
 
@@ -219,6 +220,7 @@ class SystemController extends GetxController {
     } else {
       displayWarning('Failed to change nameserver');
     }
+    await fetchDnsNameserver();
   }
 
   void systemReboot() async {

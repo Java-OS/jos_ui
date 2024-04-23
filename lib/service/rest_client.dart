@@ -8,6 +8,7 @@ import 'package:fetch_client/fetch_client.dart';
 import 'package:get/get.dart' as getx;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/dialog/toast.dart';
 import 'package:jos_ui/model/log_level.dart';
@@ -131,7 +132,7 @@ class RestClient {
       } else if (statusCode == 204) {
         return await decodeResponsePayload(response);
       } else if (statusCode == 401) {
-        getx.Get.offAllNamed('/');
+        getx.Get.offAllNamed(Routes.base.routeName);
       } else {
         var payload = await decodeResponsePayload(response);
         displayWarning(payload.metadata.message, timeout: 5);

@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/backup_controller.dart';
+import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 BackupController _backupController = Get.put(BackupController());
@@ -33,9 +33,9 @@ Future<void> displayDownloadConfigModal(int index, BuildContext context) async {
   );
 }
 
-Future<void> displayUploadConfigModal(String name, Uint8List bytes, BuildContext context) async {
+Future<void> displayUploadConfigModal(String name, Uint8List bytes) async {
   showDialog(
-    context: context,
+    context: Get.context!,
     builder: (BuildContext context) {
       return SimpleDialog(
         title: getModalHeader('Secure download'),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/system_controller.dart';
 
 var _systemController = Get.put(SystemController());
@@ -11,7 +10,7 @@ Future<void> displayPowerModal() async {
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: Colors.transparent,
-        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.grey,width: 1),borderRadius: BorderRadius.circular(3)),
+        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.grey, width: 1), borderRadius: BorderRadius.circular(3)),
         contentPadding: EdgeInsets.zero,
         titlePadding: EdgeInsets.zero,
         content: Container(

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:jos_ui/component/top_menu_component.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/controller/system_controller.dart';
@@ -38,17 +37,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return getPageContent(
-      child: Center(
-        child: SizedBox(
-          width: 600,
-          height: 500,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [TopMenuComponent(), SizedBox(height: 8), Obx(() => mosaicView())],
-          ),
-        ),
-      ),
+      child: Obx(() => mosaicView()),
     );
   }
 
@@ -85,7 +74,6 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
               SizedBox(
                 width: 80,
                 height: 80,
-                // child: actionButton(Icons.power_settings_new, 'System PowerOff', Colors.redAccent, _systemController.systemShutdown, false),
                 child: actionButton(Icons.settings_power_outlined, 'System Power', Colors.redAccent, displayPowerModal, false),
               ),
               SizedBox(

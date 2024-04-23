@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/log_controller.dart';
 import 'package:jos_ui/controller/system_controller.dart';
+import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
