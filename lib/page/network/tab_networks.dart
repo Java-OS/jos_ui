@@ -33,7 +33,7 @@ class _NetworkPageState extends State<TabNetworks> {
           child: SizedBox(
             width: double.infinity,
             child: Obx(
-                  () => DataTable(
+              () => DataTable(
                 dataRowMinHeight: 22,
                 dataRowMaxHeight: 32,
                 columns: columns(),

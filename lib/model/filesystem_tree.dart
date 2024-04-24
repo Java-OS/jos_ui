@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
-
 class FilesystemTree {
   final String name;
   final String fullPath;

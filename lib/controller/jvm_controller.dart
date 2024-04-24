@@ -2,9 +2,9 @@ import 'dart:developer' as developer;
 
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/system_controller.dart';
-import 'package:jos_ui/widget/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/widget/toast.dart';
 
 class JvmController extends GetxController {
   final SystemController systemController = Get.put(SystemController());

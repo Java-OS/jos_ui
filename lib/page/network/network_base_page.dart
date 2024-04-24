@@ -4,12 +4,6 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page/network/tab_hosts.dart';
 import 'package:jos_ui/page/network/tab_interfaces.dart';
 import 'package:jos_ui/page/network/tab_networks.dart';
-import 'package:jos_ui/page/settings/tab_backup.dart';
-import 'package:jos_ui/page/settings/tab_basic.dart';
-import 'package:jos_ui/page/settings/tab_datetime.dart';
-import 'package:jos_ui/page/settings/tab_environment.dart';
-import 'package:jos_ui/page/settings/tab_filesystem.dart';
-import 'package:jos_ui/page/settings/tab_user.dart';
 import 'package:jos_ui/page_base_content.dart';
 
 class NetworkBasePage extends StatefulWidget {
@@ -61,7 +55,7 @@ class NetworkBasePageState extends State<NetworkBasePage> {
     var reqIndex = int.parse(Get.parameters['index'] ?? '0');
     var isOnRoute = reqIndex == tabIndex;
     return InkWell(
-      onTap: () => Get.offAllNamed('$baseRoute/$tabIndex'),
+      onTap: () => Get.toNamed('$baseRoute/$tabIndex'),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 2.0),
         child: AnimatedContainer(

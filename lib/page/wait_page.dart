@@ -1,12 +1,8 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/authentication_controller.dart';
 import 'package:jos_ui/page_base_content.dart';
-import 'package:jos_ui/service/rest_client.dart';
-import 'package:jos_ui/service/storage_service.dart';
 
 class WaitPage extends StatefulWidget {
   const WaitPage({super.key});

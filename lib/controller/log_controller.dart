@@ -4,12 +4,12 @@ import 'dart:developer' as developer;
 import 'package:fetch_client/fetch_client.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/widget/toast.dart';
 import 'package:jos_ui/model/log.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/widget/toast.dart';
 
 class LogController extends GetxController {
   final TextEditingController idEditingController = TextEditingController();

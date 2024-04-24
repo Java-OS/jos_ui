@@ -30,7 +30,7 @@ class _NetworkPageState extends State<TabHosts> {
         OutlinedButton(onPressed: () => displayHostModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
         SingleChildScrollView(
           child: Obx(
-                () => DataTable(
+            () => DataTable(
               dataRowMinHeight: 22,
               dataRowMaxHeight: 32,
               columns: columns(),

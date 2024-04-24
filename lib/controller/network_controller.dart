@@ -3,13 +3,13 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/widget/toast.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/model/network/host.dart';
 import 'package:jos_ui/model/network/network.dart';
 import 'package:jos_ui/model/network/route.dart' as route;
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/widget/toast.dart';
 
 class NetworkController extends GetxController {
   final TextEditingController gatewayEditingController = TextEditingController();

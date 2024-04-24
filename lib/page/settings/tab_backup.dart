@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/backup_controller.dart';
 import 'package:jos_ui/dialog/upload_download_dialog.dart';
-import 'package:jos_ui/page_base_content.dart';
 
 class TabBackup extends StatefulWidget {
   const TabBackup({super.key});
@@ -59,7 +58,7 @@ class EnvironmentBasicPageState extends State<TabBackup> {
               SizedBox(height: 8),
               Expanded(
                 child: Obx(
-                      () => ListView.builder(
+                  () => ListView.builder(
                     shrinkWrap: true,
                     itemCount: _backupController.backupList.length,
                     itemBuilder: (BuildContext context, int index) {

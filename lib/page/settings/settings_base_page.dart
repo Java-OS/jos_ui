@@ -61,7 +61,7 @@ class _SettingsBasePageState extends State<SettingsBasePage> {
     var reqIndex = int.parse(Get.parameters['index'] ?? '0');
     var isOnRoute = reqIndex == tabIndex;
     return InkWell(
-      onTap: () => Get.offAllNamed('$baseRoute/$tabIndex'),
+      onTap: () => Get.toNamed('$baseRoute/$tabIndex'),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 2.0),
         child: AnimatedContainer(

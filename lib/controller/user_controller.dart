@@ -4,11 +4,11 @@ import 'dart:developer' as developer;
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
-import 'package:jos_ui/widget/toast.dart';
 import 'package:jos_ui/model/realm.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/model/user.dart';
 import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/widget/toast.dart';
 
 class UserController extends GetxController {
   final TextEditingController usernameEditingController = TextEditingController();

@@ -3,9 +3,9 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/widget/toast.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/widget/toast.dart';
 
 class DateTimeController extends GetxController {
   final TextEditingController ntpServerEditingController = TextEditingController();

@@ -5,16 +5,7 @@ import 'package:jos_ui/page/dashboard_page.dart';
 import 'package:jos_ui/page/login_page.dart';
 import 'package:jos_ui/page/module_page.dart';
 import 'package:jos_ui/page/network/network_base_page.dart';
-import 'package:jos_ui/page/network/tab_hosts.dart';
-import 'package:jos_ui/page/network/tab_interfaces.dart';
-import 'package:jos_ui/page/network/tab_networks.dart';
 import 'package:jos_ui/page/settings/settings_base_page.dart';
-import 'package:jos_ui/page/settings/tab_backup.dart';
-import 'package:jos_ui/page/settings/tab_basic.dart';
-import 'package:jos_ui/page/settings/tab_datetime.dart';
-import 'package:jos_ui/page/settings/tab_environment.dart';
-import 'package:jos_ui/page/settings/tab_filesystem.dart';
-import 'package:jos_ui/page/settings/tab_user.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
 void main() {

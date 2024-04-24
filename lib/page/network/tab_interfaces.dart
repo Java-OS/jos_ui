@@ -40,7 +40,7 @@ class _NetworkPageState extends State<TabInterfaces> {
             child: SizedBox(
               width: double.infinity,
               child: Obx(
-                    () => DataTable(
+                () => DataTable(
                   dataRowMinHeight: 12,
                   dataRowMaxHeight: 28,
                   columnSpacing: 0,

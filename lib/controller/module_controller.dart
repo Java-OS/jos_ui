@@ -3,10 +3,10 @@ import 'dart:developer' as developer;
 
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/widget/toast.dart';
 import 'package:jos_ui/model/module.dart';
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/widget/toast.dart';
 
 class ModuleController extends GetxController {
   var moduleList = <Module>[].obs;
