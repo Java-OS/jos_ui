@@ -17,7 +17,7 @@ class CharButton extends StatelessWidget {
     this.onPressed,
     this.toolTip,
     this.backgroundColor,
-    this.textStyle ,
+    this.textStyle,
   });
 
   @override

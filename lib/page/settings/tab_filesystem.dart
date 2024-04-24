@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/settings_side_menu_component.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/filesystem.dart';
-import 'package:jos_ui/page_base_content.dart';
 import 'package:jos_ui/widget/bar_chart.dart';
 import 'package:jos_ui/widget/char_button.dart';
 
-class SettingsFilesystemPage extends StatefulWidget {
-  const SettingsFilesystemPage({super.key});
+class TabFilesystem extends StatefulWidget {
+  const TabFilesystem({super.key});
 
   @override
-  State<SettingsFilesystemPage> createState() => _SettingsFilesystemPageState();
+  State<TabFilesystem> createState() => _SettingsFilesystemPageState();
 }
 
-class _SettingsFilesystemPageState extends State<SettingsFilesystemPage> {
+class _SettingsFilesystemPageState extends State<TabFilesystem> {
   final _systemController = Get.put(SystemController());
 
   @override
@@ -27,42 +24,15 @@ class _SettingsFilesystemPageState extends State<SettingsFilesystemPage> {
 
   @override
   Widget build(BuildContext context) {
-    return getPageContent(
-      child: Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SettingsSideMenuComponent(),
-            Expanded(
-              child: Container(
-                color: componentBackgroundColor,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Basic Settings', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-                      Divider(),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: Obx(
-                                () => Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: filesystemWidgets(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
+    return Expanded(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Obx(
+          () => Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: filesystemWidgets(),
+          ),
         ),
       ),
     );

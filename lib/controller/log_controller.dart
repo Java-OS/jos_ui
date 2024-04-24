@@ -4,7 +4,7 @@ import 'dart:developer' as developer;
 import 'package:fetch_client/fetch_client.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/dialog/toast.dart';
+import 'package:jos_ui/widget/toast.dart';
 import 'package:jos_ui/model/log.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';

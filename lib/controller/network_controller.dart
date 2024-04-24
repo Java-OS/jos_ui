@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/dialog/toast.dart';
+import 'package:jos_ui/widget/toast.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/model/network/host.dart';
 import 'package:jos_ui/model/network/network.dart';

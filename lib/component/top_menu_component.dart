@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/authentication_controller.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
 
@@ -14,18 +13,18 @@ class TopMenuComponent extends StatefulWidget {
 }
 
 class _TopMenuComponentState extends State<TopMenuComponent> with SingleTickerProviderStateMixin {
-  final AuthenticationController authenticationController = Get.put(AuthenticationController());
-  final JvmController jvmController = Get.put(JvmController());
+  final _authenticationController = Get.put(AuthenticationController());
+  final _jvmController = Get.put(JvmController());
   late final AnimationController _animationController = AnimationController(duration: Duration(seconds: 2), vsync: this)..repeat();
 
   int _hoverIndex = -1;
 
   final menuItems = [
-    [Routes.dashboard.routeName, Colors.blueAccent, Icons.dashboard],
-    [Routes.settingBasic.routeName, Colors.blueAccent, Icons.settings],
-    [Routes.networkInterfaces.routeName, Colors.blueAccent, Icons.lan_outlined],
-    [Routes.modules.routeName, Colors.blueAccent, Icons.view_module],
-    [Routes.logout.routeName, Colors.redAccent, Icons.logout_outlined],
+    ['/dashboard', Colors.blueAccent, Icons.dashboard],
+    ['/settings', Colors.blueAccent, Icons.settings],
+    ['/networks', Colors.blueAccent, Icons.lan_outlined],
+    ['/modules', Colors.blueAccent, Icons.view_module],
+    ['/logout', Colors.redAccent, Icons.logout_outlined],
   ];
 
   @override
@@ -61,7 +60,7 @@ class _TopMenuComponentState extends State<TopMenuComponent> with SingleTickerPr
         onHover: (_) => setState(() => _hoverIndex = index),
         onTap: () => navigate(routePath),
         child: Padding(
-          padding: EdgeInsets.only(right: routePath == Routes.base.routeName ? 0 : 8),
+          padding: EdgeInsets.only(right: routePath == '/' ? 0 : 8),
           child: AnimatedContainer(
             decoration: BoxDecoration(
               border: Border.all(color: getBorderColor(index, routePath, currentRoute)),
@@ -76,7 +75,7 @@ class _TopMenuComponentState extends State<TopMenuComponent> with SingleTickerPr
                   alignment: Alignment.center,
                   child: Obx(
                     () => Visibility(
-                      visible: jvmController.jvmNeedRestart.isTrue && routePath == Routes.dashboard.routeName,
+                      visible: _jvmController.jvmNeedRestart.isTrue && routePath == '/dashboard',
                       replacement: Icon(menuIcon, size: 32, color: getIconColor(index, routePath, currentRoute)),
                       child: AnimatedBuilder(
                         animation: _animationController,
@@ -95,7 +94,7 @@ class _TopMenuComponentState extends State<TopMenuComponent> with SingleTickerPr
   }
 
   Color getIconColor(int index, String routePath, String currentRoute) {
-    if (_hoverIndex == index && routePath == Routes.logout.routeName) {
+    if (_hoverIndex == index && routePath == '/logout') {
       return Colors.red;
     } else if (_hoverIndex == index || currentRoute.startsWith(routePath)) {
       return Colors.white;
@@ -105,7 +104,7 @@ class _TopMenuComponentState extends State<TopMenuComponent> with SingleTickerPr
   }
 
   Color getBorderColor(int index, String routePath, String currentRoute) {
-    if (_hoverIndex == index && routePath == Routes.logout.routeName) {
+    if (_hoverIndex == index && routePath == '/logout') {
       return Colors.red;
     } else if (_hoverIndex == index) {
       return Colors.white;
@@ -117,12 +116,10 @@ class _TopMenuComponentState extends State<TopMenuComponent> with SingleTickerPr
   }
 
   void navigate(String routePath) {
-    if (routePath == Routes.settingBasic.routeName) {
-      Get.toNamed(Routes.settingBasic.routeName);
-    } else if (routePath == Routes.networkInterfaces.routeName) {
-      Get.toNamed(Routes.networkInterfaces.routeName);
-    } else if (routePath == Routes.modules.routeName) {
-      authenticationController.logout();
+    if (routePath == '/settings' || routePath == '/networks') {
+      Get.toNamed('$routePath/0');
+    } else if (routePath == '/logout') {
+      _authenticationController.logout();
     } else {
       Get.toNamed(routePath);
     }

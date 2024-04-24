@@ -17,6 +17,7 @@ class WaitPage extends StatefulWidget {
 
 class _WaitPageState extends State<WaitPage> {
   AuthenticationController authenticationController = Get.put(AuthenticationController());
+
   @override
   void initState() {
     // WidgetsBinding.instance.addPostFrameCallback((_) => authenticationController.checkLogin());

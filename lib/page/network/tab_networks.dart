@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/network_side_menu_component.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/network_controller.dart';
 import 'package:jos_ui/dialog/network_dialog.dart';
-import 'package:jos_ui/page_base_content.dart';
 
-class NetworkNetworksPage extends StatefulWidget {
-  const NetworkNetworksPage({super.key});
+class TabNetworks extends StatefulWidget {
+  const TabNetworks({super.key});
 
   @override
-  State<NetworkNetworksPage> createState() => _NetworkPageState();
+  State<TabNetworks> createState() => _NetworkPageState();
 }
 
-class _NetworkPageState extends State<NetworkNetworksPage> {
+class _NetworkPageState extends State<TabNetworks> {
   final networkController = Get.put(NetworkController());
 
   @override
@@ -24,47 +21,28 @@ class _NetworkPageState extends State<NetworkNetworksPage> {
 
   @override
   Widget build(BuildContext context) {
-    return getPageContent(
-      child: Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            NetworkSideMenuComponent(),
-            Expanded(
-              child: Container(
-                color: componentBackgroundColor,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        OutlinedButton(onPressed: () => displayNetworkModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: Obx(
-                              () => DataTable(
-                                dataRowMinHeight: 22,
-                                dataRowMaxHeight: 32,
-                                columns: columns(),
-                                rows: rows(),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Networks', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+        Divider(),
+        OutlinedButton(onPressed: () => displayNetworkModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
+        SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: SizedBox(
+            width: double.infinity,
+            child: Obx(
+                  () => DataTable(
+                dataRowMinHeight: 22,
+                dataRowMaxHeight: 32,
+                columns: columns(),
+                rows: rows(),
               ),
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 

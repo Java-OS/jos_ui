@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/network_side_menu_component.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/network_controller.dart';
 import 'package:jos_ui/dialog/host_dialog.dart';
-import 'package:jos_ui/page_base_content.dart';
 
-class NetworkHostsPage extends StatefulWidget {
-  const NetworkHostsPage({super.key});
+class TabHosts extends StatefulWidget {
+  const TabHosts({super.key});
 
   @override
-  State<NetworkHostsPage> createState() => _NetworkPageState();
+  State<TabHosts> createState() => _NetworkPageState();
 }
 
-class _NetworkPageState extends State<NetworkHostsPage> {
+class _NetworkPageState extends State<TabHosts> {
   final networkController = Get.put(NetworkController());
 
   @override
@@ -24,43 +21,24 @@ class _NetworkPageState extends State<NetworkHostsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return getPageContent(
-      child: Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            NetworkSideMenuComponent(),
-            Expanded(
-              child: Container(
-                color: componentBackgroundColor,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        OutlinedButton(onPressed: () => displayHostModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
-                        SingleChildScrollView(
-                          child: Obx(
-                            () => DataTable(
-                              dataRowMinHeight: 22,
-                              dataRowMaxHeight: 32,
-                              columns: columns(),
-                              rows: rows(),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Hosts', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+        Divider(),
+        OutlinedButton(onPressed: () => displayHostModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
+        SingleChildScrollView(
+          child: Obx(
+                () => DataTable(
+              dataRowMinHeight: 22,
+              dataRowMaxHeight: 32,
+              columns: columns(),
+              rows: rows(),
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 

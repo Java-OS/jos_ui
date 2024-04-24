@@ -4,7 +4,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/dialog/toast.dart';
+import 'package:jos_ui/widget/toast.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/service/storage_service.dart';
 

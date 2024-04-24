@@ -11,7 +11,7 @@ class Route {
   int mtu;
   bool isLock;
 
-  Route(this.index, this.destination, this.netmask, this.gateway, this.iface, this.flags, this.metrics, this.mtu,this.isLock);
+  Route(this.index, this.destination, this.netmask, this.gateway, this.iface, this.flags, this.metrics, this.mtu, this.isLock);
 
   factory Route.fromJson(Map<String, dynamic> jsonObject) {
     var flagBit = jsonObject['flags'];

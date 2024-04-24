@@ -120,19 +120,17 @@ List<DataRow> getEnvironmentRows(String clipboard) {
 
 List<String> parseBatchEnvironments(String clipboard) {
   List<String> lines = clipboard.split('\n');
-  
+
   // Map to keep track of seen keys
   Map<String, String> seenKeys = {};
-  
+
   // Filter out duplicates
-  List<String> filteredLines = lines
-      .where((element) => element.isNotEmpty)
-      .where((line) {
+  List<String> filteredLines = lines.where((element) => element.isNotEmpty).where((line) {
     int equalSignIndex = line.indexOf('=');
     if (equalSignIndex != -1) {
       String key = line.substring(0, equalSignIndex).trim();
-      String value = line.substring(equalSignIndex +  1).trim();
-  
+      String value = line.substring(equalSignIndex + 1).trim();
+
       // If the key is not already in the map, add it and keep the line
       if (!seenKeys.containsKey(key)) {
         seenKeys[key] = value;

@@ -26,7 +26,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
       alignment: Alignment.center,
       children: [
         MouseRegion(
-          onHover:(_) => setState(() => hovered = true),
+          onHover: (_) => setState(() => hovered = true),
           cursor: hovered ? SystemMouseCursors.click : SystemMouseCursors.basic,
           onExit: (_) => setState(() => hovered = false),
           child: InkWell(
@@ -40,11 +40,11 @@ class _TextFieldBoxState extends State<TextFieldBox> {
                   enabled: widget.isEnable,
                   onSubmitted: (e) => widget.onSubmit!(e),
                   controller: widget.controller,
-                  style: TextStyle(fontSize: 14,color: widget.isEnable! ? Colors.black :Colors.black.withAlpha(150) ),
+                  style: TextStyle(fontSize: 14, color: widget.isEnable! ? Colors.black : Colors.black.withAlpha(150)),
                   obscureText: widget.isPassword,
                   enableSuggestions: widget.isPassword ? false : true,
                   autocorrect: widget.isPassword ? false : true,
-                  keyboardType: (widget.maxLines == null || widget.maxLines! > 1) ? TextInputType.multiline : TextInputType.text ,
+                  keyboardType: (widget.maxLines == null || widget.maxLines! > 1) ? TextInputType.multiline : TextInputType.text,
                   textAlign: TextAlign.start,
                   textAlignVertical: TextAlignVertical.top,
                   textInputAction: TextInputAction.none,

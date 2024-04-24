@@ -9,14 +9,7 @@ class Ethernet {
   bool isUp;
   EthernetStatistic statistic;
 
-  Ethernet(
-      {required this.iface,
-      required this.mac,
-      required this.ip,
-      required this.netmask,
-      required this.cidr,
-      required this.isUp,
-      required this.statistic});
+  Ethernet({required this.iface, required this.mac, required this.ip, required this.netmask, required this.cidr, required this.isUp, required this.statistic});
 
   factory Ethernet.fromJson(Map<String, dynamic> jsonObject) {
     var ethernetStatistic = EthernetStatistic.fromJson(jsonObject['statistic']);

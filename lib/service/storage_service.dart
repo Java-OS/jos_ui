@@ -3,7 +3,7 @@ import 'dart:html';
 class StorageService {
   static final Storage _localStorage = window.localStorage;
 
-  static void addItem(String key,String value) {
+  static void addItem(String key, String value) {
     _localStorage[key] = value;
   }
 
