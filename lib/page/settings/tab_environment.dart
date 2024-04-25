@@ -27,7 +27,7 @@ class EnvironmentBasicPageState extends State<TabEnvironments> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Backup', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+        Text('Environments', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
         Divider(),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -96,7 +96,7 @@ class EnvironmentBasicPageState extends State<TabEnvironments> {
               child: Row(
                 children: [
                   IconButton(onPressed: () => _environmentController.deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(Icons.delete, size: 16, color: Colors.black)),
-                  IconButton(onPressed: () => updateEnvironment(value, context), splashRadius: 12, icon: Icon(Icons.edit, size: 16, color: Colors.black)),
+                  IconButton(onPressed: () => updateEnvironment(key,value, context), splashRadius: 12, icon: Icon(Icons.edit, size: 16, color: Colors.black)),
                 ],
               ),
             ),

@@ -64,6 +64,7 @@ class EnvironmentController extends GetxController {
     } else {
       displayError('Failed to delete environment $key');
     }
+    clean();
   }
 
   Future<void> updateEnvironment() async {
@@ -79,5 +80,12 @@ class EnvironmentController extends GetxController {
     } else {
       displayError('Failed to update environment [$key]');
     }
+
+    clean();
+  }
+
+  void clean() {
+    keyEditingController.clear();
+    valueEditingController.clear();
   }
 }

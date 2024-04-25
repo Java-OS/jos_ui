@@ -24,15 +24,13 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Obx(
-          () => Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: filesystemWidgets(),
-          ),
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Obx(
+        () => Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: filesystemWidgets(),
         ),
       ),
     );
@@ -42,6 +40,7 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
     var list = <Widget>[];
     var filesystems = _systemController.partitions;
     for (var fs in filesystems) {
+      print('${fs.partition}    ${fs.type}   ${fs.mountPoint}');
       int used = fs.free != null ? fs.total - (fs.free as int) : 0;
       list.add(
         Padding(
@@ -55,8 +54,8 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
                   text: getPartitionText(fs),
                   warn: fs.type == 'LVM2_member' ? Colors.grey : Colors.red,
                   textStyle: TextStyle(fontSize: 12),
-                  onClick: (fs.type == 'LVM2_member' || fs.type.isEmpty) ? null : () => fetchTreeAndDisplay(fs),
-                  disabled: (fs.type == 'LVM2_member' || fs.type.isEmpty),
+                  onClick: (fs.type == 'swap' || fs.mountPoint!.isEmpty || fs.type == 'LVM2_member' || fs.type.isEmpty) ? null : () => fetchTreeAndDisplay(fs),
+                  disabled: (fs.type == 'swap' || fs.mountPoint!.isEmpty || fs.type == 'LVM2_member' || fs.type.isEmpty),
                 ),
               ),
               SizedBox(width: 8),
