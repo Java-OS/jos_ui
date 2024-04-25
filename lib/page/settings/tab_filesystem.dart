@@ -54,8 +54,8 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
                   text: getPartitionText(fs),
                   warn: fs.type == 'LVM2_member' ? Colors.grey : Colors.red,
                   textStyle: TextStyle(fontSize: 12),
-                  onClick: (fs.type == 'swap' || fs.mountPoint!.isEmpty || fs.type == 'LVM2_member' || fs.type.isEmpty) ? null : () => fetchTreeAndDisplay(fs),
-                  disabled: (fs.type == 'swap' || fs.mountPoint!.isEmpty || fs.type == 'LVM2_member' || fs.type.isEmpty),
+                  onClick: canUsePartition(fs) ? null : () => fetchTreeAndDisplay(fs),
+                  disabled: canUsePartition(fs),
                 ),
               ),
               SizedBox(width: 8),
@@ -74,6 +74,8 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
 
     return list;
   }
+
+  bool canUsePartition(HDDPartition fs) => fs.type == 'swap' || fs.mountPoint!.isEmpty || fs.type == 'LVM2_member' || fs.type.isEmpty;
 
   void actionButton(HDDPartition partition) {
     if (partition.type == 'swap') {
