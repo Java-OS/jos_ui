@@ -64,7 +64,7 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
                 height: 30,
                 char: getButtonName(fs),
                 textStyle: getButtonTextStyle(fs),
-                onPressed: fs.type == 'LVM2_member' || fs.type.isEmpty ? null : () => actionButton(fs),
+                onPressed: fs.type == 'LVM2_member' || fs.type.isEmpty || fs.mountPoint == '/' ? null : () => actionButton(fs),
               ),
             ],
           ),
@@ -119,7 +119,7 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
   String getButtonName(HDDPartition fs) {
     if (fs.type == 'swap') {
       return fs.total == 0 ? 'swap on' : 'swap off';
-    } else if (fs.type == 'LVM2_member' || fs.type.isEmpty) {
+    } else if (fs.type == 'LVM2_member' || fs.type.isEmpty || fs.mountPoint == '/') {
       return ' - ';
     } else {
       return (fs.mountPoint == null || fs.mountPoint!.isEmpty) ? 'Mount' : 'Disconnect';
