@@ -4,8 +4,6 @@ import 'dart:developer' as developer;
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
-import 'package:jos_ui/model/network/host.dart';
-import 'package:jos_ui/model/network/network.dart';
 import 'package:jos_ui/model/network/route.dart' as route;
 import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
@@ -27,8 +25,8 @@ class NetworkController extends GetxController {
   var ethernetList = <Ethernet>[].obs;
   var routeList = <route.Route>[].obs;
   var routeSelectedEthernet = Rxn<Ethernet>();
-  var hosts = <Host>[].obs;
-  var networks = <Network>[].obs;
+  var hosts = <String,String>{}.obs;
+  var networks = <String,String>{}.obs;
 
   Future<void> fetchEthernets() async {
     var payload = await RestClient.rpc(RPC.networkEthernetInformation, parameters: {'ethernet': ''});
@@ -146,9 +144,8 @@ class NetworkController extends GetxController {
     developer.log('fetch hosts');
     var payload = await RestClient.rpc(RPC.networkHostList);
     if (payload.metadata.success) {
-      var result = jsonDecode(payload.postJson) as List;
-      hosts.value = result.map((e) => Host.fromJson(e)).toList();
-      hosts.sort((a, b) => a.ip.compareTo(b.ip));
+      var map = jsonDecode(payload.postJson) as Map;
+      hosts.value = Map.from(map);
     } else {
       displayWarning('Failed to fetch hosts');
     }
@@ -172,10 +169,10 @@ class NetworkController extends GetxController {
     }
   }
 
-  void removeHost(int id) async {
-    developer.log('Remove host: $id');
+  void removeHost(String hostname) async {
+    developer.log('Remove host: $hostname');
     var reqParam = {
-      'id': id,
+      'hostname': hostname,
     };
     var payload = await RestClient.rpc(RPC.networkHostDelete, parameters: reqParam);
     if (payload.metadata.success) {
@@ -189,8 +186,8 @@ class NetworkController extends GetxController {
     developer.log('fetch networks');
     var payload = await RestClient.rpc(RPC.networkNetworkList);
     if (payload.metadata.success) {
-      var result = jsonDecode(payload.postJson) as List;
-      networks.value = result.map((e) => Network.fromJson(e)).toList();
+      var map = jsonDecode(payload.postJson) as Map;
+      networks.value = Map.from(map);
     } else {
       displayWarning('Failed to fetch networks');
     }
@@ -198,12 +195,10 @@ class NetworkController extends GetxController {
 
   void addNetwork() async {
     var network = networkNetworkEditingController.text;
-    var cidr = networkCidrEditingController.text;
     var name = networkNameEditingController.text;
-    developer.log('Add new network: $network $cidr $name');
+    developer.log('Add new network: $network $name');
     var reqParam = {
       'network': network,
-      'cidr': int.parse(cidr),
       'name': name,
     };
     var payload = await RestClient.rpc(RPC.networkNetworkAdd, parameters: reqParam);
@@ -216,10 +211,10 @@ class NetworkController extends GetxController {
     }
   }
 
-  void removeNetwork(int id) async {
-    developer.log('Remove network: $id');
+  void removeNetwork(String name) async {
+    developer.log('Remove network: $name');
     var reqParam = {
-      'id': id,
+      'name': name,
     };
     var payload = await RestClient.rpc(RPC.networkNetworkDelete, parameters: reqParam);
     if (payload.metadata.success) {

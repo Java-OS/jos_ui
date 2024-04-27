@@ -178,7 +178,7 @@ Future<void> displayLoggerModal(BuildContext context) async {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: getModalHeader('Add new route'),
+              title: getModalHeader('Logs'),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               contentPadding: EdgeInsets.zero,
               titlePadding: EdgeInsets.zero,

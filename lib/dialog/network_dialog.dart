@@ -22,8 +22,6 @@ Future<void> displayNetworkModal(BuildContext context) async {
             children: [
               TextFieldBox(controller: _networkController.networkNetworkEditingController, label: 'Network'),
               SizedBox(height: 8),
-              TextFieldBox(controller: _networkController.networkCidrEditingController, label: 'CIDR'),
-              SizedBox(height: 8),
               TextFieldBox(controller: _networkController.networkNameEditingController, label: 'name'),
               SizedBox(height: 10),
               Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _networkController.addNetwork(), child: Text('Apply'))),

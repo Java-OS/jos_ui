@@ -57,20 +57,21 @@ class _NetworkPageState extends State<TabNetworks> {
   List<DataRow> rows() {
     var rowList = <DataRow>[];
     var networks = networkController.networks;
-    for (var i = 0; i < networks.length; i++) {
-      var network = networks[i];
+    var i = 1;
+    for (var name in networks.keys) {
+      var network = networks[name] ?? '';
       var row = DataRow(
         cells: [
-          DataCell(Text((i + 1).toString(), style: TextStyle(fontSize: 12))),
-          DataCell(Text('${network.network}/${network.cidr}', style: TextStyle(fontSize: 12))),
-          DataCell(Text(network.name, style: TextStyle(fontSize: 12))),
+          DataCell(Text((i).toString(), style: TextStyle(fontSize: 12))),
+          DataCell(Text(network, style: TextStyle(fontSize: 12))),
+          DataCell(Text(name, style: TextStyle(fontSize: 12))),
           DataCell(
             Align(
               alignment: Alignment.centerLeft,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  IconButton(onPressed: () => networkController.removeNetwork(network.id), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete_rounded, size: 16)),
+                  IconButton(onPressed: () => networkController.removeNetwork(name), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete_rounded, size: 16)),
                 ],
               ),
             ),
@@ -78,6 +79,7 @@ class _NetworkPageState extends State<TabNetworks> {
         ],
       );
       rowList.add(row);
+      i++;
     }
 
     return rowList;
