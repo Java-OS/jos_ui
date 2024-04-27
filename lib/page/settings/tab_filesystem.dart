@@ -40,7 +40,6 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
     var list = <Widget>[];
     var filesystems = _systemController.partitions;
     for (var fs in filesystems) {
-      print('${fs.partition}    ${fs.type}   ${fs.mountPoint}');
       int used = fs.free != null ? fs.total - (fs.free as int) : 0;
       list.add(
         Padding(
