@@ -205,17 +205,17 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
       message: tooltipMessage,
       child: OutlinedButton(
         style: ButtonStyle(
-          side: MaterialStateProperty.resolveWith<BorderSide>(
-            (Set<MaterialState> states) {
-              if (states.contains(MaterialState.hovered)) {
+          side: WidgetStateProperty.resolveWith<BorderSide>(
+            (Set<WidgetState> states) {
+              if (states.contains(WidgetState.hovered)) {
                 return BorderSide(color: hoverColor);
               }
               return BorderSide(color: Colors.white38);
             },
           ),
-          foregroundColor: MaterialStateProperty.resolveWith<Color>(
-            (Set<MaterialState> states) {
-              if (states.contains(MaterialState.hovered)) {
+          foregroundColor: WidgetStateProperty.resolveWith<Color>(
+            (Set<WidgetState> states) {
+              if (states.contains(WidgetState.hovered)) {
                 return hoverColor; // Set the hover icon color
               }
               return Colors.white38; // Set the default icon color

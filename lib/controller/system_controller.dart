@@ -194,6 +194,7 @@ class SystemController extends GetxController {
         return w;
       }
     }
+    return null;
   }
 
   Future<void> fetchDnsNameserver() async {

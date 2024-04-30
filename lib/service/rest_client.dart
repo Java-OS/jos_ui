@@ -73,6 +73,7 @@ class RestClient {
     } catch (e) {
       developer.log('[Http Error] $rpc ${e.toString()}');
     }
+    return null;
   }
 
   static Future<bool> login(String username, String password, String salt) async {

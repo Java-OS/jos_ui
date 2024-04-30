@@ -158,7 +158,7 @@ List<DataRow> _getLogRows() {
     };
 
     var row = DataRow(
-      color: MaterialStateProperty.all(bgColor),
+      color: WidgetStateProperty.all(bgColor),
       cells: [
         DataCell(SizedBox(width: 40, child: Text(level.name, style: TextStyle(fontSize: 12, color: textColor)))),
         DataCell(SizedBox(width: 160, child: Text(dateTime.toString(), style: TextStyle(fontSize: 12, color: textColor)))),

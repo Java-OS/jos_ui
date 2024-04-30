@@ -203,7 +203,7 @@ class _SettingsBasicPageState extends State<TabDateTime> {
       initialDate: DateTime.parse(_dateTimeController.serverDate.value),
       firstDate: first,
       lastDate: last,
-    ).then((value) => setState(() => {if (value != null) _dateTimeController.serverDate.value = '${value.year}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}'}));
+    ).then((value) => setState(() {if (value != null) _dateTimeController.serverDate.value = '${value.year}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';}));
   }
 
   void _showTimePicker(BuildContext context) {

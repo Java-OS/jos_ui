@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/authentication_controller.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class TopMenuComponent extends StatefulWidget {
   const TopMenuComponent({super.key});
@@ -24,6 +25,7 @@ class _TopMenuComponentState extends State<TopMenuComponent> with SingleTickerPr
     ['/settings', Colors.blueAccent, Icons.settings],
     ['/networks', Colors.blueAccent, Icons.lan_outlined],
     ['/modules', Colors.blueAccent, Icons.view_module],
+    ['/containers', Colors.blueAccent, MdiIcons.oci],
     ['/logout', Colors.redAccent, Icons.logout_outlined],
   ];
 
