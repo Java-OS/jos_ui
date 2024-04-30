@@ -59,7 +59,6 @@ class RestClient {
         var serverPublicKey = jsonDecode(responsePayload.postJson)['public-key'];
         var captcha = jsonDecode(responsePayload.postJson)['captcha'];
         developer.log('Server public key $serverPublicKey');
-        developer.log('Captcha $captcha');
         var publicKey = _h5Proto.bytesToPublicKey(base64Decode(serverPublicKey));
         _h5Proto.makeSharedSecret(publicKey);
         _h5Proto.removePrivateKey();

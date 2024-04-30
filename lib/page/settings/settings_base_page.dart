@@ -7,7 +7,7 @@ import 'package:jos_ui/page/settings/tab_datetime.dart';
 import 'package:jos_ui/page/settings/tab_environment.dart';
 import 'package:jos_ui/page/settings/tab_filesystem.dart';
 import 'package:jos_ui/page/settings/tab_user.dart';
-import 'package:jos_ui/page_base_content.dart';
+import 'package:jos_ui/component/page_layout.dart';
 
 class SettingsBasePage extends StatefulWidget {
   const SettingsBasePage({super.key});
@@ -21,7 +21,7 @@ class _SettingsBasePageState extends State<SettingsBasePage> {
 
   @override
   Widget build(BuildContext context) {
-    return getPageContent(
+    return PageLayout(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

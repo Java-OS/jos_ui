@@ -1,6 +1,7 @@
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/tile_component.dart';
 import 'package:jos_ui/controller/backup_controller.dart';
 import 'package:jos_ui/dialog/upload_download_dialog.dart';
 
@@ -8,10 +9,10 @@ class TabBackup extends StatefulWidget {
   const TabBackup({super.key});
 
   @override
-  State<TabBackup> createState() => EnvironmentBasicPageState();
+  State<TabBackup> createState() => _TabBackupState();
 }
 
-class EnvironmentBasicPageState extends State<TabBackup> {
+class _TabBackupState extends State<TabBackup> {
   final _backupController = Get.put(BackupController());
   int hoverIndex = -1;
 
@@ -72,32 +73,12 @@ class EnvironmentBasicPageState extends State<TabBackup> {
                         title = parseConfigTitle(fileName, title);
                       }
 
-                      bool effectStatement = (hoverIndex == index && index != 0);
-                      return Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: MouseRegion(
-                          onHover: (_) => setState(() => hoverIndex = index),
-                          onExit: (_) => setState(() => hoverIndex = -1),
-                          child: Material(
-                            elevation: effectStatement ? 2 : 0,
-                            shadowColor: Colors.black,
-                            borderRadius: BorderRadius.circular(5),
-                            child: AnimatedContainer(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: effectStatement ? Colors.blue : Colors.grey.shade400, width: 0.5),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              duration: Duration(milliseconds: 500),
-                              child: ListTile(
-                                leading: index == 0 ? null : CircleAvatar(radius: 12, child: Text(index.toString(), style: TextStyle(fontSize: 12))),
-                                title: Text(title, style: TextStyle(fontSize: 14)),
-                                trailing: SizedBox(
-                                  width: 120,
-                                  child: getTilButtons(index),
-                                ),
-                              ),
-                            ),
-                          ),
+                     return TileComponent(
+                        index: index,
+                        title: Text(title, style: TextStyle(fontSize: 14)),
+                        actions: SizedBox(
+                          width: 120,
+                          child: getTilButtons(index),
                         ),
                       );
                     },

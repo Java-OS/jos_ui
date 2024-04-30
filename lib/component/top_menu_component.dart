@@ -118,7 +118,7 @@ class _TopMenuComponentState extends State<TopMenuComponent> with SingleTickerPr
   }
 
   void navigate(String routePath) {
-    if (routePath == '/settings' || routePath == '/networks') {
+    if (routePath == '/settings' || routePath == '/networks' || routePath == '/containers') {
       Get.toNamed('$routePath/0');
     } else if (routePath == '/logout') {
       _authenticationController.logout();

@@ -10,10 +10,10 @@ class TabInterfaces extends StatefulWidget {
   const TabInterfaces({super.key});
 
   @override
-  State<TabInterfaces> createState() => _NetworkPageState();
+  State<TabInterfaces> createState() => _TabInterfacesState();
 }
 
-class _NetworkPageState extends State<TabInterfaces> {
+class _TabInterfacesState extends State<TabInterfaces> {
   final _networkController = Get.put(NetworkController());
 
   @override
@@ -28,7 +28,9 @@ class _NetworkPageState extends State<TabInterfaces> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Interfaces', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+        Text('Interfaces',
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
         Divider(),
         OutlinedButton(
           onPressed: () => displayNetworkRoutesModal(context),
@@ -56,15 +58,25 @@ class _NetworkPageState extends State<TabInterfaces> {
   }
 
   List<DataColumn> getNetworkInterfacesColumns() {
-    var interfaceColumn = DataColumn(label: Expanded(child: Text('Interface', style: TextStyle(fontWeight: FontWeight.bold))));
-    var macColumn = DataColumn(label: Expanded(child: Text('Mac', style: TextStyle(fontWeight: FontWeight.bold))));
-    var ipColumn = DataColumn(label: Expanded(child: Text('Ip/cidr', style: TextStyle(fontWeight: FontWeight.bold))));
+    var interfaceColumn = DataColumn(
+        label: Expanded(
+            child: Text('Interface',
+                style: TextStyle(fontWeight: FontWeight.bold))));
+    var macColumn = DataColumn(
+        label: Expanded(
+            child: Text('Mac', style: TextStyle(fontWeight: FontWeight.bold))));
+    var ipColumn = DataColumn(
+        label: Expanded(
+            child: Text('Ip/cidr',
+                style: TextStyle(fontWeight: FontWeight.bold))));
     var actionColumn = DataColumn(label: Expanded(child: SizedBox.shrink()));
     return [interfaceColumn, macColumn, ipColumn, actionColumn];
   }
 
   List<DataRow> getEthernetsRows() {
-    return _networkController.ethernetList.map((e) => _mapEthernetToDataRow(e)).toList();
+    return _networkController.ethernetList
+        .map((e) => _mapEthernetToDataRow(e))
+        .toList();
   }
 
   DataRow _mapEthernetToDataRow(Ethernet ethernet) {
@@ -99,7 +111,11 @@ class _NetworkPageState extends State<TabInterfaces> {
                 onPressed: () => _networkController.flush(ethernet.iface),
                 textStyle: TextStyle(color: Colors.black, fontSize: 11),
               ),
-              IconButton(onPressed: () => displayEthernetConfig(ethernet, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
+              IconButton(
+                  onPressed: () => displayEthernetConfig(ethernet, context),
+                  splashRadius: 14,
+                  splashColor: Colors.transparent,
+                  icon: Icon(Icons.edit, size: 16)),
             ],
           ),
         )

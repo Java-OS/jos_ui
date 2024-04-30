@@ -10,10 +10,10 @@ class TabDateTime extends StatefulWidget {
   const TabDateTime({super.key});
 
   @override
-  State<TabDateTime> createState() => _SettingsBasicPageState();
+  State<TabDateTime> createState() => _TabDateTimeState();
 }
 
-class _SettingsBasicPageState extends State<TabDateTime> {
+class _TabDateTimeState extends State<TabDateTime> {
   final _dateTimeController = Get.put(DateTimeController());
 
   late List<String> locations = [];
@@ -38,7 +38,9 @@ class _SettingsBasicPageState extends State<TabDateTime> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Date Time', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+        Text('Date Time',
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
         Divider(),
         Expanded(
           child: SingleChildScrollView(
@@ -54,10 +56,14 @@ class _SettingsBasicPageState extends State<TabDateTime> {
                     child: Obx(
                       () => SearchField(
                         suggestions: getCountries(),
-                        controller: _dateTimeController.timeZoneEditingController,
-                        hint: _dateTimeController.serverTimeZone.isEmpty ? 'Select timezone' : _dateTimeController.serverTimeZone.value,
+                        controller:
+                            _dateTimeController.timeZoneEditingController,
+                        hint: _dateTimeController.serverTimeZone.isEmpty
+                            ? 'Select timezone'
+                            : _dateTimeController.serverTimeZone.value,
                         onSubmit: (e) => _dateTimeController.updateTimezone(e),
-                        onSuggestionTap: (e) => _dateTimeController.updateTimezone(e.searchKey),
+                        onSuggestionTap: (e) =>
+                            _dateTimeController.updateTimezone(e.searchKey),
                         searchInputDecoration: InputDecoration(
                           border: OutlineInputBorder(),
                           hintStyle: TextStyle(fontSize: 12),
@@ -75,9 +81,12 @@ class _SettingsBasicPageState extends State<TabDateTime> {
                   children: [
                     Row(
                       children: [
-                        Obx(() => Checkbox(value: _dateTimeController.isNtpActive.value, onChanged: (e) => switchToNtp(e!))),
+                        Obx(() => Checkbox(
+                            value: _dateTimeController.isNtpActive.value,
+                            onChanged: (e) => switchToNtp(e!))),
                         SizedBox(width: 4),
-                        Text('Set date and time automatically', style: TextStyle()),
+                        Text('Set date and time automatically',
+                            style: TextStyle()),
                       ],
                     ),
                     Row(
@@ -89,7 +98,11 @@ class _SettingsBasicPageState extends State<TabDateTime> {
                               message: 'Sync from hardware clock',
                               preferBelow: false,
                               verticalOffset: 22,
-                              child: OutlinedButton(onPressed: () => _dateTimeController.hcToSys(), child: Icon(Icons.settings_backup_restore, size: 16, color: Colors.black)),
+                              child: OutlinedButton(
+                                  onPressed: () =>
+                                      _dateTimeController.hcToSys(),
+                                  child: Icon(Icons.settings_backup_restore,
+                                      size: 16, color: Colors.black)),
                             ),
                           ),
                         ),
@@ -98,7 +111,10 @@ class _SettingsBasicPageState extends State<TabDateTime> {
                           message: 'Update hardware clock',
                           preferBelow: false,
                           verticalOffset: 22,
-                          child: OutlinedButton(onPressed: () => _dateTimeController.sysToHc(), child: Icon(Icons.commit_rounded, size: 16, color: Colors.black)),
+                          child: OutlinedButton(
+                              onPressed: () => _dateTimeController.sysToHc(),
+                              child: Icon(Icons.commit_rounded,
+                                  size: 16, color: Colors.black)),
                         ),
                       ],
                     )
@@ -116,7 +132,11 @@ class _SettingsBasicPageState extends State<TabDateTime> {
             ),
           ),
         ),
-        Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => _dateTimeController.apply(), child: Text('Apply')))
+        Align(
+            alignment: Alignment.bottomRight,
+            child: ElevatedButton(
+                onPressed: () => _dateTimeController.apply(),
+                child: Text('Apply')))
       ],
     );
   }
@@ -142,9 +162,13 @@ class _SettingsBasicPageState extends State<TabDateTime> {
     return Obx(
       () => Row(
         children: [
-          OutlinedButton(onPressed: () => _showDatePicker(context), child: Text(_dateTimeController.serverDate.value)),
+          OutlinedButton(
+              onPressed: () => _showDatePicker(context),
+              child: Text(_dateTimeController.serverDate.value)),
           SizedBox(width: 8),
-          OutlinedButton(onPressed: () => _showTimePicker(context), child: Text(_dateTimeController.serverTime.value)),
+          OutlinedButton(
+              onPressed: () => _showTimePicker(context),
+              child: Text(_dateTimeController.serverTime.value)),
         ],
       ),
     );
@@ -160,16 +184,28 @@ class _SettingsBasicPageState extends State<TabDateTime> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Flexible(child: TextFieldBox(controller: _dateTimeController.ntpServerEditingController, label: 'NTP server')),
+              Flexible(
+                  child: TextFieldBox(
+                      controller:
+                          _dateTimeController.ntpServerEditingController,
+                      label: 'NTP server')),
               SizedBox(width: 8),
-              Flexible(child: TextFieldBox(controller: _dateTimeController.ntpIntervalEditingController, label: 'Time interval (milliseconds)')),
+              Flexible(
+                  child: TextFieldBox(
+                      controller:
+                          _dateTimeController.ntpIntervalEditingController,
+                      label: 'Time interval (milliseconds)')),
               SizedBox(width: 8),
               Tooltip(
                 message: 'Sync from ntp server',
                 preferBelow: false,
                 verticalOffset: 22,
                 child: OutlinedButton(
-                  onPressed: () => {_dateTimeController.syncNTP(), displayInfo('Synchronize Date & time by ${_dateTimeController.referenceIdentifier.value}')},
+                  onPressed: () => {
+                    _dateTimeController.syncNTP(),
+                    displayInfo(
+                        'Synchronize Date & time by ${_dateTimeController.referenceIdentifier.value}')
+                  },
                   child: Icon(Icons.sync, size: 16, color: Colors.black),
                 ),
               ),
@@ -178,17 +214,22 @@ class _SettingsBasicPageState extends State<TabDateTime> {
           SizedBox(height: 8),
           Text('Version: ${_dateTimeController.version.value}'),
           Text('Mode: ${_dateTimeController.mode.value}'),
-          Text('Reference Identifier: ${_dateTimeController.referenceIdentifier.value}'),
+          Text(
+              'Reference Identifier: ${_dateTimeController.referenceIdentifier.value}'),
           Text('Poll: ${_dateTimeController.poll.value}'),
           Text('Stratum: ${_dateTimeController.stratum.value}'),
           Text('Leap Indicator: ${_dateTimeController.leapIndicator.value}'),
           Text('Precision: ${_dateTimeController.precision.value}'),
           Text('Root Delay: ${_dateTimeController.rootDelay.value}'),
           Text('Root Dispersion: ${_dateTimeController.rootDispersion.value}'),
-          Text('Reference Timestamp: ${_dateTimeController.referenceTimestamp.value}'),
-          Text('Originate Timestamp: ${_dateTimeController.originateTimestamp.value}'),
-          Text('Receive Timestamp: ${_dateTimeController.receiveTimestamp.value}'),
-          Text('Transmit Timestamp: ${_dateTimeController.transmitTimestamp.value}'),
+          Text(
+              'Reference Timestamp: ${_dateTimeController.referenceTimestamp.value}'),
+          Text(
+              'Originate Timestamp: ${_dateTimeController.originateTimestamp.value}'),
+          Text(
+              'Receive Timestamp: ${_dateTimeController.receiveTimestamp.value}'),
+          Text(
+              'Transmit Timestamp: ${_dateTimeController.transmitTimestamp.value}'),
         ],
       ),
     );
@@ -203,15 +244,22 @@ class _SettingsBasicPageState extends State<TabDateTime> {
       initialDate: DateTime.parse(_dateTimeController.serverDate.value),
       firstDate: first,
       lastDate: last,
-    ).then((value) => setState(() {if (value != null) _dateTimeController.serverDate.value = '${value.year}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';}));
+    ).then((value) => setState(() {
+          if (value != null)
+            _dateTimeController.serverDate.value =
+                '${value.year}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
+        }));
   }
 
   void _showTimePicker(BuildContext context) {
-    var timeOfDay = TimeOfDay(hour: int.parse(_dateTimeController.serverTime.value.split(':')[0]), minute: int.parse(_dateTimeController.serverTime.value.split(':')[1]));
+    var timeOfDay = TimeOfDay(
+        hour: int.parse(_dateTimeController.serverTime.value.split(':')[0]),
+        minute: int.parse(_dateTimeController.serverTime.value.split(':')[1]));
     showTimePicker(
       context: context,
       initialTime: timeOfDay,
-    ).then((value) => setState(() => _dateTimeController.serverTime.value = '${value!.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}:00'));
+    ).then((value) => setState(() => _dateTimeController.serverTime.value =
+        '${value!.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}:00'));
   }
 
   void switchToNtp(bool e) {

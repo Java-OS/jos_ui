@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/page/container/container_base_page.dart';
 import 'package:jos_ui/page/dashboard_page.dart';
 import 'package:jos_ui/page/login_page.dart';
 import 'package:jos_ui/page/module_page.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
           GetPage(name: '/settings/:index', page: () => SettingsBasePage(), transition: Transition.fadeIn, transitionDuration: Duration(milliseconds: 300)),
           GetPage(name: '/networks/:index', page: () => NetworkBasePage(), transition: Transition.fadeIn, transitionDuration: Duration(milliseconds: 300)),
           GetPage(name: '/modules', page: () => ModulePage(), transition: Transition.fadeIn, transitionDuration: Duration(milliseconds: 300)),
+          GetPage(name: '/containers/:index', page: () => ContainerBasePage(), transition: Transition.fadeIn, transitionDuration: Duration(milliseconds: 300)),
         ],
       ),
     );

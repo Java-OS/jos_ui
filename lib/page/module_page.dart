@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/module_controller.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
-import 'package:jos_ui/page_base_content.dart';
+import 'package:jos_ui/component/page_layout.dart';
 
 class ModulePage extends StatefulWidget {
   const ModulePage({super.key});
@@ -22,7 +22,7 @@ class _ModulePageState extends State<ModulePage> {
 
   @override
   Widget build(BuildContext context) {
-    return getPageContent(
+    return PageLayout(
       child: Expanded(
         child: Container(
           width: double.infinity,

@@ -8,10 +8,10 @@ class TabBasic extends StatefulWidget {
   const TabBasic({super.key});
 
   @override
-  State<TabBasic> createState() => TabBasicPageState();
+  State<TabBasic> createState() => _TabBasicState();
 }
 
-class TabBasicPageState extends State<TabBasic> {
+class _TabBasicState extends State<TabBasic> {
   final SystemController _systemController = Get.put(SystemController());
 
   @override
@@ -27,7 +27,9 @@ class TabBasicPageState extends State<TabBasic> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Basic', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+        Text('Basic',
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
         Divider(),
         TextFieldBox(
           isEnable: false,

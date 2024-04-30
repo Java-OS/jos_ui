@@ -8,7 +8,7 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/dialog/power_dialog.dart';
-import 'package:jos_ui/page_base_content.dart';
+import 'package:jos_ui/component/page_layout.dart';
 import 'package:jos_ui/utils.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -36,7 +36,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    return getPageContent(
+    return PageLayout(
       child: Obx(() => mosaicView()),
     );
   }

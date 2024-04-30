@@ -4,21 +4,21 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page/network/tab_hosts.dart';
 import 'package:jos_ui/page/network/tab_interfaces.dart';
 import 'package:jos_ui/page/network/tab_networks.dart';
-import 'package:jos_ui/page_base_content.dart';
+import 'package:jos_ui/component/page_layout.dart';
 
 class NetworkBasePage extends StatefulWidget {
   const NetworkBasePage({super.key});
 
   @override
-  State<NetworkBasePage> createState() => NetworkBasePageState();
+  State<NetworkBasePage> createState() => _NetworkBasePageState();
 }
 
-class NetworkBasePageState extends State<NetworkBasePage> {
+class _NetworkBasePageState extends State<NetworkBasePage> {
   static const baseRoute = '/networks';
 
   @override
   Widget build(BuildContext context) {
-    return getPageContent(
+    return PageLayout(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,7 +66,8 @@ class NetworkBasePageState extends State<NetworkBasePage> {
           height: 50,
           duration: Duration(milliseconds: 200),
           child: Center(
-            child: Icon(icon, size: 22, color: isOnRoute ? Colors.blue : Colors.white38),
+            child: Icon(icon,
+                size: 22, color: isOnRoute ? Colors.blue : Colors.white38),
           ),
         ),
       ),

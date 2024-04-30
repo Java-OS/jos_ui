@@ -7,10 +7,10 @@ class TabNetworks extends StatefulWidget {
   const TabNetworks({super.key});
 
   @override
-  State<TabNetworks> createState() => _NetworkPageState();
+  State<TabNetworks> createState() => _TabNetworksState();
 }
 
-class _NetworkPageState extends State<TabNetworks> {
+class _TabNetworksState extends State<TabNetworks> {
   final networkController = Get.put(NetworkController());
 
   @override
@@ -25,9 +25,13 @@ class _NetworkPageState extends State<TabNetworks> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Networks', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+        Text('Networks',
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
         Divider(),
-        OutlinedButton(onPressed: () => displayNetworkModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
+        OutlinedButton(
+            onPressed: () => displayNetworkModal(context),
+            child: Icon(Icons.add, size: 16, color: Colors.black)),
         SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: SizedBox(
@@ -47,9 +51,12 @@ class _NetworkPageState extends State<TabNetworks> {
   }
 
   List<DataColumn> columns() {
-    var indexColumn = DataColumn(label: Text('Index', style: TextStyle(fontWeight: FontWeight.bold)));
-    var networkColumn = DataColumn(label: Text('Network', style: TextStyle(fontWeight: FontWeight.bold)));
-    var nameColumn = DataColumn(label: Text('Name', style: TextStyle(fontWeight: FontWeight.bold)));
+    var indexColumn = DataColumn(
+        label: Text('Index', style: TextStyle(fontWeight: FontWeight.bold)));
+    var networkColumn = DataColumn(
+        label: Text('Network', style: TextStyle(fontWeight: FontWeight.bold)));
+    var nameColumn = DataColumn(
+        label: Text('Name', style: TextStyle(fontWeight: FontWeight.bold)));
     var actionColumn = DataColumn(label: SizedBox.shrink());
     return [indexColumn, networkColumn, nameColumn, actionColumn];
   }
@@ -71,7 +78,11 @@ class _NetworkPageState extends State<TabNetworks> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  IconButton(onPressed: () => networkController.removeNetwork(name), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete_rounded, size: 16)),
+                  IconButton(
+                      onPressed: () => networkController.removeNetwork(name),
+                      splashRadius: 14,
+                      splashColor: Colors.transparent,
+                      icon: Icon(Icons.delete_rounded, size: 16)),
                 ],
               ),
             ),

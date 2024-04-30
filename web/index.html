@@ -29,38 +29,21 @@
     <!-- Favicon -->
     <link href="favicon.png" rel="icon" type="image/png"/>
 
-    <title>jos_ui</title>
+    <title>JOS Panel</title>
     <link href="manifest.json" rel="manifest">
-
-    <script>
-        // The value below is injected by flutter build, do not touch.
-        {{flutter_service_worker_version}}
-    </script>
     <!-- This script adds the flutter initialization JS code -->
-    <script defer src="flutter.js"></script>
 </head>
 <body>
+		<script src="flutter_bootstrap.js" async></script>
+		<!-- load canvaskit from local -->
+		<!-- 
+		<script>
+		    window.flutterConfiguration = {
+		      canvasKitBaseUrl: "/canvaskit/"
+		    };
+		</script>
+    --> 
 <script>
-    window.flutterConfiguration = {
-      canvasKitBaseUrl: "/canvaskit/"
-    };
-</script>
-
-<script>
-    window.addEventListener('load', function(ev) {
-        // Download main.dart.js
-        FlutterLoader.load.loadEntrypoint({
-            serviceWorker: {
-                serviceWorkerVersion: serviceWorkerVersion,
-            },
-            onEntrypointLoaded: function(engineInitializer) {
-                engineInitializer.initializeEngine().then(function(appRunner) {
-                    appRunner.runApp();
-                });
-            }
-        });
-    });
-
     // Get the X-BACKEND-URL header value
     var req = new XMLHttpRequest();
     req.open('GET', document.location, true);

@@ -7,10 +7,10 @@ class TabHosts extends StatefulWidget {
   const TabHosts({super.key});
 
   @override
-  State<TabHosts> createState() => _NetworkPageState();
+  State<TabHosts> createState() => _TabHostsState();
 }
 
-class _NetworkPageState extends State<TabHosts> {
+class _TabHostsState extends State<TabHosts> {
   final networkController = Get.put(NetworkController());
 
   @override
@@ -25,9 +25,13 @@ class _NetworkPageState extends State<TabHosts> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Hosts', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+        Text('Hosts',
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
         Divider(),
-        OutlinedButton(onPressed: () => displayHostModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
+        OutlinedButton(
+            onPressed: () => displayHostModal(context),
+            child: Icon(Icons.add, size: 16, color: Colors.black)),
         SingleChildScrollView(
           child: Obx(
             () => DataTable(
@@ -43,9 +47,12 @@ class _NetworkPageState extends State<TabHosts> {
   }
 
   List<DataColumn> columns() {
-    var indexColumn = DataColumn(label: Text('Index', style: TextStyle(fontWeight: FontWeight.bold)));
-    var ipColumn = DataColumn(label: Text('Ip', style: TextStyle(fontWeight: FontWeight.bold)));
-    var hostnameColumn = DataColumn(label: Text('Hostname', style: TextStyle(fontWeight: FontWeight.bold)));
+    var indexColumn = DataColumn(
+        label: Text('Index', style: TextStyle(fontWeight: FontWeight.bold)));
+    var ipColumn = DataColumn(
+        label: Text('Ip', style: TextStyle(fontWeight: FontWeight.bold)));
+    var hostnameColumn = DataColumn(
+        label: Text('Hostname', style: TextStyle(fontWeight: FontWeight.bold)));
     var actionColumn = DataColumn(label: SizedBox.shrink());
     return [indexColumn, ipColumn, hostnameColumn, actionColumn];
   }
@@ -67,7 +74,11 @@ class _NetworkPageState extends State<TabHosts> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  IconButton(onPressed: () => networkController.removeHost(hostname), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete_rounded, size: 16)),
+                  IconButton(
+                      onPressed: () => networkController.removeHost(hostname),
+                      splashRadius: 14,
+                      splashColor: Colors.transparent,
+                      icon: Icon(Icons.delete_rounded, size: 16)),
                 ],
               ),
             ),

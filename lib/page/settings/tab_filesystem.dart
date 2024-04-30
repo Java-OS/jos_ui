@@ -10,10 +10,10 @@ class TabFilesystem extends StatefulWidget {
   const TabFilesystem({super.key});
 
   @override
-  State<TabFilesystem> createState() => _SettingsFilesystemPageState();
+  State<TabFilesystem> createState() => _TabFilesystemState();
 }
 
-class _SettingsFilesystemPageState extends State<TabFilesystem> {
+class _TabFilesystemState extends State<TabFilesystem> {
   final _systemController = Get.put(SystemController());
 
   @override
@@ -53,7 +53,9 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
                   text: getPartitionText(fs),
                   warn: fs.type == 'LVM2_member' ? Colors.grey : Colors.red,
                   textStyle: TextStyle(fontSize: 12),
-                  onClick: canUsePartition(fs) ? null : () => fetchTreeAndDisplay(fs),
+                  onClick: canUsePartition(fs)
+                      ? null
+                      : () => fetchTreeAndDisplay(fs),
                   disabled: canUsePartition(fs),
                 ),
               ),
@@ -63,7 +65,11 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
                 height: 30,
                 char: getButtonName(fs),
                 textStyle: getButtonTextStyle(fs),
-                onPressed: fs.type == 'LVM2_member' || fs.type.isEmpty || fs.mountPoint == '/' ? null : () => actionButton(fs),
+                onPressed: fs.type == 'LVM2_member' ||
+                        fs.type.isEmpty ||
+                        fs.mountPoint == '/'
+                    ? null
+                    : () => actionButton(fs),
               ),
             ],
           ),
@@ -74,11 +80,17 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
     return list;
   }
 
-  bool canUsePartition(HDDPartition fs) => fs.type == 'swap' || fs.mountPoint!.isEmpty || fs.type == 'LVM2_member' || fs.type.isEmpty;
+  bool canUsePartition(HDDPartition fs) =>
+      fs.type == 'swap' ||
+      fs.mountPoint!.isEmpty ||
+      fs.type == 'LVM2_member' ||
+      fs.type.isEmpty;
 
   void actionButton(HDDPartition partition) {
     if (partition.type == 'swap') {
-      partition.total == 0 ? _systemController.swapOn(partition) : _systemController.swapOff(partition);
+      partition.total == 0
+          ? _systemController.swapOn(partition)
+          : _systemController.swapOff(partition);
     } else if (partition.mountPoint == null || partition.mountPoint!.isEmpty) {
       _systemController.clear();
       _systemController.partitionEditingController.text = partition.partition;
@@ -110,7 +122,10 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
       return TextStyle(
         fontSize: 11,
         color: Colors.black,
-        fontWeight: (partition.mountPoint == null || partition.mountPoint!.isEmpty) ? FontWeight.bold : FontWeight.normal,
+        fontWeight:
+            (partition.mountPoint == null || partition.mountPoint!.isEmpty)
+                ? FontWeight.bold
+                : FontWeight.normal,
       );
     }
   }
@@ -118,14 +133,20 @@ class _SettingsFilesystemPageState extends State<TabFilesystem> {
   String getButtonName(HDDPartition fs) {
     if (fs.type == 'swap') {
       return fs.total == 0 ? 'swap on' : 'swap off';
-    } else if (fs.type == 'LVM2_member' || fs.type.isEmpty || fs.mountPoint == '/') {
+    } else if (fs.type == 'LVM2_member' ||
+        fs.type.isEmpty ||
+        fs.mountPoint == '/') {
       return ' - ';
     } else {
-      return (fs.mountPoint == null || fs.mountPoint!.isEmpty) ? 'Mount' : 'Disconnect';
+      return (fs.mountPoint == null || fs.mountPoint!.isEmpty)
+          ? 'Mount'
+          : 'Disconnect';
     }
   }
 
   fetchTreeAndDisplay(HDDPartition partition) {
-    _systemController.fetchFilesystemTree(partition.mountPoint!).then((value) => displayFilesystemTree(context, false));
+    _systemController
+        .fetchFilesystemTree(partition.mountPoint!)
+        .then((value) => displayFilesystemTree(context, false));
   }
 }
