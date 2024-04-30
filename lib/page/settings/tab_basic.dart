@@ -27,7 +27,7 @@ class TabBasicPageState extends State<TabBasic> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Backup', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+        Text('Basic', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
         Divider(),
         TextFieldBox(
           isEnable: false,
