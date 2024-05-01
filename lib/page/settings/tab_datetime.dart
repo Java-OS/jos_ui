@@ -245,9 +245,10 @@ class _TabDateTimeState extends State<TabDateTime> {
       firstDate: first,
       lastDate: last,
     ).then((value) => setState(() {
-          if (value != null)
+          if (value != null) {
             _dateTimeController.serverDate.value =
                 '${value.year}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
+          }
         }));
   }
 

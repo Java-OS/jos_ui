@@ -73,14 +73,17 @@ class _TabBackupState extends State<TabBackup> {
                         title = parseConfigTitle(fileName, title);
                       }
 
-                     return TileComponent(
-                        index: index,
-                        title: Text(title, style: TextStyle(fontSize: 14)),
-                        actions: SizedBox(
-                          width: 120,
-                          child: getTilButtons(index),
+                     return Padding(
+                       padding: const EdgeInsets.all(4.0),
+                       child: TileComponent(
+                          index: index,
+                          title: Text(title, style: TextStyle(fontSize: 14)),
+                          actions: SizedBox(
+                            width: 120,
+                            child: getTilButtons(index),
+                          ),
                         ),
-                      );
+                     );
                     },
                   ),
                 ),

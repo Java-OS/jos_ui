@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/model/rpc.dart';
+import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -16,7 +16,7 @@ class EnvironmentController extends GetxController {
 
   Future<void> fetchSystemEnvironments() async {
     developer.log('Fetch System Environments called');
-    var payload = await RestClient.rpc(RPC.systemEnvironmentList);
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_ENVIRONMENT_LIST);
     if (payload.metadata.success) {
       var json = jsonDecode(payload.postJson) as Map;
       environments.value = Map.from(json); //TODO , check me ...
@@ -28,7 +28,7 @@ class EnvironmentController extends GetxController {
     var key = keyEditingController.text;
     var value = valueEditingController.text;
 
-    var payload = await RestClient.rpc(RPC.systemEnvironmentSet, parameters: {'key': key, 'value': value});
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_ENVIRONMENT_SET, parameters: {'key': key, 'value': value});
     if (payload.metadata.success) {
       keyEditingController.clear();
       valueEditingController.clear();
@@ -44,7 +44,7 @@ class EnvironmentController extends GetxController {
     developer.log('Add system batch environments called');
     var batch = batchEditingController.text;
 
-    var payload = await RestClient.rpc(RPC.systemEnvironmentBatchSet, parameters: {'batch': batch});
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_ENVIRONMENT_BATCH_SET, parameters: {'batch': batch});
     if (payload.metadata.success) {
       batchEditingController.clear();
       await fetchSystemEnvironments();
@@ -57,7 +57,7 @@ class EnvironmentController extends GetxController {
 
   Future<void> deleteSystemEnvironment(String key) async {
     developer.log('Delete System Environments called');
-    var payload = await RestClient.rpc(RPC.systemEnvironmentUnset, parameters: {'key': key});
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_ENVIRONMENT_UNSET, parameters: {'key': key});
     if (payload.metadata.success) {
       await fetchSystemEnvironments();
       displayInfo('Environment $key deleted');
@@ -70,7 +70,7 @@ class EnvironmentController extends GetxController {
   Future<void> updateEnvironment() async {
     var key = keyEditingController.text;
     var value = valueEditingController.text;
-    var payload = await RestClient.rpc(RPC.systemEnvironmentUpdate, parameters: {'key': key, 'value': value});
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_ENVIRONMENT_UPDATE, parameters: {'key': key, 'value': value});
     if (payload.metadata.success) {
       keyEditingController.clear();
       valueEditingController.clear();

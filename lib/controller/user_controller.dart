@@ -4,9 +4,8 @@ import 'dart:developer' as developer;
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
-import 'package:jos_ui/model/realm.dart';
-import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/model/user.dart';
+import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -26,7 +25,7 @@ class UserController extends GetxController {
 
   Future<void> fetchUsers() async {
     developer.log('Fetch users called');
-    var payload = await RestClient.rpc(RPC.userList);
+    var payload = await RestClient.rpc(RPC.RPC_USER_LIST);
     if (payload.metadata.success) {
       userList.value = (jsonDecode(payload.postJson) as List).map((e) => User.fromJson(e)).toList();
     } else {
@@ -45,7 +44,7 @@ class UserController extends GetxController {
     }
 
     var reqParams = {'username': username, 'password': password, 'realmBit': realmBit.value};
-    var payload = await RestClient.rpc(RPC.userAdd, parameters: reqParams);
+    var payload = await RestClient.rpc(RPC.RPC_USER_ADD, parameters: reqParams);
     if (payload.metadata.success) {
       await fetchUsers();
       Get.back();
@@ -57,7 +56,7 @@ class UserController extends GetxController {
 
   Future<void> updateUserRoles() async {
     var reqParams = {'username': usernameEditingController.text, 'realmBit': realmBit.value};
-    var payload = await RestClient.rpc(RPC.userUpdateRole, parameters: reqParams);
+    var payload = await RestClient.rpc(RPC.RPC_USER_UPDATE_ROLE, parameters: reqParams);
     if (payload.metadata.success) {
       await fetchUsers();
       clear();
@@ -78,7 +77,7 @@ class UserController extends GetxController {
     }
 
     var reqParams = {'username': username, 'password': password};
-    var payload = await RestClient.rpc(RPC.userPasswd, parameters: reqParams);
+    var payload = await RestClient.rpc(RPC.RPC_USER_PASSWD, parameters: reqParams);
     if (payload.metadata.success) {
       Get.back();
       clear();
@@ -95,7 +94,7 @@ class UserController extends GetxController {
     var isTrue = await displayAlertModal('Delete user', 'You want to delete user ${user.username}.\n\nAre you sure ?');
     if (isTrue) {
       var reqParams = {'username': user.username};
-      var payload = await RestClient.rpc(RPC.userRemove, parameters: reqParams);
+      var payload = await RestClient.rpc(RPC.RPC_USER_REMOVE, parameters: reqParams);
       if (payload.metadata.success) {
         await fetchUsers();
         clear();
@@ -109,7 +108,7 @@ class UserController extends GetxController {
   Future<void> lockOrUnlockUser(User user) async {
     var reqParams = {'username': user.username};
     var lock = user.lock;
-    var payload = await RestClient.rpc(lock ? RPC.userUnlock : RPC.userLock, parameters: reqParams);
+    var payload = await RestClient.rpc(lock ? RPC.RPC_USER_UNLOCK : RPC.RPC_USER_LOCK, parameters: reqParams);
     if (payload.metadata.success) {
       displaySuccess(lock ? 'User ${user.username} activated' : 'User ${user.username} disabled');
       await fetchUsers();
@@ -127,10 +126,10 @@ class UserController extends GetxController {
   void selectItem(Realm realm, bool add) {
     if (add) {
       selectedRealms.add(realm);
-      realmBit += realm.getBit();
+      realmBit += realm.value;
     } else {
       selectedRealms.remove(realm);
-      realmBit -= realm.getBit();
+      realmBit -= realm.value;
     }
   }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jos_ui/component/tab_content.dart';
 import 'package:jos_ui/dialog/network_routes_dialog.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class OCITabNetworks extends StatefulWidget {
   const OCITabNetworks({super.key});

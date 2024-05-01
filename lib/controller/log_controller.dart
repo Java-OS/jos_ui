@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/model/log.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
-import 'package:jos_ui/model/rpc.dart';
+import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -84,7 +84,7 @@ class LogController extends GetxController {
   }
 
   Future<void> fetchAppenders() async {
-    var payload = await RestClient.rpc(RPC.logAppenderList);
+    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_LIST);
     if (payload.metadata.success) {
       var json = jsonDecode(payload.postJson);
       logAppenders.value = (json as List).map((e) => LogInfo.fromJson(e)).toList();
@@ -104,7 +104,7 @@ class LogController extends GetxController {
       'fileTotalSize': int.parse(fileTotalSizeEditingController.text),
       'fileMaxHistory': int.parse(fileMaxHistoryEditingController.text),
     };
-    var payload = await RestClient.rpc(RPC.logAppenderAdd, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_ADD, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchAppenders();
       Get.back();
@@ -125,7 +125,7 @@ class LogController extends GetxController {
       'syslogPort': int.parse(syslogPortEditingController.text),
       'syslogFacility': syslogFacilityEditingController.text,
     };
-    var payload = await RestClient.rpc(RPC.logAppenderAdd, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_ADD, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchAppenders();
       Get.back();
@@ -137,7 +137,7 @@ class LogController extends GetxController {
 
   Future<void> removeAppender(int id) async {
     var reqParam = {'id': id};
-    var payload = await RestClient.rpc(RPC.logAppenderRemove, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_REMOVE, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchAppenders();
       clear();

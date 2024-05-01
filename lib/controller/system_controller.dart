@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
 import 'package:jos_ui/model/filesystem.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
-import 'package:jos_ui/model/rpc.dart';
+import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -39,7 +39,7 @@ class SystemController extends GetxController {
 
   Future<void> fetchHostname() async {
     developer.log('Fetch hostname called');
-    var payload = await RestClient.rpc(RPC.systemGetHostname);
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_GET_HOSTNAME);
     if (payload.metadata.success) {
       var json = jsonDecode(payload.postJson);
       osHostname.value = json;
@@ -53,7 +53,7 @@ class SystemController extends GetxController {
     developer.log('Change hostname called');
     bool accepted = await displayAlertModal('Warning', 'JVM should be restarted for the changes to take effect');
     if (accepted) {
-      var payload = await RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': hostnameEditingController.text});
+      var payload = await RestClient.rpc(RPC.RPC_SYSTEM_SET_HOSTNAME, parameters: {'hostname': hostnameEditingController.text});
       if (payload.metadata.success) {
         displaySuccess('Hostname changed');
         Get.back();
@@ -66,7 +66,7 @@ class SystemController extends GetxController {
 
   void fetchSystemInformation() async {
     developer.log('Fetch System Full Information');
-    var payload = await RestClient.rpc(RPC.systemFullInformation);
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_FULL_INFORMATION);
     if (payload.metadata.success) {
       var json = jsonDecode(payload.postJson);
       dateTimeZone.value = json['os_date_time_zone'].toString();
@@ -89,7 +89,7 @@ class SystemController extends GetxController {
 
   Future<void> fetchPartitions() async {
     developer.log('Fetch filesystems');
-    var payload = await RestClient.rpc(RPC.filesystemList);
+    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_LIST);
     if (payload.metadata.success) {
       var result = jsonDecode(payload.postJson) as List;
       partitions.value = result.map((e) => HDDPartition.fromJson(e)).toList();
@@ -110,7 +110,7 @@ class SystemController extends GetxController {
     };
 
     developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.filesystemMount, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_MOUNT, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchPartitions();
       clear();
@@ -125,7 +125,7 @@ class SystemController extends GetxController {
       'uuid': partition.uuid,
     };
     developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.filesystemUmount, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_UMOUNT, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchPartitions();
       displayInfo('Successfully disconnected');
@@ -138,7 +138,7 @@ class SystemController extends GetxController {
       'uuid': partition.uuid,
     };
     developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.filesystemSwapOn, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_SWAP_ON, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchPartitions();
     } else {
@@ -152,7 +152,7 @@ class SystemController extends GetxController {
       'uuid': partition.uuid,
     };
     developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.filesystemSwapOff, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_SWAP_OFF, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchPartitions();
     } else {
@@ -164,7 +164,7 @@ class SystemController extends GetxController {
     var reqParam = {
       'rootDir': rootPath,
     };
-    var payload = await RestClient.rpc(RPC.filesystemDirectoryTree, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_DIRECTORY_TREE, parameters: reqParam);
     if (payload.metadata.success) {
       var json = jsonDecode(payload.postJson);
       var tree = FilesystemTree.fromJson(json);
@@ -199,7 +199,7 @@ class SystemController extends GetxController {
 
   Future<void> fetchDnsNameserver() async {
     developer.log('fetch dns nameserver');
-    var payload = await RestClient.rpc(RPC.networkGetDnsNameserver);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_GET_DNS_NAMESERVER);
     if (payload.metadata.success) {
       var json = jsonDecode(payload.postJson);
       dnsEditingController.text = json;
@@ -214,7 +214,7 @@ class SystemController extends GetxController {
     var reqParam = {
       'ips': dns,
     };
-    var payload = await RestClient.rpc(RPC.networkSetDnsNameserver, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_SET_DNS_NAMESERVER, parameters: reqParam);
     if (payload.metadata.success) {
       clear();
       Get.back();
@@ -225,7 +225,7 @@ class SystemController extends GetxController {
   }
 
   void systemReboot() async {
-    var payload = await RestClient.rpc(RPC.systemReboot);
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_REBOOT);
     if (payload.metadata.success) {
       displayInfo('Reboot success');
     } else {
@@ -234,7 +234,7 @@ class SystemController extends GetxController {
   }
 
   void systemShutdown() async {
-    var payload = await RestClient.rpc(RPC.systemShutdown);
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_SHUTDOWN);
     if (payload.metadata.success) {
       displayInfo('The system was completely shutdown');
     } else {

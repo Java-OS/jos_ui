@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/model/network/route.dart' as route;
-import 'package:jos_ui/model/rpc.dart';
+import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -25,11 +25,11 @@ class NetworkController extends GetxController {
   var ethernetList = <Ethernet>[].obs;
   var routeList = <route.Route>[].obs;
   var routeSelectedEthernet = Rxn<Ethernet>();
-  var hosts = <String,String>{}.obs;
-  var networks = <String,String>{}.obs;
+  var hosts = <String, String>{}.obs;
+  var networks = <String, String>{}.obs;
 
   Future<void> fetchEthernets() async {
-    var payload = await RestClient.rpc(RPC.networkEthernetInformation, parameters: {'ethernet': ''});
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_ETHERNET_INFORMATION, parameters: {'ethernet': ''});
     if (payload.metadata.success) {
       var result = jsonDecode(payload.postJson) as List;
       ethernetList.value = result.map((item) => Ethernet.fromJson(item)).toList();
@@ -39,7 +39,7 @@ class NetworkController extends GetxController {
   }
 
   Future<void> fetchRoutes() async {
-    var payload = await RestClient.rpc(RPC.networkRouteList);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_ROUTE_LIST);
     if (payload.metadata.success) {
       var json = jsonDecode(payload.postJson);
       var result = json as List;
@@ -50,7 +50,7 @@ class NetworkController extends GetxController {
   }
 
   Future<void> addDefaultGateway() async {
-    var payload = await RestClient.rpc(RPC.networkRouteDefaultGateway, parameters: {'gateway': gatewayEditingController.text});
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_ROUTE_DEFAULT_GATEWAY, parameters: {'gateway': gatewayEditingController.text});
     if (payload.metadata.success) {
       await fetchRoutes();
       Get.back();
@@ -66,7 +66,7 @@ class NetworkController extends GetxController {
       'ethernet': routeSelectedEthernet.value?.iface ?? '',
       'metrics': metricsEditingController.text.isNotEmpty ? int.parse(metricsEditingController.text) : 600,
     };
-    var payload = await RestClient.rpc(RPC.networkRouteAdd, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_ROUTE_ADD, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchRoutes();
       Get.back();
@@ -82,7 +82,7 @@ class NetworkController extends GetxController {
       'ethernet': routeSelectedEthernet.value?.iface ?? '',
       'metrics': metricsEditingController.text.isNotEmpty ? int.parse(metricsEditingController.text) : 600,
     };
-    var payload = await RestClient.rpc(RPC.networkRouteAdd, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_ROUTE_ADD, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchRoutes();
       Get.back();
@@ -91,7 +91,7 @@ class NetworkController extends GetxController {
   }
 
   Future<void> deleteRoute(int index) async {
-    var payload = await RestClient.rpc(RPC.networkRouteDelete, parameters: {'index': index});
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_ROUTE_DELETE, parameters: {'index': index});
     if (payload.metadata.success) {
       await fetchRoutes();
     }
@@ -105,7 +105,7 @@ class NetworkController extends GetxController {
       'netmask': netmaskEditingController.text,
     };
 
-    var payload = await RestClient.rpc(RPC.networkEthernetSetIp, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_ETHERNET_SET_IP, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchEthernets();
       Get.back();
@@ -115,7 +115,7 @@ class NetworkController extends GetxController {
 
   Future<void> ifDown(String iface) async {
     var reqParam = {'ethernet': iface};
-    var payload = await RestClient.rpc(RPC.networkEthernetDown, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_ETHERNET_DOWN, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchEthernets();
       clear();
@@ -124,7 +124,7 @@ class NetworkController extends GetxController {
 
   Future<void> ifUp(String iface) async {
     var reqParam = {'ethernet': iface};
-    var payload = await RestClient.rpc(RPC.networkEthernetUp, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_ETHERNET_UP, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchEthernets();
       clear();
@@ -133,7 +133,7 @@ class NetworkController extends GetxController {
 
   Future<void> flush(String iface) async {
     var reqParam = {'ethernet': iface};
-    var payload = await RestClient.rpc(RPC.networkEthernetFlush, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_ETHERNET_FLUSH, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchEthernets();
       clear();
@@ -142,7 +142,7 @@ class NetworkController extends GetxController {
 
   Future<void> fetchHosts() async {
     developer.log('fetch hosts');
-    var payload = await RestClient.rpc(RPC.networkHostList);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_HOSTS_LIST);
     if (payload.metadata.success) {
       var map = jsonDecode(payload.postJson) as Map;
       hosts.value = Map.from(map);
@@ -159,7 +159,7 @@ class NetworkController extends GetxController {
       'ip': ip,
       'hostname': hostname,
     };
-    var payload = await RestClient.rpc(RPC.networkHostAdd, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_HOSTS_ADD, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchHosts();
       clear();
@@ -174,7 +174,7 @@ class NetworkController extends GetxController {
     var reqParam = {
       'hostname': hostname,
     };
-    var payload = await RestClient.rpc(RPC.networkHostDelete, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_HOSTS_DELETE, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchHosts();
     } else {
@@ -184,7 +184,7 @@ class NetworkController extends GetxController {
 
   Future<void> fetchNetworks() async {
     developer.log('fetch networks');
-    var payload = await RestClient.rpc(RPC.networkNetworkList);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_NETWORK_LIST);
     if (payload.metadata.success) {
       var map = jsonDecode(payload.postJson) as Map;
       networks.value = Map.from(map);
@@ -201,7 +201,7 @@ class NetworkController extends GetxController {
       'network': network,
       'name': name,
     };
-    var payload = await RestClient.rpc(RPC.networkNetworkAdd, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_NETWORK_ADD, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchNetworks();
       clear();
@@ -216,7 +216,7 @@ class NetworkController extends GetxController {
     var reqParam = {
       'name': name,
     };
-    var payload = await RestClient.rpc(RPC.networkNetworkDelete, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_NETWORK_DELETE, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchNetworks();
     } else {

@@ -11,7 +11,6 @@ import 'package:http/http.dart' as http;
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/model/log_level.dart';
-import 'package:jos_ui/model/rpc.dart';
 import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/h5proto.dart';
 import 'package:jos_ui/service/storage_service.dart';
@@ -138,7 +137,7 @@ class RestClient {
         displayWarning(payload.metadata.message, timeout: 5);
       }
     } catch (e) {
-      if (rpc == RPC.systemReboot || rpc == RPC.jvmRestart || rpc == RPC.systemShutdown) {
+      if (rpc == RPC.RPC_SYSTEM_REBOOT || rpc == RPC.RPC_JVM_RESTART || rpc == RPC.RPC_SYSTEM_SHUTDOWN) {
         developer.log('Normal error by http , The jvm going to shutdown before sending response');
       } else {
         developer.log('[Http Error] $rpc ${e.toString()}');

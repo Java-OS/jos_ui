@@ -22,7 +22,7 @@ class _TabContentState extends State<TabContent> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(widget.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-            widget.toolbar ?? SizedBox.shrink(),
+            Flexible(child: widget.toolbar ?? SizedBox.shrink()),
           ],
         ),
         Divider(),

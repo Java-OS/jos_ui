@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:jos_ui/component/tab_content.dart';
-import 'package:jos_ui/dialog/network_routes_dialog.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:jos_ui/controller/container_controller.dart';
+import 'package:jos_ui/dialog/container_dialog.dart';
 
 class OCITabImages extends StatefulWidget {
   const OCITabImages({super.key});
@@ -11,6 +12,8 @@ class OCITabImages extends StatefulWidget {
 }
 
 class OCITabImagesState extends State<OCITabImages> {
+  final _containerController = Get.put(ContainerController());
+
   @override
   void initState() {
     super.initState();
@@ -21,7 +24,7 @@ class OCITabImagesState extends State<OCITabImages> {
     return TabContent(
       title: 'Images',
       toolbar: OutlinedButton(
-        onPressed: () => displayNetworkRoutesModal(context),
+        onPressed: () => displayContainerSearchImage(),
         child: Icon(Icons.add, size: 16, color: Colors.black),
       ),
       content: ListView(
