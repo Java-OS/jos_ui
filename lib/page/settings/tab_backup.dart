@@ -104,7 +104,7 @@ class _TabBackupState extends State<TabBackup> {
     return '$year/$month/$day $hour:$minute';
   }
 
-  Row getTilButtons(int index) {
+  Widget getTilButtons(int index) {
     return Row(
       children: [
         IconButton(onPressed: () => displayDownloadConfigModal(index, context), icon: Icon(Icons.file_download_outlined, size: 16, color: Colors.black), splashRadius: 20),

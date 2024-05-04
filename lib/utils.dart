@@ -31,6 +31,15 @@ String truncateWithEllipsis(int length, String myString) {
   return (myString.length <= length) ? myString : '${myString.substring(0, length)}...';
 }
 
+String truncate(String str) {
+  // return dummy str
+  if (str.length < 12) return str;
+
+  // truncate str
+  return '${str.substring(0, 24)} ... ${str.substring(str.length - 16)}';
+}
+
+
 class ProtobufBitwiseUtils {
   static List<int> getBitNumbers(int number) {
     var bitNumbers = <int>[];

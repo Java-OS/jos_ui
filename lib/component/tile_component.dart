@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 class TileComponent extends StatefulWidget {
   final int index;
   final Widget title;
+  final Widget? leading;
   final Widget? subTitle;
   final Widget? actions;
-  const TileComponent({super.key, required this.index, required this.title, this.actions, this.subTitle});
+
+  const TileComponent({super.key, required this.index, required this.title, this.actions, this.subTitle, this.leading});
 
   @override
   State<TileComponent> createState() => _TileComponentState();
@@ -16,7 +18,7 @@ class _TileComponentState extends State<TileComponent> {
 
   @override
   Widget build(BuildContext context) {
-    bool effectStatement = (hoverIndex == widget.index && widget.index != 0);
+    bool effectStatement = (hoverIndex == widget.index);
     return MouseRegion(
       onHover: (_) => setState(() => hoverIndex = widget.index),
       onExit: (_) => setState(() => hoverIndex = -1),
@@ -26,23 +28,14 @@ class _TileComponentState extends State<TileComponent> {
         borderRadius: BorderRadius.circular(5),
         child: AnimatedContainer(
           decoration: BoxDecoration(
-            border: Border.all(
-                color: effectStatement
-                    ? Colors.blue
-                    : Colors.grey.shade400,
-                width: 0.5),
+            border: Border.all(color: effectStatement ? Colors.blue : Colors.grey.shade400, width: 0.5),
             borderRadius: BorderRadius.circular(5),
           ),
           duration: Duration(milliseconds: 500),
           child: ListTile(
-            leading: widget.index == 0
-                ? null
-                : CircleAvatar(
-                radius: 12,
-                child: Text(widget.index.toString(),
-                    style: TextStyle(fontSize: 12))),
+            leading: widget.leading,
             title: widget.title,
-            subtitle: widget.subTitle ,
+            subtitle: widget.subTitle,
             trailing: widget.actions,
           ),
         ),
