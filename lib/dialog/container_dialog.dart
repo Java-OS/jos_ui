@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/tile_component.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
+import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 final _containerController = Get.put(ContainerController());
 
@@ -30,7 +31,7 @@ Future<void> displayContainerSearchImage() async {
             height: 250,
             child: Obx(
               () => Visibility(
-                visible: _containerController.waitingSearchImages.isFalse,
+                visible: _containerController.waitingImageSearch.isFalse,
                 replacement: SpinKitCircle(color: Colors.blueAccent),
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -58,7 +59,7 @@ Future<void> displayContainerSearchImage() async {
                         ),
                         title: Text(searchImage.name),
                         subTitle: Text(searchImage.index),
-                        actions: _containerController.isInstalled(searchImage.name) ? null : Visibility(
+                        actions: _containerController.isImageInstalled(searchImage.name) ? null : Visibility(
                           visible: searchImage.tag != 'JOS_PULL_IMAGE',
                           replacement: IconButton(
                             onPressed: () => _containerController.cancelPullImage(searchImage.name),
@@ -82,4 +83,32 @@ Future<void> displayContainerSearchImage() async {
       );
     },
   ).then((_) => _containerController.clean());
+}
+
+Future<void> displayCreateVolume() async {
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return SimpleDialog(
+        title: getModalHeader('Create volume'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        contentPadding: EdgeInsets.all(14),
+        titlePadding: EdgeInsets.zero,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFieldBox(controller: _containerController.volumeNameEditingController, label: 'Name'),
+              SizedBox(height: 8),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: ElevatedButton(onPressed: () => _containerController.createVolume(), child: Text('Create')),
+              ),
+            ],
+          )
+        ],
+      );
+    },
+  );
 }

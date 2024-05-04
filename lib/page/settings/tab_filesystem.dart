@@ -147,6 +147,6 @@ class _TabFilesystemState extends State<TabFilesystem> {
   fetchTreeAndDisplay(HDDPartition partition) {
     _systemController
         .fetchFilesystemTree(partition.mountPoint!)
-        .then((value) => displayFilesystemTree(context, false));
+        .then((value) => displayFilesystemTree(false));
   }
 }

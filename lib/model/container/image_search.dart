@@ -9,14 +9,14 @@ class ImageSearch {
 
   ImageSearch(this.index, this.name, this.description, this.stars, this.official, this.automated, this.tag);
 
-  factory ImageSearch.fromMap(Map<String, dynamic> json) {
-    var index = json['Index'];
-    var name = json['Name'];
-    var description = json['Description'] ?? '';
-    var stars = json['Stars'];
-    var official = json['Official'] ?? '';
-    var automated = json['Automated'] ?? '';
-    var tag = json['Tag'] ?? '';
+  factory ImageSearch.fromMap(Map<String, dynamic> map) {
+    var index = map['Index'];
+    var name = map['Name'];
+    var description = map['Description'] ?? '';
+    var stars = map['Stars'];
+    var official = map['Official'] ?? '';
+    var automated = map['Automated'] ?? '';
+    var tag = map['Tag'] ?? '';
 
     return ImageSearch(index, name, description, stars, official, automated, tag);
   }

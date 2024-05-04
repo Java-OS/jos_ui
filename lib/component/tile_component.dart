@@ -6,8 +6,9 @@ class TileComponent extends StatefulWidget {
   final Widget? leading;
   final Widget? subTitle;
   final Widget? actions;
+  final Function? onClick;
 
-  const TileComponent({super.key, required this.index, required this.title, this.actions, this.subTitle, this.leading});
+  const TileComponent({super.key, required this.index, required this.title, this.actions, this.subTitle, this.leading, this.onClick});
 
   @override
   State<TileComponent> createState() => _TileComponentState();
@@ -33,6 +34,8 @@ class _TileComponentState extends State<TileComponent> {
           ),
           duration: Duration(milliseconds: 500),
           child: ListTile(
+            mouseCursor: widget.onClick != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+            onTap: widget.onClick == null ? null : () => widget.onClick!(),
             leading: widget.leading,
             title: widget.title,
             subtitle: widget.subTitle,

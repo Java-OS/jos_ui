@@ -53,10 +53,10 @@ Future<void> displayMountFilesystemModal(BuildContext context) async {
   );
 }
 
-Future<void> displayFilesystemTree(BuildContext context, bool enableDownloadFiles) async {
+Future<void> displayFilesystemTree(bool enableDownloadFiles) async {
   final treeController = TreeController<FilesystemTree>(roots: _systemController.filesystemTree.value!.childs ?? [], childrenProvider: (FilesystemTree node) => node.childs ?? []);
   showDialog(
-    context: context,
+    context: Get.context!,
     builder: (BuildContext context) {
       return SimpleDialog(
         title: getModalHeader('Filesystem directory tree'),

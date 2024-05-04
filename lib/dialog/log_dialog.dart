@@ -318,7 +318,7 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
               children: [
                 IconButton(onPressed: () => displayFileLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
                 IconButton(onPressed: () => displayLiveLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
-                IconButton(onPressed: () => fetchTreeAndDisplay(logInfo.packageName, context), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.folder_open, size: 16)),
+                IconButton(onPressed: () => fetchTreeAndDisplay(logInfo.packageName), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.folder_open, size: 16)),
                 IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16)),
               ],
             ),
@@ -332,8 +332,8 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
   return dataRowList;
 }
 
-fetchTreeAndDisplay(String package, BuildContext context) {
-  _systemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(context, true));
+fetchTreeAndDisplay(String package) {
+  _systemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(true));
 }
 
 Future<void> displayFileLogAppender(LogInfo? logInfo) async {
