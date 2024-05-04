@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/model/container/ContainerImage.dart';
 import 'package:jos_ui/model/container/image_search.dart';
-import 'package:jos_ui/model/container/network.dart';
+import 'package:jos_ui/model/container/network_info.dart';
+import 'package:jos_ui/model/container/subnet.dart';
 import 'package:jos_ui/model/container/volume.dart';
+import 'package:jos_ui/model/network/network.dart';
 import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
 
@@ -14,10 +16,15 @@ class ContainerController extends GetxController {
   final TextEditingController searchImageEditingController = TextEditingController();
   final TextEditingController volumeNameEditingController = TextEditingController();
 
+  /* Network fields */
+  final TextEditingController networkNameEditingController = TextEditingController();
+  final TextEditingController networkSubnetEditingController = TextEditingController();
+  final TextEditingController networkGatewayEditingController = TextEditingController();
+
   var searchImageList = <ImageSearch>[].obs;
   var containerImageList = <ContainerImage>[].obs;
   var volumeList = <Volume>[].obs;
-  var networkList = <Network>[].obs;
+  var networkList = <NetworkInfo>[].obs;
   var waitingImageSearch = false.obs;
   var waitingImageRemove = false.obs;
 
@@ -117,10 +124,30 @@ class ContainerController extends GetxController {
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_NETWORK_LIST);
     if (payload.metadata.success) {
       var obj = (jsonDecode(payload.postJson) as List);
-      networkList.value = obj.map((e) => Network.fromMap(e)).toList();
+      networkList.value = obj.map((e) => NetworkInfo.fromMap(e)).toList();
     }
   }
 
+  void createNetwork() async {
+    var name = networkNameEditingController.text;
+    var subnet = networkSubnetEditingController.text;
+    var gateway = networkGatewayEditingController.text;
+    developer.log('Create network $name');
+
+    var network = Network(name, [Subnet(subnet, gateway)]);
+    var networkJson = jsonEncode(network.toMap());
+
+    var reqParams = {'network': networkJson};
+    await RestClient.rpc(RPC.RPC_CONTAINER_NETWORK_CREATE, parameters: reqParams);
+    await listNetworks().then((_) => Get.back()).then((_) async => await listNetworks());
+  }
+
+  void removeNetwork(String name) async {
+    developer.log('Remove network $name');
+    var reqParams = {'name': name};
+    await RestClient.rpc(RPC.RPC_CONTAINER_NETWORK_REMOVE, parameters: reqParams);
+    await listNetworks();
+  }
 
   bool isImageInstalled(String name) {
     return containerImageList.map((e) => e.name).contains(name);

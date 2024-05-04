@@ -13,8 +13,7 @@ class Network {
 
   Network(this.name, this.disableDNS, this.driver, this.gateway, this.internal, this.labels, this.macVLAN, this.options, this.subnets);
 
-  factory Network.fromMap(Map<String,dynamic> map) {
-
+  factory Network.fromMap(Map<String, dynamic> map) {
     var name = map['Name'];
     var disableDNS = map['DisableDNS'];
     var driver = map['Driver'];
@@ -26,23 +25,5 @@ class Network {
     var subnets = map['Subnets'];
 
     return Network(name, disableDNS, driver, gateway, internal, labels, macVLAN, options, subnets);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   }
 }

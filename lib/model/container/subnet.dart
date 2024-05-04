@@ -10,4 +10,11 @@ class Subnet {
 
     return Subnet(subnet, gateway);
   }
+
+  Map<String, String> toMap() {
+    return {
+      'subnet': subnet,
+      'gateway': gateway,
+    };
+  }
 }

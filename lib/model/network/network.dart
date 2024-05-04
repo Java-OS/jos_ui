@@ -1,17 +1,15 @@
+import 'package:jos_ui/model/container/subnet.dart';
+
 class Network {
-  final int id;
-  final String network;
-  final int cidr;
   final String name;
+  final List<Subnet> subnets;
 
-  Network(this.id, this.network, this.cidr, this.name);
+  Network(this.name, this.subnets);
 
-  factory Network.fromJson(Map<String, dynamic> map) {
-    var id = map['id'];
-    var network = map['network'];
-    var cidr = map['cidr'];
-    var name = map['name'];
-
-    return Network(id, network, cidr, name);
+  Map<String, dynamic> toMap() {
+    return {
+      'Name': name,
+      'subnets': [subnets[0].toMap()]
+    };
   }
 }
