@@ -71,7 +71,7 @@ class _TabBoxState extends State<TabBox> {
     for (var i = 0; i < widget.contents.length; i++) {
       var c = Visibility(
         visible: selectedTabIndex == i,
-        child: Container(color: Colors.white, child: widget.contents[i]),
+        child: Expanded(child: Container(color: Colors.white, child: widget.contents[i])),
       );
       items.add(c);
     }

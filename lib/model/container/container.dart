@@ -19,8 +19,30 @@ class CreateContainer {
   final String? workDir;
   final List<VolumeParameter>? volumes;
   final List<PortMapping>? portMappings;
-  final Map<String, NetworkConnect> networks;
-  final Map<String, String> netns;
+  final Map<String, NetworkConnect>? networks;
+  final Map<String, String>? netns;
 
   CreateContainer(this.name, this.dnsSearch, this.dnsServer, this.environments, this.useHostEnvironments, this.expose, this.hosts, this.hostname, this.image, this.pod, this.privileged, this.user, this.workDir, this.volumes, this.portMappings, this.networks, this.netns);
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'dnsSearch': dnsSearch,
+      'dnsServer': dnsServer,
+      'environments': environments,
+      'useHostEnvironments': useHostEnvironments,
+      'expose': expose,
+      'hosts': hosts,
+      'hostname': hostname,
+      'image': image,
+      'pod': pod,
+      'privileged': privileged,
+      'user': user,
+      'workDir': workDir,
+      'volumes': volumes,
+      'portMappings': portMappings,
+      'networks': networks,
+      'netns': netns,
+    };
+  }
 }

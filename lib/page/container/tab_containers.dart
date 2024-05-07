@@ -109,8 +109,9 @@ class OCITabContainersState extends State<OCITabContainers> {
   }
 
   Future<void> openCreateContainerDialog() async {
-    await _containerController.listVolumes();
-    await _containerController.listNetworks();
+    _containerController.listImages();
+    _containerController.listVolumes();
+    _containerController.listNetworks();
     displayCreateContainer();
   }
 }

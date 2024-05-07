@@ -56,6 +56,7 @@ class ContainerController extends GetxController {
   var selectedImage = ''.obs;
   var networkConnect = <String, NetworkConnect>{}.obs;
   var selectedNetwork = Rxn<NetworkInfo>();
+  var step = 0.obs;
 
   /* Image methods */
   Future<void> listImages() async {
@@ -232,6 +233,7 @@ class ContainerController extends GetxController {
   }
 
   void createContainer() async {
+    developer.log('Try to create container');
     var name = containerNameEditingController.text;
     var dnsSearch = containerDnsSearchEditingController.text;
     var dnsServer = containerDnsServerEditingController.text;
@@ -240,7 +242,7 @@ class ContainerController extends GetxController {
     var workDir = containerWorkDirEditingController.text;
     developer.log('Create container $name');
 
-    var netns = {'nsmode': selectedNetwork.value!.driver};
+    var netns = selectedNetwork.value != null ? {'nsmode': selectedNetwork.value!.driver} : null;
 
     var container = CreateContainer(
       name,
@@ -262,7 +264,10 @@ class ContainerController extends GetxController {
       netns,
     );
 
-    var reqParams = {'container': jsonEncode(container)};
+    var json = jsonEncode(container.toMap());
+    debugPrint(json);
+
+    var reqParams = {'container': json};
     await RestClient.rpc(RPC.RPC_CONTAINER_CREATE, parameters: reqParams);
     await listNetworks().then((_) => Get.back()).then((_) async => await listNetworks());
   }
@@ -294,7 +299,6 @@ class ContainerController extends GetxController {
     var nc = NetworkConnect(ip.isEmpty ? null : [ip], mac.isEmpty ? null : mac, null);
     networkConnect[networkName] = nc;
     Get.back();
-    selectedNetwork.close();
   }
 
   void clean() {

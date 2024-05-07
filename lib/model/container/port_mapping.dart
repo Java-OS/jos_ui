@@ -17,4 +17,14 @@ class PortMapping {
     var range = map['range'];
     return PortMapping(containerPort, hostIp, hostPort, protocol, range);
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'containerPort': containerPort,
+      'hostIp': hostIp,
+      'hostPort': hostPort,
+      'protocol': protocol,
+      'range': range,
+    };
+  }
 }

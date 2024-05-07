@@ -12,4 +12,12 @@ class NetworkConnect {
 
     return NetworkConnect(staticIps, staticMac, interfaceName);
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'staticIps': staticIps,
+      'staticMac': staticMac,
+      'interfaceName': interfaceName,
+    };
+  }
 }
