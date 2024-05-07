@@ -97,6 +97,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  dropdown_button2:
+    dependency: "direct main"
+    description:
+      name: dropdown_button2
+      sha256: b0fe8d49a030315e9eef6c7ac84ca964250155a6224d491c1365061bc974a9e1
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.9"
   equatable:
     dependency: transitive
     description:
@@ -140,12 +148,11 @@ packages:
   file_picker:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: "137840ae58eead7620b1b7fd4d9890bd03df5f29"
-      url: "https://github.com/miguelpruivo/flutter_file_picker"
-    source: git
-    version: "8.0.2"
+      name: file_picker
+      sha256: "29c90806ac5f5fb896547720b73b17ee9aed9bba540dc5d91fe29f8c5745b10a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "8.0.3"
   fixnum:
     dependency: "direct main"
     description:
@@ -162,12 +169,11 @@ packages:
   flutter_fancy_tree_view:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: a748f4448d17caa957f59c8e1f76b04e731f38e9
-      url: "https://github.com/baumths/flutter_tree_view"
-    source: git
-    version: "1.5.0"
+      name: flutter_fancy_tree_view
+      sha256: e8ef261170be1d63fe56843baa2b501fc353196eadef51d848e882d8cbe10c31
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.6.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -445,11 +451,10 @@ packages:
   searchfield:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: "3f3bf1e0721df57746032e418cce14dc4ac1937e"
-      url: "https://github.com/maheshmnj/searchfield"
-    source: git
+      name: searchfield
+      sha256: "7716650654b387ce77aa2062a296a7caf2d094c0fef7376935e4d3c28cd012c8"
+      url: "https://pub.dev"
+    source: hosted
     version: "1.0.1"
   sky_engine:
     dependency: transitive
@@ -523,12 +528,11 @@ packages:
   toastification:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: "71cd09124fa9b1605717c73f681e7117e540f86c"
-      url: "https://github.com/payam-zahedi/toastification"
-    source: git
-    version: "1.2.1"
+      name: toastification
+      sha256: "5e751acc2fb5b8d008138dac255d62290fde4e5a24824f29809ac098c3dfe395"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   typed_data:
     dependency: transitive
     description:

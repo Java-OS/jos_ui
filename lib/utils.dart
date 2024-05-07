@@ -36,7 +36,7 @@ String truncate(String str) {
   if (str.length < 12) return str;
 
   // truncate str
-  return '${str.substring(0, 24)} ... ${str.substring(str.length - 16)}';
+  return '${str.substring(0, 16)} ... ${str.substring(str.length - 16)}';
 }
 
 

@@ -51,22 +51,12 @@ dependencies:
   fixnum: ^1.1.0
   protobuf: ^3.1.0
   material_design_icons_flutter: ^7.0.7296
-  toastification:
-    git:
-      url: https://github.com/payam-zahedi/toastification
-      ref: main
-  searchfield:
-    git:
-      url: https://github.com/maheshmnj/searchfield
-      ref: master
-  flutter_fancy_tree_view:
-    git:
-      url: https://github.com/baumths/flutter_tree_view
-      ref: main
-  file_picker:
-    git:
-      url: https://github.com/miguelpruivo/flutter_file_picker
-      ref: master
+  dropdown_button2: ^2.3.9
+  toastification: ^2.0.0
+  searchfield: ^1.0.1
+  flutter_fancy_tree_view: ^1.6.0
+  file_picker: ^8.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/tab_content.dart';
 import 'package:jos_ui/component/tile_component.dart';
 import 'package:jos_ui/controller/container_controller.dart';
-import 'package:jos_ui/dialog/container_dialog.dart';
+import 'package:jos_ui/dialog/container/image_search_dialog.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 

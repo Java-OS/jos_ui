@@ -35,7 +35,7 @@ class ContainerBasePageState extends State<ContainerBasePage> {
               sideMenu(1, MdiIcons.dotsCircle),
               sideMenu(2, MdiIcons.cubeOutline),
               sideMenu(3, Icons.storage),
-              sideMenu(4, Icons.settings_ethernet),
+              sideMenu(4, MdiIcons.networkOutline),
               sideMenu(5, Icons.settings),
             ],
           ),

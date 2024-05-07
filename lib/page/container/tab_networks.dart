@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/tab_content.dart';
 import 'package:jos_ui/component/tile_component.dart';
 import 'package:jos_ui/controller/container_controller.dart';
-import 'package:jos_ui/dialog/container_dialog.dart';
+import 'package:jos_ui/dialog/container/create_network_dialog.dart';
+import 'package:jos_ui/dialog/container/network_information_dialog.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class OCITabNetworks extends StatefulWidget {
