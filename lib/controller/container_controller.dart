@@ -38,6 +38,8 @@ class ContainerController extends GetxController {
   final TextEditingController containerWorkDirEditingController = TextEditingController();
   final TextEditingController containerIpAddressEditingController = TextEditingController();
   final TextEditingController containerMacAddressEditingController = TextEditingController();
+  final TextEditingController containerEnvironmentKeyEditingController = TextEditingController();
+  final TextEditingController containerEnvironmentValueEditingController = TextEditingController();
 
   var searchImageList = <ImageSearch>[].obs;
   var containerImageList = <ContainerImage>[].obs;
@@ -298,6 +300,24 @@ class ContainerController extends GetxController {
 
     var nc = NetworkConnect(ip.isEmpty ? null : [ip], mac.isEmpty ? null : mac, null);
     networkConnect[networkName] = nc;
+    Get.back();
+  }
+
+  void addEnvironment() {
+    var key = containerEnvironmentKeyEditingController.text;
+    var value = containerEnvironmentValueEditingController.text;
+    environments[key] = value;
+    Get.back();
+  }
+
+  void removeEnvironment(String key) {
+    environments.removeWhere((k, v) => k == key);
+  }
+
+  void updateEnvironment() {
+    var key = containerEnvironmentKeyEditingController.text;
+    var value = containerEnvironmentValueEditingController.text;
+    environments[key] = value;
     Get.back();
   }
 

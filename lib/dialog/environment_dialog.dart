@@ -8,20 +8,16 @@ import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 EnvironmentController _environmentController = Get.put(EnvironmentController());
 
-Future<void> addEnvironment(BuildContext context) async {
-  _displayModal(context, _environmentController.setSystemEnvironment);
+Future<void> displayUpdateEnvironmentDialog(TextEditingController keyController, TextEditingController valueController, String key, String value, Function execute) async {
+  keyController.text = key;
+  valueController.text = value;
+  displayAddEnvironmentDialog(keyController, valueController, execute);
 }
 
-Future<void> updateEnvironment(String key, String value, BuildContext context) async {
-  _environmentController.keyEditingController.text = key;
-  _environmentController.valueEditingController.text = value;
-  _displayModal(context, _environmentController.updateEnvironment);
-}
-
-Future<void> _displayModal(BuildContext context, Function execute) async {
+Future<void> displayAddEnvironmentDialog(TextEditingController keyController, TextEditingController valueController, Function execute) async {
   var isUpdate = _environmentController.keyEditingController.text.isEmpty ? true : false;
   showDialog(
-    context: context,
+    context: Get.context!,
     builder: (BuildContext context) {
       return SimpleDialog(
         title: getModalHeader('Environment'),
@@ -33,9 +29,9 @@ Future<void> _displayModal(BuildContext context, Function execute) async {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFieldBox(controller: _environmentController.keyEditingController, label: 'Key', isEnable: isUpdate),
+              TextFieldBox(controller: keyController, label: 'Key', isEnable: isUpdate),
               SizedBox(height: 8),
-              TextFieldBox(controller: _environmentController.valueEditingController, label: 'Value'),
+              TextFieldBox(controller: valueController, label: 'Value'),
               SizedBox(height: 20),
               Align(
                 alignment: Alignment.centerRight,

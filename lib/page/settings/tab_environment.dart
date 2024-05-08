@@ -27,23 +27,17 @@ class _TabEnvironmentsState extends State<TabEnvironments> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Environments',
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
+        Text('Environments', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
         Divider(),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            OutlinedButton(
-                onPressed: () => addEnvironment(context),
-                child: Icon(Icons.add, size: 16, color: Colors.black)),
+            OutlinedButton(onPressed: () => displayAddEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, _environmentController.setSystemEnvironment), child: Icon(Icons.add, size: 16, color: Colors.black)),
             Tooltip(
               message: 'Paste from clipboard',
               preferBelow: false,
               verticalOffset: 22,
-              child: OutlinedButton(
-                  onPressed: () => pasteFromClipboard(),
-                  child: Icon(Icons.paste, size: 16, color: Colors.black)),
+              child: OutlinedButton(onPressed: () => pasteFromClipboard(), child: Icon(Icons.paste, size: 16, color: Colors.black)),
             ),
           ],
         ),
@@ -70,10 +64,8 @@ class _TabEnvironmentsState extends State<TabEnvironments> {
   }
 
   List<DataColumn> getEnvironmentColumns() {
-    var keyColumn = DataColumn(
-        label: Text('Key', style: TextStyle(fontWeight: FontWeight.bold)));
-    var valueColumn = DataColumn(
-        label: Text('Value', style: TextStyle(fontWeight: FontWeight.bold)));
+    var keyColumn = DataColumn(label: Text('Key', style: TextStyle(fontWeight: FontWeight.bold)));
+    var valueColumn = DataColumn(label: Text('Value', style: TextStyle(fontWeight: FontWeight.bold)));
     var emptyColumn = DataColumn(label: SizedBox.shrink());
     return [keyColumn, valueColumn, emptyColumn];
   }
@@ -86,34 +78,25 @@ class _TabEnvironmentsState extends State<TabEnvironments> {
           Tooltip(
             preferBelow: false,
             message: key,
-            child: Text(truncateWithEllipsis(10, key),
-                style: TextStyle(fontSize: 12)),
+            child: Text(truncateWithEllipsis(10, key), style: TextStyle(fontSize: 12)),
           ),
         ),
         DataCell(
           Tooltip(
             preferBelow: false,
             message: value,
-            child: Text(truncateWithEllipsis(50, value),
-                style: TextStyle(fontSize: 12)),
+            child: Text(truncateWithEllipsis(50, value), style: TextStyle(fontSize: 12)),
           ),
         ),
         DataCell(
           Align(
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.centerRight,
             child: SizedBox(
               width: 80,
               child: Row(
                 children: [
-                  IconButton(
-                      onPressed: () =>
-                          _environmentController.deleteSystemEnvironment(key),
-                      splashRadius: 12,
-                      icon: Icon(Icons.delete, size: 16, color: Colors.black)),
-                  IconButton(
-                      onPressed: () => updateEnvironment(key, value, context),
-                      splashRadius: 12,
-                      icon: Icon(Icons.edit, size: 16, color: Colors.black)),
+                  IconButton(onPressed: () => _environmentController.deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(Icons.delete, size: 16, color: Colors.black)),
+                  IconButton(onPressed: () => displayUpdateEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, key, value, _environmentController.updateEnvironment), splashRadius: 12, icon: Icon(Icons.edit, size: 16, color: Colors.black)),
                 ],
               ),
             ),
@@ -126,7 +109,6 @@ class _TabEnvironmentsState extends State<TabEnvironments> {
   }
 
   void pasteFromClipboard() {
-    Clipboard.getData(Clipboard.kTextPlain)
-        .then((value) => displayBatchEnvironment(value, context));
+    Clipboard.getData(Clipboard.kTextPlain).then((value) => displayBatchEnvironment(value, context));
   }
 }

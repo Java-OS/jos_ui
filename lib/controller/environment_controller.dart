@@ -34,6 +34,7 @@ class EnvironmentController extends GetxController {
       valueEditingController.clear();
       await fetchSystemEnvironments();
       displayInfo('Add environment [$key]');
+      await fetchSystemEnvironments();
       Get.back();
     } else {
       displayError('Failed to add environment [$key]');
@@ -49,6 +50,7 @@ class EnvironmentController extends GetxController {
       batchEditingController.clear();
       await fetchSystemEnvironments();
       displayInfo('Successfully set batch environments');
+      await fetchSystemEnvironments();
       Get.back();
     } else {
       displayError('Failed to set batch environments');

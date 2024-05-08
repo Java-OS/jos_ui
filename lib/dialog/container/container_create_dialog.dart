@@ -7,6 +7,7 @@ import 'package:jos_ui/component/tile_component.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
+import 'package:jos_ui/dialog/environment_dialog.dart';
 import 'package:jos_ui/model/container/network_info.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
@@ -34,7 +35,7 @@ Future<void> displayCreateContainer() async {
               currentStep: _containerController.step.value,
               controlsBuilder: (context, controlDetails) {
                 bool isAfterFirstStep = controlDetails.currentStep > 0;
-                bool isLastStep = controlDetails.currentStep == 2;
+                bool isLastStep = controlDetails.currentStep == 3;
                 bool isImageSelected = _containerController.selectedImage.isNotEmpty;
                 bool isNameFilled = _containerController.containerNameEditingController.text.isNotEmpty;
                 return Row(
@@ -66,6 +67,7 @@ Future<void> displayCreateContainer() async {
                 Step(title: Text('Basic'), content: getBasicStep()),
                 Step(title: Text('Volume'), content: getVolumeStep()),
                 Step(title: Text('Network'), content: getNetworkStep()),
+                Step(title: Text('Environment'), content: getEnvironmentStep()),
                 // Step(title: Text('POD'), content: Text('Content 4')),
               ],
             ),
@@ -398,4 +400,90 @@ Future<void> displayConnectNetworkToContainerDialog() async {
       );
     },
   );
+}
+
+/* Environments */
+Widget getEnvironmentStep() {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Obx(
+      () => Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: OutlinedButton.icon(
+              onPressed: () => displayAddEnvironmentDialog(_containerController.containerEnvironmentKeyEditingController, _containerController.containerEnvironmentValueEditingController, _containerController.addEnvironment),
+              label: Text('Add environment'),
+              icon: Icon(Icons.join_right, size: 16, color: Colors.blue),
+            ),
+          ),
+          SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            height: 150,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: DataTable(
+                dataRowMinHeight: 12,
+                dataRowMaxHeight: 28,
+                columnSpacing: 0,
+                columns: getEnvironmentColumns(),
+                rows: getEnvironmentRows(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+List<DataColumn> getEnvironmentColumns() {
+  var keyColumn = DataColumn(label: Text('Key', style: TextStyle(fontWeight: FontWeight.bold)));
+  var valueColumn = DataColumn(label: Text('Value', style: TextStyle(fontWeight: FontWeight.bold)));
+  var emptyColumn = DataColumn(label: SizedBox(width: 60));
+  return [keyColumn, valueColumn, emptyColumn];
+}
+
+List<DataRow> getEnvironmentRows() {
+  var listItems = <DataRow>[];
+  _containerController.environments.forEach((key, value) {
+    var row = DataRow(cells: [
+      DataCell(
+        Tooltip(
+          preferBelow: false,
+          message: key,
+          child: Text(truncateWithEllipsis(10, key), style: TextStyle(fontSize: 12)),
+        ),
+      ),
+      DataCell(
+        Tooltip(
+          preferBelow: false,
+          message: value,
+          child: Text(truncateWithEllipsis(50, value), style: TextStyle(fontSize: 12)),
+        ),
+      ),
+      DataCell(
+        Align(
+          alignment: Alignment.centerRight,
+          child: SizedBox(
+            width: 80,
+            child: Row(
+              children: [
+                IconButton(onPressed: () => _containerController.removeEnvironment(key), splashRadius: 12, icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black)),
+                IconButton(
+                  onPressed: () => displayUpdateEnvironmentDialog(_containerController.containerEnvironmentKeyEditingController, _containerController.containerEnvironmentValueEditingController, key, value, _containerController.updateEnvironment),
+                  splashRadius: 12,
+                  icon: Icon(MdiIcons.pencilOutline, size: 16, color: Colors.black),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ]);
+    listItems.add(row);
+  });
+  return listItems;
 }
