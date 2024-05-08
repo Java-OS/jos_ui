@@ -208,8 +208,8 @@ class ContainerController extends GetxController {
     developer.log('stop containers $name');
     var reqParams = {'name': name};
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_STOP, parameters: reqParams);
-    if (payload.metadata.success) {
-      displayWarning('Failed to kill container $name');
+    if (!payload.metadata.success) {
+      displayWarning('Failed to stop container $name');
     }
     await listContainers();
   }
@@ -218,8 +218,8 @@ class ContainerController extends GetxController {
     developer.log('remove containers $name');
     var reqParams = {'name': name};
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_REMOVE, parameters: reqParams);
-    if (payload.metadata.success) {
-      displayWarning('Failed to kill container $name');
+    if (!payload.metadata.success) {
+      displayWarning('Failed to remove container $name');
     }
     await listContainers();
   }
@@ -267,11 +267,13 @@ class ContainerController extends GetxController {
     );
 
     var json = jsonEncode(container.toMap());
-    debugPrint(json);
 
     var reqParams = {'container': json};
     await RestClient.rpc(RPC.RPC_CONTAINER_CREATE, parameters: reqParams);
-    await listNetworks().then((_) async => await listNetworks());
+    await listNetworks()
+        .then((_) => Get.back())
+        .then((_) async => await listNetworks())
+        .then((_) => cleanContainerParameters());
   }
 
   /* Other methods */
@@ -319,6 +321,27 @@ class ContainerController extends GetxController {
     var value = containerEnvironmentValueEditingController.text;
     environments[key] = value;
     Get.back();
+  }
+
+  void cleanContainerParameters() {
+    containerNameEditingController.clear();
+    containerHostnameEditingController.clear();
+    containerDnsSearchEditingController.clear();
+    containerDnsServerEditingController.clear();
+    containerUserEditingController.clear();
+    containerWorkDirEditingController.clear();
+    containerIpAddressEditingController.clear();
+    containerMacAddressEditingController.clear();
+    containerEnvironmentKeyEditingController.clear();
+    containerEnvironmentValueEditingController.clear();
+    environments.clear();
+    connectVolumes.clear();
+    portMappings.clear();
+    networkConnect.clear();
+    expose.clear();
+    selectedNetwork = Rxn<NetworkInfo>();
+    step.value = 0;
+    privileged.value = false;
   }
 
   void clean() {
