@@ -15,9 +15,9 @@ class VolumeParameter {
 
   Map<String, dynamic> toMap() {
     return {
-      'dest': dest,
-      'name': name,
-      'options': options,
+      'Dest': dest,
+      'Name': name,
+      'Options': options,
     };
   }
 }

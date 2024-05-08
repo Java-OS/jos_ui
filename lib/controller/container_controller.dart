@@ -246,21 +246,21 @@ class ContainerController extends GetxController {
 
     var container = CreateContainer(
       name,
-      [dnsSearch],
-      dnsServer.split(','),
-      environments,
+      dnsSearch.isEmpty ? null : [dnsSearch],
+      dnsServer.isEmpty ? null : dnsServer.split(','),
+      environments.isEmpty ? null : environments,
       useHostEnvironments.value,
-      expose,
-      hosts,
-      hostname,
+      expose.isEmpty ? null : expose,
+      hosts.isEmpty ? null : hosts,
+      hostname.isEmpty ? null : hostname,
       selectedImage.value,
       null,
       privileged.value,
-      user,
-      workDir,
-      connectVolumes,
-      portMappings,
-      networkConnect,
+      user.isEmpty ? null : user,
+      workDir.isEmpty ? null : workDir,
+      connectVolumes.isEmpty ? null : connectVolumes,
+      portMappings.isEmpty ? null : portMappings,
+      networkConnect.isEmpty ? null : networkConnect,
       netns,
     );
 
@@ -269,7 +269,7 @@ class ContainerController extends GetxController {
 
     var reqParams = {'container': json};
     await RestClient.rpc(RPC.RPC_CONTAINER_CREATE, parameters: reqParams);
-    await listNetworks().then((_) => Get.back()).then((_) async => await listNetworks());
+    await listNetworks().then((_) async => await listNetworks());
   }
 
   /* Other methods */

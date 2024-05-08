@@ -15,9 +15,9 @@ class NetworkConnect {
 
   Map<String, dynamic> toMap() {
     return {
-      'staticIps': staticIps,
-      'staticMac': staticMac,
-      'interfaceName': interfaceName,
+      'static_ips': staticIps,
+      'static_mac': staticMac,
+      'interface_name': interfaceName,
     };
   }
 }

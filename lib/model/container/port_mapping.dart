@@ -20,9 +20,9 @@ class PortMapping {
 
   Map<String, dynamic> toMap() {
     return {
-      'containerPort': containerPort,
-      'hostIp': hostIp,
-      'hostPort': hostPort,
+      'container_port': containerPort,
+      'host_ip': hostIp,
+      'host_port': hostPort,
       'protocol': protocol,
       'range': range,
     };

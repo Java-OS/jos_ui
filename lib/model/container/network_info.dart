@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:jos_ui/model/container/subnet.dart';
 
 class NetworkInfo {
