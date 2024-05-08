@@ -9,6 +9,7 @@ import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/dialog/environment_dialog.dart';
 import 'package:jos_ui/model/container/network_info.dart';
+import 'package:jos_ui/model/container/protocol.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
@@ -35,7 +36,7 @@ Future<void> displayCreateContainer() async {
               currentStep: _containerController.step.value,
               controlsBuilder: (context, controlDetails) {
                 bool isAfterFirstStep = controlDetails.currentStep > 0;
-                bool isLastStep = controlDetails.currentStep == 3;
+                bool isLastStep = controlDetails.currentStep == 4;
                 bool isImageSelected = _containerController.selectedImage.isNotEmpty;
                 bool isNameFilled = _containerController.containerNameEditingController.text.isNotEmpty;
                 return Row(
@@ -67,6 +68,7 @@ Future<void> displayCreateContainer() async {
                 Step(title: Text('Basic'), content: getBasicStep()),
                 Step(title: Text('Volume'), content: getVolumeStep()),
                 Step(title: Text('Network'), content: getNetworkStep()),
+                Step(title: Text('Port'), content: getPortStep()),
                 Step(title: Text('Environment'), content: getEnvironmentStep()),
                 // Step(title: Text('POD'), content: Text('Content 4')),
               ],
@@ -105,6 +107,7 @@ Widget getBasicStep() {
   );
 }
 
+/*---------------------------------------------------------------------*/
 /* Image */
 Future<void> displaySelectContainerImage() async {
   showDialog(
@@ -222,6 +225,7 @@ Widget searchImagesTab() {
   );
 }
 
+/*---------------------------------------------------------------------*/
 /* Volume */
 Widget getVolumeStep() {
   return Padding(
@@ -311,6 +315,7 @@ Future<void> displayConnectVolumeToContainerDialog() async {
   );
 }
 
+/*---------------------------------------------------------------------*/
 /* Network */
 Widget getNetworkStep() {
   return Padding(
@@ -402,6 +407,7 @@ Future<void> displayConnectNetworkToContainerDialog() async {
   );
 }
 
+/*---------------------------------------------------------------------*/
 /* Environments */
 Widget getEnvironmentStep() {
   return Padding(
@@ -486,4 +492,197 @@ List<DataRow> getEnvironmentRows() {
     listItems.add(row);
   });
   return listItems;
+}
+
+/*---------------------------------------------------------------------*/
+/* Ports */
+Widget getPortStep() {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Obx(
+      () => Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 50,
+                  child: OutlinedButton.icon(
+                    onPressed: () => displayExposePortDialog(),
+                    label: Text('Expose Port'),
+                    icon: Icon(MdiIcons.layersTriple, size: 16, color: Colors.blue),
+                  ),
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: SizedBox(
+                  height: 50,
+                  child: OutlinedButton.icon(
+                    onPressed: () => displayPublishPortDialog(),
+                    label: Text('Publish Port'),
+                    icon: Icon(MdiIcons.layersTriple, size: 16, color: Colors.blue),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          /* Publish ports */
+          ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: _containerController.portMappings.length,
+            itemBuilder: (BuildContext context, int index) {
+              var portMapping = _containerController.portMappings[index];
+              var hostIp = portMapping.hostIp;
+              var hostPort = portMapping.hostPort;
+              var containerPort = portMapping.containerPort;
+              var protocol = portMapping.protocol;
+              var range = portMapping.range;
+              var portMap = range == null ? '$hostPort:$containerPort/${protocol.name}' : '$containerPort-${containerPort + range}/${protocol.name}';
+              var text = hostIp != null ? '$hostIp:$portMap' : portMap;
+              return Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: TileComponent(
+                  index: index,
+                  title: Text(text),
+                  subTitle: range != null ? Text('Range: $range', style: TextStyle(fontSize: 12)) : null,
+                  actions: IconButton(
+                    onPressed: () => _containerController.removePublishPort(index),
+                    splashRadius: 16,
+                    icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+                  ),
+                ),
+              );
+            },
+          ),
+          /* Expose ports */
+          ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: _containerController.expose.length,
+            itemBuilder: (BuildContext context, int index) {
+              var port = _containerController.expose.keys.toList()[index];
+              var protocol = _containerController.expose[port];
+              return Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: TileComponent(
+                  index: index,
+                  title: Text('$port/${protocol!.name}'),
+                  actions: IconButton(
+                    onPressed: () => _containerController.removeExposePort(port),
+                    splashRadius: 16,
+                    icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Future<void> displayExposePortDialog() async {
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return SimpleDialog(
+        title: getModalHeader('Expose port'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        contentPadding: EdgeInsets.all(14),
+        titlePadding: EdgeInsets.zero,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFieldBox(controller: _containerController.containerPortEditingController, label: 'Port'),
+              SizedBox(height: 8),
+              Obx(
+                () => Row(
+                  children: [
+                    Row(
+                      children: [
+                        Text('TCP'),
+                        Radio(value: Protocol.tcp, groupValue: _containerController.selectedProtocol.value, onChanged: (e) => _containerController.changeProtocol(e!)),
+                      ],
+                    ),
+                    SizedBox(width: 8),
+                    Row(
+                      children: [
+                        Text('UDP'),
+                        Radio(value: Protocol.udp, groupValue: _containerController.selectedProtocol.value, onChanged: (e) => _containerController.changeProtocol(e!)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(onPressed: () => _containerController.addExposePort(), child: Text('Add')),
+              ),
+            ],
+          )
+        ],
+      );
+    },
+  );
+}
+
+Future<void> displayPublishPortDialog() async {
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return SimpleDialog(
+        title: getModalHeader('Publish port'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        contentPadding: EdgeInsets.all(14),
+        titlePadding: EdgeInsets.zero,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFieldBox(controller: _containerController.hostIpEditingController, label: 'Host ip address'),
+              SizedBox(height: 8),
+              TextFieldBox(controller: _containerController.hostPortEditingController, label: 'Host port'),
+              SizedBox(height: 8),
+              TextFieldBox(controller: _containerController.containerPortEditingController, label: 'Container Port'),
+              SizedBox(height: 8),
+              TextFieldBox(controller: _containerController.rangeEditingController, label: 'Port Range'),
+              SizedBox(height: 8),
+              Obx(
+                    () => Row(
+                  children: [
+                    Row(
+                      children: [
+                        Text('TCP'),
+                        Radio(value: Protocol.tcp, groupValue: _containerController.selectedProtocol.value, onChanged: (e) => _containerController.changeProtocol(e!)),
+                      ],
+                    ),
+                    SizedBox(width: 8),
+                    Row(
+                      children: [
+                        Text('UDP'),
+                        Radio(value: Protocol.udp, groupValue: _containerController.selectedProtocol.value, onChanged: (e) => _containerController.changeProtocol(e!)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(onPressed: () => _containerController.addPublishPort(), child: Text('Add')),
+              ),
+            ],
+          )
+        ],
+      );
+    },
+  );
 }

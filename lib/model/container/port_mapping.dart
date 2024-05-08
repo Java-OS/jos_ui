@@ -2,10 +2,10 @@ import 'package:jos_ui/model/container/protocol.dart';
 
 class PortMapping {
   final int containerPort;
-  final String hostIp;
+  final String? hostIp;
   final int hostPort;
   final Protocol protocol;
-  final int range;
+  final int? range;
 
   PortMapping(this.containerPort, this.hostIp, this.hostPort, this.protocol, this.range);
 
@@ -23,7 +23,7 @@ class PortMapping {
       'container_port': containerPort,
       'host_ip': hostIp,
       'host_port': hostPort,
-      'protocol': protocol,
+      'protocol': protocol.name.toUpperCase(),
       'range': range,
     };
   }

@@ -39,6 +39,11 @@ class OCITabContainersState extends State<OCITabContainers> {
           ),
           SizedBox(width: 8),
           OutlinedButton(
+            onPressed: () => loadContainers(),
+            child: Icon(Icons.refresh, size: 16, color: Colors.black),
+          ),
+          SizedBox(width: 8),
+          OutlinedButton(
             onPressed: () => openCreateContainerDialog(),
             child: Icon(Icons.add, size: 16, color: Colors.black),
           )

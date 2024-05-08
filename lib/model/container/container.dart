@@ -31,7 +31,7 @@ class CreateContainer {
       'dns_server': dnsServer,
       'env': environments,
       'env_host': useHostEnvironments,
-      'expose': expose,
+      'expose': expose?.map((k,v) => MapEntry(k.toString(), v.name.toUpperCase())),
       'hostadd': hosts,
       'hostname': hostname,
       'image': image,

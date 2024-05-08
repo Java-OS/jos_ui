@@ -40,6 +40,10 @@ class ContainerController extends GetxController {
   final TextEditingController containerMacAddressEditingController = TextEditingController();
   final TextEditingController containerEnvironmentKeyEditingController = TextEditingController();
   final TextEditingController containerEnvironmentValueEditingController = TextEditingController();
+  final TextEditingController containerPortEditingController = TextEditingController();
+  final TextEditingController hostPortEditingController = TextEditingController();
+  final TextEditingController hostIpEditingController = TextEditingController();
+  final TextEditingController rangeEditingController = TextEditingController();
 
   var searchImageList = <ImageSearch>[].obs;
   var containerImageList = <ContainerImage>[].obs;
@@ -58,6 +62,7 @@ class ContainerController extends GetxController {
   var selectedImage = ''.obs;
   var networkConnect = <String, NetworkConnect>{}.obs;
   var selectedNetwork = Rxn<NetworkInfo>();
+  var selectedProtocol = Protocol.tcp.obs;
   var step = 0.obs;
 
   /* Image methods */
@@ -270,10 +275,7 @@ class ContainerController extends GetxController {
 
     var reqParams = {'container': json};
     await RestClient.rpc(RPC.RPC_CONTAINER_CREATE, parameters: reqParams);
-    await listNetworks()
-        .then((_) => Get.back())
-        .then((_) async => await listNetworks())
-        .then((_) => cleanContainerParameters());
+    await listNetworks().then((_) => Get.back()).then((_) async => await listNetworks()).then((_) => cleanContainerParameters());
   }
 
   /* Other methods */
@@ -323,6 +325,46 @@ class ContainerController extends GetxController {
     Get.back();
   }
 
+  void addExposePort() {
+    var port = int.parse(containerPortEditingController.text);
+    expose[port] = selectedProtocol.value;
+    clearPortParameters();
+    Get.back();
+  }
+
+  void removeExposePort(int port) {
+    expose.removeWhere((k, v) => k == port);
+  }
+
+  void addPublishPort() {
+    var hostPort = int.parse(hostPortEditingController.text);
+    var hostIp = hostIpEditingController.text.isEmpty ? null : hostIpEditingController.text;
+    var containerPort = int.parse(containerPortEditingController.text);
+    var range = rangeEditingController.text.isEmpty ? null : int.parse(rangeEditingController.text);
+    var protocol = selectedProtocol.value;
+    var pm = PortMapping(containerPort, hostIp, hostPort, protocol, range);
+    portMappings.add(pm);
+
+    // clear
+    clearPortParameters();
+    Get.back();
+  }
+
+  void removePublishPort(int index) {
+    portMappings.removeAt(index);
+  }
+
+  void changeProtocol(Protocol p) {
+    selectedProtocol.value = p;
+  }
+
+  void clearPortParameters() {
+    hostPortEditingController.clear();
+    hostIpEditingController.clear();
+    containerPortEditingController.clear();
+    rangeEditingController.clear();
+  }
+
   void cleanContainerParameters() {
     containerNameEditingController.clear();
     containerHostnameEditingController.clear();
@@ -340,6 +382,7 @@ class ContainerController extends GetxController {
     networkConnect.clear();
     expose.clear();
     selectedNetwork = Rxn<NetworkInfo>();
+    selectedImage.value = '';
     step.value = 0;
     privileged.value = false;
   }
