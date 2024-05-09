@@ -2,8 +2,8 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/radio_tile_component.dart';
-import 'package:jos_ui/component/tile_component.dart';
+import 'package:jos_ui/widget/radio_tile_widget.dart';
+import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
@@ -164,7 +164,7 @@ Widget installedImagesTab() {
         return Padding(
           padding: const EdgeInsets.all(4.0),
           child: Obx(
-            () => RadioTileComponent<String>(
+            () => RadioTileItem<String>(
               index: index,
               value: containerImage.name,
               selectedValue: _containerController.selectedImage.value,
@@ -205,7 +205,7 @@ Widget searchImagesTab() {
                   return Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: Obx(
-                      () => RadioTileComponent<String>(
+                      () => RadioTileItem<String>(
                         index: index,
                         value: imageSearch.name,
                         selectedValue: _containerController.selectedImage.value,
@@ -252,7 +252,7 @@ Widget getVolumeStep() {
               var mountPoint = _containerController.connectVolumes[index].dest;
               return Padding(
                 padding: const EdgeInsets.only(top: 8.0),
-                child: TileComponent(
+                child: TileItem(
                   index: index,
                   title: Text(name),
                   subTitle: Text(mountPoint, style: TextStyle(fontSize: 12)),
@@ -344,7 +344,7 @@ Widget getNetworkStep() {
               var netInfo = _containerController.networkConnect[name];
               return Padding(
                 padding: const EdgeInsets.only(top: 8.0),
-                child: TileComponent(
+                child: TileItem(
                   index: index,
                   title: Text(name),
                   subTitle: netInfo!.staticIps != null && netInfo.staticIps!.isNotEmpty ? Text(netInfo.staticIps![0], style: TextStyle(fontSize: 12)) : null,
@@ -544,7 +544,7 @@ Widget getPortStep() {
               var text = hostIp != null ? '$hostIp:$portMap' : portMap;
               return Padding(
                 padding: const EdgeInsets.only(top: 8.0),
-                child: TileComponent(
+                child: TileItem(
                   index: index,
                   title: Text(text),
                   subTitle: range != null ? Text('Range: $range', style: TextStyle(fontSize: 12)) : null,
@@ -567,7 +567,7 @@ Widget getPortStep() {
               var protocol = _containerController.expose[port];
               return Padding(
                 padding: const EdgeInsets.only(top: 8.0),
-                child: TileComponent(
+                child: TileItem(
                   index: index,
                   title: Text('$port/${protocol!.name}'),
                   actions: IconButton(

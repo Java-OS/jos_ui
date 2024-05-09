@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/tab_content.dart';
-import 'package:jos_ui/component/tile_component.dart';
+import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/container/create_network_dialog.dart';
 import 'package:jos_ui/dialog/container/network_information_dialog.dart';
@@ -44,7 +44,7 @@ class _OCITabNetworksState extends State<OCITabNetworks> {
               var network = _containerController.networkList[index];
               return Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: TileComponent(
+                child: TileItem(
                   index: index,
                   title: Text(network.name),
                   actions: IconButton(

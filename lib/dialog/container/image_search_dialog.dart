@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/tile_component.dart';
+import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 
@@ -38,7 +38,7 @@ Future<void> displayContainerSearchImage() async {
                     var searchImage = _containerController.searchImageList[index];
                     return Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: TileComponent(
+                      child: TileItem(
                         index: index + 1,
                         leading: Visibility(
                           visible: searchImage.tag != 'JOS_PULL_IMAGE',

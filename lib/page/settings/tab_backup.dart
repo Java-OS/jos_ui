@@ -1,7 +1,7 @@
 import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/tile_component.dart';
+import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:jos_ui/controller/backup_controller.dart';
 import 'package:jos_ui/dialog/upload_download_dialog.dart';
 
@@ -75,7 +75,7 @@ class _TabBackupState extends State<TabBackup> {
 
                      return Padding(
                        padding: const EdgeInsets.all(4.0),
-                       child: TileComponent(
+                       child: TileItem(
                           index: index,
                           title: Text(title, style: TextStyle(fontSize: 14)),
                           actions: SizedBox(

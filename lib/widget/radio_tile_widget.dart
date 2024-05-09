@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class RadioTileComponent<T> extends StatefulWidget {
+class RadioTileItem<T> extends StatefulWidget {
   final int index;
   final T value;
   final T? selectedValue;
@@ -9,13 +9,13 @@ class RadioTileComponent<T> extends StatefulWidget {
   final Widget? subTitle;
   final Function(dynamic value) onChanged;
 
-  const RadioTileComponent({super.key, required this.index, required this.value, this.subTitle, this.leading, required this.onChanged, required this.title, this.selectedValue});
+  const RadioTileItem({super.key, required this.index, required this.value, this.subTitle, this.leading, required this.onChanged, required this.title, this.selectedValue});
 
   @override
-  State<RadioTileComponent> createState() => _RadioTileComponentState<T>();
+  State<RadioTileItem> createState() => _RadioTileItemState<T>();
 }
 
-class _RadioTileComponentState<T> extends State<RadioTileComponent> {
+class _RadioTileItemState<T> extends State<RadioTileItem> {
   int hoverIndex = -1;
 
   @override

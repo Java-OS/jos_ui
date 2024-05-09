@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TileComponent extends StatefulWidget {
+class TileItem extends StatefulWidget {
   final int index;
   final Widget title;
   final Widget? leading;
@@ -8,13 +8,13 @@ class TileComponent extends StatefulWidget {
   final Widget? actions;
   final Function? onClick;
 
-  const TileComponent({super.key, required this.index, required this.title, this.actions, this.subTitle, this.leading, this.onClick});
+  const TileItem({super.key, required this.index, required this.title, this.actions, this.subTitle, this.leading, this.onClick});
 
   @override
-  State<TileComponent> createState() => _TileComponentState();
+  State<TileItem> createState() => _TileItemState();
 }
 
-class _TileComponentState extends State<TileComponent> {
+class _TileItemState extends State<TileItem> {
   int hoverIndex = -1;
 
   @override

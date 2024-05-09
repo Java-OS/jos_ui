@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/tab_content.dart';
-import 'package:jos_ui/component/tile_component.dart';
+import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/container/container_create_dialog.dart';
 import 'package:jos_ui/dialog/container/container_information.dart';
@@ -60,7 +60,7 @@ class OCITabContainersState extends State<OCITabContainers> {
               var container = _containerController.containerList[index];
               return Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: TileComponent(
+                child: TileItem(
                   leading: CircleAvatar(
                     radius: 18,
                     child: Text((index + 1).toString(), style: TextStyle(fontSize: 12)),
