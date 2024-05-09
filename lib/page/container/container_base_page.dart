@@ -19,6 +19,11 @@ class ContainerBasePageState extends State<ContainerBasePage> {
   static const baseRoute = '/containers';
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PageLayout(
       child: Row(
@@ -31,7 +36,7 @@ class ContainerBasePageState extends State<ContainerBasePage> {
             children: [
               sideMenu(0, MdiIcons.cubeOutline),
               sideMenu(1, MdiIcons.layersTriple),
-              sideMenu(2, Icons.storage),
+              sideMenu(2, MdiIcons.sd),
               sideMenu(3, MdiIcons.networkOutline),
             ],
           ),

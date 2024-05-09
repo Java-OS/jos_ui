@@ -18,8 +18,6 @@ class OCITabImages extends StatefulWidget {
 class OCITabImagesState extends State<OCITabImages> {
   final _containerController = Get.put(ContainerController());
 
-  var _waitingListImages = false;
-
   @override
   void initState() {
     loadImages();
@@ -46,7 +44,7 @@ class OCITabImagesState extends State<OCITabImages> {
       ),
       content: Obx(
         () => Visibility(
-          visible: !_waitingListImages,
+          visible: _containerController.waitingListImages.isFalse,
           replacement: SpinKitCircle(color: Colors.blueAccent),
           child: ListView.builder(
             shrinkWrap: true,
@@ -84,7 +82,7 @@ class OCITabImagesState extends State<OCITabImages> {
                     child: IconButton(
                       splashRadius: 20,
                       icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
-                      onPressed: _containerController.waitingImageRemove.isTrue ? null : () => removeImage(containerImage.id!),
+                      onPressed: () => removeImage(containerImage.id!),
                     ),
                   ),
                 ),
@@ -97,14 +95,14 @@ class OCITabImagesState extends State<OCITabImages> {
   }
 
   void loadImages() async {
-    setState(() => _waitingListImages = true);
+    _containerController.waitingListImages.value = true;
     await _containerController.listImages();
-    setState(() => _waitingListImages = false);
+    _containerController.waitingListImages.value = false;
   }
 
   void removeImage(String imageId) async {
-    setState(() => _waitingListImages = true);
+    _containerController.waitingListImages.value = true;
     _containerController.removeImage(imageId);
-    setState(() => _waitingListImages = false);
+    _containerController.waitingListImages.value = false;
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:fetch_client/fetch_client.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/model/container/ContainerImage.dart';
@@ -16,10 +17,13 @@ import 'package:jos_ui/model/container/subnet.dart';
 import 'package:jos_ui/model/container/volume.dart';
 import 'package:jos_ui/model/container/volume_parameter.dart';
 import 'package:jos_ui/protobuf/message-buffer.pb.dart';
+import 'package:jos_ui/protobuf/message-buffer.pbserver.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
 class ContainerController extends GetxController {
+  FetchResponse? fetchResponse;
+
   final TextEditingController searchImageEditingController = TextEditingController();
   final TextEditingController volumeNameEditingController = TextEditingController();
   final TextEditingController volumeMountPointEditingController = TextEditingController();
@@ -45,13 +49,14 @@ class ContainerController extends GetxController {
   final TextEditingController hostIpEditingController = TextEditingController();
   final TextEditingController rangeEditingController = TextEditingController();
 
+  var waitingImageSearch = false.obs;
+  var waitingListImages = false.obs;
+
   var searchImageList = <ImageSearch>[].obs;
   var containerImageList = <ContainerImage>[].obs;
   var volumeList = <Volume>[].obs;
   var networkList = <NetworkInfo>[].obs;
   var containerList = <ContainerInfo>[].obs;
-  var waitingImageSearch = false.obs;
-  var waitingImageRemove = false.obs;
   var environments = <String, String>{}.obs;
   var useHostEnvironments = false.obs;
   var expose = <int, Protocol>{}.obs;
@@ -65,6 +70,12 @@ class ContainerController extends GetxController {
   var selectedProtocol = Protocol.tcp.obs;
   var step = 0.obs;
 
+  @override
+  void onInit() {
+    consumeEvents();
+    super.onInit();
+  }
+
   /* Image methods */
   Future<void> listImages() async {
     developer.log('List images');
@@ -77,10 +88,12 @@ class ContainerController extends GetxController {
 
   Future<void> removeImage(String id) async {
     developer.log('remove image $id');
-    waitingImageRemove.value = true;
     var reqParams = {'name': id};
-    await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_REMOVE, parameters: reqParams);
-    waitingImageRemove.value = false;
+    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_REMOVE, parameters: reqParams);
+    if (!payload.metadata.success) {
+      displayWarning('Failed to remove image $id');
+    }
+    await listImages();
   }
 
   Future<void> searchImage() async {
@@ -369,6 +382,17 @@ class ContainerController extends GetxController {
     selectedProtocol.value = p;
   }
 
+  void consumeEvents() async {
+    developer.log('SSE Consumer activated');
+    fetchResponse = await RestClient.sseBasic();
+    fetchResponse!.stream.listen((event) {
+      var message = Event.fromBuffer(event).message;
+      developer.log(message);
+      displayInfo(message);
+      listImages();
+    });
+  }
+
   void clearPortParameters() {
     hostPortEditingController.clear();
     hostIpEditingController.clear();
@@ -402,5 +426,12 @@ class ContainerController extends GetxController {
     searchImageList.clear();
     searchImageEditingController.clear();
     volumeNameEditingController.clear();
+  }
+
+  @override
+  void onClose() {
+    developer.log('Container controller closed');
+    fetchResponse?.cancel();
+    super.onClose();
   }
 }

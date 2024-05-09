@@ -49,7 +49,7 @@ class LogController extends GetxController {
     var packageName = packageEditingController.text;
     var level = logLevel.value;
     developer.log('SSE controller try Connect $packageName $level');
-    fetchResponse = await RestClient.sse(packageName, level);
+    fetchResponse = await RestClient.sseLog(packageName, level);
     isConnected.value = true;
     fetchResponse!.stream.transform(const Utf8Decoder()).transform(const LineSplitter()).where((event) => event.isNotEmpty).listen((event) => addToQueue(event));
   }

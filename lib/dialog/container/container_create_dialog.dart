@@ -240,7 +240,7 @@ Widget getVolumeStep() {
             child: OutlinedButton.icon(
               onPressed: () => displayConnectVolumeToContainerDialog(),
               label: Text('Connect volume'),
-              icon: Icon(MdiIcons.layersTriple, size: 16, color: Colors.blue),
+              icon: Icon(MdiIcons.sd, size: 16, color: Colors.blue),
             ),
           ),
           SizedBox(height: 8),
@@ -514,7 +514,7 @@ Widget getPortStep() {
                   child: OutlinedButton.icon(
                     onPressed: () => displayExposePortDialog(),
                     label: Text('Expose Port'),
-                    icon: Icon(MdiIcons.layersTriple, size: 16, color: Colors.blue),
+                    icon: Icon(MdiIcons.link, size: 16, color: Colors.blue),
                   ),
                 ),
               ),
@@ -525,7 +525,7 @@ Widget getPortStep() {
                   child: OutlinedButton.icon(
                     onPressed: () => displayPublishPortDialog(),
                     label: Text('Publish Port'),
-                    icon: Icon(MdiIcons.layersTriple, size: 16, color: Colors.blue),
+                    icon: Icon(MdiIcons.vectorLink, size: 16, color: Colors.blue),
                   ),
                 ),
               ),

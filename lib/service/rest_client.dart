@@ -181,7 +181,7 @@ class RestClient {
     }
   }
 
-  static Future<FetchResponse> sse(String packageName, LogLevel logLevel) async {
+  static Future<FetchResponse> sseLog(String packageName, LogLevel logLevel) async {
     developer.log('Start SSE Client [$packageName] [${logLevel.name}]');
     var token = StorageService.getItem('token');
     if (token == null) getx.Get.toNamed('/login');
@@ -193,8 +193,9 @@ class RestClient {
     };
 
     developer.log('Header send: [$header]');
+    var metadata = Metadata(logLevel: logLevel.name.toUpperCase(), logPackage: packageName,sseType: SSEType.SSE_TYPE_LOG);
 
-    var packet = await _h5Proto.encode(Payload(metadata: Metadata(logLevel: logLevel.name.toUpperCase(), logPackage: packageName)));
+    var packet = await _h5Proto.encode(Payload(metadata: metadata));
 
     var request = http.Request('POST', Uri.parse(_baseSseUrl()));
     request.bodyBytes = packet.writeToBuffer();
@@ -203,6 +204,30 @@ class RestClient {
     final FetchClient fetchClient = FetchClient(mode: RequestMode.cors);
     return fetchClient.send(request);
   }
+
+  static Future<FetchResponse> sseBasic() async {
+    developer.log('Start SSE Client [${SSEType.SSE_TYPE_BASIC.name}]');
+    var token = StorageService.getItem('token');
+    if (token == null) getx.Get.toNamed('/login');
+
+    var header = {
+      'authorization': 'Bearer $token',
+      'Connection': 'keep-alive',
+      'Content-type': 'text/event-stream',
+    };
+
+    developer.log('Header send: [$header]');
+    var metadata = Metadata(sseType: SSEType.SSE_TYPE_BASIC);
+    var packet = await _h5Proto.encode(Payload(metadata: metadata ));
+
+    var request = http.Request('POST', Uri.parse(_baseSseUrl()));
+    request.bodyBytes = packet.writeToBuffer();
+    request.headers.addAll(header);
+
+    final FetchClient fetchClient = FetchClient(mode: RequestMode.cors);
+    return fetchClient.send(request);
+  }
+
 
   static Future<void> download(Map<String, String> parameters) async {
     developer.log('Download file: ');
