@@ -31,9 +31,19 @@ class OCITabVolumesState extends State<OCITabVolumes> {
   Widget build(BuildContext context) {
     return TabContent(
       title: 'Volumes',
-      toolbar: OutlinedButton(
-        onPressed: () => displayCreateVolume(),
-        child: Icon(Icons.add, size: 16, color: Colors.black),
+      toolbar: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          OutlinedButton(
+            onPressed: () => pruneVolumes(),
+            child: Icon(MdiIcons.deleteSweepOutline, size: 16, color: Colors.black),
+          ),
+          SizedBox(width: 8),
+          OutlinedButton(
+            onPressed: () => displayCreateVolume(),
+            child: Icon(Icons.add, size: 16, color: Colors.black),
+          ),
+        ],
       ),
       content: Obx(
         () => Visibility(
@@ -67,6 +77,12 @@ class OCITabVolumesState extends State<OCITabVolumes> {
   void loadVolumes() async {
     setState(() => _waitingVolumeLoad = true);
     await _containerController.listVolumes();
+    setState(() => _waitingVolumeLoad = false);
+  }
+
+  void pruneVolumes() async {
+    setState(() => _waitingVolumeLoad = true);
+    await _containerController.pruneVolume();
     setState(() => _waitingVolumeLoad = false);
   }
 

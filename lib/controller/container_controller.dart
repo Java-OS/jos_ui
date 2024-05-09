@@ -79,10 +79,7 @@ class ContainerController extends GetxController {
     developer.log('remove image $id');
     waitingImageRemove.value = true;
     var reqParams = {'name': id};
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_REMOVE, parameters: reqParams);
-    if (payload.metadata.success) {
-      await listImages();
-    }
+    await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_REMOVE, parameters: reqParams);
     waitingImageRemove.value = false;
   }
 
@@ -151,10 +148,16 @@ class ContainerController extends GetxController {
     await listVolumes().then((_) => Get.back()).then((_) => clean());
   }
 
-  void removeVolume(String name) async {
+  Future<void> removeVolume(String name) async {
     developer.log('Remove volume $name');
     var reqParams = {'name': name};
     await RestClient.rpc(RPC.RPC_CONTAINER_VOLUME_REMOVE, parameters: reqParams);
+    await listVolumes();
+  }
+
+  Future<void> pruneVolume() async {
+    developer.log('Prune volume');
+    await RestClient.rpc(RPC.RPC_CONTAINER_VOLUME_PRUNE);
     await listVolumes();
   }
 
@@ -227,6 +230,14 @@ class ContainerController extends GetxController {
       displayWarning('Failed to remove container $name');
     }
     await listContainers();
+  }
+
+  Future<void> pruneContainer() async {
+    developer.log('prune containers');
+    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_PRUNE);
+    if (!payload.metadata.success) {
+      displayWarning('Failed to prune container');
+    }
   }
 
   Future<void> startContainer(String name) async {

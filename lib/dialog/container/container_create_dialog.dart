@@ -77,7 +77,8 @@ Future<void> displayCreateContainer() async {
         ),
       );
     },
-  );
+  ).then((_) => _containerController.cleanContainerParameters())
+      .then((_) => _containerController.clearPortParameters());
 }
 
 Widget getBasicStep() {
@@ -425,17 +426,20 @@ Widget getEnvironmentStep() {
             ),
           ),
           SizedBox(height: 8),
-          SizedBox(
-            width: double.infinity,
-            height: 150,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: DataTable(
-                dataRowMinHeight: 12,
-                dataRowMaxHeight: 28,
-                columnSpacing: 0,
-                columns: getEnvironmentColumns(),
-                rows: getEnvironmentRows(),
+          Visibility(
+            visible: _containerController.environments.isNotEmpty,
+            child: SizedBox(
+              width: double.infinity,
+              height: 150,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: DataTable(
+                  dataRowMinHeight: 12,
+                  dataRowMaxHeight: 28,
+                  columnSpacing: 0,
+                  columns: getEnvironmentColumns(),
+                  rows: getEnvironmentRows(),
+                ),
               ),
             ),
           ),

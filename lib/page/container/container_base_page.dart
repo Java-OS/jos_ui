@@ -5,8 +5,6 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page/container/tab_containers.dart';
 import 'package:jos_ui/page/container/tab_images.dart';
 import 'package:jos_ui/page/container/tab_networks.dart';
-import 'package:jos_ui/page/container/tab_pods.dart';
-import 'package:jos_ui/page/container/tab_settings.dart';
 import 'package:jos_ui/page/container/tab_volumes.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -31,12 +29,10 @@ class ContainerBasePageState extends State<ContainerBasePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              sideMenu(0, MdiIcons.layersTriple),
-              sideMenu(1, MdiIcons.dotsCircle),
-              sideMenu(2, MdiIcons.cubeOutline),
-              sideMenu(3, Icons.storage),
-              sideMenu(4, MdiIcons.networkOutline),
-              sideMenu(5, Icons.settings),
+              sideMenu(0, MdiIcons.cubeOutline),
+              sideMenu(1, MdiIcons.layersTriple),
+              sideMenu(2, Icons.storage),
+              sideMenu(3, MdiIcons.networkOutline),
             ],
           ),
           Expanded(
@@ -80,19 +76,15 @@ class ContainerBasePageState extends State<ContainerBasePage> {
     var tabIndex = Get.parameters['index'] ?? '0';
     switch (int.parse(tabIndex)) {
       case 0:
-        return OCITabImages();
-      case 1:
-        return OCITabPods();
-      case 2:
         return OCITabContainers();
-      case 3:
-        return OCITabVolumes();
-      case 4:
-        return OCITabNetworks();
-      case 5:
-        return OCITabSettings();
-      default:
+      case 1:
         return OCITabImages();
+      case 2:
+        return OCITabVolumes();
+      case 3:
+        return OCITabNetworks();
+      default:
+        return OCITabContainers();
     }
   }
 }

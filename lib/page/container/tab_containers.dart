@@ -34,7 +34,7 @@ class OCITabContainersState extends State<OCITabContainers> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           OutlinedButton(
-            onPressed: () {},
+            onPressed: () => pruneContainers(),
             child: Icon(MdiIcons.deleteSweepOutline, size: 16, color: Colors.black),
           ),
           SizedBox(width: 8),
@@ -110,6 +110,12 @@ class OCITabContainersState extends State<OCITabContainers> {
   void loadContainers() async {
     setState(() => _waitingContainersLoad = true);
     await _containerController.listContainers();
+    setState(() => _waitingContainersLoad = false);
+  }
+
+  void pruneContainers() async {
+    setState(() => _waitingContainersLoad = true);
+    await _containerController.pruneContainer();
     setState(() => _waitingContainersLoad = false);
   }
 

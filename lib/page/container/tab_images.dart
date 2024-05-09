@@ -84,7 +84,7 @@ class OCITabImagesState extends State<OCITabImages> {
                     child: IconButton(
                       splashRadius: 20,
                       icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
-                      onPressed: _containerController.waitingImageRemove.isTrue ? null : () => _containerController.removeImage(containerImage.id!),
+                      onPressed: _containerController.waitingImageRemove.isTrue ? null : () => removeImage(containerImage.id!),
                     ),
                   ),
                 ),
@@ -99,6 +99,12 @@ class OCITabImagesState extends State<OCITabImages> {
   void loadImages() async {
     setState(() => _waitingListImages = true);
     await _containerController.listImages();
+    setState(() => _waitingListImages = false);
+  }
+
+  void removeImage(String imageId) async {
+    setState(() => _waitingListImages = true);
+    _containerController.removeImage(imageId);
     setState(() => _waitingListImages = false);
   }
 }
