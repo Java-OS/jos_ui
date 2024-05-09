@@ -599,7 +599,10 @@ Future<void> displayExposePortDialog() async {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFieldBox(controller: _containerController.containerPortEditingController, label: 'Port'),
+              TextFieldBox(
+                controller: _containerController.containerPortEditingController,
+                label: 'Port',
+              ),
               SizedBox(height: 8),
               Obx(
                 () => Row(
@@ -656,7 +659,7 @@ Future<void> displayPublishPortDialog() async {
               TextFieldBox(controller: _containerController.rangeEditingController, label: 'Port Range'),
               SizedBox(height: 8),
               Obx(
-                    () => Row(
+                () => Row(
                   children: [
                     Row(
                       children: [

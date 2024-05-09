@@ -291,7 +291,7 @@ class ContainerController extends GetxController {
       displayWarning('Duplicate mount point');
       return;
     }
-    var volume = VolumeParameter(dest, name, null);
+    var volume = VolumeParameter(dest.startsWith('/') ? dest : '/$dest', name, null);
     connectVolumes.add(volume);
     Get.back();
     volumeMountPointEditingController.clear();

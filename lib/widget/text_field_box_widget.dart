@@ -8,9 +8,10 @@ class TextFieldBox extends StatefulWidget {
   final bool? isEnable;
   final int? maxLines;
   final int? maxLength;
+  final TextInputType? keyboardType;
   final Function? onClick;
 
-  const TextFieldBox({super.key, required this.controller, this.label, this.onSubmit, this.isPassword = false, this.isEnable = true, this.maxLines, this.maxLength, this.onClick});
+  const TextFieldBox({super.key, required this.controller, this.label, this.onSubmit, this.isPassword = false, this.isEnable = true, this.maxLines, this.maxLength, this.onClick, this.keyboardType});
 
   @override
   State<TextFieldBox> createState() => _TextFieldBoxState();
@@ -42,9 +43,9 @@ class _TextFieldBoxState extends State<TextFieldBox> {
                   controller: widget.controller,
                   style: TextStyle(fontSize: 14, color: widget.isEnable! ? Colors.black : Colors.black.withAlpha(150)),
                   obscureText: widget.isPassword,
-                  enableSuggestions: widget.isPassword ? false : true,
-                  autocorrect: widget.isPassword ? false : true,
-                  keyboardType: (widget.maxLines == null || widget.maxLines! > 1) ? TextInputType.multiline : TextInputType.text,
+                  enableSuggestions: !widget.isPassword,
+                  autocorrect: !widget.isPassword,
+                  keyboardType: widget.keyboardType ?? TextInputType.text,
                   textAlign: TextAlign.start,
                   textAlignVertical: TextAlignVertical.top,
                   textInputAction: TextInputAction.none,
