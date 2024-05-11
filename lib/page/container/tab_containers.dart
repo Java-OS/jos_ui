@@ -61,9 +61,20 @@ class OCITabContainersState extends State<OCITabContainers> {
               return Padding(
                 padding: const EdgeInsets.all(4.0),
                 child: TileItem(
-                  leading: CircleAvatar(
-                    radius: 18,
-                    child: Text((index + 1).toString(), style: TextStyle(fontSize: 12)),
+                  leading: Visibility(
+                    visible: container.id.isNotEmpty,
+                    replacement: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: SpinKitThreeBounce(
+                        color: Colors.blue,
+                        size: 20.0,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 18,
+                      child: Text((index + 1).toString(), style: TextStyle(fontSize: 12)),
+                    ),
                   ),
                   index: index,
                   title: Text(container.names[0]),

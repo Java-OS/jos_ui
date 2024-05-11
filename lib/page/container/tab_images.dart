@@ -20,7 +20,8 @@ class OCITabImagesState extends State<OCITabImages> {
 
   @override
   void initState() {
-    loadImages();
+    WidgetsBinding.instance.addPostFrameCallback((_) => loadImages());
+
     super.initState();
   }
 

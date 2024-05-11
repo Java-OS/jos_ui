@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
 
@@ -251,13 +252,14 @@ class ContainerController extends GetxController {
     if (!payload.metadata.success) {
       displayWarning('Failed to prune container');
     }
+    await listContainers();
   }
 
   Future<void> startContainer(String name) async {
     developer.log('Start containers $name');
     var reqParams = {'name': name};
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_START, parameters: reqParams);
-    if (payload.metadata.success) {
+    if (!payload.metadata.success) {
       displayWarning('Failed to kill container $name');
     }
     await listContainers();
@@ -298,8 +300,7 @@ class ContainerController extends GetxController {
     var json = jsonEncode(container.toMap());
 
     var reqParams = {'container': json};
-    await RestClient.rpc(RPC.RPC_CONTAINER_CREATE, parameters: reqParams);
-    await listNetworks().then((_) => Get.back()).then((_) async => await listNetworks()).then((_) => cleanContainerParameters());
+    await RestClient.rpc(RPC.RPC_CONTAINER_CREATE, parameters: reqParams).then((_) => Get.back()).then((_) => listContainers()).then((_) => cleanContainerParameters());
   }
 
   /* Other methods */
@@ -385,12 +386,22 @@ class ContainerController extends GetxController {
   void consumeEvents() async {
     developer.log('SSE Consumer activated');
     fetchResponse = await RestClient.sseBasic();
-    fetchResponse!.stream.listen((event) {
-      var message = Event.fromBuffer(event).message;
-      developer.log(message);
-      displayInfo(message);
-      listImages();
-    });
+    fetchResponse!.stream.map((e) => Event.fromBuffer(e)).listen(
+          (e) {
+            developer.log('${e.code}    ${e.message}');
+            displayInfo(e.message);
+            if (e.code == EventCode.EVENT_CODE_CONTAINER_CREATE_COMPLETED.value) {
+              listContainers();
+              listImages();
+            }
+            if (e.code == EventCode.EVENT_CODE_CONTAINER_IMAGE_PULL_COMPLETED.value) listImages();
+          },
+          cancelOnError: false,
+          onError: (e) {
+            developer.log('SSE Error : $e');
+          },
+          onDone: () => consumeEvents(),
+        );
   }
 
   void clearPortParameters() {

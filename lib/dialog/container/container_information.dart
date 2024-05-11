@@ -14,14 +14,12 @@ Future<void> displayContainerInfo(ContainerInfo ci) async {
   var idRow = DataRow(cells: [DataCell(Text('id', style: TextStyle(fontSize: 12))), DataCell(Text(ci.id, style: TextStyle(fontSize: 12)))]);
   var imageRow = DataRow(cells: [DataCell(Text('Image', style: TextStyle(fontSize: 12))), DataCell(Text(ci.image, style: TextStyle(fontSize: 12)))]);
   var imageIdRow = DataRow(cells: [DataCell(Text('Image ID', style: TextStyle(fontSize: 12))), DataCell(Text(ci.imageID, style: TextStyle(fontSize: 12)))]);
-  var podRow = DataRow(cells: [DataCell(Text('Pod', style: TextStyle(fontSize: 12))), DataCell(Text(ci.pod, style: TextStyle(fontSize: 12)))]);
-  var podNameRow = DataRow(cells: [DataCell(Text('Pod Name', style: TextStyle(fontSize: 12))), DataCell(Text(ci.podName, style: TextStyle(fontSize: 12)))]);
   var commandRow = DataRow(cells: [DataCell(Text('Command', style: TextStyle(fontSize: 12))), DataCell(Text(ci.command.toString(), style: TextStyle(fontSize: 12)))]);
   var autoRemoveRow = DataRow(cells: [DataCell(Text('Auto Remove', style: TextStyle(fontSize: 12))), DataCell(Text(ci.autoRemove.toString(), style: TextStyle(fontSize: 12)))]);
   var exitedRow = DataRow(cells: [DataCell(Text('Exited', style: TextStyle(fontSize: 12))), DataCell(Text(ci.exited.toString(), style: TextStyle(fontSize: 12)))]);
   var exitCodeRow = DataRow(cells: [DataCell(Text('Exit Code', style: TextStyle(fontSize: 12))), DataCell(Text(ci.exitCode.toString(), style: TextStyle(fontSize: 12)))]);
   var exitedAtRow = DataRow(cells: [DataCell(Text('Exit At', style: TextStyle(fontSize: 12))), DataCell(Text(ci.exitedAt.toString(), style: TextStyle(fontSize: 12)))]);
-  var rows = <DataRow>[nameRow, stateRow, idRow, imageRow, imageIdRow, podRow, podNameRow, commandRow, autoRemoveRow, exitedRow, exitCodeRow, exitedAtRow];
+  var rows = <DataRow>[nameRow, stateRow, idRow, imageRow, imageIdRow, commandRow, autoRemoveRow, exitedRow, exitCodeRow, exitedAtRow];
 
   showDialog(
     context: Get.context!,

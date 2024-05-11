@@ -1,11 +1,10 @@
-
 class ContainerImage {
-  final String? id;
-  final String? parentId;
-  final int? size;
-  final int? containers;
+  final String id;
+  final String parentId;
+  final int size;
+  final int containers;
   final String name;
-  final String? digest;
+  final String digest;
 
   ContainerImage(this.id, this.parentId, this.size, this.containers, this.name, this.digest);
 
