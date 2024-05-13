@@ -236,9 +236,12 @@ class ContainerController extends GetxController {
     await listContainers();
   }
 
-  Future<void> removeContainer(String name) async {
+  Future<void> removeContainer(String name, String id) async {
     developer.log('remove containers $name');
-    var reqParams = {'name': name};
+    var reqParams = {
+      'id': id,
+      'name': name,
+    };
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_REMOVE, parameters: reqParams);
     if (!payload.metadata.success) {
       displayWarning('Failed to remove container $name');
@@ -400,8 +403,15 @@ class ContainerController extends GetxController {
           onError: (e) {
             developer.log('SSE Error : $e');
           },
-          onDone: () => consumeEvents(),
         );
+  }
+
+  void clearNetworkParameters() {
+    containerIpAddressEditingController.clear();
+    containerMacAddressEditingController.clear();
+    networkSubnetEditingController.clear();
+    networkGatewayEditingController.clear();
+    selectedNetwork = Rxn<NetworkInfo>();
   }
 
   void clearPortParameters() {

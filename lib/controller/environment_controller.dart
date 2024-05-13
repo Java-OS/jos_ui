@@ -55,6 +55,7 @@ class EnvironmentController extends GetxController {
     } else {
       displayError('Failed to set batch environments');
     }
+    clean();
   }
 
   Future<void> deleteSystemEnvironment(String key) async {

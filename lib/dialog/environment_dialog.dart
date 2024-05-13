@@ -42,7 +42,7 @@ Future<void> displayAddEnvironmentDialog(TextEditingController keyController, Te
         ],
       );
     },
-  ).then((value) => _environmentController.clean());
+  ).then((_) => _environmentController.clean());
 }
 
 Future<void> displayBatchEnvironment(ClipboardData? clipboard, BuildContext context) async {
@@ -83,7 +83,7 @@ Future<void> displayBatchEnvironment(ClipboardData? clipboard, BuildContext cont
         ],
       );
     },
-  ).then((value) => _environmentController.fetchSystemEnvironments());
+  ).then((_) => _environmentController.fetchSystemEnvironments());
 }
 
 List<DataColumn> getEnvironmentColumns() {

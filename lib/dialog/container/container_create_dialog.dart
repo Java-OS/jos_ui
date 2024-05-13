@@ -2,8 +2,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/widget/radio_tile_widget.dart';
-import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
@@ -11,8 +9,10 @@ import 'package:jos_ui/dialog/environment_dialog.dart';
 import 'package:jos_ui/model/container/network_info.dart';
 import 'package:jos_ui/model/container/protocol.dart';
 import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/widget/radio_tile_widget.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
+import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 final _containerController = Get.put(ContainerController());
@@ -38,7 +38,6 @@ Future<void> displayCreateContainer() async {
                 bool isAfterFirstStep = controlDetails.currentStep > 0;
                 bool isLastStep = controlDetails.currentStep == 4;
                 bool isImageSelected = _containerController.selectedImage.isNotEmpty;
-                bool isNameFilled = _containerController.containerNameEditingController.text.isNotEmpty;
                 return Row(
                   children: [
                     Visibility(
@@ -55,7 +54,7 @@ Future<void> displayCreateContainer() async {
                       child: ElevatedButton(
                         onPressed: isLastStep
                             ? _containerController.createContainer
-                            : (isImageSelected && isNameFilled)
+                            : isImageSelected
                                 ? controlDetails.onStepContinue
                                 : null,
                         child: Text(isLastStep ? 'Create container' : 'Next'),
@@ -77,8 +76,7 @@ Future<void> displayCreateContainer() async {
         ),
       );
     },
-  ).then((_) => _containerController.cleanContainerParameters())
-      .then((_) => _containerController.clearPortParameters());
+  ).then((_) => _containerController.cleanContainerParameters()).then((_) => _containerController.clearPortParameters());
 }
 
 Widget getBasicStep() {
@@ -86,7 +84,7 @@ Widget getBasicStep() {
     padding: const EdgeInsets.all(8.0),
     child: Column(
       children: [
-        TextFieldBox(controller: _containerController.containerNameEditingController, label: 'Name'),
+        TextFieldBox(controller: _containerController.containerNameEditingController, label: 'Name (Optional)'),
         SizedBox(height: 8),
         TextFieldBox(controller: _containerController.containerHostnameEditingController, label: 'Hostname (Optional)'),
         SizedBox(height: 8),
@@ -170,7 +168,7 @@ Widget installedImagesTab() {
               value: containerImage.name,
               selectedValue: _containerController.selectedImage.value,
               title: Text(containerImage.name),
-              subTitle: Text(truncate(containerImage.id!)),
+              subTitle: Text(truncate(containerImage.id)),
               onChanged: (value) => _containerController.selectedImage.value = value,
             ),
           ),
@@ -405,7 +403,7 @@ Future<void> displayConnectNetworkToContainerDialog() async {
         ),
       );
     },
-  );
+  ).then((_) => _containerController.clearNetworkParameters());
 }
 
 Widget getNetworkName(NetworkInfo ni) {
@@ -414,7 +412,7 @@ Widget getNetworkName(NetworkInfo ni) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(ni.name),
-      Text('Subnet: ${ni.subnets[0].subnet}     Gateway: ${ni.subnets[0].gateway}',style: TextStyle(fontSize: 12,color: Colors.black54)),
+      Text('Subnet: ${ni.subnets[0].subnet}     Gateway: ${ni.subnets[0].gateway}', style: TextStyle(fontSize: 12, color: Colors.black54)),
     ],
   );
 }
