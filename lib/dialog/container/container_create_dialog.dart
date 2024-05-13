@@ -379,14 +379,14 @@ Future<void> displayConnectNetworkToContainerDialog() async {
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField2<NetworkInfo>(
-                isDense: true,
+                buttonStyleData: ButtonStyleData(height: 40),
+                isDense: false,
                 decoration: InputDecoration(
-                  isDense: true,
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (e) => _containerController.selectedNetwork.value = e,
                 hint: const Text('Select Network', style: TextStyle(fontSize: 14)),
-                items: _containerController.networkList.map((e) => DropdownMenuItem(value: e, child: Text(e.name))).toList(),
+                items: _containerController.networkList.map((e) => DropdownMenuItem(value: e, child: getNetworkName(e))).toList(),
               ),
               SizedBox(height: 8),
               TextFieldBox(controller: _containerController.containerIpAddressEditingController, label: 'IP address (Optional)'),
@@ -405,6 +405,17 @@ Future<void> displayConnectNetworkToContainerDialog() async {
         ),
       );
     },
+  );
+}
+
+Widget getNetworkName(NetworkInfo ni) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(ni.name),
+      Text('Subnet: ${ni.subnets[0].subnet}     Gateway: ${ni.subnets[0].gateway}',style: TextStyle(fontSize: 12,color: Colors.black54)),
+    ],
   );
 }
 

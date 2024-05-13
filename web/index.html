@@ -37,9 +37,15 @@
 <script src="flutter_bootstrap.js" async></script>
 
 <script>
-    window.flutterConfiguration = {
-      canvasKitBaseUrl: "/canvaskit/"
-    };
+    FlutterLoader.load.loadEntrypoint({
+       onEntrypointLoaded: async function(engineInitializer) {
+         let appRunner = await engineInitializer.initializeEngine({
+           // JsFlutterConfiguration goes here...
+           canvasKitBaseUrl: "/canvaskit/",
+         });
+         appRunner.runApp();
+       }
+     });
 </script>
 <script>
     // Get the X-BACKEND-URL header value
