@@ -390,7 +390,7 @@ class ContainerController extends GetxController {
           (e) {
             developer.log('${e.code}    ${e.message}');
             displayInfo(e.message);
-            if (e.code == EventCode.EVENT_CODE_CONTAINER_CREATE_COMPLETED.value) {
+            if (e.code == EventCode.EVENT_CODE_CONTAINER_CREATE_COMPLETED.value || e.code == EventCode.EVENT_CODE_CONTAINER_ERROR.value) {
               listContainers();
               listImages();
             }
