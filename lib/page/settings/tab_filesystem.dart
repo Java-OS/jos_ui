@@ -95,7 +95,7 @@ class _TabFilesystemState extends State<TabFilesystem> {
       _systemController.clear();
       _systemController.partitionEditingController.text = partition.partition;
       _systemController.filesystemTypeEditingController.text = partition.type;
-      displayMountFilesystemModal(context);
+      displayMountFilesystemModal();
     } else {
       _systemController.umount(partition);
     }

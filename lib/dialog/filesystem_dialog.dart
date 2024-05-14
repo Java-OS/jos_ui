@@ -10,9 +10,9 @@ import 'package:jos_ui/widget/text_field_box_widget.dart';
 SystemController _systemController = Get.put(SystemController());
 LogController _logController = Get.put(LogController());
 
-Future<void> displayMountFilesystemModal(BuildContext context) async {
+Future<void> displayMountFilesystemModal() async {
   showDialog(
-    context: context,
+    context: Get.context!,
     builder: (BuildContext context) {
       return SimpleDialog(
         title: getModalHeader('Mount filesystem'),
