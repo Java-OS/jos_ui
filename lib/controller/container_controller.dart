@@ -36,7 +36,6 @@ class ContainerController extends GetxController {
 
   /* Container fields */
   final TextEditingController containerNameEditingController = TextEditingController();
-  final TextEditingController containerHostnameEditingController = TextEditingController();
   final TextEditingController containerDnsSearchEditingController = TextEditingController();
   final TextEditingController containerDnsServerEditingController = TextEditingController();
   final TextEditingController containerUserEditingController = TextEditingController();
@@ -273,7 +272,6 @@ class ContainerController extends GetxController {
     var name = containerNameEditingController.text;
     var dnsSearch = containerDnsSearchEditingController.text;
     var dnsServer = containerDnsServerEditingController.text;
-    var hostname = containerHostnameEditingController.text;
     var user = containerUserEditingController.text;
     var workDir = containerWorkDirEditingController.text;
     developer.log('Create container $name');
@@ -288,7 +286,6 @@ class ContainerController extends GetxController {
       useHostEnvironments.value,
       expose.isEmpty ? null : expose,
       hosts.isEmpty ? null : hosts,
-      hostname.isEmpty ? null : hostname,
       selectedImage.value,
       null,
       privileged.value,
@@ -423,7 +420,6 @@ class ContainerController extends GetxController {
 
   void cleanContainerParameters() {
     containerNameEditingController.clear();
-    containerHostnameEditingController.clear();
     containerDnsSearchEditingController.clear();
     containerDnsServerEditingController.clear();
     containerUserEditingController.clear();

@@ -11,7 +11,6 @@ class CreateContainer {
   final bool useHostEnvironments;
   final Map<int, Protocol>? expose;
   final List<String>? hosts;
-  final String? hostname;
   final String image;
   final String? pod;
   final bool privileged;
@@ -22,7 +21,7 @@ class CreateContainer {
   final Map<String, NetworkConnect>? networks;
   final Map<String, String>? netns;
 
-  CreateContainer(this.name, this.dnsSearch, this.dnsServer, this.environments, this.useHostEnvironments, this.expose, this.hosts, this.hostname, this.image, this.pod, this.privileged, this.user, this.workDir, this.volumes, this.portMappings, this.networks, this.netns);
+  CreateContainer(this.name, this.dnsSearch, this.dnsServer, this.environments, this.useHostEnvironments, this.expose, this.hosts, this.image, this.pod, this.privileged, this.user, this.workDir, this.volumes, this.portMappings, this.networks, this.netns);
 
   Map<String, dynamic> toMap() {
     return {
@@ -33,7 +32,6 @@ class CreateContainer {
       'env_host': useHostEnvironments,
       'expose': expose?.map((k,v) => MapEntry(k.toString(), v.name.toUpperCase())),
       'hostadd': hosts,
-      'hostname': hostname,
       'image': image,
       'pod': pod,
       'privileged': privileged,

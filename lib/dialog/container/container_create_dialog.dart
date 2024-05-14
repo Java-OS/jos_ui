@@ -54,7 +54,7 @@ Future<void> displayCreateContainer() async {
                       child: ElevatedButton(
                         onPressed: isLastStep
                             ? _containerController.createContainer
-                            : isImageSelected
+                            : (isImageSelected)
                                 ? controlDetails.onStepContinue
                                 : null,
                         child: Text(isLastStep ? 'Create container' : 'Next'),
@@ -85,8 +85,6 @@ Widget getBasicStep() {
     child: Column(
       children: [
         TextFieldBox(controller: _containerController.containerNameEditingController, label: 'Name (Optional)'),
-        SizedBox(height: 8),
-        TextFieldBox(controller: _containerController.containerHostnameEditingController, label: 'Hostname (Optional)'),
         SizedBox(height: 8),
         TextFieldBox(controller: _containerController.containerUserEditingController, label: 'User  (Optional)'),
         SizedBox(height: 8),
