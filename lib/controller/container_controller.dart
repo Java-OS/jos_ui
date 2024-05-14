@@ -49,6 +49,9 @@ class ContainerController extends GetxController {
   final TextEditingController hostIpEditingController = TextEditingController();
   final TextEditingController rangeEditingController = TextEditingController();
 
+  /* Registries */
+  final TextEditingController registryEditingController = TextEditingController();
+
   var waitingImageSearch = false.obs;
   var waitingListImages = false.obs;
 
@@ -70,6 +73,7 @@ class ContainerController extends GetxController {
   var selectedProtocol = Protocol.tcp.obs;
   var step = 0.obs;
   var sseConnected = false;
+  var registries = <String>{}.obs;
 
   /* Image methods */
   Future<void> listImages() async {
@@ -399,6 +403,33 @@ class ContainerController extends GetxController {
           onError: (e) => sseConnected = false,
           onDone: () => sseConnected = false,
         );
+  }
+
+  Future<void> loadRegistries() async {
+    developer.log('Load registries');
+    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_SETTING_REGISTRIES_LOAD);
+    if (payload.metadata.success) {
+      registries.assignAll(Set<String>.from(jsonDecode(payload.postJson)));
+    }
+  }
+
+  Future<void> saveRegistries() async {
+    developer.log('Save registries');
+    var reqParams = {'registries': jsonEncode(registries.toList())};
+    developer.log('$registries');
+    await RestClient.rpc(RPC.RPC_CONTAINER_SETTING_REGISTRIES_SAVE, parameters: reqParams);
+    await loadRegistries();
+    Get.back();
+    registryEditingController.clear();
+  }
+
+  Future<void> removeRegistries(String registry) async {
+    developer.log('Remove registries');
+    registries.removeWhere((e) => e == registry);
+    var reqParams = {'registries': jsonEncode(registries.toList())};
+    developer.log('$registries');
+    await RestClient.rpc(RPC.RPC_CONTAINER_SETTING_REGISTRIES_SAVE, parameters: reqParams);
+    await loadRegistries();
   }
 
   void clearNetworkParameters() {

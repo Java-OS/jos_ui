@@ -5,6 +5,7 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page/container/tab_containers.dart';
 import 'package:jos_ui/page/container/tab_images.dart';
 import 'package:jos_ui/page/container/tab_networks.dart';
+import 'package:jos_ui/page/container/tab_settings.dart';
 import 'package:jos_ui/page/container/tab_volumes.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -38,6 +39,7 @@ class ContainerBasePageState extends State<ContainerBasePage> {
               sideMenu(1, MdiIcons.layersTriple),
               sideMenu(2, MdiIcons.sd),
               sideMenu(3, MdiIcons.networkOutline),
+              sideMenu(4, MdiIcons.cog),
             ],
           ),
           Expanded(
@@ -88,6 +90,8 @@ class ContainerBasePageState extends State<ContainerBasePage> {
         return OCITabVolumes();
       case 3:
         return OCITabNetworks();
+      case 4:
+        return OCITabSettings();
       default:
         return OCITabContainers();
     }
