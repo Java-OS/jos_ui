@@ -69,12 +69,7 @@ class ContainerController extends GetxController {
   var selectedNetwork = Rxn<NetworkInfo>();
   var selectedProtocol = Protocol.tcp.obs;
   var step = 0.obs;
-
-  @override
-  void onInit() {
-    consumeEvents();
-    super.onInit();
-  }
+  var sseConnected = false;
 
   /* Image methods */
   Future<void> listImages() async {
@@ -113,6 +108,7 @@ class ContainerController extends GetxController {
   }
 
   void pullImage(String name) async {
+    consumeEvents();
     developer.log('Pull image $name');
     var reqParams = {'name': name};
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_PULL, parameters: reqParams);
@@ -268,6 +264,7 @@ class ContainerController extends GetxController {
   }
 
   void createContainer() async {
+    consumeEvents();
     developer.log('Try to create container');
     var name = containerNameEditingController.text;
     var dnsSearch = containerDnsSearchEditingController.text;
@@ -384,6 +381,8 @@ class ContainerController extends GetxController {
   }
 
   void consumeEvents() async {
+    if (sseConnected) return;
+    sseConnected = true;
     developer.log('SSE Consumer activated');
     fetchResponse = await RestClient.sseBasic();
     fetchResponse!.stream.map((e) => Event.fromBuffer(e)).listen(
@@ -396,10 +395,9 @@ class ContainerController extends GetxController {
             }
             if (e.code == EventCode.EVENT_CODE_CONTAINER_IMAGE_PULL_COMPLETED.value) listImages();
           },
-          cancelOnError: false,
-          onError: (e) {
-            developer.log('SSE Error : $e');
-          },
+          cancelOnError: true,
+          onError: (e) => sseConnected = false,
+          onDone: () => sseConnected = false,
         );
   }
 
