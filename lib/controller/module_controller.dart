@@ -85,7 +85,7 @@ class ModuleController extends GetxController {
   Future<void> uploadModule() async {
     var picked = await FilePickerWeb.platform.pickFiles();
     if (picked != null) {
-      var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.module, null);
+      var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.UPLOAD_TYPE_MODULE, null);
       if (uploaded) fetchModules();
     }
   }

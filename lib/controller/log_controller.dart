@@ -146,15 +146,6 @@ class LogController extends GetxController {
     }
   }
 
-  Future<void> downloadLog(String package, String fileName) async {
-    var params = {
-      'type': 'log',
-      'package': package,
-      'file': fileName,
-    };
-    await RestClient.download(params);
-  }
-
   void clear() {
     packageEditingController.clear();
     typeEditingController.clear();

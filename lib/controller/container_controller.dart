@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:fetch_client/fetch_client.dart';
+import 'package:file_picker/_internal/file_picker_web.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/model/container/ContainerImage.dart';
@@ -432,6 +433,15 @@ class ContainerController extends GetxController {
     await loadRegistries();
   }
 
+  Future<void> uploadFileToVolume() async {
+    var picked = await FilePickerWeb.platform.pickFiles();
+    if (picked != null) {
+      var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.UPLOAD_TYPE_MODULE, null);
+      if (uploaded) ();
+    }
+  }
+
+  /* Other methods */
   void clearNetworkParameters() {
     containerIpAddressEditingController.clear();
     containerMacAddressEditingController.clear();

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/tab_content.dart';
-import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:jos_ui/controller/container_controller.dart';
-import 'package:jos_ui/controller/system_controller.dart';
+import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/dialog/container/create_volume_dialog.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
+import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class OCITabVolumes extends StatefulWidget {
@@ -18,7 +18,7 @@ class OCITabVolumes extends StatefulWidget {
 
 class OCITabVolumesState extends State<OCITabVolumes> {
   final _containerController = Get.put(ContainerController());
-  final _systemController = Get.put(SystemController());
+  final _filesystemController = Get.put(FilesystemController());
   var _waitingVolumeLoad = false;
 
   @override
@@ -87,6 +87,6 @@ class OCITabVolumesState extends State<OCITabVolumes> {
   }
 
   fetchTreeAndDisplay(String path) {
-    _systemController.fetchFilesystemTree(path).then((value) => displayFilesystemTree(true));
+    _filesystemController.fetchFilesystemTree(path).then((value) => displayFilesystemTree(true,true));
   }
 }

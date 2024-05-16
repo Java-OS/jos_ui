@@ -33,7 +33,8 @@ String truncateWithEllipsis(int length, String myString) {
 
 String truncate(String str) {
   // return dummy str
-  if (str.length < 12) return str;
+  if (str.isEmpty) return str;
+  if (str.length <= 16) return str;
 
   // truncate str
   return '${str.substring(0, 16)} ... ${str.substring(str.length - 16)}';

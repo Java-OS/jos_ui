@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/controller/log_controller.dart';
-import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/log_info.dart';
@@ -12,9 +12,9 @@ import 'package:jos_ui/widget/drop_down_widget.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 
-final LogController _logController = Get.put(LogController());
-final SystemController _systemController = Get.put(SystemController());
-final ScrollController _scrollController = ScrollController();
+var _logController = Get.put(LogController());
+var _filesystemController = Get.put(FilesystemController());
+var _scrollController = ScrollController();
 
 Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
   if (logInfo != null) {
@@ -184,17 +184,21 @@ Future<void> displayLoggerModal(BuildContext context) async {
               titlePadding: EdgeInsets.zero,
               backgroundColor: componentBackgroundColor,
               scrollable: true,
-              content: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: TabBox(
-                  tabs: const [
-                    TabItem(text: 'File', icon: Icons.file_copy_outlined, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
-                    TabItem(text: 'Syslog', icon: Icons.terminal_rounded, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
-                  ],
-                  contents: [
-                    Obx(() => fileLoggerTab(context)),
-                    Obx(() => syslogLoggerTab(context)),
-                  ],
+              content: SizedBox(
+                width: 900,
+                height: 300,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: TabBox(
+                    tabs: const [
+                      TabItem(text: 'File', icon: Icons.file_copy_outlined, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
+                      TabItem(text: 'Syslog', icon: Icons.terminal_rounded, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
+                    ],
+                    contents: [
+                      Obx(() => fileLoggerTab(context)),
+                      Obx(() => syslogLoggerTab(context)),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -333,7 +337,7 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
 }
 
 fetchTreeAndDisplay(String package) {
-  _systemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(true));
+  _filesystemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(false,true));
 }
 
 Future<void> displayFileLogAppender(LogInfo? logInfo) async {

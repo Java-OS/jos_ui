@@ -16,12 +16,6 @@ import 'package:jos_ui/service/h5proto.dart';
 import 'package:jos_ui/service/storage_service.dart';
 import 'package:jos_ui/widget/toast.dart';
 
-enum UploadType {
-  module,
-  config,
-  ssl;
-}
-
 class RestClient {
   static final JvmController jvmController = getx.Get.put(JvmController());
   static final _http = http.Client();
@@ -168,7 +162,7 @@ class RestClient {
     };
 
     try {
-      var request = http.MultipartRequest('POST', Uri.parse('${_baseUploadUrl()}/${type.name}'));
+      var request = http.MultipartRequest('POST', Uri.parse('${_baseUploadUrl()}/${type.value}'));
       request.headers.addAll(headers);
       var fileOrder = http.MultipartFile.fromBytes('file', bytes, filename: fileName);
       request.files.add(fileOrder);
@@ -177,6 +171,28 @@ class RestClient {
       return response.statusCode == 200;
     } catch (e) {
       displayError('Invalid ${type.name} file');
+      return false;
+    }
+  }
+
+  static Future<bool> uploadFile(Uint8List bytes, String fileName, String path) async {
+    developer.log('selected file: $fileName');
+
+    var token = StorageService.getItem('token');
+    var headers = {
+      'authorization': 'Bearer $token',
+    };
+
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse('${_baseUploadUrl()}/${UploadType.UPLOAD_TYPE_FILE.value}'));
+      request.headers.addAll(headers);
+      var fileOrder = http.MultipartFile.fromBytes('file', bytes, filename: fileName);
+      request.files.add(fileOrder);
+      request.fields['path'] = path;
+      var response = await request.send();
+      return response.statusCode == 200;
+    } catch (e) {
+      displayError('Upload file failed');
       return false;
     }
   }
@@ -193,7 +209,7 @@ class RestClient {
     };
 
     developer.log('Header send: [$header]');
-    var metadata = Metadata(logLevel: logLevel.name.toUpperCase(), logPackage: packageName,sseType: SSEType.SSE_TYPE_LOG);
+    var metadata = Metadata(logLevel: logLevel.name.toUpperCase(), logPackage: packageName, sseType: SSEType.SSE_TYPE_LOG);
 
     var packet = await _h5Proto.encode(Payload(metadata: metadata));
 
@@ -218,7 +234,7 @@ class RestClient {
 
     developer.log('Header send: [$header]');
     var metadata = Metadata(sseType: SSEType.SSE_TYPE_BASIC);
-    var packet = await _h5Proto.encode(Payload(metadata: metadata ));
+    var packet = await _h5Proto.encode(Payload(metadata: metadata));
 
     var request = http.Request('POST', Uri.parse(_baseSseUrl()));
     request.bodyBytes = packet.writeToBuffer();
@@ -228,51 +244,45 @@ class RestClient {
     return fetchClient.send(request);
   }
 
-
-  static Future<void> download(Map<String, String> parameters) async {
-    developer.log('Download file: ');
+  static Future<Payload> download(String path, String? password) async {
+    developer.log('Download file: [$path]');
     var token = StorageService.getItem('token');
-    if (token == null) getx.Get.toNamed('/');
-    var headers = {
-      'Authorization': 'Bearer $token',
+    if (token == null) getx.Get.toNamed('/login');
+    var headers = {'Authorization': 'Bearer $token'};
+    developer.log('Header send: [$headers]');
+
+    var parameters = {
+      'file': path,
+      'password': password,
     };
-    developer.log('Credential send: [$headers]');
+
+    var packet = await _h5Proto.encode(Payload(postJson: jsonEncode(parameters)));
 
     try {
-      var data = jsonEncode(parameters);
-      var packet = await _h5Proto.encode(Payload(postJson: data));
+      var response = await _http.post(Uri.parse(_baseDownloadUrl()), body: packet.writeToBuffer(), headers: headers);
+      var statusCode = response.statusCode;
+      developer.log('Response received with http code: $statusCode');
 
-      var uri = Uri.parse(_baseDownloadUrl());
-
-      final anchor = AnchorElement(href: '#')
-        ..setAttribute('download', '')
-        ..style.display = 'none';
-      document.body!.append(anchor);
-
-      // final request = await http.head(uri, headers: headers);
-      final request = http.Request('POST', uri);
-      request.headers.addAll(headers);
-      request.bodyBytes = packet.writeToBuffer();
-
-      final client = http.Client();
-      final streamedResponse = await client.send(request);
-      final response = await http.Response.fromStream(streamedResponse);
       final blob = Blob([response.bodyBytes]);
       final urlObject = Url.createObjectUrlFromBlob(blob);
 
       final contentDisposition = response.headers['content-disposition'];
       final filename = contentDisposition?.split('filename=')[1].replaceAll('"', '');
 
+      final anchor = AnchorElement(href: '#')
+        ..setAttribute('download', '')
+        ..style.display = 'none';
+      document.body!.append(anchor);
+
       anchor.href = urlObject;
       anchor.download = filename;
       anchor.click();
       anchor.remove();
       Url.revokeObjectUrl(urlObject);
-
-      client.close();
     } catch (e) {
       developer.log('[Http Error] $rpc ${e.toString()}');
     }
+    return Payload(metadata: Metadata(success: false));
   }
 
   static Future<Payload> decodeResponsePayload(http.Response response) async {

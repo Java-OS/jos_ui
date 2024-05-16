@@ -56,18 +56,14 @@ class BackupController extends GetxController {
   }
 
   Future<void> downloadBackup(int id) async {
-    var params = {
-      'type': 'config',
-      'id': id.toString(),
-      'password': passwordEditingController.text,
-    };
-    await RestClient.download(params);
+    var fileName = backupList[id];
+    await RestClient.download('/etc/$fileName', passwordEditingController.text);
     Get.back();
     passwordEditingController.clear();
   }
 
   Future<void> uploadBackup(Uint8List bytes, String name) async {
-    var success = await RestClient.upload(bytes, name, UploadType.config, passwordEditingController.text);
+    var success = await RestClient.upload(bytes, name, UploadType.UPLOAD_TYPE_CONFIG, passwordEditingController.text);
     if (success) {
       fetchBackups();
       Get.back();
