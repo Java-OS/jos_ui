@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
@@ -16,6 +17,16 @@ void main() {
   runApp(const MyApp());
 }
 
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods like buildOverscrollIndicator and buildScrollbar
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    // etc.
+  };
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -23,6 +34,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ToastificationWrapper(
       child: GetMaterialApp(
+        scrollBehavior: MyCustomScrollBehavior(),
         theme: ThemeData(useMaterial3: false, fontFamily: 'Roboto'),
         debugShowCheckedModeBanner: false,
         title: 'JOS',

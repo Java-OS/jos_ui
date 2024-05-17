@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/controller/log_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
@@ -14,7 +15,9 @@ import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 var _logController = Get.put(LogController());
 var _filesystemController = Get.put(FilesystemController());
-var _scrollController = ScrollController();
+var _containerController = Get.put(ContainerController());
+var _verticalScrollController = ScrollController();
+var _horizontalScrollController = ScrollController();
 
 Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
   if (logInfo != null) {
@@ -81,7 +84,7 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
                   //     onPressed: () => _logController.isTail.value = !_logController.isTail.value,
                   //   ),
                   // ),
-                  SizedBox(width: 8),
+                  // SizedBox(width: 8),
                   CharButton(
                     width: 36,
                     height: 36,
@@ -97,7 +100,7 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
                   width: 900,
                   height: 400,
                   child: SingleChildScrollView(
-                    controller: _scrollController,
+                    controller: _verticalScrollController,
                     scrollDirection: Axis.vertical,
                     child: Obx(
                       () => DataTable(
@@ -131,7 +134,7 @@ List<DataColumn> _getLogColumns() {
 List<DataRow> _getLogRows() {
   var dataRowList = <DataRow>[];
   var list = _logController.queue;
-  if (list.isNotEmpty && _logController.isTail.isTrue) _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  if (list.isNotEmpty && _logController.isTail.isTrue) _verticalScrollController.jumpTo(_verticalScrollController.position.maxScrollExtent);
   for (var log in list) {
     var level = log.level;
     var dateTime = log.dateTime;
@@ -337,7 +340,7 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
 }
 
 fetchTreeAndDisplay(String package) {
-  _filesystemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(false,true));
+  _filesystemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(false, true));
 }
 
 Future<void> displayFileLogAppender(LogInfo? logInfo) async {
@@ -456,4 +459,71 @@ Future<void> displaySysLogAppender(LogInfo? logInfo) async {
       );
     },
   ).then((value) => _logController.clear());
+}
+
+Future<void> displayContainerLoggerModal() async {
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: getModalHeader('Logs'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        contentPadding: EdgeInsets.zero,
+        titlePadding: EdgeInsets.zero,
+        content: SizedBox(
+          width: 800,
+          height: 400,
+          child: Obx(
+            () => Container(
+              height: double.infinity,
+              width: double.infinity,
+              color: Colors.black,
+              child: Scrollbar(
+                controller: _verticalScrollController,
+                interactive: true,
+                trackVisibility: true,
+                thumbVisibility: true,
+                scrollbarOrientation: ScrollbarOrientation.right,
+                child: Scrollbar(
+                  controller: _horizontalScrollController,
+                  interactive: true,
+                  trackVisibility: true,
+                  thumbVisibility: true,
+                  child: RawScrollbar(
+                    thumbColor: Colors.white,
+                    radius: Radius.circular(16),
+                    thickness: 7,
+                    child: SingleChildScrollView(
+                      controller: _verticalScrollController,
+                      child: RawScrollbar(
+                        thumbColor: Colors.white,
+                        radius: Radius.circular(16),
+                        thickness: 7,
+                        child: SingleChildScrollView(
+                          controller: _horizontalScrollController,
+                          primary: false,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                  _containerController.logs.value,
+                                  maxLines: 500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  ).then((_) => _containerController.closeStreamListener());
 }

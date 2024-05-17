@@ -75,6 +75,15 @@ class ContainerController extends GetxController {
   var step = 0.obs;
   var sseConnected = false;
   var registries = <String>{}.obs;
+  var logs = ''.obs;
+
+  late StreamSubscription<Event> streamListener;
+
+  void closeStreamListener() {
+    streamListener.cancel();
+    sseConnected = false;
+    logs.value = '';
+  }
 
   /* Image methods */
   Future<void> listImages() async {
@@ -268,6 +277,12 @@ class ContainerController extends GetxController {
     await listContainers();
   }
 
+  Future<void> containerLogs(String name) async {
+    developer.log('Get container logs $name');
+    var reqParams = {'name': name};
+    consumeEvents().then((_) => RestClient.rpc(RPC.RPC_CONTAINER_LOGS, parameters: reqParams));
+  }
+
   void createContainer() async {
     consumeEvents();
     developer.log('Try to create container');
@@ -385,25 +400,33 @@ class ContainerController extends GetxController {
     selectedProtocol.value = p;
   }
 
-  void consumeEvents() async {
+  Future<void> consumeEvents() async {
     if (sseConnected) return;
     sseConnected = true;
     developer.log('SSE Consumer activated');
     fetchResponse = await RestClient.sseBasic();
-    fetchResponse!.stream.map((e) => Event.fromBuffer(e)).listen(
-          (e) {
-            developer.log('${e.code}    ${e.message}');
-            displayInfo(e.message);
-            if (e.code == EventCode.EVENT_CODE_CONTAINER_CREATE_COMPLETED.value || e.code == EventCode.EVENT_CODE_CONTAINER_ERROR.value) {
-              listContainers();
-              listImages();
-            }
-            if (e.code == EventCode.EVENT_CODE_CONTAINER_IMAGE_PULL_COMPLETED.value) listImages();
-          },
-          cancelOnError: true,
-          onError: (e) => sseConnected = false,
-          onDone: () => sseConnected = false,
-        );
+    streamListener = fetchResponse!.stream.map((e) => Event.fromBuffer(e)).listen(
+      (e) {
+        var message = e.message.trim().substring(8);
+        if (e.code == EventCode.EVENT_CODE_CONTAINER_CREATE_COMPLETED.value || e.code == EventCode.EVENT_CODE_CONTAINER_ERROR.value) {
+          displayInfo(message);
+          listContainers();
+          listImages();
+        } else if (e.code == EventCode.EVENT_CODE_CONTAINER_IMAGE_PULL_COMPLETED.value) {
+          displayInfo(message);
+          listImages();
+        } else if (e.code == EventCode.EVENT_CODE_CONTAINER_LOGS.value) {
+          if (logs.value.split('\n').length == 500) {
+            logs.value = logs.value.substring(logs.value.indexOf('\n') + 1);
+          }
+          logs.value += '$message\n';
+          logs.refresh();
+        }
+      },
+      cancelOnError: true,
+      onError: (e) => sseConnected = false,
+      onDone: () => sseConnected = false,
+    );
   }
 
   Future<void> loadRegistries() async {
