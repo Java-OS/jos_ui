@@ -35,5 +35,5 @@ Future<void> displayCreateNetwork() async {
         ],
       );
     },
-  );
+  ).then((_) => _containerController.clearNetworkParameters());
 }

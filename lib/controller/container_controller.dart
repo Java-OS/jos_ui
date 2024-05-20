@@ -89,22 +89,20 @@ class ContainerController extends GetxController {
       'code': event.value,
     };
     fetchResponse = await RestClient.sse(jsonEncode(content));
-    sseListener = fetchResponse!.stream.where((event) => event.isNotEmpty)
-        .transform(const Utf8Decoder())
-        .map((e) => Event.fromJson(e)).listen(
-      (e) {
-        var code = e.code;
-        var message = e.message.trim();
-        debugPrint('$code ->   $message');
-        handleEvents(code, message);
-      },
-      cancelOnError: true,
-      onError: (e) {
-        debugPrint('$e');
-        closeStreamListener();
-      },
-      onDone: () => closeStreamListener(),
-    );
+    sseListener = fetchResponse!.stream.where((event) => event.isNotEmpty).transform(const Utf8Decoder()).map((e) => Event.fromJson(e)).listen(
+          (e) {
+            var code = e.code;
+            var message = e.message.trim();
+            debugPrint('$code ->   $message');
+            handleEvents(code, message);
+          },
+          cancelOnError: true,
+          onError: (e) {
+            debugPrint('$e');
+            closeStreamListener();
+          },
+          onDone: () => closeStreamListener(),
+        );
   }
 
   Future<void> handleEvents(EventCode code, String message) async {
@@ -238,7 +236,8 @@ class ContainerController extends GetxController {
     var gateway = networkGatewayEditingController.text;
     developer.log('Create network $name');
 
-    var network = Network(name, [Subnet(subnet, gateway)]);
+    var subnets = subnet.isEmpty ? <Subnet>[] : [Subnet(subnet, gateway)];
+    var network = Network(name, subnets);
     var networkJson = jsonEncode(network.toMap());
 
     var reqParams = {'network': networkJson};

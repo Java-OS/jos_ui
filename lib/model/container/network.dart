@@ -9,7 +9,7 @@ class Network {
   Map<String, dynamic> toMap() {
     return {
       'Name': name,
-      'subnets': [subnets[0].toMap()]
+      'subnets': subnets.isEmpty ? [] : [subnets[0].toMap()]
     };
   }
 }
