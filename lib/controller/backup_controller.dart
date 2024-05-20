@@ -17,7 +17,7 @@ class BackupController extends GetxController {
     developer.log('Fetch system backups called');
     var payload = await RestClient.rpc(RPC.RPC_CONFIG_BACKUP_LIST);
     if (payload.metadata.success) {
-      var mappedItems = (jsonDecode(payload.postJson) as List).map((e) => e.toString()).toList();
+      var mappedItems = (jsonDecode(payload.content) as List).map((e) => e.toString()).toList();
       backupList.assignAll(mappedItems);
     } else {
       displayWarning('Failed to fetch backups');

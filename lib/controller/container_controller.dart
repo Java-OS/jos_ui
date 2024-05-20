@@ -18,14 +18,14 @@ import 'package:jos_ui/model/container/protocol.dart';
 import 'package:jos_ui/model/container/subnet.dart';
 import 'package:jos_ui/model/container/volume.dart';
 import 'package:jos_ui/model/container/volume_parameter.dart';
+import 'package:jos_ui/model/event.dart';
+import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/protobuf/message-buffer.pbserver.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
 class ContainerController extends GetxController {
-  FetchResponse? fetchResponse;
-
   final TextEditingController searchImageEditingController = TextEditingController();
   final TextEditingController volumeNameEditingController = TextEditingController();
   final TextEditingController volumeMountPointEditingController = TextEditingController();
@@ -73,16 +73,58 @@ class ContainerController extends GetxController {
   var selectedNetwork = Rxn<NetworkInfo>();
   var selectedProtocol = Protocol.tcp.obs;
   var step = 0.obs;
-  var sseConnected = false;
   var registries = <String>{}.obs;
   var logs = ''.obs;
 
-  late StreamSubscription<Event> streamListener;
+  FetchResponse? fetchResponse;
+  late StreamSubscription<Event> sseListener;
+  var sseConnected = false;
+
+  Future<void> containerSSEConsumer(String? message, EventCode event) async {
+    if (sseConnected) return;
+    debugPrint('SSE Container Logs Consumer activated');
+    sseConnected = true;
+    var content = {
+      'message': message,
+      'code': event.value,
+    };
+    fetchResponse = await RestClient.sse(jsonEncode(content));
+    sseListener = fetchResponse!.stream.where((event) => event.isNotEmpty)
+        .transform(const Utf8Decoder())
+        .map((e) => Event.fromJson(e)).listen(
+      (e) {
+        var code = e.code;
+        var message = e.message.trim();
+        debugPrint('$code ->   $message');
+        handleEvents(code, message);
+      },
+      cancelOnError: true,
+      onError: (e) {
+        debugPrint('$e');
+        closeStreamListener();
+      },
+      onDone: () => closeStreamListener(),
+    );
+  }
+
+  Future<void> handleEvents(EventCode code, String message) async {
+    if (code == EventCode.containerNotification) {
+      displayInfo(message);
+      listContainers();
+      listImages();
+    } else if (code == EventCode.containerLogs) {
+      if (logs.value.split('\n').length == 500) logs.value = logs.value.substring(logs.value.indexOf('\n') + 1);
+      logs.value += '$message\n';
+      logs.refresh();
+    }
+  }
 
   void closeStreamListener() {
-    streamListener.cancel();
+    debugPrint('Close sse connection');
+    sseListener.cancel();
+    fetchResponse?.cancel();
     sseConnected = false;
-    logs.value = '';
+    logs = ''.obs;
   }
 
   /* Image methods */
@@ -90,7 +132,7 @@ class ContainerController extends GetxController {
     developer.log('List images');
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_LIST);
     if (payload.metadata.success) {
-      var obj = (jsonDecode(payload.postJson) as List);
+      var obj = (jsonDecode(payload.content) as List);
       containerImageList.value = obj.map((e) => ContainerImage.fromMap(e)).toList();
     }
   }
@@ -115,23 +157,19 @@ class ContainerController extends GetxController {
 
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_SEARCH, parameters: reqParams);
     if (payload.metadata.success) {
-      var obj = (jsonDecode(payload.postJson) as List);
+      var obj = (jsonDecode(payload.content) as List);
       searchImageList.value = obj.map((e) => ImageSearch.fromMap(e)).toList();
     }
     waitingImageSearch.value = false;
   }
 
   void pullImage(String name) async {
-    consumeEvents();
+    containerSSEConsumer(null, EventCode.containerNotification);
     developer.log('Pull image $name');
     var reqParams = {'name': name};
+    searchImageList.removeWhere((item) => item.name == name);
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_PULL, parameters: reqParams);
     if (payload.metadata.success) {
-      var indexIndex = searchImageList.indexWhere((item) => item.name == name);
-      var updatableItem = searchImageList[indexIndex];
-      updatableItem.tag = 'JOS_PULL_IMAGE';
-      searchImageList[indexIndex] = updatableItem;
-
       var pullItemImage = ContainerImage('', '', 0, 0, name, '');
       containerImageList.add(pullItemImage);
     }
@@ -158,7 +196,7 @@ class ContainerController extends GetxController {
     developer.log('List volumes');
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_VOLUME_LIST);
     if (payload.metadata.success) {
-      var obj = (jsonDecode(payload.postJson) as List);
+      var obj = (jsonDecode(payload.content) as List);
       volumeList.value = obj.map((e) => Volume.fromMap(e)).toList();
     }
   }
@@ -189,7 +227,7 @@ class ContainerController extends GetxController {
     developer.log('List networks');
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_NETWORK_LIST);
     if (payload.metadata.success) {
-      var obj = (jsonDecode(payload.postJson) as List);
+      var obj = (jsonDecode(payload.content) as List);
       networkList.value = obj.map((e) => NetworkInfo.fromMap(e)).toList();
     }
   }
@@ -220,7 +258,7 @@ class ContainerController extends GetxController {
     developer.log('List containers');
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_LIST);
     if (payload.metadata.success) {
-      var obj = (jsonDecode(payload.postJson) as List);
+      var obj = (jsonDecode(payload.content) as List);
       containerList.value = obj.map((e) => ContainerInfo.fromMap(e)).toList();
     }
   }
@@ -277,14 +315,8 @@ class ContainerController extends GetxController {
     await listContainers();
   }
 
-  Future<void> containerLogs(String name) async {
-    developer.log('Get container logs $name');
-    var reqParams = {'name': name};
-    consumeEvents().then((_) => RestClient.rpc(RPC.RPC_CONTAINER_LOGS, parameters: reqParams));
-  }
-
   void createContainer() async {
-    consumeEvents();
+    containerSSEConsumer(null, EventCode.containerNotification);
     developer.log('Try to create container');
     var name = containerNameEditingController.text;
     var dnsSearch = containerDnsSearchEditingController.text;
@@ -400,40 +432,11 @@ class ContainerController extends GetxController {
     selectedProtocol.value = p;
   }
 
-  Future<void> consumeEvents() async {
-    if (sseConnected) return;
-    sseConnected = true;
-    developer.log('SSE Consumer activated');
-    fetchResponse = await RestClient.sseBasic();
-    streamListener = fetchResponse!.stream.map((e) => Event.fromBuffer(e)).listen(
-      (e) {
-        var message = e.message.trim().substring(8);
-        if (e.code == EventCode.EVENT_CODE_CONTAINER_CREATE_COMPLETED.value || e.code == EventCode.EVENT_CODE_CONTAINER_ERROR.value) {
-          displayInfo(message);
-          listContainers();
-          listImages();
-        } else if (e.code == EventCode.EVENT_CODE_CONTAINER_IMAGE_PULL_COMPLETED.value) {
-          displayInfo(message);
-          listImages();
-        } else if (e.code == EventCode.EVENT_CODE_CONTAINER_LOGS.value) {
-          if (logs.value.split('\n').length == 500) {
-            logs.value = logs.value.substring(logs.value.indexOf('\n') + 1);
-          }
-          logs.value += '$message\n';
-          logs.refresh();
-        }
-      },
-      cancelOnError: true,
-      onError: (e) => sseConnected = false,
-      onDone: () => sseConnected = false,
-    );
-  }
-
   Future<void> loadRegistries() async {
     developer.log('Load registries');
     var payload = await RestClient.rpc(RPC.RPC_CONTAINER_SETTING_REGISTRIES_LOAD);
     if (payload.metadata.success) {
-      registries.assignAll(Set<String>.from(jsonDecode(payload.postJson)));
+      registries.assignAll(Set<String>.from(jsonDecode(payload.content)));
     }
   }
 
@@ -509,8 +512,7 @@ class ContainerController extends GetxController {
 
   @override
   void onClose() {
-    developer.log('Container controller closed');
-    fetchResponse?.cancel();
+    closeStreamListener();
     super.onClose();
   }
 }

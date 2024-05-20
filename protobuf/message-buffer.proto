@@ -8,12 +8,12 @@ option java_multiple_files = true;
 message Packet {
     bytes iv = 1;
     bytes hash = 2;
-    bytes content = 3;
+    bytes payload = 3;
 }
 
 message Payload {
     Metadata metadata = 1;
-    string post_json = 2;
+    string content = 2;
 }
 
 message Metadata {
@@ -21,27 +21,7 @@ message Metadata {
     int32 rpc = 2;
     int32 error = 3;
     bool need_restart = 4;
-    string log_package = 5;
-    string log_level = 6;
     string message = 7;
-    SSEType sse_type = 8;
-}
-
-message Event {
-    int32 code = 1;
-    string message = 2;
-}
-
-enum EventCode {
-    EVENT_CODE_CONTAINER_IMAGE_PULL_COMPLETED = 0;
-    EVENT_CODE_CONTAINER_CREATE_COMPLETED = 1;
-    EVENT_CODE_CONTAINER_ERROR = 2;
-    EVENT_CODE_CONTAINER_LOGS = 3;
-}
-
-enum SSEType {
-    SSE_TYPE_LOG = 0;
-    SSE_TYPE_BASIC = 1;
 }
 
 enum RPC {
@@ -215,9 +195,8 @@ enum RPC {
     RPC_CONTAINER_START = 2030;
     RPC_CONTAINER_KILL = 2031;
     RPC_CONTAINER_PRUNE = 2032;
-    RPC_CONTAINER_LOGS = 2033;
-    RPC_CONTAINER_SETTING_REGISTRIES_LOAD = 2034;
-    RPC_CONTAINER_SETTING_REGISTRIES_SAVE = 2035;
+    RPC_CONTAINER_SETTING_REGISTRIES_LOAD = 2033;
+    RPC_CONTAINER_SETTING_REGISTRIES_SAVE = 2034;
 }
 
 /*

@@ -26,7 +26,7 @@ class FilesystemController extends GetxController {
     developer.log('Fetch filesystems');
     var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_LIST);
     if (payload.metadata.success) {
-      var result = jsonDecode(payload.postJson) as List;
+      var result = jsonDecode(payload.content) as List;
       partitions.value = result.map((e) => HDDPartition.fromJson(e)).toList();
     } else {
       displayError('Failed to fetch filesystems');
@@ -101,7 +101,7 @@ class FilesystemController extends GetxController {
     };
     var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_DIRECTORY_TREE, parameters: reqParam);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       var tree = FilesystemTree.fromJson(json);
       if (filesystemTree.value == null) {
         filesystemTree.value = tree;

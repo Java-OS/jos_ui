@@ -14,7 +14,7 @@ class ModuleController extends GetxController {
   Future<void> fetchModules() async {
     var payload = await RestClient.rpc(RPC.RPC_MODULE_LIST);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       var result = json as List;
       moduleList.value = result.map((item) => Module.fromJson(item)).toList();
     } else {

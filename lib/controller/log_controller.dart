@@ -49,7 +49,8 @@ class LogController extends GetxController {
     var packageName = packageEditingController.text;
     var level = logLevel.value;
     developer.log('SSE controller try Connect $packageName $level');
-    fetchResponse = await RestClient.sseLog(packageName, level);
+    var content = {'packageName': packageName, 'level': level};
+    fetchResponse = await RestClient.sse(jsonEncode(content));
     isConnected.value = true;
     fetchResponse!.stream.transform(const Utf8Decoder()).transform(const LineSplitter()).where((event) => event.isNotEmpty).listen((event) => addToQueue(event));
   }
@@ -86,7 +87,7 @@ class LogController extends GetxController {
   Future<void> fetchAppenders() async {
     var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_LIST);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       logAppenders.value = (json as List).map((e) => LogInfo.fromJson(e)).toList();
     } else {
       displayWarning('Failed to fetch log appenders');

@@ -38,7 +38,7 @@ class DateTimeController extends GetxController {
     developer.log('Fetch NTP Information called');
     var payload = await RestClient.rpc(RPC.RPC_NTP_INFORMATION);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       bool serverNtpIsActive = json['activate'];
 
       ntpServerEditingController.text = json['server'];
@@ -57,7 +57,7 @@ class DateTimeController extends GetxController {
     developer.log('Fetch system date time called');
     var payload = await RestClient.rpc(RPC.RPC_DATE_TIME_INFORMATION);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       serverDate.value = json['zonedDateTime'].split(' ')[0];
       serverTime.value = json['zonedDateTime'].split(' ')[1];
       serverTimeZone.value = json['zonedDateTime'].split(' ')[2];
@@ -90,7 +90,7 @@ class DateTimeController extends GetxController {
     developer.log('Sync NTP Called');
     var payload = await RestClient.rpc(RPC.RPC_NTP_SYNC);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       leapIndicator.value = json['leapIndicator'].toString();
       version.value = json['version'].toString();
       mode.value = json['mode'].toString();

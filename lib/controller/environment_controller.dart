@@ -18,7 +18,7 @@ class EnvironmentController extends GetxController {
     developer.log('Fetch System Environments called');
     var payload = await RestClient.rpc(RPC.RPC_SYSTEM_ENVIRONMENT_LIST);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson) as Map;
+      var json = jsonDecode(payload.content) as Map;
       environments.value = Map.from(json); //TODO , check me ...
     }
   }

@@ -32,7 +32,7 @@ class SystemController extends GetxController {
     developer.log('Fetch hostname called');
     var payload = await RestClient.rpc(RPC.RPC_SYSTEM_GET_HOSTNAME);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       osHostname.value = json;
       hostnameEditingController.text = json;
     } else {
@@ -59,7 +59,7 @@ class SystemController extends GetxController {
     developer.log('Fetch System Full Information');
     var payload = await RestClient.rpc(RPC.RPC_SYSTEM_FULL_INFORMATION);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       dateTimeZone.value = json['os_date_time_zone'].toString();
       osUsername.value = json['os_username'].toString();
       osVersion.value = json['os_version'].toString();
@@ -82,7 +82,7 @@ class SystemController extends GetxController {
     developer.log('fetch dns nameserver');
     var payload = await RestClient.rpc(RPC.RPC_NETWORK_GET_DNS_NAMESERVER);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       dnsEditingController.text = json;
     } else {
       displayWarning('Failed to fetch dns nameserver');

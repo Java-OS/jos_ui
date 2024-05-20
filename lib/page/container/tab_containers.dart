@@ -6,6 +6,9 @@ import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/container/container_create_dialog.dart';
 import 'package:jos_ui/dialog/container/container_information.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
+import 'package:jos_ui/model/container/container_info.dart';
+import 'package:jos_ui/model/event.dart';
+import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -88,7 +91,7 @@ class OCITabContainersState extends State<OCITabContainers> {
                         IconButton(
                           splashRadius: 20,
                           icon: Icon(Icons.receipt_long_rounded, size: 16, color: Colors.black),
-                          onPressed: () => _containerController.containerLogs(container.names.first).then((_) => displayContainerLoggerModal()),
+                          onPressed: () => streamLogs(container),
                         ),
                         IconButton(
                           splashRadius: 20,
@@ -122,6 +125,11 @@ class OCITabContainersState extends State<OCITabContainers> {
         ),
       ),
     );
+  }
+
+  void streamLogs(ContainerInfo container) async {
+    _containerController.containerSSEConsumer(container.names.first,EventCode.containerLogs);
+    displayContainerLoggerModal();
   }
 
   void loadContainers() async {

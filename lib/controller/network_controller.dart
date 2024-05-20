@@ -31,7 +31,7 @@ class NetworkController extends GetxController {
   Future<void> fetchEthernets() async {
     var payload = await RestClient.rpc(RPC.RPC_NETWORK_ETHERNET_INFORMATION, parameters: {'ethernet': ''});
     if (payload.metadata.success) {
-      var result = jsonDecode(payload.postJson) as List;
+      var result = jsonDecode(payload.content) as List;
       ethernetList.value = result.map((item) => Ethernet.fromJson(item)).toList();
     } else {
       displayError('Failed to fetch network interfaces');
@@ -41,7 +41,7 @@ class NetworkController extends GetxController {
   Future<void> fetchRoutes() async {
     var payload = await RestClient.rpc(RPC.RPC_NETWORK_ROUTE_LIST);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       var result = json as List;
       routeList.value = result.map((item) => route.Route.fromJson(item)).toList();
     } else {
@@ -144,7 +144,7 @@ class NetworkController extends GetxController {
     developer.log('fetch hosts');
     var payload = await RestClient.rpc(RPC.RPC_NETWORK_HOSTS_LIST);
     if (payload.metadata.success) {
-      var map = jsonDecode(payload.postJson) as Map;
+      var map = jsonDecode(payload.content) as Map;
       hosts.value = Map.from(map);
     } else {
       displayWarning('Failed to fetch hosts');
@@ -186,7 +186,7 @@ class NetworkController extends GetxController {
     developer.log('fetch networks');
     var payload = await RestClient.rpc(RPC.RPC_NETWORK_NETWORK_LIST);
     if (payload.metadata.success) {
-      var map = jsonDecode(payload.postJson) as Map;
+      var map = jsonDecode(payload.content) as Map;
       networks.value = Map.from(map);
     } else {
       displayWarning('Failed to fetch networks');

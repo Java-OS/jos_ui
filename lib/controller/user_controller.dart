@@ -27,7 +27,7 @@ class UserController extends GetxController {
     developer.log('Fetch users called');
     var payload = await RestClient.rpc(RPC.RPC_USER_LIST);
     if (payload.metadata.success) {
-      userList.value = (jsonDecode(payload.postJson) as List).map((e) => User.fromJson(e)).toList();
+      userList.value = (jsonDecode(payload.content) as List).map((e) => User.fromJson(e)).toList();
     } else {
       displayWarning('Failed to fetch users');
     }
