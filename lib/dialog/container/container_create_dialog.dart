@@ -120,18 +120,16 @@ Future<void> displaySelectContainerImage() async {
           SizedBox(
             width: 400,
             height: 350,
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: TabBox(
-                tabs: const [
-                  TabItem(text: 'Installed', icon: Icons.check_outlined, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
-                  TabItem(text: 'Search', icon: Icons.search, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
-                ],
-                contents: [
-                  installedImagesTab(),
-                  searchImagesTab(),
-                ],
-              ),
+            child: TabBox(
+              expanded: true,
+              tabs: const [
+                TabItem(text: 'Installed', icon: Icons.check_outlined, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
+                TabItem(text: 'Search', icon: Icons.search, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
+              ],
+              contents: [
+                installedImagesTab(),
+                searchImagesTab(),
+              ],
             ),
           ),
           Padding(

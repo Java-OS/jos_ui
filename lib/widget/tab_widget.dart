@@ -5,8 +5,15 @@ class TabBox extends StatefulWidget {
   final List<TabItem> tabs;
   final List<Widget> contents;
   final double? width;
+  final bool expanded;
 
-  const TabBox({super.key, required this.tabs, required this.contents, this.width});
+  const TabBox({
+    super.key,
+    required this.tabs,
+    required this.contents,
+    this.width,
+    this.expanded = false,
+  });
 
   @override
   State<TabBox> createState() => _TabBoxState();
@@ -18,7 +25,6 @@ class _TabBoxState extends State<TabBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.width,
       color: componentBackgroundColor,
       child: createContent(),
     );
@@ -71,7 +77,7 @@ class _TabBoxState extends State<TabBox> {
     for (var i = 0; i < widget.contents.length; i++) {
       var c = Visibility(
         visible: selectedTabIndex == i,
-        child: Expanded(child: Container(color: Colors.white, child: widget.contents[i])),
+        child: widget.expanded ? Expanded(child: Container(color: Colors.white, child: widget.contents[i])) : Container(color: Colors.white, child: widget.contents[i]),
       );
       items.add(c);
     }

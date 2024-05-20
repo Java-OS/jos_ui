@@ -7,7 +7,6 @@ import 'package:jos_ui/dialog/container/container_create_dialog.dart';
 import 'package:jos_ui/dialog/container/container_information.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
 import 'package:jos_ui/model/container/container_info.dart';
-import 'package:jos_ui/model/event.dart';
 import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
@@ -128,7 +127,7 @@ class OCITabContainersState extends State<OCITabContainers> {
   }
 
   void streamLogs(ContainerInfo container) async {
-    _containerController.containerSSEConsumer(container.names.first,EventCode.containerLogs);
+    _containerController.containerSSEConsumer(container.names.first, EventCode.containerLogs);
     displayContainerLoggerModal();
   }
 
@@ -146,8 +145,8 @@ class OCITabContainersState extends State<OCITabContainers> {
 
   Future<void> openCreateContainerDialog() async {
     _containerController.listImages();
-    _containerController.listVolumes();
-    _containerController.listNetworks();
+    // _containerController.listVolumes();
+    // _containerController.listNetworks();
     displayCreateContainer();
   }
 }
