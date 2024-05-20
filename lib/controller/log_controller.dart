@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 import 'package:fetch_client/fetch_client.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/model/log.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
@@ -47,12 +48,22 @@ class LogController extends GetxController {
       disconnect(false, false);
     }
     var packageName = packageEditingController.text;
-    var level = logLevel.value;
+    var level = logLevel.value.name;
     developer.log('SSE controller try Connect $packageName $level');
-    var content = {'packageName': packageName, 'level': level};
+    var content = {
+      'message' :  {
+        'package' : packageName,
+        'level' : level
+      },
+      'code' : EventCode.jvmLogs.value
+    };
     fetchResponse = await RestClient.sse(jsonEncode(content));
     isConnected.value = true;
-    fetchResponse!.stream.transform(const Utf8Decoder()).transform(const LineSplitter()).where((event) => event.isNotEmpty).listen((event) => addToQueue(event));
+    fetchResponse!.stream
+        .transform(const Utf8Decoder())
+        .transform(const LineSplitter())
+        .where((event) => event.isNotEmpty)
+        .listen((event) => addToQueue(event));
   }
 
   void addToQueue(String event) async {
