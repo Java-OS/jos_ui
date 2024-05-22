@@ -63,6 +63,7 @@ class LogController extends GetxController {
         .transform(const Utf8Decoder())
         .transform(const LineSplitter())
         .where((event) => event.isNotEmpty)
+        .distinct()
         .listen((event) => addToQueue(event));
   }
 

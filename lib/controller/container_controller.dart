@@ -89,7 +89,11 @@ class ContainerController extends GetxController {
       'code': event.value,
     };
     fetchResponse = await RestClient.sse(jsonEncode(content));
-    sseListener = fetchResponse!.stream.where((event) => event.isNotEmpty).transform(const Utf8Decoder()).map((e) => Event.fromJson(e)).listen(
+    sseListener = fetchResponse!.stream
+        .where((event) => event.isNotEmpty)
+        .transform(const Utf8Decoder()).map((e) => Event.fromJson(e))
+        .distinct()
+        .listen(
           (e) {
             var code = e.code;
             var message = e.message.trim();

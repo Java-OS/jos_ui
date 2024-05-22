@@ -10,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
-import 'package:jos_ui/model/log_level.dart';
 import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/h5proto.dart';
 import 'package:jos_ui/service/storage_service.dart';
@@ -216,7 +215,7 @@ class RestClient {
     request.bodyBytes = packet.writeToBuffer();
     request.headers.addAll(header);
 
-    final FetchClient fetchClient = FetchClient(mode: RequestMode.cors);
+    final FetchClient fetchClient = FetchClient(mode: RequestMode.cors, cache: RequestCache.noCache);
     return fetchClient.send(request);
   }
 
