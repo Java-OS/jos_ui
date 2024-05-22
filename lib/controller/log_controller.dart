@@ -49,22 +49,22 @@ class LogController extends GetxController {
     }
     var packageName = packageEditingController.text;
     var level = logLevel.value.name;
-    developer.log('SSE controller try Connect $packageName $level');
+    debugPrint('SSE controller try Connect $packageName $level');
     var content = {
-      'message' :  {
-        'package' : packageName,
-        'level' : level
-      },
-      'code' : EventCode.jvmLogs.value
+      'message': {'package': packageName, 'level': level},
+      'code': EventCode.jvmLogs.value
     };
     fetchResponse = await RestClient.sse(jsonEncode(content));
     isConnected.value = true;
-    fetchResponse!.stream
-        .transform(const Utf8Decoder())
-        .transform(const LineSplitter())
+    fetchResponse!.stream.transform(const Utf8Decoder())
         .where((event) => event.isNotEmpty)
+        .transform(const LineSplitter())
         .distinct()
-        .listen((event) => addToQueue(event));
+        .listen(
+          (event) => addToQueue(event),
+          cancelOnError: true,
+          onError: (e) => debugPrint(e),
+        );
   }
 
   void addToQueue(String event) async {
@@ -86,7 +86,7 @@ class LogController extends GetxController {
 
     isTail.value = false;
 
-    developer.log('Disconnect SSE');
+    debugPrint('Disconnect SSE');
     fetchResponse?.cancel();
     isConnected.value = false;
   }
