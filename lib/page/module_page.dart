@@ -53,7 +53,7 @@ class _ModulePageState extends State<ModulePage> {
                           scrollDirection: Axis.vertical,
                           child: SizedBox(
                             width: double.infinity,
-                            child: Obx(() => DataTable(dataRowMinHeight: 12, dataRowMaxHeight: 28, columnSpacing: 0, columns: getUserTableColumns(), rows: getUserTableRows())),
+                            child: Obx(() => DataTable(dataRowMinHeight: 12, dataRowMaxHeight: 28, columnSpacing: 0, columns: getModuleTableColumns(), rows: getModuleTableRows())),
                           ),
                         ),
                       )
@@ -68,22 +68,22 @@ class _ModulePageState extends State<ModulePage> {
     );
   }
 
-  List<DataColumn> getUserTableColumns() {
+  List<DataColumn> getModuleTableColumns() {
     var nameColumn = DataColumn(label: Text('Name', style: TextStyle(fontWeight: FontWeight.bold)));
     var versionColumn = DataColumn(label: Text('version', style: TextStyle(fontWeight: FontWeight.bold)));
     var actionColumn = DataColumn(label: Expanded(child: SizedBox.shrink()));
     return [nameColumn, versionColumn, actionColumn];
   }
 
-  List<DataRow> getUserTableRows() {
+  List<DataRow> getModuleTableRows() {
     final resultList = <DataRow>[];
     for (final module in _moduleController.moduleList) {
       var name = module.name;
       var version = module.version;
       var isLock = module.lock;
       var isEnable = module.enable;
-      var isActiveService = module.activeService;
-      var containService = module.containService;
+      var isStarted = module.started;
+      var isService = module.service;
       var row = DataRow(cells: [
         DataCell(Text(name, style: TextStyle(fontSize: 12))),
         DataCell(Text(version, style: TextStyle(fontSize: 12))),
@@ -92,8 +92,8 @@ class _ModulePageState extends State<ModulePage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              getLinkButton(name, version, isEnable, isLock, containService, isActiveService),
-              getServiceButton(name, version, isActiveService, containService, isEnable),
+              getLinkButton(name, version, isEnable, isLock, isService, isStarted),
+              getServiceButton(name, version, isStarted, isService, isEnable),
               getDeleteButton(name, version, isLock),
             ],
           ),
@@ -114,18 +114,18 @@ class _ModulePageState extends State<ModulePage> {
     );
   }
 
-  Widget getServiceButton(String moduleName, String version, bool isActiveService, bool containService, bool isEnable) {
+  Widget getServiceButton(String moduleName, String version, bool isStarted, bool containService, bool isEnable) {
     return IconButton(
-      onPressed: !isEnable || !containService ? null : () => isActiveService ? _moduleController.stopService(moduleName, version) : _moduleController.startService(moduleName, version),
+      onPressed: !isEnable || !containService ? null : () => isStarted ? _moduleController.stopService(moduleName, version) : _moduleController.startService(moduleName, version),
       splashRadius: 10,
       splashColor: Colors.transparent,
-      icon: Icon(isActiveService ? Icons.pause : Icons.play_arrow, size: 16),
+      icon: Icon(isStarted ? Icons.pause : Icons.play_arrow, size: 16),
     );
   }
 
-  Widget getLinkButton(String moduleName, String version, bool isEnable, bool isLock, bool containService, bool isActiveService) {
+  Widget getLinkButton(String moduleName, String version, bool isEnable, bool isLock, bool containService, bool isStarted) {
     return IconButton(
-      onPressed: (containService && isActiveService) || (isLock && isEnable) ? null : () => isEnable ? _moduleController.disableModule(moduleName, version) : _moduleController.enableModule(moduleName, version),
+      onPressed: (containService && isStarted) || (isLock && isEnable) ? null : () => isEnable ? _moduleController.disableModule(moduleName, version) : _moduleController.enableModule(moduleName, version),
       splashRadius: 10,
       splashColor: Colors.transparent,
       icon: Icon(isEnable ? Icons.link_outlined : Icons.link_off_outlined, size: 16),

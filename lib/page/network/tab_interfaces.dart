@@ -5,6 +5,7 @@ import 'package:jos_ui/dialog/network_ethernet_dialog.dart';
 import 'package:jos_ui/dialog/network_routes_dialog.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/widget/char_button.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class TabInterfaces extends StatefulWidget {
   const TabInterfaces({super.key});
@@ -115,7 +116,7 @@ class _TabInterfacesState extends State<TabInterfaces> {
                   onPressed: () => displayEthernetConfig(ethernet, context),
                   splashRadius: 14,
                   splashColor: Colors.transparent,
-                  icon: Icon(Icons.edit, size: 16)),
+                  icon: Icon(MdiIcons.pencilOutline, size: 16)),
             ],
           ),
         )

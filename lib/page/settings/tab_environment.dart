@@ -97,7 +97,7 @@ class _TabEnvironmentsState extends State<TabEnvironments> {
               child: Row(
                 children: [
                   IconButton(onPressed: () => _environmentController.deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black)),
-                  IconButton(onPressed: () => displayUpdateEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, key, value, _environmentController.updateEnvironment), splashRadius: 12, icon: Icon(Icons.edit, size: 16, color: Colors.black)),
+                  IconButton(onPressed: () => displayUpdateEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, key, value, _environmentController.updateEnvironment), splashRadius: 12, icon: Icon(MdiIcons.pencilOutline, size: 16, color: Colors.black)),
                 ],
               ),
             ),

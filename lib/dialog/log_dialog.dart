@@ -302,7 +302,7 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
           DataCell(
             Row(
               children: [
-                IconButton(onPressed: () => displaySysLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
+                IconButton(onPressed: () => displaySysLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.pencilOutline, size: 16)),
                 IconButton(onPressed: () => displayLiveLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
                 IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.trashCanOutline, size: 16)),
               ],
@@ -324,7 +324,7 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
           DataCell(
             Row(
               children: [
-                IconButton(onPressed: () => displayFileLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
+                IconButton(onPressed: () => displayFileLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.pencilOutline, size: 16)),
                 IconButton(onPressed: () => displayLiveLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
                 IconButton(onPressed: () => fetchTreeAndDisplay(logInfo.packageName), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.folder_open, size: 16)),
                 IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.trashCanOutline, size: 16)),

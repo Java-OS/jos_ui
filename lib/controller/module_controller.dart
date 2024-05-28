@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:file_picker/_internal/file_picker_web.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/model/module.dart';
 import 'package:jos_ui/protobuf/message-buffer.pb.dart';
@@ -16,7 +17,7 @@ class ModuleController extends GetxController {
     if (payload.metadata.success) {
       var json = jsonDecode(payload.content);
       var result = json as List;
-      moduleList.value = result.map((item) => Module.fromJson(item)).toList();
+      moduleList.value = result.map((item) => Module.fromMap(item)).toList();
     } else {
       displayError('Failed to fetch network interfaces');
     }
