@@ -88,36 +88,41 @@ class _TabInterfacesState extends State<TabInterfaces> {
         DataCell(Text(ethernet.mac ?? '', style: TextStyle(fontSize: 12))),
         DataCell(Text(ipCidr, style: TextStyle(fontSize: 12))),
         DataCell(
-          Row(
-            children: [
-              Visibility(
-                visible: ethernet.isUp,
-                replacement: CharButton(
-                  char: 'E',
-                  textStyle: TextStyle(color: Colors.black, fontSize: 11),
-                  toolTip: 'Click to enable',
-                  onPressed: () => _networkController.ifUp(ethernet.iface),
+          Container(
+            padding: EdgeInsets.zero,
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Visibility(
+                  visible: ethernet.isUp,
+                  replacement: CharButton(
+                    char: 'E',
+                    textStyle: TextStyle(color: Colors.black, fontSize: 11),
+                    toolTip: 'Click to enable',
+                    onPressed: () => _networkController.ifUp(ethernet.iface),
+                  ),
+                  child: CharButton(
+                    char: 'D',
+                    toolTip: 'Click to disable',
+                    onPressed: () => _networkController.ifDown(ethernet.iface),
+                    textStyle: TextStyle(color: Colors.black, fontSize: 11),
+                  ),
                 ),
-                child: CharButton(
-                  char: 'D',
-                  toolTip: 'Click to disable',
-                  onPressed: () => _networkController.ifDown(ethernet.iface),
+                SizedBox(width: 4),
+                CharButton(
+                  char: 'F',
+                  toolTip: 'Click to flush',
+                  onPressed: () => _networkController.flush(ethernet.iface),
                   textStyle: TextStyle(color: Colors.black, fontSize: 11),
                 ),
-              ),
-              SizedBox(width: 4),
-              CharButton(
-                char: 'F',
-                toolTip: 'Click to flush',
-                onPressed: () => _networkController.flush(ethernet.iface),
-                textStyle: TextStyle(color: Colors.black, fontSize: 11),
-              ),
-              IconButton(
-                  onPressed: () => displayEthernetConfig(ethernet, context),
-                  splashRadius: 14,
-                  splashColor: Colors.transparent,
-                  icon: Icon(MdiIcons.pencilOutline, size: 16)),
-            ],
+                IconButton(
+                    onPressed: () => displayEthernetConfig(ethernet, context),
+                    splashRadius: 14,
+                    splashColor: Colors.transparent,
+                    icon: Icon(MdiIcons.pencilOutline, size: 16)),
+              ],
+            ),
           ),
         )
       ],

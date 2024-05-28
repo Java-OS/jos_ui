@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/page_layout.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/module_controller.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
-import 'package:jos_ui/component/page_layout.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class ModulePage extends StatefulWidget {
@@ -88,14 +88,17 @@ class _ModulePageState extends State<ModulePage> {
         DataCell(Text(name, style: TextStyle(fontSize: 12))),
         DataCell(Text(version, style: TextStyle(fontSize: 12))),
         DataCell(
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              getLinkButton(name, version, isEnable, isLock, isService, isStarted),
-              getServiceButton(name, version, isStarted, isService, isEnable),
-              getDeleteButton(name, version, isLock),
-            ],
+          Container(
+            padding: EdgeInsets.zero,
+            alignment: Alignment.centerRight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                getLinkButton(name, version, isEnable, isLock, isService, isStarted),
+                getServiceButton(name, version, isStarted, isService, isEnable),
+                getDeleteButton(name, version, isLock),
+              ],
+            ),
           ),
         ),
       ]);

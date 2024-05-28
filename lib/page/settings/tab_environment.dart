@@ -67,7 +67,7 @@ class _TabEnvironmentsState extends State<TabEnvironments> {
   List<DataColumn> getEnvironmentColumns() {
     var keyColumn = DataColumn(label: Text('Key', style: TextStyle(fontWeight: FontWeight.bold)));
     var valueColumn = DataColumn(label: Text('Value', style: TextStyle(fontWeight: FontWeight.bold)));
-    var emptyColumn = DataColumn(label: SizedBox.shrink());
+    var emptyColumn = DataColumn(label: SizedBox.shrink(), numeric: true);
     return [keyColumn, valueColumn, emptyColumn];
   }
 
@@ -90,16 +90,15 @@ class _TabEnvironmentsState extends State<TabEnvironments> {
           ),
         ),
         DataCell(
-          Align(
+          Container(
+            padding: EdgeInsets.zero,
             alignment: Alignment.centerRight,
-            child: SizedBox(
-              width: 80,
-              child: Row(
-                children: [
-                  IconButton(onPressed: () => _environmentController.deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black)),
-                  IconButton(onPressed: () => displayUpdateEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, key, value, _environmentController.updateEnvironment), splashRadius: 12, icon: Icon(MdiIcons.pencilOutline, size: 16, color: Colors.black)),
-                ],
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(onPressed: () => displayUpdateEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, key, value, _environmentController.updateEnvironment), splashRadius: 12, icon: Icon(MdiIcons.pencilOutline, size: 16, color: Colors.black)),
+                IconButton(onPressed: () => _environmentController.deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black)),
+              ],
             ),
           ),
         ),

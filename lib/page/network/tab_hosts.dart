@@ -35,11 +35,14 @@ class _TabHostsState extends State<TabHosts> {
             child: Icon(Icons.add, size: 16, color: Colors.black)),
         SingleChildScrollView(
           child: Obx(
-            () => DataTable(
-              dataRowMinHeight: 22,
-              dataRowMaxHeight: 32,
-              columns: columns(),
-              rows: rows(),
+            () => SizedBox(
+              width: double.infinity,
+              child: DataTable(
+                dataRowMinHeight: 22,
+                dataRowMaxHeight: 32,
+                columns: columns(),
+                rows: rows(),
+              ),
             ),
           ),
         ),
