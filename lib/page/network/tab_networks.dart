@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/network_controller.dart';
 import 'package:jos_ui/dialog/network_dialog.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class TabNetworks extends StatefulWidget {
   const TabNetworks({super.key});
@@ -82,7 +83,7 @@ class _TabNetworksState extends State<TabNetworks> {
                       onPressed: () => networkController.removeNetwork(name),
                       splashRadius: 14,
                       splashColor: Colors.transparent,
-                      icon: Icon(Icons.delete_rounded, size: 16)),
+                      icon: Icon(MdiIcons.trashCanOutline, size: 16)),
                 ],
               ),
             ),

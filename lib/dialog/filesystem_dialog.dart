@@ -162,7 +162,7 @@ Future<void> displayFilesystemTree(bool enableMakeDirectory, bool enableUploadFi
                               onPressed: () => deleteConfirmationDialog(basePath, nodePath, treeController),
                               splashRadius: 16,
                               icon: Icon(
-                                MdiIcons.delete,
+                                MdiIcons.trashCanOutline,
                                 color: Colors.black,
                                 size: 16,
                               ),

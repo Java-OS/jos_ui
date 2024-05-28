@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/controller/environment_controller.dart';
 import 'package:jos_ui/dialog/environment_dialog.dart';
 import 'package:jos_ui/utils.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class TabEnvironments extends StatefulWidget {
   const TabEnvironments({super.key});
@@ -95,7 +96,7 @@ class _TabEnvironmentsState extends State<TabEnvironments> {
               width: 80,
               child: Row(
                 children: [
-                  IconButton(onPressed: () => _environmentController.deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(Icons.delete, size: 16, color: Colors.black)),
+                  IconButton(onPressed: () => _environmentController.deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black)),
                   IconButton(onPressed: () => displayUpdateEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, key, value, _environmentController.updateEnvironment), splashRadius: 12, icon: Icon(Icons.edit, size: 16, color: Colors.black)),
                 ],
               ),

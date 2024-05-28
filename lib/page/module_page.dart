@@ -4,6 +4,7 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/module_controller.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
 import 'package:jos_ui/component/page_layout.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class ModulePage extends StatefulWidget {
   const ModulePage({super.key});
@@ -109,7 +110,7 @@ class _ModulePageState extends State<ModulePage> {
       onPressed: isLock ? null : () => _moduleController.removeModule(moduleName, version),
       splashRadius: 10,
       splashColor: Colors.transparent,
-      icon: Icon(Icons.delete, size: 16),
+      icon: Icon(MdiIcons.trashCanOutline, size: 16),
     );
   }
 

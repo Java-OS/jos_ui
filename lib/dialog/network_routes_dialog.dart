@@ -7,6 +7,7 @@ import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/widget/drop_down_widget.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 NetworkController _networkController = Get.put(NetworkController());
 
@@ -78,7 +79,7 @@ List<DataRow> _getNetworkRouteRows() {
       DataCell(Text(item.flags, style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
       DataCell(Text(item.metrics.toString(), style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
       DataCell(Text(item.mtu.toString(), style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
-      DataCell(Row(children: [IconButton(onPressed: isLock ? null : () => _networkController.deleteRoute(item.index), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16))])),
+      DataCell(Row(children: [IconButton(onPressed: isLock ? null : () => _networkController.deleteRoute(item.index), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(MdiIcons.trashCanOutline, size: 16))])),
     ]);
     dataRowList.add(row);
   }

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:jos_ui/controller/backup_controller.dart';
 import 'package:jos_ui/dialog/upload_download_dialog.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class TabBackup extends StatefulWidget {
   const TabBackup({super.key});
@@ -109,7 +110,7 @@ class _TabBackupState extends State<TabBackup> {
       children: [
         IconButton(onPressed: () => displayDownloadConfigModal(index, context), icon: Icon(Icons.file_download_outlined, size: 16, color: Colors.black), splashRadius: 20),
         Visibility(visible: index != 0, child: IconButton(onPressed: () => _backupController.restoreBackup(index), icon: Icon(Icons.restore, size: 16, color: Colors.black), splashRadius: 20)),
-        Visibility(visible: index != 0, child: IconButton(onPressed: () => _backupController.deleteBackup(index), icon: Icon(Icons.delete, size: 16, color: Colors.black), splashRadius: 20)),
+        Visibility(visible: index != 0, child: IconButton(onPressed: () => _backupController.deleteBackup(index), icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black), splashRadius: 20)),
       ],
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/user_controller.dart';
 import 'package:jos_ui/dialog/user_dialog.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class TabUsers extends StatefulWidget {
   const TabUsers({super.key});
@@ -67,7 +68,7 @@ class _TabUsersState extends State<TabUsers> {
                 IconButton(onPressed: username == 'admin' ? null : () => displayUpdateRoles(user, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.security, size: 16)),
                 IconButton(onPressed: username == 'admin' ? null : () => _userController.lockOrUnlockUser(user), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(user.lock ? Icons.person_off_outlined : Icons.person, size: 16)),
                 IconButton(onPressed: () => displayUpdatePassword(user, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.password_outlined, size: 16)),
-                IconButton(onPressed: username == 'admin' ? null : () => _userController.deleteUser(user), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete_rounded, size: 16))
+                IconButton(onPressed: username == 'admin' ? null : () => _userController.deleteUser(user), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(MdiIcons.trashCanOutline, size: 16))
               ],
             ),
           ),
