@@ -17,15 +17,6 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyCustomScrollBehavior extends MaterialScrollBehavior {
-  // Override behavior methods like buildOverscrollIndicator and buildScrollbar
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-    // etc.
-  };
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
