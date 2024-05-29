@@ -31,8 +31,8 @@ class PageLayout extends StatelessWidget {
                 height: double.infinity,
                 child: Center(
                   child: SizedBox(
-                    width: 600,
-                    height: 500,
+                    width: 700,
+                    height: 525,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,

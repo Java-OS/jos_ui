@@ -60,6 +60,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
                   maxLines: widget.isPassword ? 1 : widget.maxLines,
                   maxLength: widget.maxLines,
                   decoration: InputDecoration(
+                    counterText: '',
                     label: Text(widget.label ?? ''),
                     border: OutlineInputBorder(borderRadius: (widget.removeRadius == null || widget.removeRadius == false) ? BorderRadius.all(Radius.circular(3)) : BorderRadius.zero),
                     hintStyle: TextStyle(fontSize: 12),

@@ -29,6 +29,7 @@ class LogController extends GetxController {
   var isTail = false.obs;
   var logLevel = LogLevel.all.obs;
   var queue = <Log>[].obs;
+  var systemLog = ''.obs;
   FetchResponse? fetchResponse;
 
   @override
@@ -56,11 +57,7 @@ class LogController extends GetxController {
     };
     fetchResponse = await RestClient.sse(jsonEncode(content));
     isConnected.value = true;
-    fetchResponse!.stream.transform(const Utf8Decoder())
-        .where((event) => event.isNotEmpty)
-        .transform(const LineSplitter())
-        .distinct()
-        .listen(
+    fetchResponse!.stream.transform(const Utf8Decoder()).where((event) => event.isNotEmpty).transform(const LineSplitter()).distinct().listen(
           (event) => addToQueue(event),
           cancelOnError: true,
           onError: (e) => debugPrint(e),
@@ -156,6 +153,16 @@ class LogController extends GetxController {
       clear();
     } else {
       displayWarning('Failed to add log appender');
+    }
+  }
+
+  Future<void> fetchSystemLog() async {
+    var payload = await RestClient.rpc(RPC.RPC_LOG_SYSTEM);
+    if (payload.metadata.success) {
+      var jsonObject = jsonDecode(payload.content);
+      for (var value in jsonObject) {
+        systemLog.value += '$value\n';
+      }
     }
   }
 

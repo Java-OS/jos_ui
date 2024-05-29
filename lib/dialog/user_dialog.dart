@@ -29,7 +29,7 @@ Future<void> displayAddUser(BuildContext context) async {
               TextFieldBox(controller: _userController.passwordEditingController, label: 'Password', isPassword: true),
               SizedBox(height: 8),
               TextFieldBox(controller: _userController.passwordConfirmationEditingController, label: 'Confirm password', isPassword: true),
-              SizedBox(height: 20),
+              SizedBox(height: 8),
               Row(
                 children: [
                   Text('Access bit ', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -83,7 +83,7 @@ Future<void> displayUpdatePassword(User user, BuildContext context) async {
               TextFieldBox(controller: _userController.passwordEditingController, label: 'Password', isPassword: true),
               SizedBox(height: 8),
               TextFieldBox(controller: _userController.passwordConfirmationEditingController, label: 'Confirm password', isPassword: true),
-              SizedBox(height: 20),
+              SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
@@ -131,7 +131,7 @@ Future<void> displayUpdateRoles(User user, BuildContext context) async {
                 ),
               ),
               Obx(() => realmTable()),
-              SizedBox(height: 20),
+              SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(

@@ -72,18 +72,18 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
-                width: 80,
-                height: 80,
+                width: 100,
+                height: 100,
                 child: actionButton(Icons.settings_power_outlined, 'System Power', Colors.redAccent, displayPowerModal, false),
               ),
               SizedBox(
-                width: 80,
-                height: 80,
+                width: 100,
+                height: 100,
                 child: actionButton(Icons.refresh, 'JVM Restart', Colors.white, _jvmController.callJvmRestart, _jvmController.jvmNeedRestart.isTrue),
               ),
               SizedBox(
-                width: 80,
-                height: 80,
+                width: 100,
+                height: 100,
                 child: actionButton(Icons.recycling_outlined, 'JVM GC', Colors.white, _jvmController.callJvmGarbageCollector, false),
               ),
             ],

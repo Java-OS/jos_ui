@@ -79,7 +79,7 @@ class _TabEnvironmentsState extends State<TabEnvironments> {
           Tooltip(
             preferBelow: false,
             message: key,
-            child: Text(truncateWithEllipsis(10, key), style: TextStyle(fontSize: 12)),
+            child: Text(truncateWithEllipsis(30, key), style: TextStyle(fontSize: 12)),
           ),
         ),
         DataCell(

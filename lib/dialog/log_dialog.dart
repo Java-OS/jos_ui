@@ -32,90 +32,100 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
       return SimpleDialog(
         title: getModalHeader('Log'),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        contentPadding: EdgeInsets.all(14),
+        contentPadding: EdgeInsets.zero,
         titlePadding: EdgeInsets.zero,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  SizedBox(
-                    width: 300,
-                    child: TextFieldBox(
-                      controller: _logController.packageEditingController,
-                      label: 'package name',
-                      onSubmit: (e) => _logController.connect(),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  SizedBox(
-                    height: 36,
-                    width: 88,
-                    child: Obx(
-                      () => DropDownMenu<LogLevel>(
-                        displayClearButton: false,
-                        value: _logController.logLevel.value,
-                        hint: Text(_logController.logLevel.value.name),
-                        items: LogLevel.values.map((e) => DropdownMenuItem<LogLevel>(value: e, child: Text(e.name))).toList(),
-                        onChanged: (value) => _logController.changeLevel(value),
+          SizedBox(
+            width: 800,
+            height: 400,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: TextFieldBox(
+                          controller: _logController.packageEditingController,
+                          label: 'package name',
+                          onSubmit: (e) => _logController.connect(),
+                        ),
                       ),
-                    ),
+                      SizedBox(width: 8),
+                      SizedBox(
+                        height: 36,
+                        width: 88,
+                        child: Obx(
+                          () => DropDownMenu<LogLevel>(
+                            displayClearButton: false,
+                            value: _logController.logLevel.value,
+                            hint: Text(_logController.logLevel.value.name),
+                            items: LogLevel.values.map((e) => DropdownMenuItem<LogLevel>(value: e, child: Text(e.name))).toList(),
+                            onChanged: (value) => _logController.changeLevel(value),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Obx(
+                        () => CharButton(
+                          width: 36,
+                          height: 36,
+                          backgroundColor: _logController.isConnected.isFalse ? Colors.white : Colors.grey[500],
+                          textStyle: TextStyle(color: _logController.isConnected.isFalse ? Colors.black : Colors.white, fontSize: 11),
+                          char: _logController.isConnected.isFalse ? 'Start' : 'Stop',
+                          onPressed: () => _logController.isConnected.isFalse ? _logController.connect() : _logController.disconnect(false, false),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      CharButton(
+                        width: 36,
+                        height: 36,
+                        char: 'Clear',
+                        textStyle: TextStyle(fontSize: 11, color: Colors.black),
+                        onPressed: () => _logController.queue.clear(),
+                      )
+                    ],
                   ),
-                  SizedBox(width: 8),
-                  Obx(
-                    () => CharButton(
-                      width: 36,
-                      height: 36,
-                      backgroundColor: _logController.isConnected.isFalse ? Colors.white : Colors.grey[500],
-                      textStyle: TextStyle(color: _logController.isConnected.isFalse ? Colors.black : Colors.white, fontSize: 11),
-                      char: _logController.isConnected.isFalse ? 'Start' : 'Stop',
-                      onPressed: () => _logController.isConnected.isFalse ? _logController.connect() : _logController.disconnect(false, false),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  // Obx(
-                  //   () => CharButton(
-                  //     width: 36,
-                  //     height: 36,
-                  //     backgroundColor: _logController.isTail.isFalse ? Colors.white : Colors.grey[500],
-                  //     textStyle: TextStyle(color: _logController.isTail.isFalse ? Colors.black : Colors.white, fontSize: 11),
-                  //     char: _logController.isTail.isFalse ? 'Tail' : 'Scroll',
-                  //     onPressed: () => _logController.isTail.value = !_logController.isTail.value,
-                  //   ),
-                  // ),
-                  // SizedBox(width: 8),
-                  CharButton(
-                    width: 36,
-                    height: 36,
-                    char: 'Clear',
-                    textStyle: TextStyle(fontSize: 11, color: Colors.black),
-                    onPressed: () => _logController.queue.clear(),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: SizedBox(
-                  width: 900,
-                  height: 400,
-                  child: SingleChildScrollView(
-                    controller: _verticalScrollController,
-                    scrollDirection: Axis.vertical,
+                ),
+                Flexible(
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.black,
                     child: Obx(
-                      () => DataTable(
-                        dataRowMinHeight: 22,
-                        dataRowMaxHeight: 32,
-                        columnSpacing: 4,
-                        columns: _getLogColumns(),
-                        rows: _getLogRows(),
+                      () => Scrollbar(
+                        interactive: true,
+                        thumbVisibility: true,
+                        controller: _verticalScrollController,
+                        child: Scrollbar(
+                          interactive: true,
+                          thumbVisibility: true,
+                          controller: _horizontalScrollController,
+                          child: RawScrollbar(
+                            thumbColor: Colors.white,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              controller: _verticalScrollController,
+                              child: RawScrollbar(
+                                thumbColor: Colors.white,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  controller: _horizontalScrollController,
+                                  child: SelectableText.rich(TextSpan(style: TextStyle(fontSize: 11), children: processLines())),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           )
         ],
       );
@@ -123,57 +133,31 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
   ).then((value) => _logController.disconnect(true, true));
 }
 
-List<DataColumn> _getLogColumns() {
-  var levelColumn = DataColumn(label: Text('Level', style: TextStyle(fontWeight: FontWeight.bold)));
-  var dateTimeColumn = DataColumn(label: Expanded(child: Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold))));
-  var threadIdColumn = DataColumn(label: Expanded(child: Text('Thread ID', style: TextStyle(fontWeight: FontWeight.bold))));
-  var loggerColumn = DataColumn(label: Expanded(child: Text('Logger', style: TextStyle(fontWeight: FontWeight.bold))));
-  var messageColumn = DataColumn(label: Expanded(child: Text('Message', style: TextStyle(fontWeight: FontWeight.bold))));
-  return [levelColumn, dateTimeColumn, threadIdColumn, loggerColumn, messageColumn];
-}
-
-List<DataRow> _getLogRows() {
-  var dataRowList = <DataRow>[];
+List<InlineSpan> processLines() {
+  var result = <InlineSpan>[];
   var list = _logController.queue;
-  if (list.isNotEmpty && _logController.isTail.isTrue) _verticalScrollController.jumpTo(_verticalScrollController.position.maxScrollExtent);
   for (var log in list) {
     var level = log.level;
     var dateTime = log.dateTime;
     var thread = log.thread;
-    var logger = log.logger.length > 25 ? '... ${log.logger.substring(log.logger.length - 25)}' : log.logger;
-    var message = log.message.length > 30 ? '${log.message.substring(0, 30)} ... (truncated)' : log.message;
-
-    var bgColor = switch (level) {
-      LogLevel.info => Colors.white,
-      LogLevel.warn => Colors.orangeAccent,
-      LogLevel.debug => Colors.brown,
-      LogLevel.error => Colors.redAccent,
-      LogLevel.trace => Colors.purpleAccent,
-      LogLevel.all => Colors.white,
-    };
-
-    var textColor = switch (level) {
-      LogLevel.info => Colors.black,
-      LogLevel.warn => Colors.black,
-      LogLevel.debug => Colors.white,
-      LogLevel.error => Colors.white,
-      LogLevel.trace => Colors.white,
-      LogLevel.all => Colors.black,
-    };
-
-    var row = DataRow(
-      color: WidgetStateProperty.all(bgColor),
-      cells: [
-        DataCell(SizedBox(width: 40, child: Text(level.name, style: TextStyle(fontSize: 12, color: textColor)))),
-        DataCell(SizedBox(width: 160, child: Text(dateTime.toString(), style: TextStyle(fontSize: 12, color: textColor)))),
-        DataCell(Text(thread, style: TextStyle(fontSize: 12, color: textColor))),
-        DataCell(Text(logger, style: TextStyle(fontSize: 12, color: textColor))),
-        DataCell(Text(message, style: TextStyle(fontSize: 12, color: textColor))),
-      ],
-    );
-    dataRowList.add(row);
+    var logger = log.logger;
+    var message = log.message;
+    var line = '[${level.name.toUpperCase()}] $dateTime $thread $logger $message\n';
+    result.add(TextSpan(text: line, style: TextStyle(color: getLineColor(level))));
   }
-  return dataRowList;
+
+  return result;
+}
+
+Color getLineColor(LogLevel level) {
+  return switch (level) {
+    LogLevel.info => Colors.white,
+    LogLevel.warn => Colors.orangeAccent,
+    LogLevel.debug => Colors.orangeAccent,
+    LogLevel.error => Colors.redAccent,
+    LogLevel.trace => Colors.purpleAccent,
+    LogLevel.all => Colors.white,
+  };
 }
 
 Future<void> displayLoggerModal(BuildContext context) async {
@@ -527,4 +511,64 @@ Future<void> displayContainerLoggerModal() async {
       );
     },
   ).then((_) => _containerController.closeStreamListener());
+}
+
+Future<void> displaySystemLogDialog() async {
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return SimpleDialog(
+        title: getModalHeader('System Log'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        contentPadding: EdgeInsets.zero,
+        titlePadding: EdgeInsets.zero,
+        children: [
+          SizedBox(
+            width: 800,
+            height: 400,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.black,
+                    child: Scrollbar(
+                      interactive: true,
+                      trackVisibility: true,
+                      thumbVisibility: true,
+                      controller: _verticalScrollController,
+                      child: Scrollbar(
+                        interactive: true,
+                        trackVisibility: true,
+                        thumbVisibility: true,
+                        controller: _horizontalScrollController,
+                        child: RawScrollbar(
+                          thumbColor: Colors.white,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            controller: _verticalScrollController,
+                            child: RawScrollbar(
+                              thumbColor: Colors.white,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                controller: _horizontalScrollController,
+                                child: SelectableText(_logController.systemLog.value,maxLines: 1001, style: TextStyle(fontSize: 11,color: Colors.white)),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      );
+    },
+  ).then((value) => _logController.disconnect(true, true));
 }

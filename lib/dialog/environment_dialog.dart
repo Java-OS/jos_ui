@@ -25,19 +25,22 @@ Future<void> displayAddEnvironmentDialog(TextEditingController keyController, Te
         contentPadding: EdgeInsets.all(14),
         titlePadding: EdgeInsets.zero,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFieldBox(controller: keyController, label: 'Key', isEnable: isUpdate),
-              SizedBox(height: 8),
-              TextFieldBox(controller: valueController, label: 'Value'),
-              SizedBox(height: 20),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton(onPressed: () => execute(), child: Text('Apply')),
-              ),
-            ],
+          SizedBox(
+            width: 250,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFieldBox(controller: keyController, label: 'Key', isEnable: isUpdate, maxLines: 1),
+                SizedBox(height: 8),
+                TextFieldBox(controller: valueController, label: 'Value', maxLines: 1),
+                SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(onPressed: () => execute(), child: Text('Apply')),
+                ),
+              ],
+            ),
           )
         ],
       );

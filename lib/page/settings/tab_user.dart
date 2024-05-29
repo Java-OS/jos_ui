@@ -62,8 +62,9 @@ class _TabUsersState extends State<TabUsers> {
         DataCell(Text(username, style: TextStyle(fontSize: 12))),
         DataCell(
           Align(
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.centerRight,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(onPressed: username == 'admin' ? null : () => displayUpdateRoles(user, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.security, size: 16)),
                 IconButton(onPressed: username == 'admin' ? null : () => _userController.lockOrUnlockUser(user), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(user.lock ? Icons.person_off_outlined : Icons.person, size: 16)),
