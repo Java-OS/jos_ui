@@ -34,7 +34,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ToastificationWrapper(
       child: GetMaterialApp(
-        scrollBehavior: MyCustomScrollBehavior(),
         theme: ThemeData(useMaterial3: false, fontFamily: 'Roboto'),
         debugShowCheckedModeBanner: false,
         title: 'JOS',

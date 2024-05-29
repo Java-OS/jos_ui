@@ -33,7 +33,7 @@ class _TopMenuComponentState extends State<TopMenuComponent> with SingleTickerPr
   ];
 
   final rightMenuItems = [
-    ['/log', Colors.blueAccent, MdiIcons.mathLog, 5],
+    ['/log', Colors.blueAccent, Icons.receipt_long_rounded, 5],
     ['/logout', Colors.redAccent, Icons.logout_outlined, 6],
   ];
 

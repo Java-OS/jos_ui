@@ -90,35 +90,16 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
                     ],
                   ),
                 ),
-                Flexible(
+                Expanded(
                   child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
                     color: Colors.black,
-                    child: Obx(
-                      () => Scrollbar(
-                        interactive: true,
-                        thumbVisibility: true,
-                        controller: _verticalScrollController,
-                        child: Scrollbar(
-                          interactive: true,
-                          thumbVisibility: true,
-                          controller: _horizontalScrollController,
-                          child: RawScrollbar(
-                            thumbColor: Colors.white,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              controller: _verticalScrollController,
-                              child: RawScrollbar(
-                                thumbColor: Colors.white,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  controller: _horizontalScrollController,
-                                  child: SelectableText.rich(TextSpan(style: TextStyle(fontSize: 11), children: processLines())),
-                                ),
-                              ),
-                            ),
-                          ),
+                    width: double.infinity,
+                    child: Theme(
+                      data: ThemeData(scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(Colors.white))),
+                      child: Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Obx(
+                          () => SelectableText.rich(TextSpan(style: TextStyle(fontSize: 11), children: processLines())),
                         ),
                       ),
                     ),
@@ -446,63 +427,58 @@ Future<void> displaySysLogAppender(LogInfo? logInfo) async {
   ).then((value) => _logController.clear());
 }
 
-Future<void> displayContainerLoggerModal() async {
+Future<void> displaySystemLogDialog() async {
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: getModalHeader('Logs'),
+        title: getModalHeader('System Log'),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         contentPadding: EdgeInsets.zero,
         titlePadding: EdgeInsets.zero,
-        content: SizedBox(
+        content: Container(
           width: 800,
           height: 400,
-          child: Obx(
-            () => Container(
-              height: double.infinity,
-              width: double.infinity,
-              color: Colors.black,
-              child: Scrollbar(
-                controller: _verticalScrollController,
-                interactive: true,
-                trackVisibility: true,
-                thumbVisibility: true,
-                scrollbarOrientation: ScrollbarOrientation.right,
-                child: Scrollbar(
-                  controller: _horizontalScrollController,
-                  interactive: true,
-                  trackVisibility: true,
-                  thumbVisibility: true,
-                  child: RawScrollbar(
-                    thumbColor: Colors.white,
-                    radius: Radius.circular(16),
-                    thickness: 7,
-                    child: SingleChildScrollView(
-                      controller: _verticalScrollController,
-                      child: RawScrollbar(
-                        thumbColor: Colors.white,
-                        radius: Radius.circular(16),
-                        thickness: 7,
-                        child: SingleChildScrollView(
-                          controller: _horizontalScrollController,
-                          primary: false,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  style: TextStyle(color: Colors.white, fontSize: 12),
-                                  _containerController.logs.value,
-                                  maxLines: 500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+          color: Colors.black,
+          child: Theme(
+            data: ThemeData(scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(Colors.white))),
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: SelectableText(
+                _logController.systemLog.value,
+                maxLines: 150,
+                style: TextStyle(fontSize: 11, color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Future<void> displayContainerLogDialog() async {
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: getModalHeader('Container Log'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        contentPadding: EdgeInsets.zero,
+        titlePadding: EdgeInsets.zero,
+        content: Container(
+          width: 800,
+          height: 400,
+          color: Colors.black,
+          child: Theme(
+            data: ThemeData(scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(Colors.white))),
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Obx(
+                () => SelectableText(
+                  _containerController.logs.value,
+                  maxLines: 150,
+                  style: TextStyle(fontSize: 11, color: Colors.white),
                 ),
               ),
             ),
@@ -511,64 +487,4 @@ Future<void> displayContainerLoggerModal() async {
       );
     },
   ).then((_) => _containerController.closeStreamListener());
-}
-
-Future<void> displaySystemLogDialog() async {
-  showDialog(
-    context: Get.context!,
-    builder: (BuildContext context) {
-      return SimpleDialog(
-        title: getModalHeader('System Log'),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        contentPadding: EdgeInsets.zero,
-        titlePadding: EdgeInsets.zero,
-        children: [
-          SizedBox(
-            width: 800,
-            height: 400,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: Colors.black,
-                    child: Scrollbar(
-                      interactive: true,
-                      trackVisibility: true,
-                      thumbVisibility: true,
-                      controller: _verticalScrollController,
-                      child: Scrollbar(
-                        interactive: true,
-                        trackVisibility: true,
-                        thumbVisibility: true,
-                        controller: _horizontalScrollController,
-                        child: RawScrollbar(
-                          thumbColor: Colors.white,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            controller: _verticalScrollController,
-                            child: RawScrollbar(
-                              thumbColor: Colors.white,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                controller: _horizontalScrollController,
-                                child: SelectableText(_logController.systemLog.value,maxLines: 1001, style: TextStyle(fontSize: 11,color: Colors.white)),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      );
-    },
-  ).then((value) => _logController.disconnect(true, true));
 }

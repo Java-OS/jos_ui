@@ -84,36 +84,39 @@ class OCITabContainersState extends State<OCITabContainers> {
                   subTitle: Text(truncate(container.id), style: TextStyle(fontSize: 12)),
                   actions: SizedBox(
                     width: 140,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          splashRadius: 20,
-                          icon: Icon(Icons.receipt_long_rounded, size: 16, color: Colors.black),
-                          onPressed: () => streamLogs(container),
-                        ),
-                        IconButton(
-                          splashRadius: 20,
-                          icon: Icon(container.state == 'running' ? MdiIcons.stopCircleOutline : MdiIcons.playCircleOutline, size: 16, color: Colors.black),
-                          onPressed: () => container.state == 'running' ? _containerController.stopContainer(container.id) : _containerController.startContainer(container.id),
-                        ),
-                        Visibility(
-                          visible: container.state == 'running',
-                          child: IconButton(
+                    child: Visibility(
+                      visible: container.state.isNotEmpty,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
                             splashRadius: 20,
-                            icon: Icon(MdiIcons.skullOutline, size: 16, color: Colors.red),
-                            onPressed: () => _containerController.killContainer(container.id),
+                            icon: Icon(Icons.receipt_long_rounded, size: 16, color: Colors.black),
+                            onPressed: () => streamLogs(container).then((_) => displayContainerLogDialog()),
                           ),
-                        ),
-                        Visibility(
-                          visible: container.state != 'running',
-                          child: IconButton(
+                          IconButton(
                             splashRadius: 20,
-                            icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
-                            onPressed: () => _containerController.removeContainer(container.names[0], container.id),
+                            icon: Icon(container.state == 'running' ? MdiIcons.stopCircleOutline : MdiIcons.playCircleOutline, size: 16, color: Colors.black),
+                            onPressed: () => container.state == 'running' ? _containerController.stopContainer(container.id) : _containerController.startContainer(container.id),
                           ),
-                        )
-                      ],
+                          Visibility(
+                            visible: container.state == 'running',
+                            child: IconButton(
+                              splashRadius: 20,
+                              icon: Icon(MdiIcons.skullOutline, size: 16, color: Colors.red),
+                              onPressed: () => _containerController.killContainer(container.id),
+                            ),
+                          ),
+                          Visibility(
+                            visible: container.state != 'running',
+                            child: IconButton(
+                              splashRadius: 20,
+                              icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+                              onPressed: () => _containerController.removeContainer(container.names[0], container.id),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   onClick: () => displayContainerInfo(container),
@@ -126,9 +129,8 @@ class OCITabContainersState extends State<OCITabContainers> {
     );
   }
 
-  void streamLogs(ContainerInfo container) async {
+  Future<void> streamLogs(ContainerInfo container) async {
     _containerController.containerSSEConsumer(container.names.first, EventCode.containerLogs);
-    displayContainerLoggerModal();
   }
 
   void loadContainers() async {
