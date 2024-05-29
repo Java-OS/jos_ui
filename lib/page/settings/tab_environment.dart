@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/environment_controller.dart';
 import 'package:jos_ui/dialog/environment_dialog.dart';
@@ -30,18 +29,7 @@ class _TabEnvironmentsState extends State<TabEnvironments> {
       children: [
         Text('Environments', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
         Divider(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            OutlinedButton(onPressed: () => displayAddEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, _environmentController.setSystemEnvironment), child: Icon(Icons.add, size: 16, color: Colors.black)),
-            Tooltip(
-              message: 'Paste from clipboard',
-              preferBelow: false,
-              verticalOffset: 22,
-              child: OutlinedButton(onPressed: () => pasteFromClipboard(), child: Icon(Icons.paste, size: 16, color: Colors.black)),
-            ),
-          ],
-        ),
+        OutlinedButton(onPressed: () => displayAddEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, _environmentController.setSystemEnvironment), child: Icon(Icons.add, size: 16, color: Colors.black)),
         SizedBox(width: 8),
         Expanded(
           child: SingleChildScrollView(
@@ -106,9 +94,5 @@ class _TabEnvironmentsState extends State<TabEnvironments> {
       listItems.add(row);
     });
     return listItems;
-  }
-
-  void pasteFromClipboard() {
-    Clipboard.getData(Clipboard.kTextPlain).then((value) => displayBatchEnvironment(value, context));
   }
 }

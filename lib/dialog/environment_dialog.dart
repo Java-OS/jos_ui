@@ -48,10 +48,9 @@ Future<void> displayAddEnvironmentDialog(TextEditingController keyController, Te
   ).then((_) => _environmentController.clean());
 }
 
-Future<void> displayBatchEnvironment(ClipboardData? clipboard, BuildContext context) async {
-  if (clipboard == null || clipboard.text == null) return;
+Future<void> displayBatchEnvironment(String data) async {
   showDialog(
-    context: context,
+    context: Get.context!,
     builder: (BuildContext context) {
       return SimpleDialog(
         title: getModalHeader('Batch environment'),
@@ -71,7 +70,7 @@ Future<void> displayBatchEnvironment(ClipboardData? clipboard, BuildContext cont
                 dataRowMaxHeight: 28,
                 columnSpacing: 25,
                 columns: getEnvironmentColumns(),
-                rows: getEnvironmentRows(clipboard.text!),
+                rows: getEnvironmentRows(data),
               ),
             ),
           ),
