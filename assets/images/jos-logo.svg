@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="200mm"
+   height="200mm"
+   viewBox="0 0 200 200"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="jos-logo.svg"
+   inkscape:export-filename="jos-logo.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     showborder="false"
+     inkscape:zoom="0.20972501"
+     inkscape:cx="715.22227"
+     inkscape:cy="264.63224"
+     inkscape:window-width="1318"
+     inkscape:window-height="740"
+     inkscape:window-x="48"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect222"
+       style="fill:#374548;stroke-width:0.980513;stroke-dashoffset:0.2"
+       d="M 100.0001 0 C 44.600153 2.0053075e-14 1.5473718e-16 44.600153 0 100.0001 C 7.3111357e-15 140.39655 23.717097 175.04514 58.040385 190.85243 L 58.10033 190.59353 C 58.972414 190.81156 60.171378 191.02922 61.697526 191.24724 C 63.114663 191.57427 64.368431 191.73817 65.458537 191.73817 C 68.837864 191.73817 71.672155 190.86596 73.961377 189.12179 C 76.250599 187.37762 78.212681 184.37944 79.847839 180.12802 C 81.592008 175.98562 83.227335 170.31756 84.753483 163.12286 L 98.815674 96.735181 C 99.142706 95.318043 99.415174 93.900898 99.633195 92.483761 C 99.851216 91.066623 99.960307 90.140128 99.960307 89.704085 C 99.960307 86.7608 99.306279 84.907292 97.998153 84.144218 C 96.690026 83.272133 94.455475 82.836287 91.294169 82.836287 L 88.35068 82.836287 L 89.985722 74.17015 L 128.57561 74.17015 L 109.60778 163.12286 C 107.64559 172.8248 104.75701 180.40066 100.94164 185.85119 C 97.235283 191.41073 92.929043 195.33541 88.023568 197.62463 C 87.018625 198.0936 85.9993 198.5116 84.966907 198.8845 C 89.868526 199.61747 94.887999 200.0002 100.0001 200.0002 C 155.40004 200.0002 200.0002 155.40004 200.0002 100.0001 C 200.0002 44.600153 155.40004 1.5473718e-16 100.0001 0 z M 119.74566 35.907369 C 123.234 35.907369 126.28647 36.724774 128.90273 38.359932 C 131.51898 39.88608 132.82703 42.50219 132.82703 46.208549 C 132.82703 50.677982 131.19171 54.002923 127.92139 56.183134 C 124.76008 58.363345 121.21748 59.453219 117.2931 59.453219 C 113.69575 59.453219 110.64328 58.635814 108.13604 57.000655 C 105.7378 55.256486 104.53884 52.694664 104.53884 49.315336 C 104.53884 44.518871 106.06507 41.085357 109.11737 39.014156 C 112.16967 36.942955 115.71227 35.907369 119.74566 35.907369 z " />
+  </g>
+</svg>
