@@ -2,13 +2,13 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:jos_ui/component/page_layout.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/dialog/power_dialog.dart';
-import 'package:jos_ui/component/page_layout.dart';
 import 'package:jos_ui/utils.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -57,7 +57,13 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   }
 
   Widget displayBrandLabel() {
-    return Center(child: Text('JOS', style: GoogleFonts.smoochSans(letterSpacing: 3, color: Colors.white, fontSize: 55, fontWeight: FontWeight.bold)));
+    return Center(
+      child: SvgPicture.asset(
+        'assets/images/jos-logo.svg',
+        colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+        height: 80,
+      ),
+    );
   }
 
   Widget displayActionButtons() {

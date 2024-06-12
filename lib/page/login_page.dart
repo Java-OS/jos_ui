@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/authentication_controller.dart';
 
@@ -54,7 +55,11 @@ class _LoginPageState extends State<LoginPage> {
                           padding: const EdgeInsets.all(14.0),
                           child: Column(
                             children: [
-                              Center(child: Text('JOS', style: TextStyle(fontFamily: 'smooch', letterSpacing: 3, color: Colors.white, fontSize: 55, fontWeight: FontWeight.bold))),
+                              SvgPicture.asset(
+                                'assets/images/jos-logo.svg',
+                                colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                                height: 80,
+                              ),
                               TextField(
                                 controller: _authenticationController.usernameEditingController,
                                 enableSuggestions: false,
