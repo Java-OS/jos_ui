@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/system_controller.dart';
 
 var _systemController = Get.put(SystemController());
@@ -11,7 +10,7 @@ Future<void> displayPowerModal() async {
     builder: (BuildContext context) {
       return AlertDialog(
         backgroundColor: Colors.transparent,
-        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.grey,width: 1),borderRadius: BorderRadius.circular(3)),
+        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.grey, width: 1), borderRadius: BorderRadius.circular(3)),
         contentPadding: EdgeInsets.zero,
         titlePadding: EdgeInsets.zero,
         content: Container(
@@ -49,17 +48,17 @@ Widget actionButton(IconData icon, String tooltipMessage, Color hoverColor, Func
     message: tooltipMessage,
     child: OutlinedButton(
       style: ButtonStyle(
-        side: MaterialStateProperty.resolveWith<BorderSide>(
-          (Set<MaterialState> states) {
-            if (states.contains(MaterialState.hovered)) {
+        side: WidgetStateProperty.resolveWith<BorderSide>(
+          (Set<WidgetState> states) {
+            if (states.contains(WidgetState.hovered)) {
               return BorderSide(color: hoverColor);
             }
             return BorderSide(color: Colors.white38);
           },
         ),
-        foregroundColor: MaterialStateProperty.resolveWith<Color>(
-          (Set<MaterialState> states) {
-            if (states.contains(MaterialState.hovered)) {
+        foregroundColor: WidgetStateProperty.resolveWith<Color>(
+          (Set<WidgetState> states) {
+            if (states.contains(WidgetState.hovered)) {
               return hoverColor; // Set the hover icon color
             }
             return Colors.white38; // Set the default icon color

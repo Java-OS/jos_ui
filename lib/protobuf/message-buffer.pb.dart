@@ -13,11 +13,13 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
+export 'message-buffer.pbenum.dart';
+
 class Packet extends $pb.GeneratedMessage {
   factory Packet({
     $core.List<$core.int>? iv,
     $core.List<$core.int>? hash,
-    $core.List<$core.int>? content,
+    $core.List<$core.int>? payload,
   }) {
     final $result = create();
     if (iv != null) {
@@ -26,8 +28,8 @@ class Packet extends $pb.GeneratedMessage {
     if (hash != null) {
       $result.hash = hash;
     }
-    if (content != null) {
-      $result.content = content;
+    if (payload != null) {
+      $result.payload = payload;
     }
     return $result;
   }
@@ -38,7 +40,7 @@ class Packet extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Packet', package: const $pb.PackageName(_omitMessageNames ? '' : 'jos'), createEmptyInstance: create)
     ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'iv', $pb.PbFieldType.OY)
     ..a<$core.List<$core.int>>(2, _omitFieldNames ? '' : 'hash', $pb.PbFieldType.OY)
-    ..a<$core.List<$core.int>>(3, _omitFieldNames ? '' : 'content', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(3, _omitFieldNames ? '' : 'payload', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
@@ -82,26 +84,26 @@ class Packet extends $pb.GeneratedMessage {
   void clearHash() => clearField(2);
 
   @$pb.TagNumber(3)
-  $core.List<$core.int> get content => $_getN(2);
+  $core.List<$core.int> get payload => $_getN(2);
   @$pb.TagNumber(3)
-  set content($core.List<$core.int> v) { $_setBytes(2, v); }
+  set payload($core.List<$core.int> v) { $_setBytes(2, v); }
   @$pb.TagNumber(3)
-  $core.bool hasContent() => $_has(2);
+  $core.bool hasPayload() => $_has(2);
   @$pb.TagNumber(3)
-  void clearContent() => clearField(3);
+  void clearPayload() => clearField(3);
 }
 
 class Payload extends $pb.GeneratedMessage {
   factory Payload({
     Metadata? metadata,
-    $core.String? postJson,
+    $core.String? content,
   }) {
     final $result = create();
     if (metadata != null) {
       $result.metadata = metadata;
     }
-    if (postJson != null) {
-      $result.postJson = postJson;
+    if (content != null) {
+      $result.content = content;
     }
     return $result;
   }
@@ -111,7 +113,7 @@ class Payload extends $pb.GeneratedMessage {
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Payload', package: const $pb.PackageName(_omitMessageNames ? '' : 'jos'), createEmptyInstance: create)
     ..aOM<Metadata>(1, _omitFieldNames ? '' : 'metadata', subBuilder: Metadata.create)
-    ..aOS(2, _omitFieldNames ? '' : 'postJson')
+    ..aOS(2, _omitFieldNames ? '' : 'content')
     ..hasRequiredFields = false
   ;
 
@@ -148,13 +150,13 @@ class Payload extends $pb.GeneratedMessage {
   Metadata ensureMetadata() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $core.String get postJson => $_getSZ(1);
+  $core.String get content => $_getSZ(1);
   @$pb.TagNumber(2)
-  set postJson($core.String v) { $_setString(1, v); }
+  set content($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasPostJson() => $_has(1);
+  $core.bool hasContent() => $_has(1);
   @$pb.TagNumber(2)
-  void clearPostJson() => clearField(2);
+  void clearContent() => clearField(2);
 }
 
 class Metadata extends $pb.GeneratedMessage {
@@ -163,8 +165,6 @@ class Metadata extends $pb.GeneratedMessage {
     $core.int? rpc,
     $core.int? error,
     $core.bool? needRestart,
-    $core.String? logPackage,
-    $core.String? logLevel,
     $core.String? message,
   }) {
     final $result = create();
@@ -180,12 +180,6 @@ class Metadata extends $pb.GeneratedMessage {
     if (needRestart != null) {
       $result.needRestart = needRestart;
     }
-    if (logPackage != null) {
-      $result.logPackage = logPackage;
-    }
-    if (logLevel != null) {
-      $result.logLevel = logLevel;
-    }
     if (message != null) {
       $result.message = message;
     }
@@ -200,8 +194,6 @@ class Metadata extends $pb.GeneratedMessage {
     ..a<$core.int>(2, _omitFieldNames ? '' : 'rpc', $pb.PbFieldType.O3)
     ..a<$core.int>(3, _omitFieldNames ? '' : 'error', $pb.PbFieldType.O3)
     ..aOB(4, _omitFieldNames ? '' : 'needRestart')
-    ..aOS(5, _omitFieldNames ? '' : 'logPackage')
-    ..aOS(6, _omitFieldNames ? '' : 'logLevel')
     ..aOS(7, _omitFieldNames ? '' : 'message')
     ..hasRequiredFields = false
   ;
@@ -263,30 +255,12 @@ class Metadata extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   void clearNeedRestart() => clearField(4);
 
-  @$pb.TagNumber(5)
-  $core.String get logPackage => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set logPackage($core.String v) { $_setString(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasLogPackage() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearLogPackage() => clearField(5);
-
-  @$pb.TagNumber(6)
-  $core.String get logLevel => $_getSZ(5);
-  @$pb.TagNumber(6)
-  set logLevel($core.String v) { $_setString(5, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasLogLevel() => $_has(5);
-  @$pb.TagNumber(6)
-  void clearLogLevel() => clearField(6);
-
   @$pb.TagNumber(7)
-  $core.String get message => $_getSZ(6);
+  $core.String get message => $_getSZ(4);
   @$pb.TagNumber(7)
-  set message($core.String v) { $_setString(6, v); }
+  set message($core.String v) { $_setString(4, v); }
   @$pb.TagNumber(7)
-  $core.bool hasMessage() => $_has(6);
+  $core.bool hasMessage() => $_has(4);
   @$pb.TagNumber(7)
   void clearMessage() => clearField(7);
 }

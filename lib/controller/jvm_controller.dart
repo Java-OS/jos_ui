@@ -2,9 +2,9 @@ import 'dart:developer' as developer;
 
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/system_controller.dart';
-import 'package:jos_ui/dialog/toast.dart';
-import 'package:jos_ui/model/rpc.dart';
+import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/widget/toast.dart';
 
 class JvmController extends GetxController {
   final SystemController systemController = Get.put(SystemController());
@@ -21,13 +21,13 @@ class JvmController extends GetxController {
 
   void callJvmGarbageCollector() {
     developer.log('JVM Garbage Collector called');
-    RestClient.rpc(RPC.jvmGc).then((value) => systemController.fetchSystemInformation());
+    RestClient.rpc(RPC.RPC_JVM_GC).then((value) => systemController.fetchSystemInformation());
     displaySuccess('CleanUp JVM Heap Space');
   }
 
   void callJvmRestart() {
     developer.log('JVM restart called');
-    RestClient.rpc(RPC.jvmRestart);
+    RestClient.rpc(RPC.RPC_JVM_RESTART);
     disableRestartJvm();
     displaySuccess('Restarting JVM, please wait ...');
   }

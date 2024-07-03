@@ -4,12 +4,13 @@ import 'dart:developer' as developer;
 import 'package:fetch_client/fetch_client.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/dialog/toast.dart';
+import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/model/log.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
-import 'package:jos_ui/model/rpc.dart';
+import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/widget/toast.dart';
 
 class LogController extends GetxController {
   final TextEditingController idEditingController = TextEditingController();
@@ -28,6 +29,7 @@ class LogController extends GetxController {
   var isTail = false.obs;
   var logLevel = LogLevel.all.obs;
   var queue = <Log>[].obs;
+  var systemLog = ''.obs;
   FetchResponse? fetchResponse;
 
   @override
@@ -47,11 +49,19 @@ class LogController extends GetxController {
       disconnect(false, false);
     }
     var packageName = packageEditingController.text;
-    var level = logLevel.value;
-    developer.log('SSE controller try Connect $packageName $level');
-    fetchResponse = await RestClient.sse(packageName, level);
+    var level = logLevel.value.name;
+    debugPrint('SSE controller try Connect $packageName $level');
+    var content = {
+      'message': {'package': packageName, 'level': level},
+      'code': EventCode.jvmLogs.value
+    };
+    fetchResponse = await RestClient.sse(jsonEncode(content));
     isConnected.value = true;
-    fetchResponse!.stream.transform(const Utf8Decoder()).transform(const LineSplitter()).where((event) => event.isNotEmpty).listen((event) => addToQueue(event));
+    fetchResponse!.stream.transform(const Utf8Decoder()).where((event) => event.isNotEmpty).transform(const LineSplitter()).distinct().listen(
+          (event) => addToQueue(event),
+          cancelOnError: true,
+          onError: (e) => debugPrint(e),
+        );
   }
 
   void addToQueue(String event) async {
@@ -73,7 +83,7 @@ class LogController extends GetxController {
 
     isTail.value = false;
 
-    developer.log('Disconnect SSE');
+    debugPrint('Disconnect SSE');
     fetchResponse?.cancel();
     isConnected.value = false;
   }
@@ -84,9 +94,9 @@ class LogController extends GetxController {
   }
 
   Future<void> fetchAppenders() async {
-    var payload = await RestClient.rpc(RPC.logAppenderList);
+    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_LIST);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       logAppenders.value = (json as List).map((e) => LogInfo.fromJson(e)).toList();
     } else {
       displayWarning('Failed to fetch log appenders');
@@ -104,7 +114,7 @@ class LogController extends GetxController {
       'fileTotalSize': int.parse(fileTotalSizeEditingController.text),
       'fileMaxHistory': int.parse(fileMaxHistoryEditingController.text),
     };
-    var payload = await RestClient.rpc(RPC.logAppenderAdd, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_ADD, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchAppenders();
       Get.back();
@@ -125,7 +135,7 @@ class LogController extends GetxController {
       'syslogPort': int.parse(syslogPortEditingController.text),
       'syslogFacility': syslogFacilityEditingController.text,
     };
-    var payload = await RestClient.rpc(RPC.logAppenderAdd, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_ADD, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchAppenders();
       Get.back();
@@ -137,7 +147,7 @@ class LogController extends GetxController {
 
   Future<void> removeAppender(int id) async {
     var reqParam = {'id': id};
-    var payload = await RestClient.rpc(RPC.logAppenderRemove, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_REMOVE, parameters: reqParam);
     if (payload.metadata.success) {
       await fetchAppenders();
       clear();
@@ -146,13 +156,14 @@ class LogController extends GetxController {
     }
   }
 
-  Future<void> downloadLog(String package, String fileName) async {
-    var params = {
-      'type': 'log',
-      'package': package,
-      'file': fileName,
-    };
-    await RestClient.download(params);
+  Future<void> fetchSystemLog() async {
+    var payload = await RestClient.rpc(RPC.RPC_LOG_SYSTEM);
+    if (payload.metadata.success) {
+      var jsonObject = jsonDecode(payload.content);
+      for (var value in jsonObject) {
+        systemLog.value += '$value\n';
+      }
+    }
   }
 
   void clear() {

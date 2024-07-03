@@ -4,18 +4,13 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
-import 'package:jos_ui/dialog/toast.dart';
-import 'package:jos_ui/model/filesystem.dart';
-import 'package:jos_ui/model/filesystem_tree.dart';
-import 'package:jos_ui/model/rpc.dart';
+import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/widget/toast.dart';
 
 class SystemController extends GetxController {
   final TextEditingController dnsEditingController = TextEditingController();
   final TextEditingController hostnameEditingController = TextEditingController();
-  final TextEditingController partitionEditingController = TextEditingController();
-  final TextEditingController mountPointEditingController = TextEditingController();
-  final TextEditingController filesystemTypeEditingController = TextEditingController();
 
   var osUsername = ''.obs;
   var osType = ''.obs;
@@ -32,16 +27,12 @@ class SystemController extends GetxController {
   var jvmTotalHeapSize = 0.obs;
   var jvmUsedHeapSize = 0.obs;
   var dateTimeZone = ''.obs;
-  var partitions = <HDDPartition>[].obs;
-  var selectedPartition = Rxn<HDDPartition>();
-  var mountOnStartUp = false.obs;
-  var filesystemTree = Rxn<FilesystemTree>();
 
   Future<void> fetchHostname() async {
     developer.log('Fetch hostname called');
-    var payload = await RestClient.rpc(RPC.systemGetHostname);
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_GET_HOSTNAME);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       osHostname.value = json;
       hostnameEditingController.text = json;
     } else {
@@ -53,21 +44,22 @@ class SystemController extends GetxController {
     developer.log('Change hostname called');
     bool accepted = await displayAlertModal('Warning', 'JVM should be restarted for the changes to take effect');
     if (accepted) {
-      var payload = await RestClient.rpc(RPC.systemSetHostname, parameters: {'hostname': hostnameEditingController.text});
+      var payload = await RestClient.rpc(RPC.RPC_SYSTEM_SET_HOSTNAME, parameters: {'hostname': hostnameEditingController.text});
       if (payload.metadata.success) {
         displaySuccess('Hostname changed');
         Get.back();
       } else {
         displayWarning('Failed to change hostname');
       }
+      await fetchHostname();
     }
   }
 
   void fetchSystemInformation() async {
     developer.log('Fetch System Full Information');
-    var payload = await RestClient.rpc(RPC.systemFullInformation);
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_FULL_INFORMATION);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       dateTimeZone.value = json['os_date_time_zone'].toString();
       osUsername.value = json['os_username'].toString();
       osVersion.value = json['os_version'].toString();
@@ -86,120 +78,11 @@ class SystemController extends GetxController {
     }
   }
 
-  Future<void> fetchPartitions() async {
-    developer.log('Fetch filesystems');
-    var payload = await RestClient.rpc(RPC.filesystemList);
-    if (payload.metadata.success) {
-      var result = jsonDecode(payload.postJson) as List;
-      partitions.value = result.map((e) => HDDPartition.fromJson(e)).toList();
-    } else {
-      displayError('Failed to fetch filesystems');
-    }
-  }
-
-  void mount() async {
-    var mountPoint = mountPointEditingController.text;
-    var fsType = filesystemTypeEditingController.text;
-    var partition = partitions.firstWhere((element) => element.partition == partitionEditingController.text);
-    var reqParam = {
-      'uuid': partition.uuid,
-      'type': fsType,
-      'mountPoint': mountPoint,
-      'mountOnStartUp': mountOnStartUp.value,
-    };
-
-    developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.filesystemMount, parameters: reqParam);
-    if (payload.metadata.success) {
-      await fetchPartitions();
-      clear();
-      Get.back();
-      displayInfo('Successfully mounted on [$mountPoint]');
-    }
-  }
-
-  void umount(HDDPartition partition) async {
-    developer.log('Umount partition ${partition.partition}');
-    var reqParam = {
-      'uuid': partition.uuid,
-    };
-    developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.filesystemUmount, parameters: reqParam);
-    if (payload.metadata.success) {
-      await fetchPartitions();
-      displayInfo('Successfully disconnected');
-    }
-  }
-
-  void swapOn(HDDPartition partition) async {
-    developer.log('SwapOn ${partition.type}   ${partition.uuid}');
-    var reqParam = {
-      'uuid': partition.uuid,
-    };
-    developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.filesystemSwapOn, parameters: reqParam);
-    if (payload.metadata.success) {
-      await fetchPartitions();
-    } else {
-      displayWarning('Failed to activate swap ${partition.partition}');
-    }
-  }
-
-  void swapOff(HDDPartition partition) async {
-    developer.log('SwapOff ${partition.type}   ${partition.uuid}');
-    var reqParam = {
-      'uuid': partition.uuid,
-    };
-    developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.filesystemSwapOff, parameters: reqParam);
-    if (payload.metadata.success) {
-      await fetchPartitions();
-    } else {
-      displayWarning('Failed to deactivate swap ${partition.partition}');
-    }
-  }
-
-  Future<void> fetchFilesystemTree(String rootPath) async {
-    var reqParam = {
-      'rootDir': rootPath,
-    };
-    var payload = await RestClient.rpc(RPC.filesystemDirectoryTree, parameters: reqParam);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
-      var tree = FilesystemTree.fromJson(json);
-      if (filesystemTree.value == null) {
-        filesystemTree.value = tree;
-      } else {
-        var foundedTree = walkToFindFilesystemTree(filesystemTree.value!, rootPath);
-        if (foundedTree != null && foundedTree.childs!.isEmpty) {
-          foundedTree.childs!.addAll(tree.childs!);
-        }
-      }
-    }
-  }
-
-  FilesystemTree? walkToFindFilesystemTree(FilesystemTree tree, String absolutePath) {
-    if (tree.fullPath == absolutePath) {
-      return tree;
-    }
-    var dirList = tree.childs!.where((element) => !element.isFile).toList();
-    if (dirList.isEmpty) return null;
-    for (FilesystemTree child in dirList) {
-      if (child.fullPath == absolutePath) {
-        return child;
-      } else {
-        var w = walkToFindFilesystemTree(child, absolutePath);
-        if (w == null) continue;
-        return w;
-      }
-    }
-  }
-
   Future<void> fetchDnsNameserver() async {
     developer.log('fetch dns nameserver');
-    var payload = await RestClient.rpc(RPC.networkGetDnsNameserver);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_GET_DNS_NAMESERVER);
     if (payload.metadata.success) {
-      var json = jsonDecode(payload.postJson);
+      var json = jsonDecode(payload.content);
       dnsEditingController.text = json;
     } else {
       displayWarning('Failed to fetch dns nameserver');
@@ -212,17 +95,18 @@ class SystemController extends GetxController {
     var reqParam = {
       'ips': dns,
     };
-    var payload = await RestClient.rpc(RPC.networkSetDnsNameserver, parameters: reqParam);
+    var payload = await RestClient.rpc(RPC.RPC_NETWORK_SET_DNS_NAMESERVER, parameters: reqParam);
     if (payload.metadata.success) {
       clear();
       Get.back();
     } else {
       displayWarning('Failed to change nameserver');
     }
+    await fetchDnsNameserver();
   }
 
   void systemReboot() async {
-    var payload = await RestClient.rpc(RPC.systemReboot);
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_REBOOT);
     if (payload.metadata.success) {
       displayInfo('Reboot success');
     } else {
@@ -231,7 +115,7 @@ class SystemController extends GetxController {
   }
 
   void systemShutdown() async {
-    var payload = await RestClient.rpc(RPC.systemShutdown);
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_SHUTDOWN);
     if (payload.metadata.success) {
       displayInfo('The system was completely shutdown');
     } else {
@@ -242,9 +126,5 @@ class SystemController extends GetxController {
   void clear() {
     dnsEditingController.clear();
     hostnameEditingController.clear();
-    partitionEditingController.clear();
-    mountPointEditingController.clear();
-    filesystemTypeEditingController.clear();
-    filesystemTree = Rxn<FilesystemTree>();
   }
 }

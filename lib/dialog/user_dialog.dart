@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/user_controller.dart';
-import 'package:jos_ui/model/realm.dart';
+import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/model/user.dart';
+import 'package:jos_ui/protobuf/message-buffer.pb.dart';
+import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 UserController _userController = Get.put(UserController());
@@ -28,7 +29,7 @@ Future<void> displayAddUser(BuildContext context) async {
               TextFieldBox(controller: _userController.passwordEditingController, label: 'Password', isPassword: true),
               SizedBox(height: 8),
               TextFieldBox(controller: _userController.passwordConfirmationEditingController, label: 'Confirm password', isPassword: true),
-              SizedBox(height: 20),
+              SizedBox(height: 8),
               Row(
                 children: [
                   Text('Access bit ', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -82,7 +83,7 @@ Future<void> displayUpdatePassword(User user, BuildContext context) async {
               TextFieldBox(controller: _userController.passwordEditingController, label: 'Password', isPassword: true),
               SizedBox(height: 8),
               TextFieldBox(controller: _userController.passwordConfirmationEditingController, label: 'Confirm password', isPassword: true),
-              SizedBox(height: 20),
+              SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
@@ -101,7 +102,7 @@ Future<void> displayUpdatePassword(User user, BuildContext context) async {
 Future<void> displayUpdateRoles(User user, BuildContext context) async {
   _userController.usernameEditingController.text = user.username;
   _userController.realmBit.value = user.realmBit;
-  _userController.selectedRealms.value = Realm.getRealmsOfBit(user.realmBit).toList();
+  _userController.selectedRealms.value = ProtobufBitwiseUtils.getRealms(user.realmBit);
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -130,7 +131,7 @@ Future<void> displayUpdateRoles(User user, BuildContext context) async {
                 ),
               ),
               Obx(() => realmTable()),
-              SizedBox(height: 20),
+              SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
@@ -147,16 +148,16 @@ Future<void> displayUpdateRoles(User user, BuildContext context) async {
 }
 
 Table realmTable() {
-  var allRealms = Realm.getAllRealms();
+  var allRealms = Realm.values;
   var tableRows = <TableRow>[];
   for (var i = 0; i < allRealms.length; i++) {
     if (i % 2 == 0) {
       var row = TableRow(
         children: [
           Checkbox(value: _userController.isSelected(allRealms[i].name), onChanged: (e) => _userController.selectItem(allRealms[i], e!)),
-          Text(allRealms[i].displayName),
+          Text(allRealms[i].name),
           Checkbox(value: _userController.isSelected(allRealms[i + 1].name), onChanged: (e) => _userController.selectItem(allRealms[i + 1], e!)),
-          Text(allRealms[i + 1].displayName),
+          Text(allRealms[i + 1].name),
         ],
       );
 

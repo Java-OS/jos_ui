@@ -3,9 +3,10 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/dialog/toast.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/service/storage_service.dart';
+import 'package:jos_ui/widget/toast.dart';
 
 class AuthenticationController extends GetxController {
   final TextEditingController usernameEditingController = TextEditingController();
@@ -14,28 +15,35 @@ class AuthenticationController extends GetxController {
 
   var captchaImage = Rxn<Image>();
 
-  void login() async {
-    developer.log('Login called');
-    var success = await RestClient.login(usernameEditingController.text, passwordEditingController.text, captchaEditingController.text);
-    if (success) {
-      Get.offNamed('/dashboard');
-    } else {
-      displayError('Login failed');
-      captchaEditingController.clear();
-      requestPublicKey();
-    }
-  }
-
-  void logout() {
-    developer.log('Logout called');
-    StorageService.removeItem('token');
-    Get.offAllNamed('/login');
-  }
-
   Future<void> requestPublicKey() async {
     var result = await RestClient.sendEcdhPublicKey();
     if (result != null) {
       captchaImage.value = Image.memory(base64Decode(result));
     }
+  }
+
+  void login() async {
+    developer.log('Login called');
+    var success = await RestClient.login(usernameEditingController.text, passwordEditingController.text, captchaEditingController.text);
+    if (success) {
+      Get.offNamed(Routes.dashboard.routeName);
+    } else {
+      displayError('Login failed');
+      requestPublicKey();
+    }
+
+    clean();
+  }
+
+  void logout() {
+    developer.log('Logout called');
+    StorageService.removeItem('token');
+    Get.offAllNamed(Routes.login.routeName);
+  }
+
+  void clean() {
+    usernameEditingController.clear();
+    passwordEditingController.clear();
+    captchaEditingController.clear();
   }
 }

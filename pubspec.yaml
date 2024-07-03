@@ -41,7 +41,7 @@ dependencies:
   http: ^1.2.0
   get: ^4.6.6
   font_awesome_flutter: ^10.6.0
-  fetch_client: ^1.0.2
+  fetch_client: ^1.1.1
   path_provider: ^2.1.2
   timezone: ^0.9.2
   cryptography: ^2.7.0
@@ -50,22 +50,14 @@ dependencies:
   pointycastle: ^3.7.3
   fixnum: ^1.1.0
   protobuf: ^3.1.0
-  toastification:
-    git:
-      url: https://github.com/payam-zahedi/toastification
-      ref: main
-  searchfield:
-    git:
-      url: https://github.com/maheshmnj/searchfield
-      ref: master
-  flutter_fancy_tree_view:
-    git:
-      url: https://github.com/baumths/flutter_tree_view
-      ref: main
-  file_picker:
-    git:
-      url: https://github.com/miguelpruivo/flutter_file_picker
-      ref: master
+  material_design_icons_flutter: ^7.0.7296
+  dropdown_button2: ^2.3.9
+  toastification: ^2.0.0
+  searchfield: ^1.0.1
+  flutter_fancy_tree_view: ^1.6.0
+  file_picker: ^8.0.3
+  flutter_svg: ^2.0.10+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -90,8 +82,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-#    - assets/images/background.jpg
+    #    - assets/images/background.jpg
     - assets/images/background.webp
+    - assets/images/jos-logo.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

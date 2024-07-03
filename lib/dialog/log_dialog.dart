@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/controller/container_controller.dart';
+import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/controller/log_controller.dart';
-import 'package:jos_ui/controller/system_controller.dart';
+import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
@@ -10,10 +12,11 @@ import 'package:jos_ui/widget/char_button.dart';
 import 'package:jos_ui/widget/drop_down_widget.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-final LogController _logController = Get.put(LogController());
-final SystemController _systemController = Get.put(SystemController());
-final ScrollController _scrollController = ScrollController();
+var _logController = Get.put(LogController());
+var _filesystemController = Get.put(FilesystemController());
+var _containerController = Get.put(ContainerController());
 
 Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
   if (logInfo != null) {
@@ -27,90 +30,81 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
       return SimpleDialog(
         title: getModalHeader('Log'),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        contentPadding: EdgeInsets.all(14),
+        contentPadding: EdgeInsets.zero,
         titlePadding: EdgeInsets.zero,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  SizedBox(
-                    width: 300,
-                    child: TextFieldBox(
-                      controller: _logController.packageEditingController,
-                      label: 'package name',
-                      onSubmit: (e) => _logController.connect(),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  SizedBox(
-                    height: 36,
-                    width: 88,
-                    child: Obx(
-                      () => DropDownMenu<LogLevel>(
-                        displayClearButton: false,
-                        value: _logController.logLevel.value,
-                        hint: Text(_logController.logLevel.value.name),
-                        items: LogLevel.values.map((e) => DropdownMenuItem<LogLevel>(value: e, child: Text(e.name))).toList(),
-                        onChanged: (value) => _logController.changeLevel(value),
+          SizedBox(
+            width: 800,
+            height: 400,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: TextFieldBox(
+                          controller: _logController.packageEditingController,
+                          label: 'package name',
+                          onSubmit: (e) => _logController.connect(),
+                        ),
                       ),
-                    ),
+                      SizedBox(width: 8),
+                      SizedBox(
+                        height: 36,
+                        width: 88,
+                        child: Obx(
+                          () => DropDownMenu<LogLevel>(
+                            displayClearButton: false,
+                            value: _logController.logLevel.value,
+                            hint: Text(_logController.logLevel.value.name),
+                            items: LogLevel.values.map((e) => DropdownMenuItem<LogLevel>(value: e, child: Text(e.name))).toList(),
+                            onChanged: (value) => _logController.changeLevel(value),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Obx(
+                        () => CharButton(
+                          width: 36,
+                          height: 36,
+                          backgroundColor: _logController.isConnected.isFalse ? Colors.white : Colors.grey[500],
+                          textStyle: TextStyle(color: _logController.isConnected.isFalse ? Colors.black : Colors.white, fontSize: 11),
+                          char: _logController.isConnected.isFalse ? 'Start' : 'Stop',
+                          onPressed: () => _logController.isConnected.isFalse ? _logController.connect() : _logController.disconnect(false, false),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      CharButton(
+                        width: 36,
+                        height: 36,
+                        char: 'Clear',
+                        textStyle: TextStyle(fontSize: 11, color: Colors.black),
+                        onPressed: () => _logController.queue.clear(),
+                      )
+                    ],
                   ),
-                  SizedBox(width: 8),
-                  Obx(
-                    () => CharButton(
-                      width: 36,
-                      height: 36,
-                      backgroundColor: _logController.isConnected.isFalse ? Colors.white : Colors.grey[500],
-                      textStyle: TextStyle(color: _logController.isConnected.isFalse ? Colors.black : Colors.white, fontSize: 11),
-                      char: _logController.isConnected.isFalse ? 'Start' : 'Stop',
-                      onPressed: () => _logController.isConnected.isFalse ? _logController.connect() : _logController.disconnect(false, false),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  // Obx(
-                  //   () => CharButton(
-                  //     width: 36,
-                  //     height: 36,
-                  //     backgroundColor: _logController.isTail.isFalse ? Colors.white : Colors.grey[500],
-                  //     textStyle: TextStyle(color: _logController.isTail.isFalse ? Colors.black : Colors.white, fontSize: 11),
-                  //     char: _logController.isTail.isFalse ? 'Tail' : 'Scroll',
-                  //     onPressed: () => _logController.isTail.value = !_logController.isTail.value,
-                  //   ),
-                  // ),
-                  SizedBox(width: 8),
-                  CharButton(
-                    width: 36,
-                    height: 36,
-                    char: 'Clear',
-                    textStyle: TextStyle(fontSize: 11, color: Colors.black),
-                    onPressed: () => _logController.queue.clear(),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: SizedBox(
-                  width: 900,
-                  height: 400,
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    scrollDirection: Axis.vertical,
-                    child: Obx(
-                      () => DataTable(
-                        dataRowMinHeight: 22,
-                        dataRowMaxHeight: 32,
-                        columnSpacing: 4,
-                        columns: _getLogColumns(),
-                        rows: _getLogRows(),
+                ),
+                Expanded(
+                  child: Container(
+                    color: Colors.black,
+                    width: double.infinity,
+                    child: Theme(
+                      data: ThemeData(scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(Colors.white))),
+                      child: Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Obx(
+                          () => SelectableText.rich(TextSpan(style: TextStyle(fontSize: 11), children: processLines())),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           )
         ],
       );
@@ -118,57 +112,31 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
   ).then((value) => _logController.disconnect(true, true));
 }
 
-List<DataColumn> _getLogColumns() {
-  var levelColumn = DataColumn(label: Text('Level', style: TextStyle(fontWeight: FontWeight.bold)));
-  var dateTimeColumn = DataColumn(label: Expanded(child: Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold))));
-  var threadIdColumn = DataColumn(label: Expanded(child: Text('Thread ID', style: TextStyle(fontWeight: FontWeight.bold))));
-  var loggerColumn = DataColumn(label: Expanded(child: Text('Logger', style: TextStyle(fontWeight: FontWeight.bold))));
-  var messageColumn = DataColumn(label: Expanded(child: Text('Message', style: TextStyle(fontWeight: FontWeight.bold))));
-  return [levelColumn, dateTimeColumn, threadIdColumn, loggerColumn, messageColumn];
-}
-
-List<DataRow> _getLogRows() {
-  var dataRowList = <DataRow>[];
+List<InlineSpan> processLines() {
+  var result = <InlineSpan>[];
   var list = _logController.queue;
-  if (list.isNotEmpty && _logController.isTail.isTrue) _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   for (var log in list) {
     var level = log.level;
     var dateTime = log.dateTime;
     var thread = log.thread;
-    var logger = log.logger.length > 25 ? '... ${log.logger.substring(log.logger.length - 25)}' : log.logger;
-    var message = log.message.length > 30 ? '${log.message.substring(0, 30)} ... (truncated)' : log.message;
-
-    var bgColor = switch (level) {
-      LogLevel.info => Colors.white,
-      LogLevel.warn => Colors.orangeAccent,
-      LogLevel.debug => Colors.brown,
-      LogLevel.error => Colors.redAccent,
-      LogLevel.trace => Colors.purpleAccent,
-      LogLevel.all => Colors.white,
-    };
-
-    var textColor = switch (level) {
-      LogLevel.info => Colors.black,
-      LogLevel.warn => Colors.black,
-      LogLevel.debug => Colors.white,
-      LogLevel.error => Colors.white,
-      LogLevel.trace => Colors.white,
-      LogLevel.all => Colors.black,
-    };
-
-    var row = DataRow(
-      color: MaterialStateProperty.all(bgColor),
-      cells: [
-        DataCell(SizedBox(width: 40, child: Text(level.name, style: TextStyle(fontSize: 12, color: textColor)))),
-        DataCell(SizedBox(width: 160, child: Text(dateTime.toString(), style: TextStyle(fontSize: 12, color: textColor)))),
-        DataCell(Text(thread, style: TextStyle(fontSize: 12, color: textColor))),
-        DataCell(Text(logger, style: TextStyle(fontSize: 12, color: textColor))),
-        DataCell(Text(message, style: TextStyle(fontSize: 12, color: textColor))),
-      ],
-    );
-    dataRowList.add(row);
+    var logger = log.logger;
+    var message = log.message;
+    var line = '[${level.name.toUpperCase()}] $dateTime $thread $logger $message\n';
+    result.add(TextSpan(text: line, style: TextStyle(color: getLineColor(level))));
   }
-  return dataRowList;
+
+  return result;
+}
+
+Color getLineColor(LogLevel level) {
+  return switch (level) {
+    LogLevel.info => Colors.white,
+    LogLevel.warn => Colors.orangeAccent,
+    LogLevel.debug => Colors.orangeAccent,
+    LogLevel.error => Colors.redAccent,
+    LogLevel.trace => Colors.purpleAccent,
+    LogLevel.all => Colors.white,
+  };
 }
 
 Future<void> displayLoggerModal(BuildContext context) async {
@@ -177,23 +145,27 @@ Future<void> displayLoggerModal(BuildContext context) async {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: getModalHeader('Add new route'),
+              title: getModalHeader('Logs'),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               contentPadding: EdgeInsets.zero,
               titlePadding: EdgeInsets.zero,
               backgroundColor: componentBackgroundColor,
               scrollable: true,
-              content: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: TabBox(
-                  tabs: const [
-                    TabItem(text: 'File', icon: Icons.file_copy_outlined, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
-                    TabItem(text: 'Syslog', icon: Icons.terminal_rounded, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
-                  ],
-                  contents: [
-                    Obx(() => fileLoggerTab(context)),
-                    Obx(() => syslogLoggerTab(context)),
-                  ],
+              content: SizedBox(
+                width: 900,
+                height: 300,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: TabBox(
+                    tabs: const [
+                      TabItem(text: 'File', icon: Icons.file_copy_outlined, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
+                      TabItem(text: 'Syslog', icon: Icons.terminal_rounded, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
+                    ],
+                    contents: [
+                      Obx(() => fileLoggerTab(context)),
+                      Obx(() => syslogLoggerTab(context)),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -293,9 +265,9 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
           DataCell(
             Row(
               children: [
-                IconButton(onPressed: () => displaySysLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
+                IconButton(onPressed: () => displaySysLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.pencilOutline, size: 16)),
                 IconButton(onPressed: () => displayLiveLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
-                IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16)),
+                IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.trashCanOutline, size: 16)),
               ],
             ),
           ),
@@ -315,10 +287,10 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
           DataCell(
             Row(
               children: [
-                IconButton(onPressed: () => displayFileLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.edit, size: 16)),
+                IconButton(onPressed: () => displayFileLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.pencilOutline, size: 16)),
                 IconButton(onPressed: () => displayLiveLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
-                IconButton(onPressed: () => fetchTreeAndDisplay(logInfo.packageName, context), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.folder_open, size: 16)),
-                IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16)),
+                IconButton(onPressed: () => fetchTreeAndDisplay(logInfo.packageName), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.folder_open, size: 16)),
+                IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.trashCanOutline, size: 16)),
               ],
             ),
           )
@@ -331,8 +303,8 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
   return dataRowList;
 }
 
-fetchTreeAndDisplay(String package, BuildContext context) {
-  _systemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(context, true));
+fetchTreeAndDisplay(String package) {
+  _filesystemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(false, true));
 }
 
 Future<void> displayFileLogAppender(LogInfo? logInfo) async {
@@ -451,4 +423,66 @@ Future<void> displaySysLogAppender(LogInfo? logInfo) async {
       );
     },
   ).then((value) => _logController.clear());
+}
+
+Future<void> displaySystemLogDialog() async {
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: getModalHeader('System Log'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        contentPadding: EdgeInsets.zero,
+        titlePadding: EdgeInsets.zero,
+        content: Container(
+          width: 800,
+          height: 400,
+          color: Colors.black,
+          child: Theme(
+            data: ThemeData(scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(Colors.white))),
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: SelectableText(
+                _logController.systemLog.value,
+                maxLines: 150,
+                style: TextStyle(fontSize: 11, color: Colors.white),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Future<void> displayContainerLogDialog() async {
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: getModalHeader('Container Log'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        contentPadding: EdgeInsets.zero,
+        titlePadding: EdgeInsets.zero,
+        content: Container(
+          width: 800,
+          height: 400,
+          color: Colors.black,
+          child: Theme(
+            data: ThemeData(scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(Colors.white))),
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Obx(
+                () => SelectableText(
+                  _containerController.logs.value,
+                  maxLines: 150,
+                  style: TextStyle(fontSize: 11, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  ).then((_) => _containerController.closeStreamListener());
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/system_controller.dart';
+import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 SystemController _systemController = Get.put(SystemController());
@@ -19,16 +19,12 @@ Future<void> displayHostnameModal(BuildContext context) async {
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFieldBox(controller: _systemController.hostnameEditingController, label: 'Hostname'),
-              SizedBox(height: 10),
-              Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _systemController.changeHostname(), child: Text('Apply')))
-            ],
+            children: [TextFieldBox(controller: _systemController.hostnameEditingController, label: 'Hostname'), SizedBox(height: 10), Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _systemController.changeHostname(), child: Text('Apply')))],
           )
         ],
       );
     },
-  ).then((value) => _systemController.fetchHostname());
+  );
 }
 
 Future<void> displayDNSNameserverModal(BuildContext context) async {
@@ -44,14 +40,10 @@ Future<void> displayDNSNameserverModal(BuildContext context) async {
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFieldBox(controller: _systemController.dnsEditingController, label: 'DNS'),
-              SizedBox(height: 10),
-              Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _systemController.setDnsNameserver(), child: Text('Apply')))
-            ],
-          )
+            children: [TextFieldBox(controller: _systemController.dnsEditingController, label: 'DNS'), SizedBox(height: 10), Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _systemController.setDnsNameserver(), child: Text('Apply')))],
+          ),
         ],
       );
     },
-  ).then((value) => _systemController.fetchDnsNameserver());
+  );
 }

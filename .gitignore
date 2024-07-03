@@ -45,3 +45,6 @@ app.*.map.json
 
 # CICD Tests
 test-nginx-default.conf
+
+# lib/protobuf/
+.vscode/

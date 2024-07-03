@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/network_controller.dart';
+import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/widget/drop_down_widget.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 NetworkController _networkController = Get.put(NetworkController());
 
@@ -28,9 +30,8 @@ Future<void> displayNetworkRoutesModal(BuildContext context) async {
                 onPressed: () => displayAddNewRouteModal(context),
                 child: Icon(Icons.add, size: 16, color: Colors.black),
               ),
-              SizedBox(
-                width: double.infinity,
-                height: 400,
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: 300),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: Obx(
@@ -78,7 +79,7 @@ List<DataRow> _getNetworkRouteRows() {
       DataCell(Text(item.flags, style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
       DataCell(Text(item.metrics.toString(), style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
       DataCell(Text(item.mtu.toString(), style: TextStyle(fontSize: 12, color: isLock ? Colors.grey : Colors.black))),
-      DataCell(Row(children: [IconButton(onPressed: isLock ? null : () => _networkController.deleteRoute(item.index), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.delete, size: 16))])),
+      DataCell(Row(children: [IconButton(onPressed: isLock ? null : () => _networkController.deleteRoute(item.index), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(MdiIcons.trashCanOutline, size: 16))])),
     ]);
     dataRowList.add(row);
   }
@@ -89,16 +90,14 @@ Future<void> displayAddNewRouteModal(BuildContext context) async {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
+      return SimpleDialog(
         title: getModalHeader('Add new route'),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         contentPadding: EdgeInsets.zero,
         titlePadding: EdgeInsets.zero,
         backgroundColor: componentBackgroundColor,
-        scrollable: true,
-        content: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: TabBox(
+        children: [
+          TabBox(
             tabs: const [
               TabItem(text: 'Default Gateway', icon: Icons.double_arrow, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
               TabItem(text: 'Host', icon: Icons.computer, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
@@ -110,7 +109,7 @@ Future<void> displayAddNewRouteModal(BuildContext context) async {
               networkTab(),
             ],
           ),
-        ),
+        ],
       );
     },
   );
@@ -120,7 +119,15 @@ Widget defaultGatewayTab() {
   return Padding(
     padding: EdgeInsets.all(14.0),
     child: Column(
-      children: [TextFieldBox(controller: _networkController.gatewayEditingController, label: 'Gateway'), SizedBox(height: 30), Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _networkController.addDefaultGateway(), child: Text('Apply')))],
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextFieldBox(controller: _networkController.gatewayEditingController, label: 'Gateway'),
+        SizedBox(height: 8),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: ElevatedButton(onPressed: () => _networkController.addDefaultGateway(), child: Text('Apply')),
+        ),
+      ],
     ),
   );
 }
@@ -146,8 +153,11 @@ Widget hostTab() {
         ),
         SizedBox(height: 8),
         TextFieldBox(controller: _networkController.metricsEditingController, label: 'metrics (optional [default: 600])'),
-        SizedBox(height: 20),
-        Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => _networkController.addHostRoute(), child: Text('Apply')))
+        SizedBox(height: 8),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: ElevatedButton(onPressed: () => _networkController.addHostRoute(), child: Text('Apply')),
+        ),
       ],
     ),
   );
@@ -176,8 +186,11 @@ Widget networkTab() {
         ),
         SizedBox(height: 8),
         TextFieldBox(controller: _networkController.metricsEditingController, label: 'metrics (optional [default: 600])'),
-        SizedBox(height: 20),
-        Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => _networkController.addNetworkRoute(), child: Text('Apply')))
+        SizedBox(height: 8),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: ElevatedButton(onPressed: () => _networkController.addNetworkRoute(), child: Text('Apply')),
+        ),
       ],
     ),
   );

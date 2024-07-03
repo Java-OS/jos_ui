@@ -172,7 +172,7 @@ class H5Proto {
     var iv = secretBox.nonce;
     var data = secretBox.concatenation(nonce: false, mac: true);
 
-    Packet packet = Packet(iv: iv, hash: hash, content: data);
+    Packet packet = Packet(iv: iv, hash: hash, payload: data);
     return packet;
   }
 

@@ -1,3 +1,5 @@
+import 'package:jos_ui/protobuf/message-buffer.pb.dart';
+
 String formatSize(int size) {
   if (size < 0) throw ArgumentError('Size cannot be negative.');
 
@@ -27,4 +29,40 @@ String formatSize(int size) {
 
 String truncateWithEllipsis(int length, String myString) {
   return (myString.length <= length) ? myString : '${myString.substring(0, length)}...';
+}
+
+String truncate(String str) {
+  // return dummy str
+  if (str.isEmpty) return str;
+  if (str.length <= 16) return str;
+
+  // truncate str
+  return '${str.substring(0, 16)} ... ${str.substring(str.length - 16)}';
+}
+
+
+class ProtobufBitwiseUtils {
+  static List<int> getBitNumbers(int number) {
+    var bitNumbers = <int>[];
+    int count = 1;
+    while (number != 0) {
+      if (number & 1 == 1) bitNumbers.add(count);
+      number >>= 1;
+      count <<= 1;
+    }
+    return bitNumbers;
+  }
+
+  static List<Realm> getRealms(int number) {
+    var realms = <Realm>[];
+    var bitNumbers = getBitNumbers(number);
+    for (var bn in bitNumbers) {
+      var role = Realm.valueOf(bn);
+      if (role != null) {
+        realms.add(role);
+      }
+    }
+
+    return realms;
+  }
 }

@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/environment_controller.dart';
+import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 EnvironmentController _environmentController = Get.put(EnvironmentController());
 
-Future<void> addEnvironment(BuildContext context) async {
-  _displayModal(context, _environmentController.setSystemEnvironment);
+Future<void> displayUpdateEnvironmentDialog(TextEditingController keyController, TextEditingController valueController, String key, String value, Function execute) async {
+  keyController.text = key;
+  valueController.text = value;
+  displayAddEnvironmentDialog(keyController, valueController, execute);
 }
 
-Future<void> updateEnvironment(String value, BuildContext context) async {
-  _environmentController.valueEditingController.text = value;
-  _displayModal(context, _environmentController.updateEnvironment);
-}
-
-Future<void> _displayModal(BuildContext context, Function execute) async {
+Future<void> displayAddEnvironmentDialog(TextEditingController keyController, TextEditingController valueController, Function execute) async {
+  var isUpdate = _environmentController.keyEditingController.text.isEmpty ? true : false;
   showDialog(
-    context: context,
+    context: Get.context!,
     builder: (BuildContext context) {
       return SimpleDialog(
         title: getModalHeader('Environment'),
@@ -27,21 +25,32 @@ Future<void> _displayModal(BuildContext context, Function execute) async {
         contentPadding: EdgeInsets.all(14),
         titlePadding: EdgeInsets.zero,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [TextFieldBox(controller: _environmentController.keyEditingController, label: 'Key', isEnable: false), SizedBox(height: 8), TextFieldBox(controller: _environmentController.valueEditingController, label: 'Value'), SizedBox(height: 20), Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => execute(), child: Text('Apply')))],
+          SizedBox(
+            width: 250,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFieldBox(controller: keyController, label: 'Key', isEnable: isUpdate, maxLines: 1),
+                SizedBox(height: 8),
+                TextFieldBox(controller: valueController, label: 'Value', maxLines: 1),
+                SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(onPressed: () => execute(), child: Text('Apply')),
+                ),
+              ],
+            ),
           )
         ],
       );
     },
-  );
+  ).then((_) => _environmentController.clean());
 }
 
-Future<void> displayBatchEnvironment(ClipboardData? clipboard, BuildContext context) async {
-  if (clipboard == null || clipboard.text == null) return;
+Future<void> displayBatchEnvironment(String data) async {
   showDialog(
-    context: context,
+    context: Get.context!,
     builder: (BuildContext context) {
       return SimpleDialog(
         title: getModalHeader('Batch environment'),
@@ -61,7 +70,7 @@ Future<void> displayBatchEnvironment(ClipboardData? clipboard, BuildContext cont
                 dataRowMaxHeight: 28,
                 columnSpacing: 25,
                 columns: getEnvironmentColumns(),
-                rows: getEnvironmentRows(clipboard.text!),
+                rows: getEnvironmentRows(data),
               ),
             ),
           ),
@@ -76,7 +85,7 @@ Future<void> displayBatchEnvironment(ClipboardData? clipboard, BuildContext cont
         ],
       );
     },
-  ).then((value) => _environmentController.fetchSystemEnvironments());
+  ).then((_) => _environmentController.fetchSystemEnvironments());
 }
 
 List<DataColumn> getEnvironmentColumns() {
@@ -120,19 +129,17 @@ List<DataRow> getEnvironmentRows(String clipboard) {
 
 List<String> parseBatchEnvironments(String clipboard) {
   List<String> lines = clipboard.split('\n');
-  
+
   // Map to keep track of seen keys
   Map<String, String> seenKeys = {};
-  
+
   // Filter out duplicates
-  List<String> filteredLines = lines
-      .where((element) => element.isNotEmpty)
-      .where((line) {
+  List<String> filteredLines = lines.where((element) => element.isNotEmpty).where((line) {
     int equalSignIndex = line.indexOf('=');
     if (equalSignIndex != -1) {
       String key = line.substring(0, equalSignIndex).trim();
-      String value = line.substring(equalSignIndex +  1).trim();
-  
+      String value = line.substring(equalSignIndex + 1).trim();
+
       // If the key is not already in the map, add it and keep the line
       if (!seenKeys.containsKey(key)) {
         seenKeys[key] = value;

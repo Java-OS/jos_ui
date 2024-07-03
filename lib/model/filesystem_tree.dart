@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
-
 class FilesystemTree {
   final String name;
   final String fullPath;
@@ -14,7 +12,11 @@ class FilesystemTree {
     var name = map['name'];
     var fullPath = map['fullPath'];
     var isFile = map['file'];
-    var childs = (map['childs'] == null) ? [] : (map['childs'] == null && !isFile) ? [] : map['childs'] as List;
+    var childs = (map['childs'] == null)
+        ? []
+        : (map['childs'] == null && !isFile)
+            ? []
+            : map['childs'] as List;
     var mappedChilds = childs.map((e) => FilesystemTree.fromJson(e)).toList();
     return FilesystemTree(name: name, fullPath: fullPath, childs: mappedChilds, isFile: isFile);
   }

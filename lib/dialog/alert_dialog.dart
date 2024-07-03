@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/dialog/base_dialog.dart';
 
 Future<bool> displayAlertModal(String title, String message) async {
   var result = await showDialog<bool>(
