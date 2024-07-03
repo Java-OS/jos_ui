@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Colors
+const backgroundDarkColor =Color.fromRGBO(46, 46, 46, 100) ;
 const componentBackgroundColor = Color.fromRGBO(247, 247, 247, 1);
 const dashboardMosaicBackgroundColor = Color.fromRGBO(80, 100, 80, 0.5);
 final navigatorKey = GlobalKey<NavigatorState>();
