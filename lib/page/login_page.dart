@@ -14,7 +14,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    // _authenticationController.requestPublicKey();
+    _authenticationController.requestPublicKey();
     super.initState();
   }
 
@@ -27,13 +27,16 @@ class _LoginPageState extends State<LoginPage> {
             Expanded(
               child: Container(
                 width: double.infinity,
-                color: Color.fromRGBO(46, 46, 46, 60),
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(29, 30, 44,1),
+                  border: Border(right: BorderSide(color: Colors.white10, width: 1)),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(40.0),
-                      child: Image.asset('assets/images/logo.png'),
+                      child: Image.asset('assets/images/jos-logo.png'),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 40.0, left: 80.0),
@@ -76,125 +79,97 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Container(
-              width: 360,
-              color: Color.fromRGBO(25, 25, 25, 100),
+              width: 290,
+              color: Color.fromRGBO(36, 39, 54, 1),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextField(
+                      controller: _authenticationController.usernameEditingController,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+                        labelText: 'Username',
+                        labelStyle: TextStyle(fontSize: 12, color: Colors.white38),
+                      ),
+                      onSubmitted: (_) => _authenticationController.login(),
+                    ),
+                    SizedBox(height: 10),
+                    TextField(
+                      controller: _authenticationController.passwordEditingController,
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+                        labelText: 'Password',
+                        labelStyle: TextStyle(fontSize: 12, color: Colors.white38),
+                      ),
+                      onSubmitted: (_) => _authenticationController.login(),
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 50,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [Obx(() => captchaWidget())],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(padding: EdgeInsets.zero, side: BorderSide(color: Colors.white30)),
+                            onPressed: () => _authenticationController.requestPublicKey(),
+                            child: Icon(Icons.refresh, size: 28, color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    TextField(
+                      controller: _authenticationController.captchaEditingController,
+                      enableSuggestions: false,
+                      autocorrect: false,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+                        labelText: 'Captcha',
+                        labelStyle: TextStyle(color: Colors.white38, fontSize: 12),
+                        contentPadding: EdgeInsets.all(14),
+                      ),
+                      onSubmitted: (_) => _authenticationController.login(),
+                    ),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () => _authenticationController.login(),
+                        child: Text('Login'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             )
           ],
         ),
-        // body: Stack(
-        //   children: [
-        //     Container(
-        //       color: Color.fromARGB(150, 0, 0, 0),
-        //       width: double.infinity,
-        //       height: double.infinity,
-        //       child: Center(
-        //         child: Center(
-        //           child: SizedBox(
-        //             width: 280,
-        //             height: 400,
-        //             child: Card(
-        //               color: Colors.transparent,
-        //               shadowColor: Colors.transparent,
-        //               shape: RoundedRectangleBorder(side: BorderSide(color: Colors.white38), borderRadius: BorderRadius.zero),
-        //               child: Padding(
-        //                 padding: const EdgeInsets.all(14.0),
-        //                 child: Column(
-        //                   children: [
-        //                     SvgPicture.asset(
-        //                       'assets/images/jos-logo.svg',
-        //                       colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-        //                       height: 80,
-        //                     ),
-        //                     TextField(
-        //                       controller: _authenticationController.usernameEditingController,
-        //                       enableSuggestions: false,
-        //                       autocorrect: false,
-        //                       style: TextStyle(color: Colors.white),
-        //                       decoration: InputDecoration(
-        //                         focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-        //                         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-        //                         labelText: 'Username',
-        //                         labelStyle: TextStyle(color: Colors.white38, fontSize: 12),
-        //                         contentPadding: EdgeInsets.all(14),
-        //                       ),
-        //                       onSubmitted: (_) => _authenticationController.login(),
-        //                     ),
-        //                     SizedBox(height: 10),
-        //                     TextField(
-        //                       controller: _authenticationController.passwordEditingController,
-        //                       obscureText: true,
-        //                       enableSuggestions: false,
-        //                       autocorrect: false,
-        //                       style: TextStyle(color: Colors.white),
-        //                       decoration: InputDecoration(
-        //                         focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-        //                         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-        //                         labelText: 'Password',
-        //                         labelStyle: TextStyle(color: Colors.white38, fontSize: 12),
-        //                         contentPadding: EdgeInsets.all(14),
-        //                       ),
-        //                       onSubmitted: (_) => _authenticationController.login(),
-        //                     ),
-        //                     SizedBox(height: 10),
-        //                     SizedBox(
-        //                       height: 50,
-        //                       width: double.infinity,
-        //                       child: Row(
-        //                         crossAxisAlignment: CrossAxisAlignment.center,
-        //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //                         children: [
-        //                           Expanded(
-        //                             child: SizedBox(
-        //                               height: 50,
-        //                               child: Stack(
-        //                                 alignment: Alignment.center,
-        //                                 children: [Obx(() => captchaWidget())],
-        //                               ),
-        //                             ),
-        //                           ),
-        //                           SizedBox(
-        //                             width: 50,
-        //                             height: 50,
-        //                             child: OutlinedButton(
-        //                               style: OutlinedButton.styleFrom(padding: EdgeInsets.zero, side: BorderSide(color: Colors.white30)),
-        //                               onPressed: () => _authenticationController.requestPublicKey(),
-        //                               child: Icon(Icons.refresh, size: 28, color: Colors.blue),
-        //                             ),
-        //                           ),
-        //                         ],
-        //                       ),
-        //                     ),
-        //                     SizedBox(height: 10),
-        //                     TextField(
-        //                       controller: _authenticationController.captchaEditingController,
-        //                       enableSuggestions: false,
-        //                       autocorrect: false,
-        //                       style: TextStyle(color: Colors.white),
-        //                       decoration: InputDecoration(
-        //                         focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-        //                         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-        //                         labelText: 'Captcha',
-        //                         labelStyle: TextStyle(color: Colors.white38, fontSize: 12),
-        //                         contentPadding: EdgeInsets.all(14),
-        //                       ),
-        //                       onSubmitted: (_) => _authenticationController.login(),
-        //                     ),
-        //                     SizedBox(height: 10),
-        //                     SizedBox(
-        //                       width: double.infinity,
-        //                       height: 50,
-        //                       child: ElevatedButton(onPressed: () => _authenticationController.login(), child: Text('Login')),
-        //                     ),
-        //                   ],
-        //                 ),
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //     )
-        //   ],
-        // ),
       ),
     );
   }
@@ -202,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget captchaWidget() {
     return Visibility(
       visible: _authenticationController.captchaImage.value != null,
-      replacement: SizedBox(width: 16, height: 16, child: CircularProgressIndicator()),
+      replacement: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white38)),
       child: ClipRRect(borderRadius: BorderRadius.circular(3), child: _authenticationController.captchaImage.value),
     );
   }
