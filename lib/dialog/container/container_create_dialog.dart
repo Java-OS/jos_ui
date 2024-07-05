@@ -115,7 +115,7 @@ Future<void> displaySelectContainerImage() async {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         contentPadding: EdgeInsets.zero,
         titlePadding: EdgeInsets.zero,
-        backgroundColor: componentBackgroundColor,
+        backgroundColor: secondaryColor,
         children: [
           SizedBox(
             width: 400,

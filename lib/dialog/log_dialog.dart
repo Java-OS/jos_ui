@@ -149,7 +149,7 @@ Future<void> displayLoggerModal(BuildContext context) async {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
               contentPadding: EdgeInsets.zero,
               titlePadding: EdgeInsets.zero,
-              backgroundColor: componentBackgroundColor,
+              backgroundColor: secondaryColor,
               scrollable: true,
               content: SizedBox(
                 width: 900,

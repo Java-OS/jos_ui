@@ -48,7 +48,7 @@ class _SettingsBasePageState extends State<SettingsBasePage> {
     return Expanded(
       child: Container(
         height: 380,
-        color: componentBackgroundColor,
+        color: secondaryColor,
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: chooseTargetTab(),
@@ -66,7 +66,7 @@ class _SettingsBasePageState extends State<SettingsBasePage> {
         padding: const EdgeInsets.only(bottom: 2.0),
         child: AnimatedContainer(
           decoration: BoxDecoration(
-            color: isOnRoute ? componentBackgroundColor : Colors.white10,
+            color: isOnRoute ? secondaryColor : Colors.white10,
           ),
           width: 80,
           height: 50,

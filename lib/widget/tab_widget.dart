@@ -25,7 +25,7 @@ class _TabBoxState extends State<TabBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: componentBackgroundColor,
+      color: secondaryColor,
       child: createContent(),
     );
   }

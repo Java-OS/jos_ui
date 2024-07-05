@@ -27,7 +27,7 @@ class _ModulePageState extends State<ModulePage> {
       child: Expanded(
         child: Container(
           width: double.infinity,
-          color: componentBackgroundColor,
+          color: secondaryColor,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
