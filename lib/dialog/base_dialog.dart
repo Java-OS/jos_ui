@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 Widget getModalHeader(String title) {
   return Container(
     width: double.infinity,
-    height: 46,
+    height: 50,
     color: Colors.green,
     child: Padding(
       padding: const EdgeInsets.all(14.0),
@@ -12,7 +12,7 @@ Widget getModalHeader(String title) {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white)),
+          Text(title, style: TextStyle(fontSize: 14, color: Colors.white)),
           closeButton(),
         ],
       ),
@@ -24,7 +24,7 @@ Widget getModalHeaderAdvanced({required String title, required List<Widget> acti
   actionButtons.add(closeButton());
   return Container(
     width: double.infinity,
-    height: 46,
+    height: 50,
     color: Colors.green,
     child: Padding(
       padding: const EdgeInsets.all(14.0),
@@ -32,7 +32,7 @@ Widget getModalHeaderAdvanced({required String title, required List<Widget> acti
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white)),
+          Text(title, style: TextStyle(fontSize: 14, color: Colors.white)),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: actionButtons,

@@ -28,51 +28,38 @@ class _LoginPageState extends State<LoginPage> {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(29, 30, 44,1),
                   border: Border(right: BorderSide(color: Colors.white10, width: 1)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(40.0),
+                      padding: const EdgeInsets.all(70.0),
                       child: Image.asset('assets/images/jos-logo.png'),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 40.0, left: 80.0),
                       child: Text(
                         'JVM/Linux operating system',
-                        style: TextStyle(color: Colors.white, fontSize: 40, fontFamily: 'smooch', fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 40, fontFamily: 'smooch', fontWeight: FontWeight.bold),
                       ),
                     ),
                     SizedBox(height: 40),
                     Padding(
                       padding: const EdgeInsets.only(left: 80.0),
-                      child: Text(
-                        '⬤   Open Source Software Under GPL v2',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: Text('⬤   Open Source Software Under GPL v2'),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 80.0),
-                      child: Text(
-                        '⬤   Easy to use',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: Text('⬤   Easy to use'),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 80.0),
-                      child: Text(
-                        '⬤   Fast and Secure',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: Text('⬤   Fast and Secure'),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 80.0),
-                      child: Text(
-                        '⬤   Modular',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: Text('⬤   Modular'),
                     )
                   ],
                 ),
@@ -80,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             Container(
               width: 290,
-              color: Color.fromRGBO(36, 39, 54, 1),
+              color: Colors.lightBlue,
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
@@ -91,11 +78,12 @@ class _LoginPageState extends State<LoginPage> {
                       enableSuggestions: false,
                       autocorrect: false,
                       style: TextStyle(color: Colors.white),
+                      cursorColor: Colors.white70,
                       decoration: InputDecoration(
-                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
                         labelText: 'Username',
-                        labelStyle: TextStyle(fontSize: 12, color: Colors.white38),
+                        labelStyle: TextStyle(fontSize: 12, color: Colors.white),
                       ),
                       onSubmitted: (_) => _authenticationController.login(),
                     ),
@@ -106,11 +94,12 @@ class _LoginPageState extends State<LoginPage> {
                       enableSuggestions: false,
                       autocorrect: false,
                       style: TextStyle(color: Colors.white),
+                      cursorColor: Colors.white70,
                       decoration: InputDecoration(
-                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
                         labelText: 'Password',
-                        labelStyle: TextStyle(fontSize: 12, color: Colors.white38),
+                        labelStyle: TextStyle(fontSize: 12, color: Colors.white),
                       ),
                       onSubmitted: (_) => _authenticationController.login(),
                     ),
@@ -146,12 +135,12 @@ class _LoginPageState extends State<LoginPage> {
                       enableSuggestions: false,
                       autocorrect: false,
                       style: TextStyle(color: Colors.white),
+                      cursorColor: Colors.white70,
                       decoration: InputDecoration(
-                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
-                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white38)),
+                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
                         labelText: 'Captcha',
-                        labelStyle: TextStyle(color: Colors.white38, fontSize: 12),
-                        contentPadding: EdgeInsets.all(14),
+                        labelStyle: TextStyle(color: Colors.white, fontSize: 12),
                       ),
                       onSubmitted: (_) => _authenticationController.login(),
                     ),
@@ -160,8 +149,11 @@ class _LoginPageState extends State<LoginPage> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white
+                        ),
                         onPressed: () => _authenticationController.login(),
-                        child: Text('Login'),
+                        child: Text('Login',style: TextStyle(color: Colors.blue,fontSize: 16)),
                       ),
                     ),
                   ],
@@ -177,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget captchaWidget() {
     return Visibility(
       visible: _authenticationController.captchaImage.value != null,
-      replacement: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white38)),
+      replacement: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white)),
       child: ClipRRect(borderRadius: BorderRadius.circular(3), child: _authenticationController.captchaImage.value),
     );
   }

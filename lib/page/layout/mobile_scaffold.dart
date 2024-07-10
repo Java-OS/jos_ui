@@ -16,7 +16,11 @@ class _MobileScaffoldState extends State<MobileScaffold> {
     return Scaffold(
       appBar: AppBar(),
       drawer: DrawerComponent(),
-      body: widget.content,
+      body: Column(
+        children: [
+          widget.content,
+        ],
+      ),
     );
   }
 }

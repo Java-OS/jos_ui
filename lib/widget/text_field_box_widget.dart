@@ -66,7 +66,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
                     hintStyle: TextStyle(fontSize: 12),
                     isDense: true,
                     contentPadding: EdgeInsets.all(14),
-                    fillColor: widget.backgroundColor,
+                    fillColor: widget.backgroundColor ?? Colors.white,
                     filled: true,
                   ),
                 ),

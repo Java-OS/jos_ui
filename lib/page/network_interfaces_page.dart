@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/network_controller.dart';
 import 'package:jos_ui/dialog/network_ethernet_dialog.dart';
 import 'package:jos_ui/dialog/network_routes_dialog.dart';
@@ -7,14 +8,14 @@ import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/widget/char_button.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class TabInterfaces extends StatefulWidget {
-  const TabInterfaces({super.key});
+class NetworkInterfacesPage extends StatefulWidget {
+  const NetworkInterfacesPage({super.key});
 
   @override
-  State<TabInterfaces> createState() => _TabInterfacesState();
+  State<NetworkInterfacesPage> createState() => NetworkInterfacesPageState();
 }
 
-class _TabInterfacesState extends State<TabInterfaces> {
+class NetworkInterfacesPageState extends State<NetworkInterfacesPage> {
   final _networkController = Get.put(NetworkController());
 
   @override
@@ -25,20 +26,14 @@ class _TabInterfacesState extends State<TabInterfaces> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Interfaces',
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-        Divider(),
-        OutlinedButton(
-          onPressed: () => displayNetworkRoutesModal(context),
-          child: Icon(Icons.directions_outlined, size: 16, color: Colors.black),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
+    return CardContent(
+      title: 'Interfaces',
+      controllers: [OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.directions_outlined, size: 16, color: Colors.black))],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: SizedBox(
               width: double.infinity,
@@ -52,32 +47,22 @@ class _TabInterfacesState extends State<TabInterfaces> {
                 ),
               ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 
   List<DataColumn> getNetworkInterfacesColumns() {
-    var interfaceColumn = DataColumn(
-        label: Expanded(
-            child: Text('Interface',
-                style: TextStyle(fontWeight: FontWeight.bold))));
-    var macColumn = DataColumn(
-        label: Expanded(
-            child: Text('Mac', style: TextStyle(fontWeight: FontWeight.bold))));
-    var ipColumn = DataColumn(
-        label: Expanded(
-            child: Text('Ip/cidr',
-                style: TextStyle(fontWeight: FontWeight.bold))));
+    var interfaceColumn = DataColumn(label: Expanded(child: Text('Interface', style: TextStyle(fontWeight: FontWeight.bold))));
+    var macColumn = DataColumn(label: Expanded(child: Text('Mac', style: TextStyle(fontWeight: FontWeight.bold))));
+    var ipColumn = DataColumn(label: Expanded(child: Text('Ip/cidr', style: TextStyle(fontWeight: FontWeight.bold))));
     var actionColumn = DataColumn(label: Expanded(child: SizedBox.shrink()));
     return [interfaceColumn, macColumn, ipColumn, actionColumn];
   }
 
   List<DataRow> getEthernetsRows() {
-    return _networkController.ethernetList
-        .map((e) => _mapEthernetToDataRow(e))
-        .toList();
+    return _networkController.ethernetList.map((e) => _mapEthernetToDataRow(e)).toList();
   }
 
   DataRow _mapEthernetToDataRow(Ethernet ethernet) {
@@ -116,11 +101,7 @@ class _TabInterfacesState extends State<TabInterfaces> {
                   onPressed: () => _networkController.flush(ethernet.iface),
                   textStyle: TextStyle(color: Colors.black, fontSize: 11),
                 ),
-                IconButton(
-                    onPressed: () => displayEthernetConfig(ethernet, context),
-                    splashRadius: 14,
-                    splashColor: Colors.transparent,
-                    icon: Icon(MdiIcons.pencilOutline, size: 16)),
+                IconButton(onPressed: () => displayEthernetConfig(ethernet, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(MdiIcons.pencilOutline, size: 16)),
               ],
             ),
           ),

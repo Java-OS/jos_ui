@@ -31,14 +31,15 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _systemController.fetchSystemInformation();
+    // _systemController.fetchSystemInformation();
   }
 
   @override
   Widget build(BuildContext context) {
-    return PageLayout(
-      child: Obx(() => mosaicView()),
-    );
+    return Text('Dashboard');
+    // return PageLayout(
+    //   child: Obx(() => mosaicView()),
+    // );
   }
 
   Widget mosaicView() {
@@ -245,7 +246,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   @override
   void dispose() {
-    _animationController.dispose();
+    // _animationController.dispose();
     super.dispose();
   }
 }

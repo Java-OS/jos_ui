@@ -16,7 +16,11 @@ class _TabletScaffoldState extends State<TabletScaffold> {
     return Scaffold(
       appBar: AppBar(),
       drawer: DrawerComponent(),
-      body: widget.content,
+      body: Column(
+        children: [
+          widget.content,
+        ],
+      ),
     );
   }
 }

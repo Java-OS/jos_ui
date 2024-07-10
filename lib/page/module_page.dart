@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/page_layout.dart';
-import 'package:jos_ui/constant.dart';
+import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/module_controller.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -23,49 +22,25 @@ class _ModulePageState extends State<ModulePage> {
 
   @override
   Widget build(BuildContext context) {
-    return PageLayout(
-      child: Expanded(
-        child: Container(
-          width: double.infinity,
-          color: secondaryColor,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Modules', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.blue)),
-                Divider(),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          OutlinedButton(onPressed: () => _moduleController.uploadModule(), child: Icon(Icons.add, size: 16, color: Colors.black)),
-                          OutlinedButton(onPressed: () => displayLoggerModal(context), child: Icon(Icons.assignment_outlined, size: 16, color: Colors.black)),
-                        ],
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: Obx(() => DataTable(dataRowMinHeight: 12, dataRowMaxHeight: 28, columnSpacing: 0, columns: getModuleTableColumns(), rows: getModuleTableRows())),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+    return CardContent(title: 'Modules', controllers: controllers(context), child: content());
+  }
+
+  Widget content() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: SizedBox(
+        width: double.infinity,
+        child: Obx(() => DataTable(dataRowMinHeight: 12, dataRowMaxHeight: 28, columnSpacing: 0, columns: getModuleTableColumns(), rows: getModuleTableRows())),
       ),
     );
+  }
+
+  List<Widget> controllers(BuildContext context) {
+    return [
+      OutlinedButton(onPressed: () => _moduleController.uploadModule(), child: Icon(Icons.add, size: 16,color: Colors.black,)),
+      SizedBox(width: 8),
+      OutlinedButton(onPressed: () => displayLoggerModal(context), child: Icon(Icons.assignment_outlined, size: 16)),
+    ];
   }
 
   List<DataColumn> getModuleTableColumns() {

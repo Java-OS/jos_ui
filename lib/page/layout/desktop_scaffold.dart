@@ -15,9 +15,20 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           DrawerComponent(),
-          widget.content
+          Expanded(
+            child: Column(
+              children: [
+                AppBar(
+                  automaticallyImplyLeading: false,
+                ),
+                widget.content,
+              ],
+            ),
+          )
         ],
       ),
     );
