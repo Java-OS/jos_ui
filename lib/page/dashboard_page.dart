@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/page_layout.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/controller/system_controller.dart';
@@ -30,8 +29,8 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   @override
   void initState() {
+    _systemController.fetchSystemInformation();
     super.initState();
-    // _systemController.fetchSystemInformation();
   }
 
   @override
