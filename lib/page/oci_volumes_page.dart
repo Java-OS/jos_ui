@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/tab_content.dart';
+import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/dialog/container/create_volume_dialog.dart';
@@ -9,14 +9,14 @@ import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class OCITabVolumes extends StatefulWidget {
-  const OCITabVolumes({super.key});
+class OciVolumesPage extends StatefulWidget {
+  const OciVolumesPage({super.key});
 
   @override
-  State<OCITabVolumes> createState() => OCITabVolumesState();
+  State<OciVolumesPage> createState() => _OciImagesPageState();
 }
 
-class OCITabVolumesState extends State<OCITabVolumes> {
+class _OciImagesPageState extends State<OciVolumesPage> {
   final _containerController = Get.put(ContainerController());
   final _filesystemController = Get.put(FilesystemController());
   var _waitingVolumeLoad = false;
@@ -29,24 +29,21 @@ class OCITabVolumesState extends State<OCITabVolumes> {
 
   @override
   Widget build(BuildContext context) {
-    return TabContent(
+    return CardContent(
       title: 'Volumes',
-      toolbar: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          OutlinedButton(
-            onPressed: () => pruneVolumes(),
-            child: Icon(MdiIcons.deleteSweepOutline, size: 16, color: Colors.black),
-          ),
-          SizedBox(width: 8),
-          OutlinedButton(
-            onPressed: () => displayCreateVolume(),
-            child: Icon(Icons.add, size: 16, color: Colors.black),
-          ),
-        ],
-      ),
-      content: Obx(
-        () => Visibility(
+      controllers: [
+        OutlinedButton(
+          onPressed: () => pruneVolumes(),
+          child: Icon(MdiIcons.deleteSweepOutline, size: 16, color: Colors.black),
+        ),
+        SizedBox(width: 8),
+        OutlinedButton(
+          onPressed: () => displayCreateVolume(),
+          child: Icon(Icons.add, size: 16, color: Colors.black),
+        ),
+      ],
+      child: Obx(
+            () => Visibility(
           visible: !_waitingVolumeLoad,
           replacement: SpinKitCircle(color: Colors.blueAccent),
           child: ListView.builder(

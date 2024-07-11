@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/tab_content.dart';
+import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/container/registry_dialog.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class OCITabSettings extends StatefulWidget {
-  const OCITabSettings({super.key});
+class OciSettingsPage extends StatefulWidget {
+  const OciSettingsPage({super.key});
 
   @override
-  State<OCITabSettings> createState() => OCITabSettingsState();
+  State<OciSettingsPage> createState() => _OciSettingsPageState();
 }
 
-class OCITabSettingsState extends State<OCITabSettings> {
+class _OciSettingsPageState extends State<OciSettingsPage> {
   final _containerController = Get.put(ContainerController());
 
   @override
@@ -24,20 +24,16 @@ class OCITabSettingsState extends State<OCITabSettings> {
 
   @override
   Widget build(BuildContext context) {
-    return TabContent(
+    return CardContent(
       title: 'Registries',
-      toolbar: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          SizedBox(width: 8),
-          OutlinedButton(
-            onPressed: () => displayAddRegistryDialog(),
-            child: Icon(Icons.add, size: 16, color: Colors.black),
-          ),
-        ],
-      ),
-      content: Obx(
-        () => ListView.builder(
+      controllers: [
+        OutlinedButton(
+          onPressed: () => displayAddRegistryDialog(),
+          child: Icon(Icons.add, size: 16, color: Colors.black),
+        ),
+      ],
+      child: Obx(
+            () => ListView.builder(
           shrinkWrap: true,
           itemCount: _containerController.registries.length,
           itemBuilder: (BuildContext context, int index) {
@@ -59,7 +55,6 @@ class OCITabSettingsState extends State<OCITabSettings> {
       ),
     );
   }
-
   void loadRegistries() async {
     await _containerController.loadRegistries();
   }

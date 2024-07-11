@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/tab_content.dart';
-import 'package:jos_ui/widget/tile_widget.dart';
+import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/container/create_network_dialog.dart';
 import 'package:jos_ui/dialog/container/network_information_dialog.dart';
+import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class OCITabNetworks extends StatefulWidget {
-  const OCITabNetworks({super.key});
+class OciNetworksPage extends StatefulWidget {
+  const OciNetworksPage({super.key});
 
   @override
-  State<OCITabNetworks> createState() => _OCITabNetworksState();
+  State<OciNetworksPage> createState() => _OciImagesPageState();
 }
 
-class _OCITabNetworksState extends State<OCITabNetworks> {
+class _OciImagesPageState extends State<OciNetworksPage> {
   final _containerController = Get.put(ContainerController());
   var _waitingNetworksLoad = false;
 
@@ -27,13 +27,15 @@ class _OCITabNetworksState extends State<OCITabNetworks> {
 
   @override
   Widget build(BuildContext context) {
-    return TabContent(
+    return CardContent(
       title: 'Networks',
-      toolbar: OutlinedButton(
-        onPressed: () => displayCreateNetwork(),
-        child: Icon(Icons.add, size: 16, color: Colors.black),
-      ),
-      content: Obx(
+      controllers: [
+        OutlinedButton(
+          onPressed: () => displayCreateNetwork(),
+          child: Icon(Icons.add, size: 16, color: Colors.black),
+        ),
+      ],
+      child: Obx(
         () => Visibility(
           visible: !_waitingNetworksLoad,
           replacement: SpinKitCircle(color: Colors.blueAccent),

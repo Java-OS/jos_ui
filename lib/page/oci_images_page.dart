@@ -1,49 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/tab_content.dart';
-import 'package:jos_ui/widget/tile_widget.dart';
+import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/container/image_search_dialog.dart';
+import 'package:jos_ui/model/container/container_info.dart';
+import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class OCITabImages extends StatefulWidget {
-  const OCITabImages({super.key});
+class OciImagesPage extends StatefulWidget {
+  const OciImagesPage({super.key});
 
   @override
-  State<OCITabImages> createState() => OCITabImagesState();
+  State<OciImagesPage> createState() => _OciImagesPageState();
 }
 
-class OCITabImagesState extends State<OCITabImages> {
+class _OciImagesPageState extends State<OciImagesPage> {
   final _containerController = Get.put(ContainerController());
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) => loadImages());
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return TabContent(
+    return CardContent(
       title: 'Images',
-      toolbar: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          OutlinedButton(
-            onPressed: () => loadImages(),
-            child: Icon(Icons.refresh, size: 16, color: Colors.black),
-          ),
-          SizedBox(width: 8),
-          OutlinedButton(
-            onPressed: () => displayContainerSearchImage(),
-            child: Icon(Icons.add, size: 16, color: Colors.black),
-          )
-        ],
-      ),
-      content: Obx(
+      controllers: [
+        OutlinedButton(
+          onPressed: () => loadImages(),
+          child: Icon(Icons.refresh, size: 16, color: Colors.black),
+        ),
+        SizedBox(width: 8),
+        OutlinedButton(
+          onPressed: () => displayContainerSearchImage(),
+          child: Icon(Icons.add, size: 16, color: Colors.black),
+        ),
+      ],
+      child: Obx(
         () => Visibility(
           visible: _containerController.waitingListImages.isFalse,
           replacement: SpinKitCircle(color: Colors.blueAccent),
@@ -57,7 +55,7 @@ class OCITabImagesState extends State<OCITabImages> {
                 child: TileItem(
                   index: index,
                   leading: Visibility(
-                    visible: containerImage.id!.isNotEmpty,
+                    visible: containerImage.id.isNotEmpty,
                     replacement: SizedBox(
                       width: 40,
                       height: 40,
@@ -72,9 +70,9 @@ class OCITabImagesState extends State<OCITabImages> {
                     ),
                   ),
                   title: Text(containerImage.name),
-                  subTitle: Text(truncate(containerImage.id!)),
+                  subTitle: Text(truncate(containerImage.id)),
                   actions: Visibility(
-                    visible: containerImage.id!.isNotEmpty,
+                    visible: containerImage.id.isNotEmpty,
                     replacement: IconButton(
                       splashRadius: 20,
                       icon: Icon(Icons.cancel, size: 16, color: Colors.black),
@@ -83,7 +81,7 @@ class OCITabImagesState extends State<OCITabImages> {
                     child: IconButton(
                       splashRadius: 20,
                       icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
-                      onPressed: () => removeImage(containerImage.id!),
+                      onPressed: () => removeImage(containerImage.id),
                     ),
                   ),
                 ),
@@ -93,6 +91,10 @@ class OCITabImagesState extends State<OCITabImages> {
         ),
       ),
     );
+  }
+
+  Future<void> streamLogs(ContainerInfo container) async {
+    _containerController.containerSSEConsumer(container.names.first, EventCode.containerLogs);
   }
 
   void loadImages() async {

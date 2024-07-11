@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/tab_content.dart';
+import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/dialog/container/container_create_dialog.dart';
 import 'package:jos_ui/dialog/container/container_information.dart';
@@ -12,14 +12,14 @@ import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class OCITabContainers extends StatefulWidget {
-  const OCITabContainers({super.key});
+class OciContainersPage extends StatefulWidget {
+  const OciContainersPage({super.key});
 
   @override
-  State<OCITabContainers> createState() => OCITabContainersState();
+  State<OciContainersPage> createState() => _OciContainersPageState();
 }
 
-class OCITabContainersState extends State<OCITabContainers> {
+class _OciContainersPageState extends State<OciContainersPage> {
   final _containerController = Get.put(ContainerController());
   var _waitingContainersLoad = false;
 
@@ -31,28 +31,25 @@ class OCITabContainersState extends State<OCITabContainers> {
 
   @override
   Widget build(BuildContext context) {
-    return TabContent(
+    return CardContent(
       title: 'Containers',
-      toolbar: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          OutlinedButton(
-            onPressed: () => pruneContainers(),
-            child: Icon(MdiIcons.deleteSweepOutline, size: 16, color: Colors.black),
-          ),
-          SizedBox(width: 8),
-          OutlinedButton(
-            onPressed: () => loadContainers(),
-            child: Icon(Icons.refresh, size: 16, color: Colors.black),
-          ),
-          SizedBox(width: 8),
-          OutlinedButton(
-            onPressed: () => openCreateContainerDialog(),
-            child: Icon(Icons.add, size: 16, color: Colors.black),
-          )
-        ],
-      ),
-      content: Obx(
+      controllers: [
+        OutlinedButton(
+          onPressed: () => pruneContainers(),
+          child: Icon(MdiIcons.deleteSweepOutline, size: 16, color: Colors.black),
+        ),
+        SizedBox(width: 8),
+        OutlinedButton(
+          onPressed: () => loadContainers(),
+          child: Icon(Icons.refresh, size: 16, color: Colors.black),
+        ),
+        SizedBox(width: 8),
+        OutlinedButton(
+          onPressed: () => openCreateContainerDialog(),
+          child: Icon(Icons.add, size: 16, color: Colors.black),
+        ),
+      ],
+      child: Obx(
         () => Visibility(
           visible: !_waitingContainersLoad,
           replacement: SpinKitCircle(color: Colors.blueAccent),
