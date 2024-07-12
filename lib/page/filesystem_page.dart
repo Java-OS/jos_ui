@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
-import 'package:jos_ui/dialog/user_dialog.dart';
 import 'package:jos_ui/model/filesystem.dart';
 import 'package:jos_ui/widget/bar_chart.dart';
 import 'package:jos_ui/widget/char_button.dart';
@@ -31,7 +30,7 @@ class _FilesystemPageState extends State<FilesystemPage> {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Obx(
-              () => Column(
+          () => Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: filesystemWidgets(),
@@ -45,7 +44,7 @@ class _FilesystemPageState extends State<FilesystemPage> {
     var list = <Widget>[];
     var filesystems = _filesystemController.partitions;
     for (var fs in filesystems) {
-      int used = fs.free != null ? fs.total - (fs.free as int) : 0;
+      int used = fs.freeSize != null ? fs.totalSize - (fs.freeSize as int) : 0;
       list.add(
         Padding(
           padding: const EdgeInsets.all(4.0),
@@ -53,8 +52,8 @@ class _FilesystemPageState extends State<FilesystemPage> {
             children: [
               Expanded(
                 child: BarChart(
-                  total: fs.total,
-                  current: fs.type == 'LVM2_member' ? fs.total : used,
+                  total: fs.totalSize,
+                  current: fs.type == 'LVM2_member' ? fs.totalSize : used,
                   text: getPartitionText(fs),
                   warn: fs.type == 'LVM2_member' ? Colors.grey : Colors.red,
                   textStyle: TextStyle(fontSize: 12),
@@ -79,14 +78,14 @@ class _FilesystemPageState extends State<FilesystemPage> {
     return list;
   }
 
-  bool canUsePartition(HDDPartition fs) => fs.type == 'swap' || fs.mountPoint!.isEmpty || fs.type == 'LVM2_member' || fs.type.isEmpty;
+  bool canUsePartition(PartitionInformation fs) => fs.type == 'swap' || fs.mountPoint.isEmpty || fs.type == 'LVM2_member' || fs.type.isEmpty;
 
-  void actionButton(HDDPartition partition) {
+  void actionButton(PartitionInformation partition) {
     if (partition.type == 'swap') {
-      partition.total == 0 ? _filesystemController.swapOn(partition) : _filesystemController.swapOff(partition);
-    } else if (partition.mountPoint == null || partition.mountPoint!.isEmpty) {
+      partition.totalSize == 0 ? _filesystemController.swapOn(partition) : _filesystemController.swapOff(partition);
+    } else if (partition.mountPoint.isEmpty) {
       _filesystemController.clear();
-      _filesystemController.partitionEditingController.text = partition.partition;
+      _filesystemController.partitionEditingController.text = partition.blk;
       _filesystemController.filesystemTypeEditingController.text = partition.type;
       displayMountFilesystemModal();
     } else {
@@ -94,43 +93,43 @@ class _FilesystemPageState extends State<FilesystemPage> {
     }
   }
 
-  String getPartitionText(HDDPartition fs) {
+  String getPartitionText(PartitionInformation fs) {
     if (fs.type == 'LVM2_member') {
-      return '${fs.partition} -> [ LVM ]   ';
+      return '${fs.blk} -> [ LVM ]   ';
     } else if (fs.type == 'swap') {
-      return '${fs.partition} -> [ SWAP ]   ';
+      return '${fs.blk} -> [ SWAP ]   ';
     } else {
-      return '${fs.partition} -> [ ${fs.mountPoint ?? ''} ]   ';
+      return '${fs.blk} -> [ ${fs.mountPoint ?? ''} ]   ';
     }
   }
 
-  TextStyle getButtonTextStyle(HDDPartition partition) {
+  TextStyle getButtonTextStyle(PartitionInformation partition) {
     if (partition.type == 'swap') {
       return TextStyle(
         fontSize: 11,
         color: Colors.black,
-        fontWeight: partition.total != 0 ? FontWeight.normal : FontWeight.bold,
+        fontWeight: partition.totalSize != 0 ? FontWeight.normal : FontWeight.bold,
       );
     } else {
       return TextStyle(
         fontSize: 11,
         color: Colors.black,
-        fontWeight: (partition.mountPoint == null || partition.mountPoint!.isEmpty) ? FontWeight.bold : FontWeight.normal,
+        fontWeight: (partition.mountPoint.isEmpty) ? FontWeight.bold : FontWeight.normal,
       );
     }
   }
 
-  String getButtonName(HDDPartition fs) {
+  String getButtonName(PartitionInformation fs) {
     if (fs.type == 'swap') {
-      return fs.total == 0 ? 'swap on' : 'swap off';
+      return fs.totalSize == 0 ? 'swap on' : 'swap off';
     } else if (fs.type == 'LVM2_member' || fs.type.isEmpty || fs.mountPoint == '/') {
       return ' - ';
     } else {
-      return (fs.mountPoint == null || fs.mountPoint!.isEmpty) ? 'Mount' : 'Disconnect';
+      return (fs.mountPoint.isEmpty) ? 'Mount' : 'Disconnect';
     }
   }
 
-  fetchTreeAndDisplay(HDDPartition partition) {
-    _filesystemController.fetchFilesystemTree(partition.mountPoint!).then((value) => displayFilesystemTree(true,false));
+  fetchTreeAndDisplay(PartitionInformation partition) {
+    _filesystemController.fetchFilesystemTree(partition.mountPoint).then((value) => displayFilesystemTree(true, false));
   }
 }

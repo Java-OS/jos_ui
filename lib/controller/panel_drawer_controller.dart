@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/dialog/user_dialog.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class PanelDrawerController extends GetxController {
@@ -35,6 +34,7 @@ class PanelDrawerController extends GetxController {
         {'title': 'Hosts', 'path': Routes.networkHosts.routeName, 'icon': Icons.devices_other_outlined, 'font-size': 12, 'icon-size': 16},
       ],
     },
+    {'title': 'Firewall', 'path': Routes.filesystem.routeName, 'icon': MdiIcons.wallFire, 'font-size': 16, 'icon-size': 24},
     {'title': 'Filesystem', 'path': Routes.filesystem.routeName, 'icon': Icons.save, 'font-size': 16, 'icon-size': 24},
     {
       'title': 'Settings',
@@ -44,6 +44,8 @@ class PanelDrawerController extends GetxController {
       'path' : '/setting',
       'submenu': [
         {'title': 'Basic', 'path': Routes.settingBasic.routeName, 'icon': Icons.settings, 'font-size': 12, 'icon-size': 16},
+        {'title': 'Kernel Modules', 'path': Routes.settingKernelModules.routeName, 'icon': MdiIcons.cpu64Bit, 'font-size': 12, 'icon-size': 16},
+        {'title': 'Kernel Parameters', 'path': Routes.settingKernelParameters.routeName, 'icon': MdiIcons.wrenchCogOutline, 'font-size': 12, 'icon-size': 16},
         {'title': 'Date & Time', 'path': Routes.settingsDateTime.routeName, 'icon': Icons.schedule, 'font-size': 12, 'icon-size': 16},
         {'title': 'Environment Variables', 'path': Routes.settingsEnvironments.routeName, 'icon': Icons.join_right, 'font-size': 12, 'icon-size': 16},
         {'title': 'Users', 'path': Routes.settingsUsers.routeName, 'icon': Icons.groups_sharp, 'font-size': 12, 'icon-size': 16},

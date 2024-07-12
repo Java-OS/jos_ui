@@ -18,6 +18,8 @@ enum Routes {
   ociNetworks('/oci/networks'),
   ociSettings('/oci/settings'),
   settingBasic('/setting/basic'),
+  settingKernelModules('/setting/kernel-modules'),
+  settingKernelParameters('/setting/kernel-parameters'),
   settingsDateTime('/setting/datetime'),
   settingsEnvironments('/setting/env'),
   settingsUsers('/setting/user'),

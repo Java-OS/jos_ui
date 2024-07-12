@@ -15,8 +15,8 @@ class FilesystemController extends GetxController {
   final TextEditingController filesystemTypeEditingController = TextEditingController();
   final TextEditingController newFolderEditingController = TextEditingController();
 
-  var partitions = <HDDPartition>[].obs;
-  var selectedPartition = Rxn<HDDPartition>();
+  var partitions = <PartitionInformation>[].obs;
+  var selectedPartition = Rxn<PartitionInformation>();
   var mountOnStartUp = false.obs;
   var filesystemTree = Rxn<FilesystemTree>();
   var path = ''.obs;
@@ -27,7 +27,7 @@ class FilesystemController extends GetxController {
     var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_LIST);
     if (payload.metadata.success) {
       var result = jsonDecode(payload.content) as List;
-      partitions.value = result.map((e) => HDDPartition.fromJson(e)).toList();
+      partitions.value = result.map((e) => PartitionInformation.fromJson(e)).toList();
     } else {
       displayError('Failed to fetch filesystems');
     }
@@ -36,7 +36,7 @@ class FilesystemController extends GetxController {
   void mount() async {
     var mountPoint = mountPointEditingController.text;
     var fsType = filesystemTypeEditingController.text;
-    var partition = partitions.firstWhere((element) => element.partition == partitionEditingController.text);
+    var partition = partitions.firstWhere((element) => element.blk == partitionEditingController.text);
     var reqParam = {
       'uuid': partition.uuid,
       'type': fsType,
@@ -54,8 +54,8 @@ class FilesystemController extends GetxController {
     }
   }
 
-  void umount(HDDPartition partition) async {
-    developer.log('Umount partition ${partition.partition}');
+  void umount(PartitionInformation partition) async {
+    developer.log('Umount partition ${partition.blk}');
     var reqParam = {
       'uuid': partition.uuid,
     };
@@ -67,7 +67,7 @@ class FilesystemController extends GetxController {
     }
   }
 
-  void swapOn(HDDPartition partition) async {
+  void swapOn(PartitionInformation partition) async {
     developer.log('SwapOn ${partition.type}   ${partition.uuid}');
     var reqParam = {
       'uuid': partition.uuid,
@@ -77,11 +77,11 @@ class FilesystemController extends GetxController {
     if (payload.metadata.success) {
       await fetchPartitions();
     } else {
-      displayWarning('Failed to activate swap ${partition.partition}');
+      displayWarning('Failed to activate swap ${partition.blk}');
     }
   }
 
-  void swapOff(HDDPartition partition) async {
+  void swapOff(PartitionInformation partition) async {
     developer.log('SwapOff ${partition.type}   ${partition.uuid}');
     var reqParam = {
       'uuid': partition.uuid,
@@ -91,7 +91,7 @@ class FilesystemController extends GetxController {
     if (payload.metadata.success) {
       await fetchPartitions();
     } else {
-      displayWarning('Failed to deactivate swap ${partition.partition}');
+      displayWarning('Failed to deactivate swap ${partition.blk}');
     }
   }
 

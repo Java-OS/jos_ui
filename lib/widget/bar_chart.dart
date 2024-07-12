@@ -63,8 +63,8 @@ class _BarChartState extends State<BarChart> {
   }
 
   String parseText() {
-    var total = formatSize(widget.total * 1024);
-    var current = formatSize((widget.current ?? 0) * 1024);
+    var total = formatSize(widget.total);
+    var current = formatSize(widget.current ?? 0);
 
     return '${widget.text ?? ''} $current/$total';
   }
