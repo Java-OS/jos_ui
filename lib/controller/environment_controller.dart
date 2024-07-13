@@ -32,7 +32,6 @@ class EnvironmentController extends GetxController {
     if (payload.metadata.success) {
       keyEditingController.clear();
       valueEditingController.clear();
-      await fetchSystemEnvironments();
       displayInfo('Add environment [$key]');
       await fetchSystemEnvironments();
       Get.back();
@@ -48,7 +47,6 @@ class EnvironmentController extends GetxController {
     var payload = await RestClient.rpc(RPC.RPC_SYSTEM_ENVIRONMENT_BATCH_SET, parameters: {'batch': batch});
     if (payload.metadata.success) {
       batchEditingController.clear();
-      await fetchSystemEnvironments();
       displayInfo('Successfully set batch environments');
       await fetchSystemEnvironments();
       Get.back();
