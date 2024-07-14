@@ -18,6 +18,7 @@ import 'package:jos_ui/page/settings_backup_page.dart';
 import 'package:jos_ui/page/settings_basic_page.dart';
 import 'package:jos_ui/page/settings_datetime_page.dart';
 import 'package:jos_ui/page/settings_environments_page.dart';
+import 'package:jos_ui/page/settings_kernel_parameters_page.dart';
 import 'package:jos_ui/page/settings_user_page.dart';
 import 'package:timezone/data/latest.dart';
 import 'package:toastification/toastification.dart';
@@ -61,6 +62,8 @@ class MyApp extends StatelessWidget {
           GetPage(name: Routes.login.routeName, page: () => LoginPage()),
           GetPage(name: Routes.dashboard.routeName, page: () => ResponsiveLayout(body: DashboardPage())),
           GetPage(name: Routes.settingBasic.routeName, page: () => ResponsiveLayout(body: SettingsBasicPage())),
+          GetPage(name: Routes.settingKernelParameters.routeName, page: () => ResponsiveLayout(body: SettingsKernelParametersPage())),
+          GetPage(name: Routes.settingKernelModules.routeName, page: () => ResponsiveLayout(body: SettingsKernelParametersPage())),
           GetPage(name: Routes.settingsDateTime.routeName, page: () => ResponsiveLayout(body: SettingsDatetimePage())),
           GetPage(name: Routes.settingsEnvironments.routeName, page: () => ResponsiveLayout(body: SettingsEnvironmentsPage())),
           GetPage(name: Routes.settingsUsers.routeName, page: () => ResponsiveLayout(body: SettingsUserPage())),
