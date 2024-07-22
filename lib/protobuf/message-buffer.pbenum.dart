@@ -314,6 +314,7 @@ class Realm extends $pb.ProtobufEnum {
   static const Realm REALM_FILESYSTEM = Realm._(1024, _omitEnumNames ? '' : 'REALM_FILESYSTEM');
   static const Realm REALM_SSL = Realm._(2048, _omitEnumNames ? '' : 'REALM_SSL');
   static const Realm REALM_CONTAINER_ENGINE = Realm._(4096, _omitEnumNames ? '' : 'REALM_CONTAINER_ENGINE');
+  static const Realm REALM_KERNEL = Realm._(8192, _omitEnumNames ? '' : 'REALM_KERNEL');
 
   static const $core.List<Realm> values = <Realm> [
     REALM_NONE,
@@ -330,6 +331,7 @@ class Realm extends $pb.ProtobufEnum {
     REALM_FILESYSTEM,
     REALM_SSL,
     REALM_CONTAINER_ENGINE,
+    REALM_KERNEL,
   ];
 
   static final $core.Map<$core.int, Realm> _byValue = $pb.ProtobufEnum.initByValue(values);

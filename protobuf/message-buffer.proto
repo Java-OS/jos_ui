@@ -228,6 +228,7 @@ enum Realm {
     REALM_FILESYSTEM = 1024;
     REALM_SSL = 2048;
     REALM_CONTAINER_ENGINE = 4096;
+    REALM_KERNEL = 8192;
 }
 
 enum UploadType {

@@ -250,6 +250,7 @@ const Realm$json = {
     {'1': 'REALM_FILESYSTEM', '2': 1024},
     {'1': 'REALM_SSL', '2': 2048},
     {'1': 'REALM_CONTAINER_ENGINE', '2': 4096},
+    {'1': 'REALM_KERNEL', '2': 8192},
   ],
 };
 
@@ -260,7 +261,7 @@ final $typed_data.Uint8List realmDescriptor = $convert.base64Decode(
     'TkZJR1VSQVRJT04QEBIVChFSRUFMTV9FTlZJUk9OTUVOVBAgEhAKDFJFQUxNX01PRFVMRRBAEh'
     'IKDVJFQUxNX05FVFdPUksQgAESDwoKUkVBTE1fVVNFUhCAAhIOCglSRUFMTV9MT0cQgAQSFQoQ'
     'UkVBTE1fRklMRVNZU1RFTRCACBIOCglSRUFMTV9TU0wQgBASGwoWUkVBTE1fQ09OVEFJTkVSX0'
-    'VOR0lORRCAIA==');
+    'VOR0lORRCAIBIRCgxSRUFMTV9LRVJORUwQgEA=');
 
 @$core.Deprecated('Use uploadTypeDescriptor instead')
 const UploadType$json = {
