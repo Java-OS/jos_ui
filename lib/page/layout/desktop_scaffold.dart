@@ -25,7 +25,7 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                 AppBar(
                   automaticallyImplyLeading: false,
                 ),
-                widget.content,
+                Expanded(child: widget.content),
               ],
             ),
           )

@@ -8,7 +8,7 @@ final _kernelController = Get.put(KernelController());
 
 Future<void> displayUpdateKernelParameterDialog(String key, String value, Function execute) async {
   _kernelController.selectedSystemKey.value = key;
-  _kernelController.systemValueEditingController.text = value;
+  _kernelController.systemKernelParameterValueEditingController.text = value;
   displayAddKernelParameterDialog(execute);
 }
 
@@ -38,7 +38,7 @@ Future<void> displayAddKernelParameterDialog(Function execute) async {
                   initialValue: isUpdate ? TextEditingValue(text: _kernelController.selectedSystemKey.value) : TextEditingValue(),
                   onSelected: (k) {
                     _kernelController.selectedSystemKey.value = k;
-                    _kernelController.systemValueEditingController.text = _kernelController.allKernelParameters[k] ?? '';
+                    _kernelController.systemKernelParameterValueEditingController.text = _kernelController.allKernelParameters[k] ?? '';
                   },
                   optionsViewBuilder: (context, onSelected, options) => Align(
                     alignment: Alignment.topLeft,
@@ -87,7 +87,7 @@ Future<void> displayAddKernelParameterDialog(Function execute) async {
                 ),
                 // TextFieldBox(controller: _kernelController.systemKeyEditingController, label: 'Parameter', isEnable: isUpdate, maxLines: 1),
                 SizedBox(height: 8),
-                TextFieldBox(controller: _kernelController.systemValueEditingController, label: 'Value', maxLines: 1),
+                TextFieldBox(controller: _kernelController.systemKernelParameterValueEditingController, label: 'Value', maxLines: 1),
                 SizedBox(height: 8),
                 Align(
                   alignment: Alignment.centerRight,
@@ -99,5 +99,38 @@ Future<void> displayAddKernelParameterDialog(Function execute) async {
         ],
       );
     },
-  ).then((_) => _kernelController.clean());
+  );
+}
+
+Future<void> displayAddKernelModuleDialog(Function execute) async {
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return SimpleDialog(
+        title: getModalHeader('Kernel module'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        contentPadding: EdgeInsets.all(14),
+        titlePadding: EdgeInsets.zero,
+        children: [
+          SizedBox(
+            width: 370,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFieldBox(controller: _kernelController.systemKernelModuleNameEditingController, label: 'name', maxLines: 1),
+                SizedBox(height: 8),
+                TextFieldBox(controller: _kernelController.systemKernelModuleOptionsEditingController, label: 'Options (comma delimited)', maxLines: 1),
+                SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(onPressed: () => execute(), child: Text('Apply')),
+                ),
+              ],
+            ),
+          )
+        ],
+      );
+    },
+  );
 }

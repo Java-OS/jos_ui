@@ -26,7 +26,7 @@ class _SettingsKernelParametersPageState extends State<SettingsKernelParametersP
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Kernel parameters',
+      title: 'Kernel Parameters',
       controllers: [
         OutlinedButton(
           onPressed: () => displayAddKernelParameterDialog(_kernelController.setKernelParameter),
@@ -88,7 +88,7 @@ class _SettingsKernelParametersPageState extends State<SettingsKernelParametersP
                   splashRadius: 12,
                   icon: Icon(MdiIcons.pencilOutline, size: 16, color: Colors.black),
                 ),
-                IconButton(onPressed: () => _kernelController.unsetKernelParameter(key), splashRadius: 12, icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black)),
+                IconButton(onPressed: () => _kernelController.unsetKernelParameter(key), splashRadius: 12, icon: Icon(MdiIcons.trashCanOutline, size: 16)),
               ],
             ),
           ),

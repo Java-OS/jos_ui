@@ -3,16 +3,20 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/model/kernel_mod_info.dart';
 import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
 class KernelController extends GetxController {
-  final TextEditingController systemValueEditingController = TextEditingController();
+  final TextEditingController systemKernelParameterValueEditingController = TextEditingController();
+  final TextEditingController systemKernelModuleNameEditingController = TextEditingController();
+  final TextEditingController systemKernelModuleOptionsEditingController = TextEditingController();
 
   var allKernelParameters = <String, String>{}.obs;
   var configuredKernelParameters = <String, String>{}.obs;
   var selectedSystemKey = ''.obs;
+  var moduleList = <KernelModInfo>[].obs;
 
   Map<String, String> filterSuggestions() {
     Map<String, String> sug = Map.from(allKernelParameters);
@@ -50,18 +54,22 @@ class KernelController extends GetxController {
   Future<void> setKernelParameter() async {
     developer.log('set kernel parameter called');
     var key = selectedSystemKey.value.trim();
-    var value = systemValueEditingController.text.trim();
+    var value = systemKernelParameterValueEditingController.text.trim();
 
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_PARAMETER_SET, parameters: {'key': key, 'value': value});
+    var param = {
+      'name': key,
+      'parameters': value,
+    };
+
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_PARAMETER_SET, parameters: param);
     if (payload.metadata.success) {
-      selectedSystemKey.value = '';
-      systemValueEditingController.clear();
-      displayInfo('Set kernel parameter [$key]');
+      displayInfo('Set kernel parameter $key');
       await fetchConfiguredKernelParameters();
       Get.back();
     } else {
-      displayError('Failed to set kernel parameter [$key]');
+      displayError('Failed to set kernel parameter $key');
     }
+    clean();
   }
 
   Future<void> unsetKernelParameter(String key) async {
@@ -76,8 +84,53 @@ class KernelController extends GetxController {
     clean();
   }
 
+  Future<void> fetchKernelModules() async {
+    developer.log('Fetch kernel modules called');
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_MODULE_LIST);
+    if (payload.metadata.success) {
+      var json = jsonDecode(payload.content);
+      var result = json as List;
+      moduleList.value = result.map((item) => KernelModInfo.fromMap(item)).toList();
+    }
+  }
+
+  Future<void> loadKernelModule() async {
+    developer.log('Load kernel parameter called');
+    var name = systemKernelModuleNameEditingController.text.trim();
+    var options = systemKernelModuleOptionsEditingController.text;
+
+    var param = {
+      'name': name,
+      'options': options,
+    };
+
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_MODULE_LOAD, parameters: param);
+    if (payload.metadata.success) {
+      displayInfo('Module $name loaded');
+      await fetchConfiguredKernelParameters();
+      Get.back();
+    } else {
+      displayError('Failed to load kernel module $name');
+    }
+  }
+
+  Future<void> unloadKernelModule(String name) async {
+    developer.log('Unload kernel module called');
+    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_MODULE_UNLOAD, parameters: {'name': name});
+    if (payload.metadata.success) {
+      await fetchKernelModules();
+      displayInfo('Module $name unloaded');
+      Get.back();
+    } else {
+      displayError('Failed to unload kernel module $name');
+    }
+    clean();
+  }
+
   void clean() {
     selectedSystemKey.value = '';
-    systemValueEditingController.clear();
+    systemKernelParameterValueEditingController.clear();
+    systemKernelModuleNameEditingController.clear();
+    systemKernelModuleOptionsEditingController.clear();
   }
 }
