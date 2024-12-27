@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 
-import 'package:file_picker/_internal/file_picker_web.dart';
-import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/model/module.dart';
 import 'package:jos_ui/protobuf/message-buffer.pb.dart';
@@ -84,7 +83,7 @@ class ModuleController extends GetxController {
   }
 
   Future<void> uploadModule() async {
-    var picked = await FilePickerWeb.platform.pickFiles();
+    var picked = await FilePicker.platform.pickFiles();
     if (picked != null) {
       var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.UPLOAD_TYPE_MODULE, null);
       if (uploaded) fetchModules();

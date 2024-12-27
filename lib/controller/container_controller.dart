@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:fetch_client/fetch_client.dart';
-import 'package:file_picker/_internal/file_picker_web.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/model/container/ContainerImage.dart';
@@ -89,11 +89,7 @@ class ContainerController extends GetxController {
       'code': event.value,
     };
     fetchResponse = await RestClient.sse(jsonEncode(content));
-    sseListener = fetchResponse!.stream
-        .where((event) => event.isNotEmpty)
-        .transform(const Utf8Decoder()).map((e) => Event.fromJson(e))
-        .distinct()
-        .listen(
+    sseListener = fetchResponse!.stream.where((event) => event.isNotEmpty).transform(const Utf8Decoder()).map((e) => Event.fromJson(e)).distinct().listen(
           (e) {
             var code = e.code;
             var message = e.message.trim();
@@ -463,7 +459,7 @@ class ContainerController extends GetxController {
   }
 
   Future<void> uploadFileToVolume() async {
-    var picked = await FilePickerWeb.platform.pickFiles();
+    var picked = await FilePicker.platform.pickFiles();
     if (picked != null) {
       var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.UPLOAD_TYPE_MODULE, null);
       if (uploaded) ();

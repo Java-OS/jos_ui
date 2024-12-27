@@ -1,4 +1,4 @@
-import 'package:file_picker/_internal/file_picker_web.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
 import 'package:get/get.dart';
@@ -71,7 +71,7 @@ Future<void> displayFilesystemTree(bool enableMakeDirectory, bool enableUploadFi
             Visibility(
               visible: enableMakeDirectory,
               child: IconButton(
-                onPressed: () => addFolderDialog(basePath,basePath, treeController),
+                onPressed: () => addFolderDialog(basePath, basePath, treeController),
                 padding: EdgeInsets.zero,
                 splashRadius: 10,
                 icon: Icon(MdiIcons.folderPlusOutline, size: 16, color: Colors.white),
@@ -136,7 +136,7 @@ Future<void> displayFilesystemTree(bool enableMakeDirectory, bool enableUploadFi
                             Visibility(
                               visible: !isFile,
                               child: IconButton(
-                                onPressed: () => addFolderDialog(basePath,nodePath, treeController),
+                                onPressed: () => addFolderDialog(basePath, nodePath, treeController),
                                 splashRadius: 16,
                                 icon: Icon(
                                   MdiIcons.folderPlusOutline,
@@ -183,7 +183,7 @@ Future<void> displayFilesystemTree(bool enableMakeDirectory, bool enableUploadFi
 }
 
 Future<void> uploadFile(String basePath, TreeController<FilesystemTree> treeController) async {
-  var picked = await FilePickerWeb.platform.pickFiles();
+  var picked = await FilePicker.platform.pickFiles();
   if (picked != null) {
     var bytes = picked.files.single.bytes!;
     var fileName = picked.files.single.name;
@@ -193,7 +193,7 @@ Future<void> uploadFile(String basePath, TreeController<FilesystemTree> treeCont
   }
 }
 
-Future<void> addFolderDialog(String basePath,String path, TreeController treeController) async {
+Future<void> addFolderDialog(String basePath, String path, TreeController treeController) async {
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {

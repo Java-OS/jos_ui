@@ -56,7 +56,7 @@ class _SettingsDatetimePageState extends State<SettingsDatetimePage> {
                     hint: _dateTimeController.serverTimeZone.isEmpty ? 'Select timezone' : _dateTimeController.serverTimeZone.value,
                     onSubmit: (e) => _dateTimeController.updateTimezone(e),
                     onSuggestionTap: (e) => _dateTimeController.updateTimezone(e.searchKey),
-                    searchInputDecoration: InputDecoration(
+                    searchInputDecoration: SearchInputDecoration(
                       border: OutlineInputBorder(),
                       hintStyle: TextStyle(fontSize: 12),
                       isDense: true,
@@ -137,7 +137,11 @@ class _SettingsDatetimePageState extends State<SettingsDatetimePage> {
     return Obx(
       () => Row(
         children: [
-          OutlinedButton(onPressed: () => _showDatePicker(context), child: Text(_dateTimeController.serverDate.value,)),
+          OutlinedButton(
+              onPressed: () => _showDatePicker(context),
+              child: Text(
+                _dateTimeController.serverDate.value,
+              )),
           SizedBox(width: 8),
           OutlinedButton(onPressed: () => _showTimePicker(context), child: Text(_dateTimeController.serverTime.value)),
         ],

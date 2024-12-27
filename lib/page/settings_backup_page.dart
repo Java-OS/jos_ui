@@ -1,4 +1,4 @@
-import 'package:file_picker/_internal/file_picker_web.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
@@ -108,7 +108,7 @@ class _SettingsBackupPageState extends State<SettingsBackupPage> {
   }
 
   Future<void> chooseConfigFile() async {
-    var picked = await FilePickerWeb.platform.pickFiles();
+    var picked = await FilePicker.platform.pickFiles();
     if (picked != null) {
       var bytes = picked.files.single.bytes!;
       var name = picked.files.single.name;
