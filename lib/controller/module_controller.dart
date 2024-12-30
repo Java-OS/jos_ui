@@ -4,7 +4,8 @@ import 'dart:developer' as developer;
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/model/module.dart';
-import 'package:jos_ui/protobuf/message-buffer.pb.dart';
+import 'package:jos_ui/model/protocol/rpc.dart';
+import 'package:jos_ui/model/protocol/upload_type.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -12,9 +13,9 @@ class ModuleController extends GetxController {
   var moduleList = <Module>[].obs;
 
   Future<void> fetchModules() async {
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_LIST);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content);
+    var payload = await RestClient.rpc(RPC.rpcModuleList);
+    if (payload.isSuccess()) {
+      var json = jsonDecode(payload.content!);
       var result = json as List;
       moduleList.value = result.map((item) => Module.fromMap(item)).toList();
     } else {
@@ -28,8 +29,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_REMOVE, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcModuleRemove, parameters: reqParam);
+    if (payload.isSuccess()) {
       await fetchModules();
     }
   }
@@ -40,8 +41,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_ENABLE, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcModuleEnable, parameters: reqParam);
+    if (payload.isSuccess()) {
       await fetchModules();
     }
   }
@@ -52,8 +53,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_DISABLE, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcModuleDisable, parameters: reqParam);
+    if (payload.isSuccess()) {
       await fetchModules();
     }
   }
@@ -64,8 +65,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_START, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcModuleStart, parameters: reqParam);
+    if (payload.isSuccess()) {
       await fetchModules();
     }
   }
@@ -76,8 +77,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_STOP, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcModuleStart, parameters: reqParam);
+    if (payload.isSuccess()) {
       await fetchModules();
     }
   }
@@ -85,7 +86,7 @@ class ModuleController extends GetxController {
   Future<void> uploadModule() async {
     var picked = await FilePicker.platform.pickFiles();
     if (picked != null) {
-      var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.UPLOAD_TYPE_MODULE, null);
+      var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.uploadTypeModule, null);
       if (uploaded) fetchModules();
     }
   }

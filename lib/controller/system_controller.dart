@@ -4,7 +4,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
-import 'package:jos_ui/protobuf/message-buffer.pb.dart';
+import 'package:jos_ui/model/protocol/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -30,9 +30,9 @@ class SystemController extends GetxController {
 
   Future<void> fetchHostname() async {
     developer.log('Fetch hostname called');
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_GET_HOSTNAME);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content);
+    var payload = await RestClient.rpc(RPC.rpcSystemGetHostname);
+    if (payload.isSuccess()) {
+      var json = jsonDecode(payload.content!);
       osHostname.value = json;
       hostnameEditingController.text = json;
     } else {
@@ -44,8 +44,8 @@ class SystemController extends GetxController {
     developer.log('Change hostname called');
     bool accepted = await displayAlertModal('Warning', 'JVM should be restarted for the changes to take effect');
     if (accepted) {
-      var payload = await RestClient.rpc(RPC.RPC_SYSTEM_SET_HOSTNAME, parameters: {'hostname': hostnameEditingController.text});
-      if (payload.metadata.success) {
+      var payload = await RestClient.rpc(RPC.rpcSystemSetHostname, parameters: {'hostname': hostnameEditingController.text});
+      if (payload.isSuccess()) {
         displaySuccess('Hostname changed');
         Get.back();
       } else {
@@ -57,32 +57,32 @@ class SystemController extends GetxController {
 
   void fetchSystemInformation() async {
     developer.log('Fetch System Full Information');
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_FULL_INFORMATION);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content);
-      dateTimeZone.value = json['os_date_time_zone'].toString();
-      osUsername.value = json['os_username'].toString();
-      osVersion.value = json['os_version'].toString();
-      osType.value = json['os_type'].toString();
-      osHostname.value = json['os_hostname'].toString();
-      hwCpuInfo.value = json['hw_cpu_info'].toString();
-      hwCpuCount.value = json['hw_cpu_count'].toString();
-      hwTotalMemory.value = json['hw_total_memory'];
-      hwUsedMemory.value = json['hw_used_memory'];
-      hwFreeMemory.value = json['hw_free_memory'];
-      jvmVendor.value = json['jvm_vendor'].toString();
-      jvmVersion.value = json['jvm_version'].toString();
-      jvmMaxHeapSize.value = json['jvm_max_heap_size'];
-      jvmTotalHeapSize.value = json['jvm_total_heap_size'];
-      jvmUsedHeapSize.value = json['jvm_used_heap_size'];
+    var payload = await RestClient.rpc(RPC.rpcSystemFullInformation);
+    if (payload.isSuccess()) {
+      var json = jsonDecode(payload.content!);
+      dateTimeZone.value = json['osDateTimeZone'].toString();
+      osUsername.value = json['osUsername'].toString();
+      osVersion.value = json['osVersion'].toString();
+      osType.value = json['osType'].toString();
+      osHostname.value = json['osHostname'].toString();
+      hwCpuInfo.value = json['hwCpuInfo'].toString();
+      hwCpuCount.value = json['hwCpuCount'].toString();
+      hwTotalMemory.value = json['hwTotalMemory'];
+      hwUsedMemory.value = json['hwUsedMemory'];
+      hwFreeMemory.value = json['hwFreeMemory'];
+      jvmVendor.value = json['jvmVendor'].toString();
+      jvmVersion.value = json['jvmVersion'].toString();
+      jvmMaxHeapSize.value = json['jvmMaxHeapSize'];
+      jvmTotalHeapSize.value = json['jvmTotalHeapSize'];
+      jvmUsedHeapSize.value = json['jvmUsedHeapSize'];
     }
   }
 
   Future<void> fetchDnsNameserver() async {
     developer.log('fetch dns nameserver');
-    var payload = await RestClient.rpc(RPC.RPC_NETWORK_GET_DNS_NAMESERVER);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content);
+    var payload = await RestClient.rpc(RPC.rpcNetworkGetDnsNameserver);
+    if (payload.isSuccess()) {
+      var json = jsonDecode(payload.content!);
       dnsEditingController.text = json;
     } else {
       displayWarning('Failed to fetch dns nameserver');
@@ -95,8 +95,8 @@ class SystemController extends GetxController {
     var reqParam = {
       'ips': dns,
     };
-    var payload = await RestClient.rpc(RPC.RPC_NETWORK_SET_DNS_NAMESERVER, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcNetworkSetDnsNameserver, parameters: reqParam);
+    if (payload.isSuccess()) {
       clear();
       Get.back();
     } else {
@@ -106,8 +106,8 @@ class SystemController extends GetxController {
   }
 
   void systemReboot() async {
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_REBOOT);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcSystemReboot);
+    if (payload.isSuccess()) {
       displayInfo('Reboot success');
     } else {
       displayError('Reboot failed');
@@ -115,8 +115,8 @@ class SystemController extends GetxController {
   }
 
   void systemShutdown() async {
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_SHUTDOWN);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcSystemShutdown);
+    if (payload.isSuccess()) {
       displayInfo('The system was completely shutdown');
     } else {
       displayError('Shutdown failed');

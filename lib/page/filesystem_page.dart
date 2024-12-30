@@ -99,7 +99,7 @@ class _FilesystemPageState extends State<FilesystemPage> {
     } else if (fs.type == 'swap') {
       return '${fs.blk} -> [ SWAP ]   ';
     } else {
-      return '${fs.blk} -> [ ${fs.mountPoint ?? ''} ]   ';
+      return '${fs.blk} -> [ ${fs.mountPoint} ]   ';
     }
   }
 

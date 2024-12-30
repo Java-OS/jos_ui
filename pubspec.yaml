@@ -57,6 +57,7 @@ dependencies:
   flutter_fancy_tree_view: ^1.6.0
   file_picker: ^8.0.3
   flutter_svg: ^2.0.10+1
+  flat_buffers: ^23.5.26
 
 dev_dependencies:
   flutter_test:

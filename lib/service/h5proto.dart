@@ -6,7 +6,9 @@ import 'package:basic_utils/basic_utils.dart';
 import 'package:cryptography/cryptography.dart' as cryptography;
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/foundation.dart';
-import 'package:jos_ui/protobuf/message-buffer.pb.dart';
+import 'package:jos_ui/model/protocol/metadata.dart';
+import 'package:jos_ui/model/protocol/packet.dart';
+import 'package:jos_ui/model/protocol/payload.dart';
 import 'package:jos_ui/service/storage_service.dart';
 import 'package:pointycastle/export.dart';
 
@@ -164,16 +166,15 @@ class H5Proto {
   }
 
   /* Encrypt message */
-  Future<Packet> encode(Payload payload) async {
-    var hash = sha256(payload.writeToBuffer());
+  Future<Packet> encode(Uint8List payload) async {
+    var hash = sha256(payload);
     var key = getKey();
 
-    var secretBox = await _encrypt(payload.writeToBuffer(), key);
+    var secretBox = await _encrypt(payload, key);
     var iv = secretBox.nonce;
     var data = secretBox.concatenation(nonce: false, mac: true);
 
-    Packet packet = Packet(iv: iv, hash: hash, payload: data);
-    return packet;
+    return Packet(base64.encode(Uint8List.fromList(iv)), base64.encode(hash), base64.encode(data));
   }
 
   Future<cryptography.SecretBox> _encrypt(Uint8List bytes, Uint8List key) async {
@@ -189,7 +190,7 @@ class H5Proto {
   }
 
   /* Decrypt server message */
-  Future<Payload> _decrypt(Uint8List bytes, Uint8List iv) async {
+  Future<Payload> decrypt(Uint8List bytes, Uint8List iv) async {
     var key = getKey();
     final algorithm = cryptography.AesGcm.with256bits();
     final secretKey = await algorithm.newSecretKeyFromBytes(key);
@@ -197,10 +198,7 @@ class H5Proto {
     bytes = bytes.sublist(0, bytes.length - 16);
     var secretBox = cryptography.SecretBox(bytes, nonce: iv, mac: cryptography.Mac(mac));
     var result = await algorithm.decrypt(secretBox, secretKey: secretKey);
-    return Payload.fromBuffer(result);
-  }
-
-  Future<Payload> decode(Uint8List bytes, Uint8List iv) async {
-    return _decrypt(bytes, iv);
+    var json = jsonDecode(utf8.decode(base64.decode(utf8.decode(result))));
+    return Payload.fromJson(json);
   }
 }

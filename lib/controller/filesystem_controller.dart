@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/model/filesystem.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
-import 'package:jos_ui/protobuf/message-buffer.pb.dart';
+import 'package:jos_ui/model/protocol/rpc.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -24,9 +24,9 @@ class FilesystemController extends GetxController {
 
   Future<void> fetchPartitions() async {
     developer.log('Fetch filesystems');
-    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_LIST);
-    if (payload.metadata.success) {
-      var result = jsonDecode(payload.content) as List;
+    var payload = await RestClient.rpc(RPC.rpcFilesystemList);
+    if (payload.isSuccess()) {
+      var result = jsonDecode(payload.content!) as List;
       partitions.value = result.map((e) => PartitionInformation.fromJson(e)).toList();
     } else {
       displayError('Failed to fetch filesystems');
@@ -45,8 +45,8 @@ class FilesystemController extends GetxController {
     };
 
     developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_MOUNT, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcFilesystemMount, parameters: reqParam);
+    if (payload.isSuccess()) {
       await fetchPartitions();
       clear();
       Get.back();
@@ -60,8 +60,8 @@ class FilesystemController extends GetxController {
       'uuid': partition.uuid,
     };
     developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_UMOUNT, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcFilesystemUmount, parameters: reqParam);
+    if (payload.isSuccess()) {
       await fetchPartitions();
       displayInfo('Successfully disconnected');
     }
@@ -73,8 +73,8 @@ class FilesystemController extends GetxController {
       'uuid': partition.uuid,
     };
     developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_SWAP_ON, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcFilesystemSwapOn, parameters: reqParam);
+    if (payload.isSuccess()) {
       await fetchPartitions();
     } else {
       displayWarning('Failed to activate swap ${partition.blk}');
@@ -87,8 +87,8 @@ class FilesystemController extends GetxController {
       'uuid': partition.uuid,
     };
     developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_SWAP_OFF, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcFilesystemSwapOff, parameters: reqParam);
+    if (payload.isSuccess()) {
       await fetchPartitions();
     } else {
       displayWarning('Failed to deactivate swap ${partition.blk}');
@@ -99,9 +99,9 @@ class FilesystemController extends GetxController {
     var reqParam = {
       'rootDir': rootPath,
     };
-    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_DIRECTORY_TREE, parameters: reqParam);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content);
+    var payload = await RestClient.rpc(RPC.rpcFilesystemDirectoryTree, parameters: reqParam);
+    if (payload.isSuccess()) {
+      var json = jsonDecode(payload.content!);
       var tree = FilesystemTree.fromJson(json);
       if (filesystemTree.value == null) {
         filesystemTree.value = tree;
@@ -144,8 +144,8 @@ class FilesystemController extends GetxController {
       'path': filePath,
     };
     developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_DELETE_FILE, parameters: reqParam);
-    if (!payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcFilesystemDeleteFile, parameters: reqParam);
+    if (!payload.isSuccess()) {
       displayWarning('Failed to delete $filePath');
     }
   }
@@ -157,8 +157,8 @@ class FilesystemController extends GetxController {
       'path': '$basePath/$path',
     };
     developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_CREATE_DIRECTORY, parameters: reqParam);
-    if (!payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcFilesystemCreateDirectory, parameters: reqParam);
+    if (!payload.isSuccess()) {
       displayWarning('Failed to create new folder $path');
     }
 
@@ -171,8 +171,8 @@ class FilesystemController extends GetxController {
       'target': path,
     };
     developer.log('$reqParam');
-    var payload = await RestClient.rpc(RPC.RPC_FILESYSTEM_EXTRACT_ARCHIVE, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcFilesystemExtractArchive, parameters: reqParam);
+    if (payload.isSuccess()) {
       await fetchPartitions();
     } else {
       displayWarning('Failed to create directory $path');

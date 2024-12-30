@@ -6,8 +6,8 @@ import 'package:fetch_client/fetch_client.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/model/container/ContainerImage.dart';
 import 'package:jos_ui/model/container/container.dart';
+import 'package:jos_ui/model/container/container_image.dart';
 import 'package:jos_ui/model/container/container_info.dart';
 import 'package:jos_ui/model/container/image_search.dart';
 import 'package:jos_ui/model/container/network.dart';
@@ -20,8 +20,8 @@ import 'package:jos_ui/model/container/volume.dart';
 import 'package:jos_ui/model/container/volume_parameter.dart';
 import 'package:jos_ui/model/event.dart';
 import 'package:jos_ui/model/event_code.dart';
-import 'package:jos_ui/protobuf/message-buffer.pb.dart';
-import 'package:jos_ui/protobuf/message-buffer.pbserver.dart';
+import 'package:jos_ui/model/protocol/rpc.dart';
+import 'package:jos_ui/model/protocol/upload_type.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -128,9 +128,9 @@ class ContainerController extends GetxController {
   /* Image methods */
   Future<void> listImages() async {
     developer.log('List images');
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_LIST);
-    if (payload.metadata.success) {
-      var obj = (jsonDecode(payload.content) as List);
+    var payload = await RestClient.rpc(RPC.rpcContainerImageList);
+    if (payload.isSuccess()) {
+      var obj = (jsonDecode(payload.content!) as List);
       containerImageList.value = obj.map((e) => ContainerImage.fromMap(e)).toList();
     }
   }
@@ -138,8 +138,8 @@ class ContainerController extends GetxController {
   Future<void> removeImage(String id) async {
     developer.log('remove image $id');
     var reqParams = {'name': id};
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_REMOVE, parameters: reqParams);
-    if (!payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcContainerImageRemove, parameters: reqParams);
+    if (!payload.isSuccess()) {
       displayWarning('Failed to remove image $id');
     }
     await listImages();
@@ -153,9 +153,9 @@ class ContainerController extends GetxController {
 
     developer.log('Search image $name');
 
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_SEARCH, parameters: reqParams);
-    if (payload.metadata.success) {
-      var obj = (jsonDecode(payload.content) as List);
+    var payload = await RestClient.rpc(RPC.rpcContainerImageSearch, parameters: reqParams);
+    if (payload.isSuccess()) {
+      var obj = (jsonDecode(payload.content!) as List);
       searchImageList.value = obj.map((e) => ImageSearch.fromMap(e)).toList();
     }
     waitingImageSearch.value = false;
@@ -166,8 +166,8 @@ class ContainerController extends GetxController {
     developer.log('Pull image $name');
     var reqParams = {'name': name};
     searchImageList.removeWhere((item) => item.name == name);
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_PULL, parameters: reqParams);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcContainerImagePull, parameters: reqParams);
+    if (payload.isSuccess()) {
       var pullItemImage = ContainerImage('', '', 0, 0, name, '');
       containerImageList.add(pullItemImage);
     }
@@ -176,8 +176,8 @@ class ContainerController extends GetxController {
   void cancelPullImage(String name) async {
     developer.log('Cancel pull image $name');
     var reqParams = {'name': name};
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_IMAGE_PULL_CANCEL, parameters: reqParams);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcContainerImagePullCancel, parameters: reqParams);
+    if (payload.isSuccess()) {
       var indexIndex = searchImageList.indexWhere((item) => item.name == name);
       if (indexIndex >= 0) {
         var updatableItem = searchImageList[indexIndex];
@@ -192,9 +192,9 @@ class ContainerController extends GetxController {
   /* Volume methods */
   Future<void> listVolumes() async {
     developer.log('List volumes');
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_VOLUME_LIST);
-    if (payload.metadata.success) {
-      var obj = (jsonDecode(payload.content) as List);
+    var payload = await RestClient.rpc(RPC.rpcContainerVolumeList);
+    if (payload.isSuccess()) {
+      var obj = (jsonDecode(payload.content!) as List);
       volumeList.value = obj.map((e) => Volume.fromMap(e)).toList();
     }
   }
@@ -203,29 +203,29 @@ class ContainerController extends GetxController {
     var name = volumeNameEditingController.text;
     developer.log('Create volume $name');
     var reqParams = {'name': name};
-    await RestClient.rpc(RPC.RPC_CONTAINER_VOLUME_CREATE, parameters: reqParams);
+    await RestClient.rpc(RPC.rpcContainerVolumeCreate, parameters: reqParams);
     await listVolumes().then((_) => Get.back()).then((_) => clean());
   }
 
   Future<void> removeVolume(String name) async {
     developer.log('Remove volume $name');
     var reqParams = {'name': name};
-    await RestClient.rpc(RPC.RPC_CONTAINER_VOLUME_REMOVE, parameters: reqParams);
+    await RestClient.rpc(RPC.rpcContainerVolumeRemove, parameters: reqParams);
     await listVolumes();
   }
 
   Future<void> pruneVolume() async {
     developer.log('Prune volume');
-    await RestClient.rpc(RPC.RPC_CONTAINER_VOLUME_PRUNE);
+    await RestClient.rpc(RPC.rpcContainerVolumePrune);
     await listVolumes();
   }
 
   /* Network methods */
   Future<void> listNetworks() async {
     developer.log('List networks');
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_NETWORK_LIST);
-    if (payload.metadata.success) {
-      var obj = (jsonDecode(payload.content) as List);
+    var payload = await RestClient.rpc(RPC.rpcContainerNetworkList);
+    if (payload.isSuccess()) {
+      var obj = (jsonDecode(payload.content!) as List);
       networkList.value = obj.map((e) => NetworkInfo.fromMap(e)).toList();
     }
   }
@@ -241,23 +241,23 @@ class ContainerController extends GetxController {
     var networkJson = jsonEncode(network.toMap());
 
     var reqParams = {'network': networkJson};
-    await RestClient.rpc(RPC.RPC_CONTAINER_NETWORK_CREATE, parameters: reqParams);
+    await RestClient.rpc(RPC.rpcContainerNetworkCreate, parameters: reqParams);
     await listNetworks().then((_) => Get.back()).then((_) async => await listNetworks());
   }
 
   void removeNetwork(String name) async {
     developer.log('Remove network $name');
     var reqParams = {'name': name};
-    await RestClient.rpc(RPC.RPC_CONTAINER_NETWORK_REMOVE, parameters: reqParams);
+    await RestClient.rpc(RPC.rpcContainerNetworkRemove, parameters: reqParams);
     await listNetworks();
   }
 
   /* Container methods */
   Future<void> listContainers() async {
     developer.log('List containers');
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_LIST);
-    if (payload.metadata.success) {
-      var obj = (jsonDecode(payload.content) as List);
+    var payload = await RestClient.rpc(RPC.rpcContainerList);
+    if (payload.isSuccess()) {
+      var obj = (jsonDecode(payload.content!) as List);
       containerList.value = obj.map((e) => ContainerInfo.fromMap(e)).toList();
     }
   }
@@ -265,8 +265,8 @@ class ContainerController extends GetxController {
   Future<void> killContainer(String name) async {
     developer.log('kill containers $name');
     var reqParams = {'name': name};
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_KILL, parameters: reqParams);
-    if (!payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcContainerKill, parameters: reqParams);
+    if (!payload.isSuccess()) {
       displayWarning('Failed to kill container $name');
     }
     await listContainers();
@@ -275,8 +275,8 @@ class ContainerController extends GetxController {
   Future<void> stopContainer(String name) async {
     developer.log('stop containers $name');
     var reqParams = {'name': name};
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_STOP, parameters: reqParams);
-    if (!payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcContainerStop, parameters: reqParams);
+    if (!payload.isSuccess()) {
       displayWarning('Failed to stop container $name');
     }
     await listContainers();
@@ -288,8 +288,8 @@ class ContainerController extends GetxController {
       'id': id,
       'name': name,
     };
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_REMOVE, parameters: reqParams);
-    if (!payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcContainerRemove, parameters: reqParams);
+    if (!payload.isSuccess()) {
       displayWarning('Failed to remove container $name');
     }
     await listContainers();
@@ -297,8 +297,8 @@ class ContainerController extends GetxController {
 
   Future<void> pruneContainer() async {
     developer.log('prune containers');
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_PRUNE);
-    if (!payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcContainerPrune);
+    if (!payload.isSuccess()) {
       displayWarning('Failed to prune container');
     }
     await listContainers();
@@ -307,8 +307,8 @@ class ContainerController extends GetxController {
   Future<void> startContainer(String name) async {
     developer.log('Start containers $name');
     var reqParams = {'name': name};
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_START, parameters: reqParams);
-    if (!payload.metadata.success) {
+    var payload = await RestClient.rpc(RPC.rpcContainerStart, parameters: reqParams);
+    if (!payload.isSuccess()) {
       displayWarning('Failed to kill container $name');
     }
     await listContainers();
@@ -348,7 +348,7 @@ class ContainerController extends GetxController {
     var json = jsonEncode(container.toMap());
 
     var reqParams = {'container': json};
-    await RestClient.rpc(RPC.RPC_CONTAINER_CREATE, parameters: reqParams).then((_) => Get.back()).then((_) => listContainers()).then((_) => cleanContainerParameters());
+    await RestClient.rpc(RPC.rpcContainerCreate, parameters: reqParams).then((_) => Get.back()).then((_) => listContainers()).then((_) => cleanContainerParameters());
   }
 
   /* Other methods */
@@ -433,9 +433,9 @@ class ContainerController extends GetxController {
 
   Future<void> loadRegistries() async {
     developer.log('Load registries');
-    var payload = await RestClient.rpc(RPC.RPC_CONTAINER_SETTING_REGISTRIES_LOAD);
-    if (payload.metadata.success) {
-      registries.assignAll(Set<String>.from(jsonDecode(payload.content)));
+    var payload = await RestClient.rpc(RPC.rpcContainerSettingRegistriesLoad);
+    if (payload.isSuccess()) {
+      registries.assignAll(Set<String>.from(jsonDecode(payload.content!)));
     }
   }
 
@@ -443,7 +443,7 @@ class ContainerController extends GetxController {
     developer.log('Save registries');
     var reqParams = {'registries': jsonEncode(registries.toList())};
     developer.log('$registries');
-    await RestClient.rpc(RPC.RPC_CONTAINER_SETTING_REGISTRIES_SAVE, parameters: reqParams);
+    await RestClient.rpc(RPC.rpcContainerSettingRegistriesSave, parameters: reqParams);
     await loadRegistries();
     Get.back();
     registryEditingController.clear();
@@ -454,14 +454,14 @@ class ContainerController extends GetxController {
     registries.removeWhere((e) => e == registry);
     var reqParams = {'registries': jsonEncode(registries.toList())};
     developer.log('$registries');
-    await RestClient.rpc(RPC.RPC_CONTAINER_SETTING_REGISTRIES_SAVE, parameters: reqParams);
+    await RestClient.rpc(RPC.rpcContainerSettingRegistriesSave, parameters: reqParams);
     await loadRegistries();
   }
 
   Future<void> uploadFileToVolume() async {
     var picked = await FilePicker.platform.pickFiles();
     if (picked != null) {
-      var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.UPLOAD_TYPE_MODULE, null);
+      var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.uploadTypeModule, null);
       if (uploaded) ();
     }
   }

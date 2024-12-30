@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:jos_ui/model/event_code.dart';
 
 class Event {

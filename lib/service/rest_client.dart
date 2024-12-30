@@ -10,7 +10,11 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
-import 'package:jos_ui/protobuf/message-buffer.pb.dart';
+import 'package:jos_ui/model/protocol/metadata.dart';
+import 'package:jos_ui/model/protocol/packet.dart';
+import 'package:jos_ui/model/protocol/payload.dart';
+import 'package:jos_ui/model/protocol/rpc.dart';
+import 'package:jos_ui/model/protocol/upload_type.dart';
 import 'package:jos_ui/service/h5proto.dart';
 import 'package:jos_ui/service/storage_service.dart';
 import 'package:jos_ui/widget/toast.dart';
@@ -38,18 +42,16 @@ class RestClient {
     var publicKey = _h5Proto.exportPublicKey();
 
     try {
-      Payload payload = Payload();
-      payload.content = publicKey;
-      var packet = Packet();
-      packet.payload = payload.writeToBuffer();
+      var payload = Payload(Metadata(null, null, null, null, null), publicKey);
+      var packet = Packet(null, null, base64.encode(payload.toUint8List()));
       var uri = Uri.parse(_baseH5ProtoUrl());
-      var response = await _http.post(uri, body: packet.writeToBuffer());
+      var response = await _http.post(uri, body: packet.toJson());
       var statusCode = response.statusCode;
       if (statusCode == 200) {
-        packet = Packet.fromBuffer(response.bodyBytes);
-        var responsePayload = Payload.fromBuffer(packet.payload);
-        var serverPublicKey = jsonDecode(responsePayload.content)['public-key'];
-        var captcha = jsonDecode(responsePayload.content)['captcha'];
+        var packet = Packet.fromBase64(response.body);
+        var responsePayload = Payload.fromJson(json.decode(utf8.decode(base64.decode(packet.cipher))));
+        var serverPublicKey = jsonDecode(responsePayload.content!)['public-key'];
+        var captcha = jsonDecode(responsePayload.content!)['captcha'];
         developer.log('Server public key $serverPublicKey');
         var publicKey = _h5Proto.bytesToPublicKey(base64Decode(serverPublicKey));
         _h5Proto.makeSharedSecret(publicKey);
@@ -78,11 +80,11 @@ class RestClient {
     var token = StorageService.getItem('token');
     var headers = {'authorization': 'Bearer $token'};
     developer.log('Header send: [$headers]');
-
-    var packet = await _h5Proto.encode(Payload(content: jsonEncode(data)));
+    var payload = Payload(Metadata(null, null, null, null, null), json.encode(data));
+    var packet = await _h5Proto.encode(payload.toUint8List());
 
     try {
-      var response = await _http.post(Uri.parse(_baseLoginUrl()), body: packet.writeToBuffer(), headers: headers);
+      var response = await _http.post(Uri.parse(_baseLoginUrl()), body: packet.toJson(), headers: headers);
       var statusCode = response.statusCode;
       if (statusCode == 204) {
         storeToken(response.headers);
@@ -106,15 +108,17 @@ class RestClient {
     developer.log('Header send: [$headers]');
 
     var data = parameters != null ? jsonEncode(parameters) : null;
-    var packet = await _h5Proto.encode(Payload(content: data, metadata: Metadata(rpc: rpc.value)));
+    var metadata = Metadata(null, rpc.code, null, null, null);
+    var payload = Payload(metadata, data);
+    var packet = await _h5Proto.encode(payload.toUint8List());
 
     // debugPrint('Parameters : ${jsonEncode(parameters)}');
-    // debugPrint('IV : ${base64Encode(packet.iv)}');
-    // debugPrint('Hash : ${base64Encode(packet.hash)}');
-    // debugPrint('Content : ${base64Encode(packet.content)}');
+    // debugPrint('IV : ${base64Encode(packet.dart.iv)}');
+    // debugPrint('Hash : ${base64Encode(packet.dart.hash)}');
+    // debugPrint('Content : ${base64Encode(packet.dart.content)}');
 
     try {
-      var response = await _http.post(Uri.parse(_baseRpcUrl()), body: packet.writeToBuffer(), headers: headers);
+      var response = await _http.post(Uri.parse(_baseRpcUrl()), body: packet.toJson(), headers: headers);
       var statusCode = response.statusCode;
       developer.log('Response received with http code: $statusCode');
 
@@ -127,16 +131,18 @@ class RestClient {
         getx.Get.offAllNamed(Routes.base.routeName);
       } else {
         var payload = await decodeResponsePayload(response);
-        displayWarning(payload.metadata.message, timeout: 5);
+        displayWarning(payload.metadata.message!, timeout: 5);
       }
     } catch (e) {
-      if (rpc == RPC.RPC_SYSTEM_REBOOT || rpc == RPC.RPC_JVM_RESTART || rpc == RPC.RPC_SYSTEM_SHUTDOWN) {
+      if (rpc == RPC.rpcSystemReboot || rpc == RPC.rpcJvmRestart || rpc == RPC.rpcSystemShutdown) {
         developer.log('Normal error by http , The jvm going to shutdown before sending response');
       } else {
         developer.log('[Http Error] $rpc ${e.toString()}');
       }
     }
-    return Payload(metadata: Metadata(success: false));
+
+    metadata = Metadata(false, null, null, null, null);
+    return Payload(metadata, null);
   }
 
   static void storeToken(Map<String, String> headers) {
@@ -161,7 +167,7 @@ class RestClient {
     };
 
     try {
-      var request = http.MultipartRequest('POST', Uri.parse('${_baseUploadUrl()}/${type.value}'));
+      var request = http.MultipartRequest('POST', Uri.parse('${_baseUploadUrl()}/${type.code}'));
       request.headers.addAll(headers);
       var fileOrder = http.MultipartFile.fromBytes('file', bytes, filename: fileName);
       request.files.add(fileOrder);
@@ -183,7 +189,7 @@ class RestClient {
     };
 
     try {
-      var request = http.MultipartRequest('POST', Uri.parse('${_baseUploadUrl()}/${UploadType.UPLOAD_TYPE_FILE.value}'));
+      var request = http.MultipartRequest('POST', Uri.parse('${_baseUploadUrl()}/${UploadType.uploadTypeFile.code}'));
       request.headers.addAll(headers);
       var fileOrder = http.MultipartFile.fromBytes('file', bytes, filename: fileName);
       request.files.add(fileOrder);
@@ -209,10 +215,11 @@ class RestClient {
 
     developer.log('Header send: [$header]');
 
-    var packet = await _h5Proto.encode(Payload(content: content));
+    var payload = Payload(Metadata(null, null, null, null, null), jsonEncode(content));
+    var packet = await _h5Proto.encode(payload.toUint8List());
 
     var request = http.Request('POST', Uri.parse(_baseSseUrl()));
-    request.bodyBytes = packet.writeToBuffer();
+    request.bodyBytes = utf8.encode(packet.cipher);
     request.headers.addAll(header);
 
     final FetchClient fetchClient = FetchClient(mode: RequestMode.cors, cache: RequestCache.noCache);
@@ -231,10 +238,11 @@ class RestClient {
       'password': password,
     };
 
-    var packet = await _h5Proto.encode(Payload(content: jsonEncode(parameters)));
+    var payload = Payload(Metadata(null, null, null, null, null), jsonEncode(parameters));
+    var packet = await _h5Proto.encode(payload.toUint8List());
 
     try {
-      var response = await _http.post(Uri.parse(_baseDownloadUrl()), body: packet.writeToBuffer(), headers: headers);
+      var response = await _http.post(Uri.parse(_baseDownloadUrl()), body: packet, headers: headers);
       var statusCode = response.statusCode;
       developer.log('Response received with http code: $statusCode');
 
@@ -257,17 +265,16 @@ class RestClient {
     } catch (e) {
       developer.log('[Http Error] $rpc ${e.toString()}');
     }
-    return Payload(metadata: Metadata(success: false));
+    var metadata = Metadata(false, null, null, null, null);
+    return Payload(metadata, null);
   }
 
   static Future<Payload> decodeResponsePayload(http.Response response) async {
     var bodyBytes = response.bodyBytes;
-    var packet = Packet.fromBuffer(bodyBytes);
-    var iv = Uint8List.fromList(packet.iv);
-    var content = Uint8List.fromList(packet.payload);
-    var payload = await _h5Proto.decode(content, iv);
+    var packet = Packet.fromBase64(utf8.decode(bodyBytes));
+    var payload = await _h5Proto.decrypt(base64.decode(utf8.decode(utf8.encode(packet.cipher))), base64.decode(utf8.decode(utf8.encode(packet.iv!))));
     var metadata = payload.metadata;
-    storeJvmNeedRestart(metadata.needRestart);
+    storeJvmNeedRestart(metadata.needRestart!);
     return payload;
   }
 }
