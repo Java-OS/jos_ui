@@ -4,11 +4,11 @@ import 'dart:developer' as developer;
 import 'package:fetch_client/fetch_client.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/model/log.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
-import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -34,6 +34,7 @@ class LogController extends GetxController {
 
   @override
   void onInit() {
+    super.onInit();
     patternEditingController.text = '[%-5level] %date [%thread] %logger{10} [%file:%line] %msg%n';
   }
 
@@ -94,9 +95,9 @@ class LogController extends GetxController {
   }
 
   Future<void> fetchAppenders() async {
-    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_LIST);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content);
+    var payload = await RestClient.rpc(Rpc.RPC_LOG_APPENDER_LIST);
+    if (payload.metadata!.success) {
+      var json = jsonDecode(payload.content!);
       logAppenders.value = (json as List).map((e) => LogInfo.fromJson(e)).toList();
     } else {
       displayWarning('Failed to fetch log appenders');
@@ -114,8 +115,8 @@ class LogController extends GetxController {
       'fileTotalSize': int.parse(fileTotalSizeEditingController.text),
       'fileMaxHistory': int.parse(fileMaxHistoryEditingController.text),
     };
-    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_ADD, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_LOG_APPENDER_ADD, parameters: reqParam);
+    if (payload.metadata!.success) {
       await fetchAppenders();
       Get.back();
       clear();
@@ -135,8 +136,8 @@ class LogController extends GetxController {
       'syslogPort': int.parse(syslogPortEditingController.text),
       'syslogFacility': syslogFacilityEditingController.text,
     };
-    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_ADD, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_LOG_APPENDER_ADD, parameters: reqParam);
+    if (payload.metadata!.success) {
       await fetchAppenders();
       Get.back();
       clear();
@@ -147,8 +148,8 @@ class LogController extends GetxController {
 
   Future<void> removeAppender(int id) async {
     var reqParam = {'id': id};
-    var payload = await RestClient.rpc(RPC.RPC_LOG_APPENDER_REMOVE, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_LOG_APPENDER_REMOVE, parameters: reqParam);
+    if (payload.metadata!.success) {
       await fetchAppenders();
       clear();
     } else {
@@ -157,9 +158,9 @@ class LogController extends GetxController {
   }
 
   Future<void> fetchSystemLog() async {
-    var payload = await RestClient.rpc(RPC.RPC_LOG_SYSTEM);
-    if (payload.metadata.success) {
-      var jsonObject = jsonDecode(payload.content);
+    var payload = await RestClient.rpc(Rpc.RPC_LOG_SYSTEM);
+    if (payload.metadata!.success) {
+      var jsonObject = jsonDecode(payload.content!);
       for (var value in jsonObject) {
         systemLog.value += '$value\n';
       }

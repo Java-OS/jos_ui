@@ -4,7 +4,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
-import 'package:jos_ui/protobuf/message-buffer.pb.dart';
+import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -30,9 +30,9 @@ class SystemController extends GetxController {
 
   Future<void> fetchHostname() async {
     developer.log('Fetch hostname called');
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_GET_HOSTNAME);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content);
+    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_GET_HOSTNAME);
+    if (payload.metadata!.success) {
+      var json = jsonDecode(payload.content!);
       osHostname.value = json;
       hostnameEditingController.text = json;
     } else {
@@ -44,8 +44,8 @@ class SystemController extends GetxController {
     developer.log('Change hostname called');
     bool accepted = await displayAlertModal('Warning', 'JVM should be restarted for the changes to take effect');
     if (accepted) {
-      var payload = await RestClient.rpc(RPC.RPC_SYSTEM_SET_HOSTNAME, parameters: {'hostname': hostnameEditingController.text});
-      if (payload.metadata.success) {
+      var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_SET_HOSTNAME, parameters: {'hostname': hostnameEditingController.text});
+      if (payload.metadata!.success) {
         displaySuccess('Hostname changed');
         Get.back();
       } else {
@@ -57,9 +57,9 @@ class SystemController extends GetxController {
 
   void fetchSystemInformation() async {
     developer.log('Fetch System Full Information');
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_FULL_INFORMATION);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content);
+    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_FULL_INFORMATION);
+    if (payload.metadata!.success) {
+      var json = jsonDecode(payload.content!);
       dateTimeZone.value = json['os_date_time_zone'].toString();
       osUsername.value = json['os_username'].toString();
       osVersion.value = json['os_version'].toString();
@@ -80,9 +80,9 @@ class SystemController extends GetxController {
 
   Future<void> fetchDnsNameserver() async {
     developer.log('fetch dns nameserver');
-    var payload = await RestClient.rpc(RPC.RPC_NETWORK_GET_DNS_NAMESERVER);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content);
+    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_GET_DNS_NAMESERVER);
+    if (payload.metadata!.success) {
+      var json = jsonDecode(payload.content!);
       dnsEditingController.text = json;
     } else {
       displayWarning('Failed to fetch dns nameserver');
@@ -95,8 +95,8 @@ class SystemController extends GetxController {
     var reqParam = {
       'ips': dns,
     };
-    var payload = await RestClient.rpc(RPC.RPC_NETWORK_SET_DNS_NAMESERVER, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_SET_DNS_NAMESERVER, parameters: reqParam);
+    if (payload.metadata!.success) {
       clear();
       Get.back();
     } else {
@@ -106,8 +106,8 @@ class SystemController extends GetxController {
   }
 
   void systemReboot() async {
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_REBOOT);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_REBOOT);
+    if (payload.metadata!.success) {
       displayInfo('Reboot success');
     } else {
       displayError('Reboot failed');
@@ -115,8 +115,8 @@ class SystemController extends GetxController {
   }
 
   void systemShutdown() async {
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_SHUTDOWN);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_SHUTDOWN);
+    if (payload.metadata!.success) {
       displayInfo('The system was completely shutdown');
     } else {
       displayError('Shutdown failed');

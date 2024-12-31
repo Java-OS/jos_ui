@@ -3,8 +3,8 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/kernel_mod_info.dart';
-import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -35,18 +35,18 @@ class KernelController extends GetxController {
 
   Future<void> fetchKernelParameters() async {
     developer.log('Fetch all kernel parameters called');
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_PARAMETER_LIST);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content) as Map;
+    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_KERNEL_PARAMETER_LIST);
+    if (payload.metadata!.success) {
+      var json = jsonDecode(payload.content!) as Map;
       allKernelParameters.value = Map.from(json);
     }
   }
 
   Future<void> fetchConfiguredKernelParameters() async {
     developer.log('Fetch configured kernel parameters called');
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_PARAMETER_GET);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content) as Map;
+    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_KERNEL_PARAMETER_GET);
+    if (payload.metadata!.success) {
+      var json = jsonDecode(payload.content!) as Map;
       configuredKernelParameters.value = Map.from(json);
     }
   }
@@ -61,8 +61,8 @@ class KernelController extends GetxController {
       'parameters': value,
     };
 
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_PARAMETER_SET, parameters: param);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_KERNEL_PARAMETER_SET, parameters: param);
+    if (payload.metadata!.success) {
       displayInfo('Set kernel parameter $key');
       await fetchConfiguredKernelParameters();
       Get.back();
@@ -74,8 +74,8 @@ class KernelController extends GetxController {
 
   Future<void> unsetKernelParameter(String key) async {
     developer.log('Unset kernel parameter called');
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_PARAMETER_UNSET, parameters: {'key': key});
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_KERNEL_PARAMETER_UNSET, parameters: {'key': key});
+    if (payload.metadata!.success) {
       await fetchConfiguredKernelParameters();
       displayInfo('Environment $key deleted');
     } else {
@@ -86,9 +86,9 @@ class KernelController extends GetxController {
 
   Future<void> fetchKernelModules() async {
     developer.log('Fetch kernel modules called');
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_MODULE_LIST);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content);
+    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_KERNEL_MODULE_LIST);
+    if (payload.metadata!.success) {
+      var json = jsonDecode(payload.content!);
       var result = json as List;
       moduleList.value = result.map((item) => KernelModInfo.fromMap(item)).toList();
     }
@@ -104,8 +104,8 @@ class KernelController extends GetxController {
       'options': options,
     };
 
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_MODULE_LOAD, parameters: param);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_KERNEL_MODULE_LOAD, parameters: param);
+    if (payload.metadata!.success) {
       displayInfo('Module $name loaded');
       await fetchConfiguredKernelParameters();
       Get.back();
@@ -116,8 +116,8 @@ class KernelController extends GetxController {
 
   Future<void> unloadKernelModule(String name) async {
     developer.log('Unload kernel module called');
-    var payload = await RestClient.rpc(RPC.RPC_SYSTEM_KERNEL_MODULE_UNLOAD, parameters: {'name': name});
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_KERNEL_MODULE_UNLOAD, parameters: {'name': name});
+    if (payload.metadata!.success) {
       await fetchKernelModules();
       displayInfo('Module $name unloaded');
       Get.back();

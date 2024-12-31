@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/user_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
+import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/user.dart';
-import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 
@@ -154,10 +154,10 @@ Table realmTable() {
     if (i % 2 == 0) {
       var row = TableRow(
         children: [
-          Checkbox(value: _userController.isSelected(allRealms[i].name), onChanged: (e) => _userController.selectItem(allRealms[i], e!)),
-          Text(allRealms[i].name),
-          Checkbox(value: _userController.isSelected(allRealms[i + 1].name), onChanged: (e) => _userController.selectItem(allRealms[i + 1], e!)),
-          Text(allRealms[i + 1].name),
+          Checkbox(value: _userController.isSelected(allRealms[i]!.value), onChanged: (e) => _userController.selectItem(allRealms[i]!, e!)),
+          Text(allRealms[i]!.value.toString()),
+          Checkbox(value: _userController.isSelected(allRealms[i + 1]!.value), onChanged: (e) => _userController.selectItem(allRealms[i + 1]!, e!)),
+          Text(allRealms[i + 1]!.value.toString()),
         ],
       );
 

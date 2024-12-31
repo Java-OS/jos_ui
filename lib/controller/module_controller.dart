@@ -3,8 +3,8 @@ import 'dart:developer' as developer;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/module.dart';
-import 'package:jos_ui/protobuf/message-buffer.pb.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
@@ -12,9 +12,9 @@ class ModuleController extends GetxController {
   var moduleList = <Module>[].obs;
 
   Future<void> fetchModules() async {
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_LIST);
-    if (payload.metadata.success) {
-      var json = jsonDecode(payload.content);
+    var payload = await RestClient.rpc(Rpc.RPC_MODULE_LIST);
+    if (payload.metadata!.success) {
+      var json = jsonDecode(payload.content!);
       var result = json as List;
       moduleList.value = result.map((item) => Module.fromMap(item)).toList();
     } else {
@@ -28,8 +28,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_REMOVE, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_MODULE_REMOVE, parameters: reqParam);
+    if (payload.metadata!.success) {
       await fetchModules();
     }
   }
@@ -40,8 +40,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_ENABLE, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_MODULE_ENABLE, parameters: reqParam);
+    if (payload.metadata!.success) {
       await fetchModules();
     }
   }
@@ -52,8 +52,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_DISABLE, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_MODULE_DISABLE, parameters: reqParam);
+    if (payload.metadata!.success) {
       await fetchModules();
     }
   }
@@ -64,8 +64,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_START, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_MODULE_START, parameters: reqParam);
+    if (payload.metadata!.success) {
       await fetchModules();
     }
   }
@@ -76,8 +76,8 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(RPC.RPC_MODULE_STOP, parameters: reqParam);
-    if (payload.metadata.success) {
+    var payload = await RestClient.rpc(Rpc.RPC_MODULE_STOP, parameters: reqParam);
+    if (payload.metadata!.success) {
       await fetchModules();
     }
   }
