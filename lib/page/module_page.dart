@@ -17,6 +17,7 @@ class _ModulePageState extends State<ModulePage> {
 
   @override
   void initState() {
+    super.initState();
     _moduleController.fetchModules();
   }
 
@@ -37,7 +38,13 @@ class _ModulePageState extends State<ModulePage> {
 
   List<Widget> controllers(BuildContext context) {
     return [
-      OutlinedButton(onPressed: () => _moduleController.uploadModule(), child: Icon(Icons.add, size: 16,color: Colors.black,)),
+      OutlinedButton(
+          onPressed: () => _moduleController.uploadModule(),
+          child: Icon(
+            Icons.add,
+            size: 16,
+            color: Colors.black,
+          )),
       SizedBox(width: 8),
       OutlinedButton(onPressed: () => displayLoggerModal(context), child: Icon(Icons.assignment_outlined, size: 16)),
     ];
