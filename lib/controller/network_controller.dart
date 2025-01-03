@@ -30,12 +30,12 @@ class NetworkController extends GetxController {
 
   Future<void> fetchEthernets() async {
     var payload = await RestClient.rpc(Rpc.RPC_NETWORK_ETHERNET_INFORMATION, parameters: {'ethernet': ''});
-    // if (payload.metadata!.success) {
-    //   var result = jsonDecode(payload.content!) as List;
-    //   ethernetList.value = result.map((item) => Ethernet.fromJson(item)).toList();
-    // } else {
-    //   displayError('Failed to fetch network interfaces');
-    // }
+    if (payload.metadata!.success) {
+      var result = jsonDecode(payload.content!) as List;
+      ethernetList.value = result.map((item) => Ethernet.fromJson(item)).toList();
+    } else {
+      displayError('Failed to fetch network interfaces');
+    }
   }
 
   Future<void> fetchRoutes() async {

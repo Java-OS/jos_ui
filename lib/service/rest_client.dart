@@ -112,12 +112,6 @@ class RestClient {
     // debugPrint('IV : ${base64Encode(packet.iv)}');
     // debugPrint('Hash : ${base64Encode(packet.hash)}');
     // debugPrint('Content : ${base64Encode(packet.content)}');
-
-    var p = Packet(packet);
-    var pl = await _h5Proto.decrypt(Uint8List.fromList(p.payload!), Uint8List.fromList(p.iv!));
-
-    developer.log('$pl');
-
     try {
       var response = await _http.post(Uri.parse(_baseRpcUrl()), body: packet, headers: headers);
       var statusCode = response.statusCode;
@@ -271,8 +265,8 @@ class RestClient {
     var bodyBytes = response.bodyBytes;
     var packet = Packet(bodyBytes);
     var iv = Uint8List.fromList(packet.iv!);
-    var content = Uint8List.fromList(packet.payload!);
-    var payload = await _h5Proto.decrypt(content, iv);
+    var cipher = Uint8List.fromList(packet.payload!);
+    var payload = await _h5Proto.decrypt(cipher, iv);
     var metadata = payload.metadata;
     storeJvmNeedRestart(metadata!.needRestart);
     return payload;

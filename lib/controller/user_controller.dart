@@ -113,7 +113,6 @@ class UserController extends GetxController {
       displaySuccess(lock ? 'User ${user.username} activated' : 'User ${user.username} disabled');
       await fetchUsers();
       clear();
-      Get.back();
     } else {
       displayWarning(lock ? 'Failed to activate ${user.username}' : 'Failed to disable ${user.username}');
     }

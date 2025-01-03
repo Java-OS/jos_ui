@@ -45,7 +45,7 @@ class BackupController extends GetxController {
 
   Future<void> restoreBackup(int index) async {
     developer.log('Restore system backup called');
-    bool accepted = await displayAlertModal('Warning', 'JVM should be restarted for the changes to take effect');
+    bool accepted = await displayAlertModal('Warning', 'JVM must be restarted for the changes to take effect');
     if (accepted) {
       var reqParam = {'id': index};
       var payload = await RestClient.rpc(Rpc.RPC_CONFIG_BACKUP_RESTORE, parameters: reqParam);

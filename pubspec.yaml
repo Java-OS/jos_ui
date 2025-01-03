@@ -118,3 +118,6 @@ flutter:
     - family: cairo
       fonts:
         - asset: assets/fonts/Cairo.ttf
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf

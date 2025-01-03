@@ -190,6 +190,7 @@ class H5Proto {
 
   /* Decrypt server message */
   Future<Payload> decrypt(Uint8List bytes, Uint8List iv) async {
+    developer.log('Payload encrypted size: ${bytes.length}, iv size: ${iv.length}');
     var key = getKey();
     final algorithm = cryptography.AesGcm.with256bits();
     final secretKey = await algorithm.newSecretKeyFromBytes(key);
@@ -197,6 +198,7 @@ class H5Proto {
     bytes = bytes.sublist(0, bytes.length - 16);
     var secretBox = cryptography.SecretBox(bytes, nonce: iv, mac: cryptography.Mac(mac));
     var result = await algorithm.decrypt(secretBox, secretKey: secretKey);
+    developer.log('Payload decrypted size: ${result.length}');
     return Payload(result);
   }
 }

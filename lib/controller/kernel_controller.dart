@@ -120,7 +120,6 @@ class KernelController extends GetxController {
     if (payload.metadata!.success) {
       await fetchKernelModules();
       displayInfo('Module $name unloaded');
-      Get.back();
     } else {
       displayError('Failed to unload kernel module $name');
     }
