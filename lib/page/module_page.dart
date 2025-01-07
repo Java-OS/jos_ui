@@ -46,7 +46,10 @@ class _ModulePageState extends State<ModulePage> {
             color: Colors.black,
           )),
       SizedBox(width: 8),
-      OutlinedButton(onPressed: () => displayLoggerModal(context), child: Icon(Icons.assignment_outlined, size: 16)),
+      OutlinedButton(
+        onPressed: () => displayLoggerModal(),
+        child: Icon(Icons.assignment_outlined, size: 16),
+      ),
     ];
   }
 
@@ -119,7 +122,7 @@ class _ModulePageState extends State<ModulePage> {
 
   Widget getLogButton() {
     return IconButton(
-      onPressed: () => displayLoggerModal(context),
+      onPressed: () => displayLoggerModal(),
       splashRadius: 10,
       splashColor: Colors.transparent,
       icon: Icon(Icons.assignment_outlined, size: 16),

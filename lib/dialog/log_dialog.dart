@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/controller/log_controller.dart';
+import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/log_info.dart';
@@ -13,6 +13,8 @@ import 'package:jos_ui/widget/drop_down_widget.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:xterm/core.dart';
+import 'package:xterm/ui.dart';
 
 var _logController = Get.put(LogController());
 var _filesystemController = Get.put(FilesystemController());
@@ -83,26 +85,35 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
                         height: 36,
                         char: 'Clear',
                         textStyle: TextStyle(fontSize: 11, color: Colors.black),
-                        onPressed: () => _logController.queue.clear(),
+                        onPressed: () => _logController.terminal.buffer.clear(),
                       )
                     ],
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    color: Colors.black,
-                    width: double.infinity,
-                    child: Theme(
-                      data: ThemeData(scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(Colors.white))),
-                      child: Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Obx(
-                          () => SelectableText.rich(TextSpan(style: TextStyle(fontSize: 11), children: processLines())),
-                        ),
-                      ),
-                    ),
+                  child: TerminalView(
+                    padding: EdgeInsets.only(top: 8,bottom: 8),
+                    _logController.terminal,
+                    controller: _logController.terminalController,
+                    autofocus: true,
+                    textStyle: TerminalStyle(fontSize: 11,fontFamily: 'IBMPlexMono'),
                   ),
-                ),
+                )
+                // Expanded(
+                //   child: Container(
+                //     color: Colors.black,
+                //     width: double.infinity,
+                //     child: Theme(
+                //       data: ThemeData(scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(Colors.white))),
+                //       child: Padding(
+                //         padding: EdgeInsets.all(4),
+                //         child: Obx(
+                //           () => SelectableText.rich(TextSpan(style: TextStyle(fontSize: 11), children: processLines())),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           )
@@ -112,37 +123,10 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
   ).then((value) => _logController.disconnect(true, true));
 }
 
-List<InlineSpan> processLines() {
-  var result = <InlineSpan>[];
-  var list = _logController.queue;
-  for (var log in list) {
-    var level = log.level;
-    var dateTime = log.dateTime;
-    var thread = log.thread;
-    var logger = log.logger;
-    var message = log.message;
-    var line = '[${level.name.toUpperCase()}] $dateTime $thread $logger $message\n';
-    result.add(TextSpan(text: line, style: TextStyle(color: getLineColor(level))));
-  }
-
-  return result;
-}
-
-Color getLineColor(LogLevel level) {
-  return switch (level) {
-    LogLevel.info => Colors.white,
-    LogLevel.warn => Colors.orangeAccent,
-    LogLevel.debug => Colors.orangeAccent,
-    LogLevel.error => Colors.redAccent,
-    LogLevel.trace => Colors.purpleAccent,
-    LogLevel.all => Colors.white,
-  };
-}
-
-Future<void> displayLoggerModal(BuildContext context) async {
+Future<void> displayLoggerModal() async {
   _logController.fetchAppenders().then(
         (value) => showDialog(
-          context: context,
+          context: Get.context!,
           builder: (BuildContext context) {
             return AlertDialog(
               title: getModalHeader('Logs'),

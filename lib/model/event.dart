@@ -15,4 +15,13 @@ class Event {
 
     return Event(message, eventCode);
   }
+
+  factory Event.fromBytes(List<int> bytes) {
+    var str = utf8.decode(bytes);
+    var map = jsonDecode(str);
+    var message = map['message'] ?? '';
+    var eventCode = EventCode.getValue(map['code'] ?? '');
+
+    return Event(message, eventCode);
+  }
 }

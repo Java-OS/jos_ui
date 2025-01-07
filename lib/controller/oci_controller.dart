@@ -81,35 +81,39 @@ class OciController extends GetxController {
 
   Future<void> ociSSEConsumer(String? message, EventCode event) async {
     if (sseConnected) return;
-    debugPrint('SSE Container Logs Consumer activated');
+    developer.log('SSE Container Logs Consumer activated');
     sseConnected = true;
     var content = {
       'message': message,
       'code': event.value,
     };
     fetchResponse = await RestClient.sse(jsonEncode(content));
-    sseListener = fetchResponse!.stream.where((event) => event.isNotEmpty).transform(const Utf8Decoder()).map((e) => Event.fromJson(e)).distinct().listen(
+    sseListener = fetchResponse!.stream
+        .where((event) => event.isNotEmpty)
+        .map((e) => Event.fromBytes(e))
+        .distinct()
+        .listen(
           (e) {
             var code = e.code;
             var message = e.message.trim();
-            debugPrint('$code ->   $message');
+            developer.log('$code ->   $message');
             handleEvents(code, message);
           },
           cancelOnError: true,
           onError: (e) {
-            debugPrint('$e');
+            handleEvents(event, null);
             closeStreamListener();
           },
           onDone: () => closeStreamListener(),
         );
   }
 
-  Future<void> handleEvents(EventCode code, String message) async {
+  Future<void> handleEvents(EventCode code, String? message) async {
     if (code == EventCode.ociImageNotification) {
-      displayInfo(message);
+      if (message != null) displayInfo(message);
       listImages();
     } else if (code == EventCode.ociContainerNotification) {
-      displayInfo(message);
+      if (message != null)  displayInfo(message);
       listContainers();
     } else if (code == EventCode.ociContainerLogs) {
       if (logs.value.split('\n').length == 500) logs.value = logs.value.substring(logs.value.indexOf('\n') + 1);
@@ -119,7 +123,7 @@ class OciController extends GetxController {
   }
 
   void closeStreamListener() {
-    debugPrint('Close sse connection');
+    developer.log('Close sse connection');
     sseListener.cancel();
     fetchResponse?.cancel();
     sseConnected = false;

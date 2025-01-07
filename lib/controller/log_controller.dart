@@ -11,6 +11,8 @@ import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
+import 'package:xterm/core.dart';
+import 'package:xterm/ui.dart';
 
 class LogController extends GetxController {
   final TextEditingController idEditingController = TextEditingController();
@@ -23,12 +25,12 @@ class LogController extends GetxController {
   final TextEditingController fileMaxSizeEditingController = TextEditingController();
   final TextEditingController fileTotalSizeEditingController = TextEditingController();
   final TextEditingController fileMaxHistoryEditingController = TextEditingController();
-
+  final terminalController = TerminalController();
+  final terminal = Terminal(maxLines: 1000, platform: TerminalTargetPlatform.web, reflowEnabled: true);
   var logAppenders = <LogInfo>[].obs;
   var isConnected = false.obs;
   var isTail = false.obs;
   var logLevel = LogLevel.all.obs;
-  var queue = <Log>[].obs;
   var systemLog = ''.obs;
   FetchResponse? fetchResponse;
 
@@ -51,7 +53,7 @@ class LogController extends GetxController {
     }
     var packageName = packageEditingController.text;
     var level = logLevel.value.name;
-    debugPrint('SSE controller try Connect $packageName $level');
+    developer.log('SSE controller try Connect $packageName $level');
     var content = {
       'message': {'package': packageName, 'level': level},
       'code': EventCode.jvmLogs.value
@@ -59,23 +61,21 @@ class LogController extends GetxController {
     fetchResponse = await RestClient.sse(jsonEncode(content));
     isConnected.value = true;
     fetchResponse!.stream.transform(const Utf8Decoder()).where((event) => event.isNotEmpty).transform(const LineSplitter()).distinct().listen(
-          (event) => addToQueue(event),
+          (event) => writeToTerminal(event),
           cancelOnError: true,
-          onError: (e) => debugPrint(e),
+          onError: (e) => developer.log(e),
         );
   }
 
-  void addToQueue(String event) async {
-    if (queue.length == 1000) {
-      queue.removeAt(0);
-    }
-    queue.add(Log.fromText(event));
+  void writeToTerminal(String event) async {
+    var log = Log.fromText(event);
+    var formattedLog = '${log.dateTime} [${log.level}] ${log.logger} [${log.thread}] ${log.message}\r\n';
+    terminal.write(formattedLog);
   }
 
   Future<void> disconnect(bool clearQueue, bool closeModal) async {
     if (clearQueue) {
       developer.log('Clear queue');
-      queue.clear();
     }
 
     if (closeModal) {
@@ -84,7 +84,7 @@ class LogController extends GetxController {
 
     isTail.value = false;
 
-    debugPrint('Disconnect SSE');
+    developer.log('Disconnect SSE');
     fetchResponse?.cancel();
     isConnected.value = false;
   }
