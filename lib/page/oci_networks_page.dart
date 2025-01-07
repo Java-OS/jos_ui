@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
-import 'package:jos_ui/controller/container_controller.dart';
+import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/create_network_dialog.dart';
 import 'package:jos_ui/dialog/container/network_information_dialog.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
@@ -16,7 +16,7 @@ class OciNetworksPage extends StatefulWidget {
 }
 
 class _OciImagesPageState extends State<OciNetworksPage> {
-  final _containerController = Get.put(ContainerController());
+  final _containerController = Get.put(OciController());
   var _waitingNetworksLoad = false;
 
   @override
@@ -38,7 +38,7 @@ class _OciImagesPageState extends State<OciNetworksPage> {
       child: Obx(
         () => Visibility(
           visible: !_waitingNetworksLoad,
-          replacement: SpinKitCircle(color: Colors.blueAccent),
+          replacement: Expanded(child: SpinKitCircle(color: Colors.blueAccent)),
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: _containerController.networkList.length,

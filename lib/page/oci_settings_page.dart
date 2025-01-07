@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
-import 'package:jos_ui/controller/container_controller.dart';
+import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/registry_dialog.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -14,7 +14,7 @@ class OciSettingsPage extends StatefulWidget {
 }
 
 class _OciSettingsPageState extends State<OciSettingsPage> {
-  final _containerController = Get.put(ContainerController());
+  final _containerController = Get.put(OciController());
 
   @override
   void initState() {

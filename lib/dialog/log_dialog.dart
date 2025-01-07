@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/controller/container_controller.dart';
+import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/controller/log_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
@@ -16,7 +16,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 var _logController = Get.put(LogController());
 var _filesystemController = Get.put(FilesystemController());
-var _containerController = Get.put(ContainerController());
+var _containerController = Get.put(OciController());
 
 Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
   if (logInfo != null) {

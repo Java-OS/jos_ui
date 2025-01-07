@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
-import 'package:jos_ui/controller/container_controller.dart';
+import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/container_create_dialog.dart';
 import 'package:jos_ui/dialog/container/container_information.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
@@ -20,7 +20,7 @@ class OciContainersPage extends StatefulWidget {
 }
 
 class _OciContainersPageState extends State<OciContainersPage> {
-  final _containerController = Get.put(ContainerController());
+  final _containerController = Get.put(OciController());
   var _waitingContainersLoad = false;
 
   @override
@@ -52,7 +52,7 @@ class _OciContainersPageState extends State<OciContainersPage> {
       child: Obx(
         () => Visibility(
           visible: !_waitingContainersLoad,
-          replacement: SpinKitCircle(color: Colors.blueAccent),
+          replacement: Expanded(child: SpinKitCircle(color: Colors.blueAccent)),
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: _containerController.containerList.length,
@@ -127,7 +127,7 @@ class _OciContainersPageState extends State<OciContainersPage> {
   }
 
   Future<void> streamLogs(ContainerInfo container) async {
-    _containerController.containerSSEConsumer(container.names.first, EventCode.containerLogs);
+    _containerController.ociSSEConsumer(container.names.first, EventCode.ociContainerLogs);
   }
 
   void loadContainers() async {

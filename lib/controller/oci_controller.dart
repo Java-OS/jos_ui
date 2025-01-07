@@ -24,7 +24,7 @@ import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
-class ContainerController extends GetxController {
+class OciController extends GetxController {
   final TextEditingController searchImageEditingController = TextEditingController();
   final TextEditingController volumeNameEditingController = TextEditingController();
   final TextEditingController volumeMountPointEditingController = TextEditingController();
@@ -79,7 +79,7 @@ class ContainerController extends GetxController {
   late StreamSubscription<Event> sseListener;
   var sseConnected = false;
 
-  Future<void> containerSSEConsumer(String? message, EventCode event) async {
+  Future<void> ociSSEConsumer(String? message, EventCode event) async {
     if (sseConnected) return;
     debugPrint('SSE Container Logs Consumer activated');
     sseConnected = true;
@@ -105,11 +105,13 @@ class ContainerController extends GetxController {
   }
 
   Future<void> handleEvents(EventCode code, String message) async {
-    if (code == EventCode.containerNotification) {
+    if (code == EventCode.ociImageNotification) {
+      displayInfo(message);
+      listImages();
+    } else if (code == EventCode.ociContainerNotification) {
       displayInfo(message);
       listContainers();
-      listImages();
-    } else if (code == EventCode.containerLogs) {
+    } else if (code == EventCode.ociContainerLogs) {
       if (logs.value.split('\n').length == 500) logs.value = logs.value.substring(logs.value.indexOf('\n') + 1);
       logs.value += '$message\n';
       logs.refresh();
@@ -161,7 +163,7 @@ class ContainerController extends GetxController {
   }
 
   void pullImage(String name) async {
-    containerSSEConsumer(null, EventCode.containerNotification);
+    ociSSEConsumer(null, EventCode.ociImageNotification);
     developer.log('Pull image $name');
     var reqParams = {'name': name};
     searchImageList.removeWhere((item) => item.name == name);
@@ -314,7 +316,7 @@ class ContainerController extends GetxController {
   }
 
   void createContainer() async {
-    containerSSEConsumer(null, EventCode.containerNotification);
+    ociSSEConsumer(null, EventCode.ociContainerNotification);
     developer.log('Try to create container');
     var name = containerNameEditingController.text;
     var dnsSearch = containerDnsSearchEditingController.text;

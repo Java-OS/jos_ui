@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/controller/container_controller.dart';
+import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 
-final _containerController = Get.put(ContainerController());
+final _containerController = Get.put(OciController());
 
 Future<void> displayCreateNetwork() async {
   showDialog(

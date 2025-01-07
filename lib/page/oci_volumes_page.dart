@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
-import 'package:jos_ui/controller/container_controller.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
+import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/create_volume_dialog.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
@@ -17,7 +17,7 @@ class OciVolumesPage extends StatefulWidget {
 }
 
 class _OciImagesPageState extends State<OciVolumesPage> {
-  final _containerController = Get.put(ContainerController());
+  final _containerController = Get.put(OciController());
   final _filesystemController = Get.put(FilesystemController());
   var _waitingVolumeLoad = false;
 
@@ -43,9 +43,9 @@ class _OciImagesPageState extends State<OciVolumesPage> {
         ),
       ],
       child: Obx(
-            () => Visibility(
+        () => Visibility(
           visible: !_waitingVolumeLoad,
-          replacement: SpinKitCircle(color: Colors.blueAccent),
+          replacement: Expanded(child: SpinKitCircle(color: Colors.blueAccent)),
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: _containerController.volumeList.length,
@@ -84,6 +84,6 @@ class _OciImagesPageState extends State<OciVolumesPage> {
   }
 
   fetchTreeAndDisplay(String path) {
-    _filesystemController.fetchFilesystemTree(path).then((value) => displayFilesystemTree(true,true));
+    _filesystemController.fetchFilesystemTree(path).then((value) => displayFilesystemTree(true, true));
   }
 }

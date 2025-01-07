@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
-import 'package:jos_ui/controller/container_controller.dart';
+import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/image_search_dialog.dart';
-import 'package:jos_ui/model/container/container_info.dart';
+import 'package:jos_ui/model/container/container_image.dart';
 import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
@@ -18,7 +18,7 @@ class OciImagesPage extends StatefulWidget {
 }
 
 class _OciImagesPageState extends State<OciImagesPage> {
-  final _containerController = Get.put(ContainerController());
+  final _containerController = Get.put(OciController());
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _OciImagesPageState extends State<OciImagesPage> {
       child: Obx(
         () => Visibility(
           visible: _containerController.waitingListImages.isFalse,
-          replacement: SpinKitCircle(color: Colors.blueAccent),
+          replacement: Expanded(child: SpinKitCircle(color: Colors.blueAccent)),
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: _containerController.containerImageList.length,
@@ -93,8 +93,8 @@ class _OciImagesPageState extends State<OciImagesPage> {
     );
   }
 
-  Future<void> streamLogs(ContainerInfo container) async {
-    _containerController.containerSSEConsumer(container.names.first, EventCode.containerLogs);
+  Future<void> streamLogs(ContainerImage ci) async {
+    _containerController.ociSSEConsumer(ci.name, EventCode.ociContainerLogs);
   }
 
   void loadImages() async {

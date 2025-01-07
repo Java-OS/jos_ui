@@ -1,7 +1,8 @@
 enum EventCode {
   jvmLogs('JVM_LOGS'),
-  containerNotification('CONTAINER_NOTIFICATION'),
-  containerLogs('CONTAINER_LOGS');
+  ociContainerNotification('OCI_CONTAINER_NOTIFICATION'),
+  ociImageNotification('OCI_IMAGE_NOTIFICATION'),
+  ociContainerLogs('OCI_CONTAINER_LOGS');
 
   final String value ;
   const EventCode(this.value);

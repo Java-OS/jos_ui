@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/controller/container_controller.dart';
+import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/dialog/environment_dialog.dart';
 import 'package:jos_ui/model/container/network_info.dart';
@@ -15,7 +15,7 @@ import 'package:jos_ui/widget/text_field_box_widget.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-final _containerController = Get.put(ContainerController());
+final _containerController = Get.put(OciController());
 
 Future<void> displayCreateContainer() async {
   showDialog(
@@ -373,13 +373,14 @@ Future<void> displayConnectNetworkToContainerDialog() async {
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField2<NetworkInfo>(
-                buttonStyleData: ButtonStyleData(height: 40),
+                buttonStyleData: ButtonStyleData(height: 60),
                 isDense: false,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (e) => _containerController.selectedNetwork.value = e,
                 hint: const Text('Select Network', style: TextStyle(fontSize: 14)),
+                menuItemStyleData: MenuItemStyleData(height: 60),
                 items: _containerController.networkList.map((e) => DropdownMenuItem(value: e, child: getNetworkName(e))).toList(),
               ),
               SizedBox(height: 8),
@@ -404,7 +405,7 @@ Future<void> displayConnectNetworkToContainerDialog() async {
 
 Widget getNetworkName(NetworkInfo ni) {
   return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
+    mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(ni.name),

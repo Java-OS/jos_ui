@@ -209,7 +209,8 @@ class RestClient {
 
     developer.log('Header send: [$header]');
 
-    var packet = await _h5Proto.encode(ProtocolUtils.serializePayload(null, content));
+    var serializeMetadata = ProtocolUtils.serializeMetadata(false, null, null, null, null);
+    var packet = await _h5Proto.encode(ProtocolUtils.serializePayload(serializeMetadata, content));
 
     var request = http.Request('POST', Uri.parse(_baseSseUrl()));
     request.bodyBytes = packet;

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
-import 'package:jos_ui/controller/container_controller.dart';
+import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 
-final _containerController = Get.put(ContainerController());
+final _containerController = Get.put(OciController());
 Future<void> displayContainerSearchImage() async {
   showDialog(
     context: Get.context!,
