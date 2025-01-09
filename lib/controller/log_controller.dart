@@ -60,7 +60,11 @@ class LogController extends GetxController {
     };
     fetchResponse = await RestClient.sse(jsonEncode(content));
     isConnected.value = true;
-    fetchResponse!.stream.transform(const Utf8Decoder()).where((event) => event.isNotEmpty).transform(const LineSplitter()).distinct().listen(
+    fetchResponse!.stream
+        .where((event) => event.isNotEmpty)
+        .transform(const Utf8Decoder())
+        .transform(const LineSplitter())
+        .distinct().listen(
           (event) => writeToTerminal(event),
           cancelOnError: true,
           onError: (e) => developer.log(e),

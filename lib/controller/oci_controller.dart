@@ -23,6 +23,8 @@ import 'package:jos_ui/model/event.dart';
 import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
+import 'package:xterm/core.dart';
+import 'package:xterm/ui.dart';
 
 class OciController extends GetxController {
   final TextEditingController searchImageEditingController = TextEditingController();
@@ -52,6 +54,9 @@ class OciController extends GetxController {
   /* Registries */
   final TextEditingController registryEditingController = TextEditingController();
 
+  final terminalController = TerminalController();
+  final terminal = Terminal(maxLines: 1000, platform: TerminalTargetPlatform.web, reflowEnabled: true);
+
   var waitingImageSearch = false.obs;
   var waitingListImages = false.obs;
 
@@ -73,7 +78,6 @@ class OciController extends GetxController {
   var selectedProtocol = Protocol.tcp.obs;
   var step = 0.obs;
   var registries = <String>{}.obs;
-  var logs = ''.obs;
 
   FetchResponse? fetchResponse;
   late StreamSubscription<Event> sseListener;
@@ -90,17 +94,19 @@ class OciController extends GetxController {
     fetchResponse = await RestClient.sse(jsonEncode(content));
     sseListener = fetchResponse!.stream
         .where((event) => event.isNotEmpty)
-        .map((e) => Event.fromBytes(e))
+        .transform(const Utf8Decoder())
+        .transform(const LineSplitter())
+        .map((e) => Event.fromJson(e))
         .distinct()
         .listen(
           (e) {
             var code = e.code;
             var message = e.message.trim();
-            developer.log('$code ->   $message');
             handleEvents(code, message);
           },
           cancelOnError: true,
           onError: (e) {
+            developer.log('$e');
             handleEvents(event, null);
             closeStreamListener();
           },
@@ -116,18 +122,18 @@ class OciController extends GetxController {
       if (message != null)  displayInfo(message);
       listContainers();
     } else if (code == EventCode.ociContainerLogs) {
-      if (logs.value.split('\n').length == 500) logs.value = logs.value.substring(logs.value.indexOf('\n') + 1);
-      logs.value += '$message\n';
-      logs.refresh();
+      // if (logs.value.split('\n').length == 500) logs.value = logs.value.substring(logs.value.indexOf('\n') + 1);
+      // logs.value += '$message\n';
+      // logs.refresh();
+      terminal.write('$message\r\n');
     }
   }
 
   void closeStreamListener() {
-    developer.log('Close sse connection');
+    developer.log('Disconnect SSE');
     sseListener.cancel();
     fetchResponse?.cancel();
     sseConnected = false;
-    logs = ''.obs;
   }
 
   /* Image methods */

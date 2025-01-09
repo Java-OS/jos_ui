@@ -452,18 +452,12 @@ Future<void> displayContainerLogDialog() async {
           width: 800,
           height: 400,
           color: Colors.black,
-          child: Theme(
-            data: ThemeData(scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(Colors.white))),
-            child: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Obx(
-                () => SelectableText(
-                  _containerController.logs.value,
-                  maxLines: 150,
-                  style: TextStyle(fontSize: 11, color: Colors.white),
-                ),
-              ),
-            ),
+          child: TerminalView(
+            padding: EdgeInsets.only(top: 8,bottom: 8),
+            _containerController.terminal,
+            controller: _containerController.terminalController,
+            autofocus: true,
+            textStyle: TerminalStyle(fontSize: 11,fontFamily: 'IBMPlexMono'),
           ),
         ),
       );
