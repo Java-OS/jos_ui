@@ -23,7 +23,7 @@ class Rpc {
       value == null ? null : Rpc.fromValue(value);
 
   static const int minValue = 0;
-  static const int maxValue = 2034;
+  static const int maxValue = 11111;
   static bool containsValue(int value) => values.containsKey(value);
 
   static const Rpc RPC_SYSTEM_SHUTDOWN = Rpc._(0);
@@ -128,6 +128,23 @@ class Rpc {
   static const Rpc RPC_SSL_JKS_UPLOAD = Rpc._(1001);
   static const Rpc RPC_SSL_JKS_REMOVE = Rpc._(1002);
   static const Rpc RPC_SSL_JKS_INFO = Rpc._(1003);
+  static const Rpc RPC_FIREWALL_TABLE_ADD = Rpc._(1100);
+  static const Rpc RPC_FIREWALL_TABLE_REMOVE = Rpc._(1101);
+  static const Rpc RPC_FIREWALL_TABLE_LIST = Rpc._(1102);
+  static const Rpc RPC_FIREWALL_TABLE_RENAME = Rpc._(1103);
+  static const Rpc RPC_FIREWALL_CHAIN_ADD = Rpc._(1104);
+  static const Rpc RPC_FIREWALL_CHAIN_REMOVE = Rpc._(1105);
+  static const Rpc RPC_FIREWALL_CHAIN_LIST = Rpc._(1106);
+  static const Rpc RPC_FIREWALL_CHAIN_RENAME = Rpc._(1107);
+  static const Rpc RPC_FIREWALL_SET_ADD = Rpc._(1108);
+  static const Rpc RPC_FIREWALL_SET_LIST = Rpc._(1109);
+  static const Rpc RPC_FIREWALL_SET_REMOVE = Rpc._(1110);
+  static const Rpc RPC_FIREWALL_SET_ELEMENT_ADD = Rpc._(1112);
+  static const Rpc RPC_FIREWALL_SET_ELEMENT_REMOVE = Rpc._(1113);
+  static const Rpc RPC_FIREWALL_RULE_ADD = Rpc._(1114);
+  static const Rpc RPC_FIREWALL_RULE_INSERT = Rpc._(1115);
+  static const Rpc RPC_FIREWALL_RULE_LIST = Rpc._(1116);
+  static const Rpc RPC_FIREWALL_RULE_REMOVE = Rpc._(1117);
   static const Rpc RPC_CONTAINER_IMAGE_PULL = Rpc._(2000);
   static const Rpc RPC_CONTAINER_IMAGE_REMOVE = Rpc._(2001);
   static const Rpc RPC_CONTAINER_IMAGE_LIST = Rpc._(2002);
@@ -162,6 +179,7 @@ class Rpc {
   static const Rpc RPC_CONTAINER_PRUNE = Rpc._(2032);
   static const Rpc RPC_CONTAINER_SETTING_REGISTRIES_LOAD = Rpc._(2033);
   static const Rpc RPC_CONTAINER_SETTING_REGISTRIES_SAVE = Rpc._(2034);
+  static const Rpc RPC_FIREWALL_SET_RENAME = Rpc._(11111);
   static const Map<int, Rpc> values = {
     0: RPC_SYSTEM_SHUTDOWN,
     1: RPC_SYSTEM_REBOOT,
@@ -265,6 +283,23 @@ class Rpc {
     1001: RPC_SSL_JKS_UPLOAD,
     1002: RPC_SSL_JKS_REMOVE,
     1003: RPC_SSL_JKS_INFO,
+    1100: RPC_FIREWALL_TABLE_ADD,
+    1101: RPC_FIREWALL_TABLE_REMOVE,
+    1102: RPC_FIREWALL_TABLE_LIST,
+    1103: RPC_FIREWALL_TABLE_RENAME,
+    1104: RPC_FIREWALL_CHAIN_ADD,
+    1105: RPC_FIREWALL_CHAIN_REMOVE,
+    1106: RPC_FIREWALL_CHAIN_LIST,
+    1107: RPC_FIREWALL_CHAIN_RENAME,
+    1108: RPC_FIREWALL_SET_ADD,
+    1109: RPC_FIREWALL_SET_LIST,
+    1110: RPC_FIREWALL_SET_REMOVE,
+    1112: RPC_FIREWALL_SET_ELEMENT_ADD,
+    1113: RPC_FIREWALL_SET_ELEMENT_REMOVE,
+    1114: RPC_FIREWALL_RULE_ADD,
+    1115: RPC_FIREWALL_RULE_INSERT,
+    1116: RPC_FIREWALL_RULE_LIST,
+    1117: RPC_FIREWALL_RULE_REMOVE,
     2000: RPC_CONTAINER_IMAGE_PULL,
     2001: RPC_CONTAINER_IMAGE_REMOVE,
     2002: RPC_CONTAINER_IMAGE_LIST,
@@ -298,7 +333,8 @@ class Rpc {
     2031: RPC_CONTAINER_KILL,
     2032: RPC_CONTAINER_PRUNE,
     2033: RPC_CONTAINER_SETTING_REGISTRIES_LOAD,
-    2034: RPC_CONTAINER_SETTING_REGISTRIES_SAVE};
+    2034: RPC_CONTAINER_SETTING_REGISTRIES_SAVE,
+    11111: RPC_FIREWALL_SET_RENAME};
 
   static const fb.Reader<Rpc> reader = _RpcReader();
 
@@ -455,7 +491,7 @@ class Packet {
 
   @override
   String toString() {
-    return 'Packet{iv: $iv, hash: $hash, payload: $payload}';
+    return 'Packet{iv: ${iv}, hash: ${hash}, payload: ${payload}}';
   }
 }
 
@@ -512,11 +548,11 @@ class PacketObjectBuilder extends fb.ObjectBuilder {
   @override
   int finish(fb.Builder fbBuilder) {
     final int? ivOffset = _iv == null ? null
-        : fbBuilder.writeListInt8(_iv);
+        : fbBuilder.writeListInt8(_iv!);
     final int? hashOffset = _hash == null ? null
-        : fbBuilder.writeListInt8(_hash);
+        : fbBuilder.writeListInt8(_hash!);
     final int? payloadOffset = _payload == null ? null
-        : fbBuilder.writeListInt8(_payload);
+        : fbBuilder.writeListInt8(_payload!);
     fbBuilder.startTable(3);
     fbBuilder.addOffset(0, ivOffset);
     fbBuilder.addOffset(1, hashOffset);
@@ -549,7 +585,7 @@ class Payload {
 
   @override
   String toString() {
-    return 'Payload{metadata: $metadata, content: $content}';
+    return 'Payload{metadata: ${metadata}, content: ${content}}';
   }
 }
 
@@ -600,7 +636,7 @@ class PayloadObjectBuilder extends fb.ObjectBuilder {
   int finish(fb.Builder fbBuilder) {
     final int? metadataOffset = _metadata?.getOrCreateOffset(fbBuilder);
     final int? contentOffset = _content == null ? null
-        : fbBuilder.writeString(_content);
+        : fbBuilder.writeString(_content!);
     fbBuilder.startTable(2);
     fbBuilder.addOffset(0, metadataOffset);
     fbBuilder.addOffset(1, contentOffset);
@@ -635,7 +671,7 @@ class Metadata {
 
   @override
   String toString() {
-    return 'Metadata{success: $success, rpc: $rpc, error: $error, needRestart: $needRestart, message: $message}';
+    return 'Metadata{success: ${success}, rpc: ${rpc}, error: ${error}, needRestart: ${needRestart}, message: ${message}}';
   }
 }
 
@@ -706,7 +742,7 @@ class MetadataObjectBuilder extends fb.ObjectBuilder {
   @override
   int finish(fb.Builder fbBuilder) {
     final int? messageOffset = _message == null ? null
-        : fbBuilder.writeString(_message);
+        : fbBuilder.writeString(_message!);
     fbBuilder.startTable(5);
     fbBuilder.addBool(0, _success);
     fbBuilder.addInt32(1, _rpc);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jos_ui/widget/breadcrumb.dart';
 
 class CardContent extends StatelessWidget {
   final Widget child;
@@ -21,7 +22,20 @@ class CardContent extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, fontFamily: 'cairo')),
+                  // Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, fontFamily: 'cairo')),
+                  Breadcrumb(
+                    items: [
+                      BreadcrumbItem(
+                        text: Text(title, style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'cairo')),
+                        action: () => print('Hello'),
+                      ),
+                      BreadcrumbItem(
+                        offset: 2,
+                        text: Text('Test', style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'cairo')),
+                        action: () => print('Bye'),
+                      ),
+                    ],
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: controllers ?? [SizedBox.shrink()],
