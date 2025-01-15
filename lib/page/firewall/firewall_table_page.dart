@@ -7,14 +7,14 @@ import 'package:jos_ui/dialog/host_dialog.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class FirewallPage extends StatefulWidget {
-  const FirewallPage({super.key});
+class FirewallTablePage extends StatefulWidget {
+  const FirewallTablePage({super.key});
 
   @override
-  State<FirewallPage> createState() => FirewallPageState();
+  State<FirewallTablePage> createState() => FirewallTablePageState();
 }
 
-class FirewallPageState extends State<FirewallPage> {
+class FirewallTablePageState extends State<FirewallTablePage> {
   final _firewallController = Get.put(FirewallController());
 
   @override
@@ -68,42 +68,5 @@ class FirewallPageState extends State<FirewallPage> {
         ),
       ),
     );
-  }
-
-  List<DataColumn> columns() {
-    var idColumn = DataColumn(label: Text('id', style: TextStyle(fontWeight: FontWeight.bold)));
-    var nameColumn = DataColumn(label: Text('name', style: TextStyle(fontWeight: FontWeight.bold)));
-    var typeColumn = DataColumn(label: Text('type', style: TextStyle(fontWeight: FontWeight.bold)));
-    var actionColumn = DataColumn(label: SizedBox.shrink());
-    return [idColumn, nameColumn, typeColumn, actionColumn];
-  }
-
-  List<DataRow> rows() {
-    var rowList = <DataRow>[];
-    var tables = _firewallController.firewallTables;
-    for (var item in tables) {
-      var row = DataRow(
-        cells: [
-          DataCell(Text(item.handle.toString(), style: TextStyle(fontSize: 12))),
-          DataCell(Text(item.name, style: TextStyle(fontSize: 12))),
-          DataCell(Text(item.type.value, style: TextStyle(fontSize: 12))),
-          DataCell(SizedBox.expand())
-          // DataCell(
-          //   Align(
-          //     alignment: Alignment.centerLeft,
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.end,
-          //       children: [
-          //         IconButton(onPressed: () => _networkController.removeHost(hostname), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(MdiIcons.trashCanOutline, size: 16)),
-          //       ],
-          //     ),
-          //   ),
-          // )
-        ],
-      );
-      rowList.add(row);
-    }
-
-    return rowList;
   }
 }

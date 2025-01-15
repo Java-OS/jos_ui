@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page/dashboard_page.dart';
 import 'package:jos_ui/page/filesystem_page.dart';
-import 'package:jos_ui/page/firewall_page.dart';
+import 'package:jos_ui/page/firewall/firewall_table_page.dart';
 import 'package:jos_ui/page/layout/responsive_layout.dart';
 import 'package:jos_ui/page/login_page.dart';
 import 'package:jos_ui/page/module_page.dart';
@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
           GetPage(name: Routes.networkInterfaces.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: NetworkInterfacesPage())),
           GetPage(name: Routes.networkNetworks.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: NetworkNetworksPage())),
           GetPage(name: Routes.networkHosts.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: NetworkHostsPage())),
-          GetPage(name: Routes.firewall.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: FirewallPage())),
+          GetPage(name: Routes.firewall.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: FirewallTablePage())),
           GetPage(name: Routes.filesystem.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: FilesystemPage())),
           GetPage(name: Routes.modules.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: ModulePage())),
           GetPage(name: Routes.ociContainers.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciContainersPage())),
