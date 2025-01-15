@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 enum FirewallTableType {
-  // ipv4('ip'),
-  // ipv6('ip6'),
+  ipv4('ip'),
+  ipv6('ip6'),
   inet('inet'),
   arp('arp'),
   // bridge('bridge'),

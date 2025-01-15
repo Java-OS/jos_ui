@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:developer' as developer;
-
 import 'package:jos_ui/constant.dart';
 
 class Breadcrumb extends StatelessWidget {
-  final List<BreadcrumbItem> items;
   final double offset;
 
-  const Breadcrumb({super.key, required this.items, this.offset = 3});
+  const Breadcrumb({super.key, this.offset = 3});
 
   @override
   Widget build(BuildContext context) {
-    items[0].isFirst = true;
-    items[0].color = Colors.grey;
-
     var currentRoute = Get.currentRoute;
     var list = <BreadcrumbItem>[];
 

@@ -22,20 +22,7 @@ class CardContent extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, fontFamily: 'cairo')),
-                  Breadcrumb(
-                    items: [
-                      BreadcrumbItem(
-                        text: Text(title, style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'cairo')),
-                        action: () => print('Hello'),
-                      ),
-                      BreadcrumbItem(
-                        offset: 2,
-                        text: Text('Test', style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'cairo')),
-                        action: () => print('Bye'),
-                      ),
-                    ],
-                  ),
+                  Breadcrumb(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: controllers ?? [SizedBox.shrink()],
