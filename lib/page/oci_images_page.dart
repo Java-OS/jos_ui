@@ -29,7 +29,6 @@ class _OciImagesPageState extends State<OciImagesPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Images',
       controllers: [
         OutlinedButton(
           onPressed: () => loadImages(),

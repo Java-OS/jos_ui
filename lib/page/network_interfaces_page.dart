@@ -27,7 +27,6 @@ class NetworkInterfacesPageState extends State<NetworkInterfacesPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Interfaces',
       controllers: [OutlinedButton(onPressed: () => displayNetworkRoutesModal(context), child: Icon(Icons.directions_outlined, size: 16, color: Colors.black))],
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

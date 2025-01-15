@@ -27,7 +27,6 @@ class _SettingsBackupPageState extends State<SettingsBackupPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Date & Time',
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

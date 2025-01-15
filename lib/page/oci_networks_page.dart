@@ -28,7 +28,6 @@ class _OciImagesPageState extends State<OciNetworksPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Networks',
       controllers: [
         OutlinedButton(
           onPressed: () => displayCreateNetwork(),

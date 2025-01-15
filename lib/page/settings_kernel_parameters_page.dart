@@ -26,7 +26,6 @@ class _SettingsKernelParametersPageState extends State<SettingsKernelParametersP
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Kernel Parameters',
       controllers: [
         OutlinedButton(
           onPressed: () => displayAddKernelParameterDialog(_kernelController.setKernelParameter),

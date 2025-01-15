@@ -24,7 +24,6 @@ class NetworkNetworksPageState extends State<NetworkNetworksPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Networks',
       controllers: [
         OutlinedButton(onPressed: () => displayNetworkModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
       ],

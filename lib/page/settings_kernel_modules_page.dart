@@ -16,7 +16,7 @@ class SettingsKernelModulesPage extends StatefulWidget {
 
 class _SettingsKernelModulesPageState extends State<SettingsKernelModulesPage> {
   final _kernelController = Get.put(KernelController());
-  bool _sortAscending = true ;
+  bool _sortAscending = true;
 
   @override
   void initState() {
@@ -27,7 +27,6 @@ class _SettingsKernelModulesPageState extends State<SettingsKernelModulesPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Kernel Modules',
       controllers: [
         OutlinedButton(
           onPressed: () => displayAddKernelModuleDialog(_kernelController.loadKernelModule),
@@ -58,7 +57,7 @@ class _SettingsKernelModulesPageState extends State<SettingsKernelModulesPage> {
 
   List<DataColumn> getTableColumns() {
     var nameColumn = DataColumn(
-      onSort: (index,sortAscending) {
+      onSort: (index, sortAscending) {
         setState(() => _sortAscending = sortAscending);
         if (!_sortAscending) {
           _kernelController.moduleList.sort((a, b) => a.name.compareTo(b.name));

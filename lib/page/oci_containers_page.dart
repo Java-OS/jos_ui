@@ -32,7 +32,6 @@ class _OciContainersPageState extends State<OciContainersPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Containers',
       controllers: [
         OutlinedButton(
           onPressed: () => pruneContainers(),

@@ -24,7 +24,6 @@ class _SettingsUserPageState extends State<SettingsUserPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Users',
       controllers: [OutlinedButton(onPressed: () => displayAddUser(context), child: Icon(Icons.add, size: 16, color: Colors.black))],
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -60,7 +59,11 @@ class _SettingsUserPageState extends State<SettingsUserPage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(onPressed: username == 'admin' ? null : () => displayUpdateRoles(user, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.security, size: 16)),
-                IconButton(onPressed: username == 'admin' ? null : () => _userController.lockOrUnlockUser(user), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(user.lock ? Icons.person_off_outlined : Icons.person, size: 16)),
+                IconButton(
+                    onPressed: username == 'admin' ? null : () => _userController.lockOrUnlockUser(user),
+                    splashRadius: 14,
+                    splashColor: Colors.transparent,
+                    icon: Icon(user.lock ? Icons.person_off_outlined : Icons.person, size: 16)),
                 IconButton(onPressed: () => displayUpdatePassword(user, context), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(Icons.password_outlined, size: 16)),
                 IconButton(onPressed: username == 'admin' ? null : () => _userController.deleteUser(user), splashRadius: 14, splashColor: Colors.transparent, icon: Icon(MdiIcons.trashCanOutline, size: 16))
               ],

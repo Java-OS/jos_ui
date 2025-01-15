@@ -25,7 +25,6 @@ class _OciSettingsPageState extends State<OciSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Registries',
       controllers: [
         OutlinedButton(
           onPressed: () => displayAddRegistryDialog(),
@@ -33,7 +32,7 @@ class _OciSettingsPageState extends State<OciSettingsPage> {
         ),
       ],
       child: Obx(
-            () => ListView.builder(
+        () => ListView.builder(
           shrinkWrap: true,
           itemCount: _containerController.registries.length,
           itemBuilder: (BuildContext context, int index) {
@@ -55,6 +54,7 @@ class _OciSettingsPageState extends State<OciSettingsPage> {
       ),
     );
   }
+
   void loadRegistries() async {
     await _containerController.loadRegistries();
   }

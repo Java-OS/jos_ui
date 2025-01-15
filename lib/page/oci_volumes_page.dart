@@ -30,7 +30,6 @@ class _OciImagesPageState extends State<OciVolumesPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Volumes',
       controllers: [
         OutlinedButton(
           onPressed: () => pruneVolumes(),

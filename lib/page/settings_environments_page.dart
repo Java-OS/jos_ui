@@ -25,9 +25,10 @@ class _SettingsEnvironmentsPageState extends State<SettingsEnvironmentsPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Environment Variables',
       controllers: [
-        OutlinedButton(onPressed: () => displayAddEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, _environmentController.setSystemEnvironment), child: Icon(Icons.add, size: 16, color: Colors.black)),
+        OutlinedButton(
+            onPressed: () => displayAddEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, _environmentController.setSystemEnvironment),
+            child: Icon(Icons.add, size: 16, color: Colors.black)),
       ],
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -79,7 +80,10 @@ class _SettingsEnvironmentsPageState extends State<SettingsEnvironmentsPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                IconButton(onPressed: () => displayUpdateEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, key, value, _environmentController.updateEnvironment), splashRadius: 12, icon: Icon(MdiIcons.pencilOutline, size: 16, color: Colors.black)),
+                IconButton(
+                    onPressed: () => displayUpdateEnvironmentDialog(_environmentController.keyEditingController, _environmentController.valueEditingController, key, value, _environmentController.updateEnvironment),
+                    splashRadius: 12,
+                    icon: Icon(MdiIcons.pencilOutline, size: 16, color: Colors.black)),
                 IconButton(onPressed: () => _environmentController.deleteSystemEnvironment(key), splashRadius: 12, icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black)),
               ],
             ),

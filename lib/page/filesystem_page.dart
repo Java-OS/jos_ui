@@ -26,7 +26,6 @@ class _FilesystemPageState extends State<FilesystemPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Filesystem',
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Obx(

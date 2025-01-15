@@ -25,7 +25,6 @@ class _SettingsBasicPageState extends State<SettingsBasicPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Basic',
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

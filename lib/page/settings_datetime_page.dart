@@ -35,7 +35,6 @@ class _SettingsDatetimePageState extends State<SettingsDatetimePage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Date & Time',
       controllers: [
         Align(alignment: Alignment.bottomRight, child: ElevatedButton(onPressed: () => _dateTimeController.apply(), child: Text('Apply'))),
       ],

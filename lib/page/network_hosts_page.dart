@@ -24,7 +24,6 @@ class NetworkHostsPageState extends State<NetworkHostsPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      title: 'Hosts',
       controllers: [
         OutlinedButton(onPressed: () => displayHostModal(context), child: Icon(Icons.add, size: 16, color: Colors.black)),
       ],

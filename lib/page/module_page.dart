@@ -23,7 +23,7 @@ class _ModulePageState extends State<ModulePage> {
 
   @override
   Widget build(BuildContext context) {
-    return CardContent(title: 'Modules', controllers: controllers(context), child: content());
+    return CardContent(controllers: controllers(context), child: content());
   }
 
   Widget content() {

@@ -149,11 +149,9 @@ class _LoginPageState extends State<LoginPage> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white
-                        ),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
                         onPressed: () => _authenticationController.login(),
-                        child: Text('Login',style: TextStyle(color: Colors.blue,fontSize: 16)),
+                        child: Text('Login', style: TextStyle(color: Colors.blue, fontSize: 16)),
                       ),
                     ),
                   ],
