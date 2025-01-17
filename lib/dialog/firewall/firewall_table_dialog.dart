@@ -9,7 +9,7 @@ import '../../widget/drop_down_widget.dart';
 
 FirewallController _firewallController = Get.put(FirewallController());
 
-Future<void> displayFirewallTableModal() async {
+Future<void> displayFirewallTableModal(bool isRename) async {
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
@@ -24,21 +24,30 @@ Future<void> displayFirewallTableModal() async {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFieldBox(controller: _firewallController.tableNameEditingController, label: 'Name'),
-              SizedBox(height: 8),
+              SizedBox(height: 10),
               Obx(
                 () => DropDownMenu<FirewallTableType>(
+                  disabled: isRename,
+                  displayClearButton: false,
+                  requiredValue: true,
                   value: _firewallController.tableType.value,
-                  hint: Text('Type of table'),
+                  label: 'Table Type (default inet)',
                   items: FirewallTableType.values.map((e) => DropdownMenuItem<FirewallTableType>(value: e, child: Text(e.name))).toList(),
                   onChanged: (value) => _firewallController.tableType.value = value,
                 ),
               ),
               SizedBox(height: 10),
-              Align(alignment: Alignment.centerRight, child: ElevatedButton(onPressed: () => _firewallController.tableAdd(), child: Text('Apply'))),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                  onPressed: () => isRename ? _firewallController.tableRename() : _firewallController.tableAdd(),
+                  child: Text(isRename ? 'Rename' : 'Add'),
+                ),
+              ),
             ],
           )
         ],
       );
     },
-  );
+  ).then((e) => _firewallController.clear());
 }

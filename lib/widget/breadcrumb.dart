@@ -13,10 +13,12 @@ class Breadcrumb extends StatelessWidget {
     var list = <BreadcrumbItem>[];
 
     String path = '/';
-    for (var value in currentRoute.split('/')) {
+    var split = currentRoute.split('/');
+    for (int i = 0; i < split.length; i++) {
+      var value = split[i];
       if (value.isNotEmpty) {
         path = path + value;
-        list.add(createBredCrumbItem(path));
+        list.add(createBredCrumbItem(path, i));
         path = '$path/';
       }
     }
@@ -24,14 +26,16 @@ class Breadcrumb extends StatelessWidget {
     list[0].isFirst = true;
     list[0].color = Colors.grey;
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       spacing: offset,
       children: list,
     );
   }
 
-  BreadcrumbItem createBredCrumbItem(String path) {
+  BreadcrumbItem createBredCrumbItem(String path, int index) {
     var text = Text(Routes.find(path).title, style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'cairo'));
-    return BreadcrumbItem(text: text, action: () => navigator!.pushNamed(path));
+    return BreadcrumbItem(text: text, action: () => navigator!.pushNamed(path), index: index);
   }
 }
 
@@ -44,8 +48,9 @@ class BreadcrumbItem extends StatelessWidget {
   Color color;
   bool _isFirst = false;
   final Function action;
+  final int index;
 
-  BreadcrumbItem({super.key, this.height = 40, this.offset = 0, required this.text, this.color = Colors.blueAccent, required this.action});
+  BreadcrumbItem({super.key, this.height = 40, this.offset = 0, required this.text, this.color = Colors.blueAccent, required this.action, required this.index});
 
   set isFirst(bool value) {
     _isFirst = value;
@@ -54,7 +59,7 @@ class BreadcrumbItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Transform.translate(
-      offset: _isFirst ? Offset(0, 0) : Offset(-15, 0),
+      offset: _isFirst ? Offset(0, 0) : Offset((-15 * (index - 1)) as double, 0),
       child: ClipPath(
         clipper: _isFirst ? _StartClipper() : _MiddleClipper(),
         child: SizedBox(

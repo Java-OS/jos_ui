@@ -135,7 +135,7 @@ class Rpc {
   static const Rpc RPC_FIREWALL_CHAIN_ADD = Rpc._(1104);
   static const Rpc RPC_FIREWALL_CHAIN_REMOVE = Rpc._(1105);
   static const Rpc RPC_FIREWALL_CHAIN_LIST = Rpc._(1106);
-  static const Rpc RPC_FIREWALL_CHAIN_RENAME = Rpc._(1107);
+  static const Rpc RPC_FIREWALL_CHAIN_UPDATE = Rpc._(1107);
   static const Rpc RPC_FIREWALL_SET_ADD = Rpc._(1108);
   static const Rpc RPC_FIREWALL_SET_LIST = Rpc._(1109);
   static const Rpc RPC_FIREWALL_SET_REMOVE = Rpc._(1110);
@@ -290,7 +290,7 @@ class Rpc {
     1104: RPC_FIREWALL_CHAIN_ADD,
     1105: RPC_FIREWALL_CHAIN_REMOVE,
     1106: RPC_FIREWALL_CHAIN_LIST,
-    1107: RPC_FIREWALL_CHAIN_RENAME,
+    1107: RPC_FIREWALL_CHAIN_UPDATE,
     1108: RPC_FIREWALL_SET_ADD,
     1109: RPC_FIREWALL_SET_LIST,
     1110: RPC_FIREWALL_SET_REMOVE,
@@ -371,7 +371,7 @@ class Realm {
       value == null ? null : Realm.fromValue(value);
 
   static const int minValue = 0;
-  static const int maxValue = 8192;
+  static const int maxValue = 16384;
   static bool containsValue(int value) => values.containsKey(value);
 
   static const Realm REALM_NONE = Realm._(0);
@@ -389,6 +389,7 @@ class Realm {
   static const Realm REALM_SSL = Realm._(2048);
   static const Realm REALM_CONTAINER_ENGINE = Realm._(4096);
   static const Realm REALM_KERNEL = Realm._(8192);
+  static const Realm REALM_FIREWALL = Realm._(16384);
   static const Map<int, Realm> values = {
     0: REALM_NONE,
     1: REALM_SYSTEM,
@@ -404,7 +405,8 @@ class Realm {
     1024: REALM_FILESYSTEM,
     2048: REALM_SSL,
     4096: REALM_CONTAINER_ENGINE,
-    8192: REALM_KERNEL};
+    8192: REALM_KERNEL,
+    16384: REALM_FIREWALL};
 
   static const fb.Reader<Realm> reader = _RealmReader();
 

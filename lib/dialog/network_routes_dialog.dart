@@ -27,7 +27,7 @@ Future<void> displayNetworkRoutesModal(BuildContext context) async {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               OutlinedButton(
-                onPressed: () => displayAddNewRouteModal(context),
+                onPressed: () => displayAddNewRouteModal(),
                 child: Icon(Icons.add, size: 16, color: Colors.black),
               ),
               ConstrainedBox(
@@ -86,9 +86,9 @@ List<DataRow> _getNetworkRouteRows() {
   return dataRowList;
 }
 
-Future<void> displayAddNewRouteModal(BuildContext context) async {
+Future<void> displayAddNewRouteModal() async {
   showDialog(
-    context: context,
+    context: Get.context!,
     builder: (BuildContext context) {
       return SimpleDialog(
         title: getModalHeader('Add new route'),

@@ -34,7 +34,7 @@ class PanelDrawerController extends GetxController {
         {'title': 'Hosts', 'path': Routes.networkHosts.routeName, 'icon': Icons.devices_other_outlined, 'font-size': 12, 'icon-size': 16},
       ],
     },
-    {'title': 'Firewall', 'path': Routes.firewall.routeName, 'icon': MdiIcons.wallFire, 'font-size': 16, 'icon-size': 24},
+    {'title': 'Firewall', 'path': Routes.firewallTables.routeName, 'icon': MdiIcons.wallFire, 'font-size': 16, 'icon-size': 24},
     {'title': 'Filesystem', 'path': Routes.filesystem.routeName, 'icon': Icons.save, 'font-size': 16, 'icon-size': 24},
     {
       'title': 'System',

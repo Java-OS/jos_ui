@@ -13,7 +13,6 @@ import 'package:jos_ui/widget/drop_down_widget.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:xterm/core.dart';
 import 'package:xterm/ui.dart';
 
 var _logController = Get.put(LogController());
@@ -92,11 +91,11 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
                 ),
                 Expanded(
                   child: TerminalView(
-                    padding: EdgeInsets.only(top: 8,bottom: 8),
+                    padding: EdgeInsets.only(top: 8, bottom: 8),
                     _logController.terminal,
                     controller: _logController.terminalController,
                     autofocus: true,
-                    textStyle: TerminalStyle(fontSize: 11,fontFamily: 'IBMPlexMono'),
+                    textStyle: TerminalStyle(fontSize: 11, fontFamily: 'IBMPlexMono'),
                   ),
                 )
                 // Expanded(
@@ -453,11 +452,11 @@ Future<void> displayContainerLogDialog() async {
           height: 400,
           color: Colors.black,
           child: TerminalView(
-            padding: EdgeInsets.only(top: 8,bottom: 8),
+            padding: EdgeInsets.only(top: 8, bottom: 8),
             _containerController.terminal,
             controller: _containerController.terminalController,
             autofocus: true,
-            textStyle: TerminalStyle(fontSize: 11,fontFamily: 'IBMPlexMono'),
+            textStyle: TerminalStyle(fontSize: 11, fontFamily: 'IBMPlexMono'),
           ),
         ),
       );

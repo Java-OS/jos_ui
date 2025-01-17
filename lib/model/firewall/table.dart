@@ -3,7 +3,7 @@ enum FirewallTableType {
   ipv6('ip6'),
   inet('inet'),
   arp('arp'),
-  // bridge('bridge'),
+  bridge('bridge'),
   netdev('netdev');
 
   final String value;
@@ -16,9 +16,9 @@ enum FirewallTableType {
 }
 
 class FirewallTable {
-  final int handle;
-  final String name;
-  final FirewallTableType type;
+  int? handle;
+  String name;
+  FirewallTableType type;
 
   FirewallTable(this.handle, this.name, this.type);
 
