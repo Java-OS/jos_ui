@@ -6,10 +6,12 @@ import 'package:get/get.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/firewall/chain.dart';
 import 'package:jos_ui/model/firewall/table.dart';
+import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
 class FirewallController extends GetxController {
+  final _apiService = Get.put(ApiService());
   final TextEditingController tableNameEditingController = TextEditingController();
   final TextEditingController chainNameEditingController = TextEditingController();
 
@@ -115,7 +117,7 @@ class FirewallController extends GetxController {
     if (payload.metadata!.success) {
       await chainFetch();
     } else {
-      displayWarning('Failed to remove table');
+      displayWarning('Failed to remove chain');
     }
   }
 
@@ -136,8 +138,17 @@ class FirewallController extends GetxController {
       Get.back();
       clear();
     } else {
-      displayWarning('Failed to remove table');
+      displayWarning('Failed to update chain');
     }
+  }
+
+  Future<void> chainSwitch() async {
+    var reqParam = {
+      'tableId': tableHandle.value,
+      'chainIds': chainList.map((item) => item.handle).toList(),
+    };
+
+    _apiService.callApi(Rpc.RPC_FIREWALL_CHAIN_SWITCH, parameters: reqParam, message: 'Failed to switch chain').then((e) => chainFetch()).then((e) => clear());
   }
 
   void clear() {

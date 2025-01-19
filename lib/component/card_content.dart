@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
+import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/widget/breadcrumb.dart';
 
 class CardContent extends StatelessWidget {
   final Widget child;
   final List<Widget>? controllers;
+  final _apiService = Get.put(ApiService());
 
-  const CardContent({super.key, this.controllers, required this.child});
+  CardContent({super.key, this.controllers, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +36,13 @@ class CardContent extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                 child: Divider(height: 1),
               ),
-              child
+              Obx(
+                ()=> Visibility(
+                  visible: _apiService.isLoading.isFalse,
+                  replacement: Expanded(child: SpinKitCircle(color: Colors.blueAccent)),
+                  child: child,
+                ),
+              ),
             ],
           ),
         ),

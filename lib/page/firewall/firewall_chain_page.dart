@@ -6,7 +6,7 @@ import 'package:jos_ui/dialog/firewall/firewall_chain_dialog.dart';
 import 'package:jos_ui/model/firewall/chain.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'dart:developer' as developer;
+
 class FirewallChainPage extends StatefulWidget {
   const FirewallChainPage({super.key});
 
@@ -31,57 +31,74 @@ class FirewallChainPageState extends State<FirewallChainPage> {
       ],
       child: SingleChildScrollView(
         child: Obx(
-          () => ListView.builder(
+          () => ReorderableListView.builder(
+            buildDefaultDragHandles: false,
+            proxyDecorator: (child, i, d) => child,
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             itemCount: _firewallController.chainList.length,
             itemBuilder: (context, index) {
               var chain = _firewallController.chainList[index];
               return Padding(
+                key: ValueKey(chain),
                 padding: const EdgeInsets.all(4.0),
-                child: TileItem(
-                  onClick: () => print('Hello'),
-                  actions: SizedBox(
-                    width: 100,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.end,
+                child: ReorderableDragStartListener(
+                  index: index,
+                  child: TileItem(
+                    onClick: () => print('Hello'),
+                    actions: SizedBox(
+                      width: 100,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: () => _firewallController.chainDelete(chain.table.handle!, chain.handle!),
+                            splashRadius: 12,
+                            icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+                          ),
+                          IconButton(
+                            onPressed: () => updateChain(chain),
+                            splashRadius: 12,
+                            icon: Icon(MdiIcons.pencil, size: 16, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ),
+                    subTitle: Row(
                       children: [
-                        IconButton(
-                          onPressed: () => _firewallController.chainDelete(chain.table.handle!, chain.handle!),
-                          splashRadius: 12,
-                          icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
-                        ),
-                        IconButton(
-                          onPressed: () => updateChain(chain),
-                          splashRadius: 12,
-                          icon: Icon(MdiIcons.pencil, size: 16, color: Colors.black),
-                        ),
+                        chainMetadata(chain.type?.name ?? 'Regular', Colors.white),
+                        SizedBox(width: 8),
+                        Visibility(visible: chain.hook != null, child: chainMetadata(chain.hook?.name ?? '', Colors.white)),
+                        SizedBox(width: 8),
+                        Visibility(visible: chain.policy != null, child: chainMetadata(chain.policy?.name ?? '', Colors.white)),
+                        SizedBox(width: 8),
                       ],
                     ),
+                    leading: CircleAvatar(
+                      radius: 18,
+                      child: Text(chain.handle.toString(), style: TextStyle(fontSize: 12)),
+                    ),
+                    index: index,
+                    title: Text(chain.name),
                   ),
-                  subTitle: Row(
-                    children: [
-                      chainMetadata(chain.type?.name ?? 'Global', Colors.white),
-                      SizedBox(width: 8),
-                      Visibility(visible: chain.hook != null, child: chainMetadata(chain.hook?.name ?? '', Colors.white)),
-                      SizedBox(width: 8),
-                      Visibility(visible: chain.policy != null, child: chainMetadata(chain.policy?.name ?? '', Colors.white)),
-                      SizedBox(width: 8),
-                    ],
-                  ),
-                  leading: CircleAvatar(
-                    radius: 18,
-                    child: Text(chain.handle.toString(), style: TextStyle(fontSize: 12)),
-                  ),
-                  index: index,
-                  title: Text(chain.name),
                 ),
               );
             },
+            onReorder: (int oldIndex, int newIndex) => updateOrder(oldIndex, newIndex),
           ),
         ),
       ),
     );
+  }
+
+  void updateOrder(int oldIndex, int newIndex) {
+    setState(() {
+      if (oldIndex < newIndex) newIndex--;
+      var chain = _firewallController.chainList.removeAt(oldIndex);
+      _firewallController.chainList.insert(newIndex, chain);
+      _firewallController.chainSwitch();
+    });
   }
 
   Container chainMetadata(String text, Color color) {

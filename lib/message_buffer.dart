@@ -23,7 +23,7 @@ class Rpc {
       value == null ? null : Rpc.fromValue(value);
 
   static const int minValue = 0;
-  static const int maxValue = 11111;
+  static const int maxValue = 11112;
   static bool containsValue(int value) => values.containsKey(value);
 
   static const Rpc RPC_SYSTEM_SHUTDOWN = Rpc._(0);
@@ -136,15 +136,16 @@ class Rpc {
   static const Rpc RPC_FIREWALL_CHAIN_REMOVE = Rpc._(1105);
   static const Rpc RPC_FIREWALL_CHAIN_LIST = Rpc._(1106);
   static const Rpc RPC_FIREWALL_CHAIN_UPDATE = Rpc._(1107);
-  static const Rpc RPC_FIREWALL_SET_ADD = Rpc._(1108);
-  static const Rpc RPC_FIREWALL_SET_LIST = Rpc._(1109);
-  static const Rpc RPC_FIREWALL_SET_REMOVE = Rpc._(1110);
-  static const Rpc RPC_FIREWALL_SET_ELEMENT_ADD = Rpc._(1112);
-  static const Rpc RPC_FIREWALL_SET_ELEMENT_REMOVE = Rpc._(1113);
-  static const Rpc RPC_FIREWALL_RULE_ADD = Rpc._(1114);
-  static const Rpc RPC_FIREWALL_RULE_INSERT = Rpc._(1115);
-  static const Rpc RPC_FIREWALL_RULE_LIST = Rpc._(1116);
-  static const Rpc RPC_FIREWALL_RULE_REMOVE = Rpc._(1117);
+  static const Rpc RPC_FIREWALL_CHAIN_SWITCH = Rpc._(1108);
+  static const Rpc RPC_FIREWALL_SET_ADD = Rpc._(1109);
+  static const Rpc RPC_FIREWALL_SET_LIST = Rpc._(1110);
+  static const Rpc RPC_FIREWALL_SET_REMOVE = Rpc._(1111);
+  static const Rpc RPC_FIREWALL_SET_ELEMENT_ADD = Rpc._(1113);
+  static const Rpc RPC_FIREWALL_SET_ELEMENT_REMOVE = Rpc._(1114);
+  static const Rpc RPC_FIREWALL_RULE_ADD = Rpc._(1115);
+  static const Rpc RPC_FIREWALL_RULE_INSERT = Rpc._(1116);
+  static const Rpc RPC_FIREWALL_RULE_LIST = Rpc._(1117);
+  static const Rpc RPC_FIREWALL_RULE_REMOVE = Rpc._(1118);
   static const Rpc RPC_CONTAINER_IMAGE_PULL = Rpc._(2000);
   static const Rpc RPC_CONTAINER_IMAGE_REMOVE = Rpc._(2001);
   static const Rpc RPC_CONTAINER_IMAGE_LIST = Rpc._(2002);
@@ -179,7 +180,7 @@ class Rpc {
   static const Rpc RPC_CONTAINER_PRUNE = Rpc._(2032);
   static const Rpc RPC_CONTAINER_SETTING_REGISTRIES_LOAD = Rpc._(2033);
   static const Rpc RPC_CONTAINER_SETTING_REGISTRIES_SAVE = Rpc._(2034);
-  static const Rpc RPC_FIREWALL_SET_RENAME = Rpc._(11111);
+  static const Rpc RPC_FIREWALL_SET_RENAME = Rpc._(11112);
   static const Map<int, Rpc> values = {
     0: RPC_SYSTEM_SHUTDOWN,
     1: RPC_SYSTEM_REBOOT,
@@ -291,15 +292,16 @@ class Rpc {
     1105: RPC_FIREWALL_CHAIN_REMOVE,
     1106: RPC_FIREWALL_CHAIN_LIST,
     1107: RPC_FIREWALL_CHAIN_UPDATE,
-    1108: RPC_FIREWALL_SET_ADD,
-    1109: RPC_FIREWALL_SET_LIST,
-    1110: RPC_FIREWALL_SET_REMOVE,
-    1112: RPC_FIREWALL_SET_ELEMENT_ADD,
-    1113: RPC_FIREWALL_SET_ELEMENT_REMOVE,
-    1114: RPC_FIREWALL_RULE_ADD,
-    1115: RPC_FIREWALL_RULE_INSERT,
-    1116: RPC_FIREWALL_RULE_LIST,
-    1117: RPC_FIREWALL_RULE_REMOVE,
+    1108: RPC_FIREWALL_CHAIN_SWITCH,
+    1109: RPC_FIREWALL_SET_ADD,
+    1110: RPC_FIREWALL_SET_LIST,
+    1111: RPC_FIREWALL_SET_REMOVE,
+    1113: RPC_FIREWALL_SET_ELEMENT_ADD,
+    1114: RPC_FIREWALL_SET_ELEMENT_REMOVE,
+    1115: RPC_FIREWALL_RULE_ADD,
+    1116: RPC_FIREWALL_RULE_INSERT,
+    1117: RPC_FIREWALL_RULE_LIST,
+    1118: RPC_FIREWALL_RULE_REMOVE,
     2000: RPC_CONTAINER_IMAGE_PULL,
     2001: RPC_CONTAINER_IMAGE_REMOVE,
     2002: RPC_CONTAINER_IMAGE_LIST,
@@ -334,7 +336,7 @@ class Rpc {
     2032: RPC_CONTAINER_PRUNE,
     2033: RPC_CONTAINER_SETTING_REGISTRIES_LOAD,
     2034: RPC_CONTAINER_SETTING_REGISTRIES_SAVE,
-    11111: RPC_FIREWALL_SET_RENAME};
+    11112: RPC_FIREWALL_SET_RENAME};
 
   static const fb.Reader<Rpc> reader = _RpcReader();
 
