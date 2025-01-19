@@ -18,8 +18,10 @@ class _SettingsKernelParametersPageState extends State<SettingsKernelParametersP
 
   @override
   void initState() {
-    _kernelController.fetchConfiguredKernelParameters();
-    _kernelController.fetchKernelParameters();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _kernelController.fetchConfiguredKernelParameters();
+      _kernelController.fetchKernelParameters();
+    });
     super.initState();
   }
 

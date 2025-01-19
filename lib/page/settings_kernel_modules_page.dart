@@ -20,7 +20,7 @@ class _SettingsKernelModulesPageState extends State<SettingsKernelModulesPage> {
 
   @override
   void initState() {
-    _kernelController.fetchKernelModules();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _kernelController.fetchKernelModules());
     super.initState();
   }
 

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 
 final _containerController = Get.put(OciController());
+final _apiService = Get.put(ApiService());
 Future<void> displayContainerSearchImage() async {
   showDialog(
     context: Get.context!,
@@ -29,7 +31,7 @@ Future<void> displayContainerSearchImage() async {
             height: 250,
             child: Obx(
                   () => Visibility(
-                visible: _containerController.waitingImageSearch.isFalse,
+                visible: _apiService.isLoading.isFalse,
                 replacement: SpinKitCircle(color: Colors.blueAccent),
                 child: ListView.builder(
                   shrinkWrap: true,

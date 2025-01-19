@@ -18,7 +18,7 @@ class _OciSettingsPageState extends State<OciSettingsPage> {
 
   @override
   void initState() {
-    loadRegistries();
+    WidgetsBinding.instance.addPostFrameCallback((e) => _containerController.loadRegistries());
     super.initState();
   }
 
@@ -53,9 +53,5 @@ class _OciSettingsPageState extends State<OciSettingsPage> {
         ),
       ),
     );
-  }
-
-  void loadRegistries() async {
-    await _containerController.loadRegistries();
   }
 }

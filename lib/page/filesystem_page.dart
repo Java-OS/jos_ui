@@ -19,7 +19,7 @@ class _FilesystemPageState extends State<FilesystemPage> {
 
   @override
   void initState() {
-    _filesystemController.fetchPartitions();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _filesystemController.fetchPartitions());
     super.initState();
   }
 

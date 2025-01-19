@@ -29,7 +29,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   @override
   void initState() {
-    _systemController.fetchSystemInformation();
+    WidgetsBinding.instance.addPostFrameCallback((e) => _systemController.fetchSystemInformation());
     super.initState();
   }
 

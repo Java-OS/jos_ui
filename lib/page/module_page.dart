@@ -17,8 +17,8 @@ class _ModulePageState extends State<ModulePage> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((e) => _moduleController.fetchModules());
     super.initState();
-    _moduleController.fetchModules();
   }
 
   @override

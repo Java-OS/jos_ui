@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
@@ -6,10 +5,11 @@ import 'package:get/get.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/user.dart';
-import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/widget/toast.dart';
 
 class UserController extends GetxController {
+  final _apiService = Get.put(ApiService());
   final TextEditingController usernameEditingController = TextEditingController();
   final TextEditingController passwordEditingController = TextEditingController();
   final TextEditingController passwordConfirmationEditingController = TextEditingController();
@@ -25,12 +25,7 @@ class UserController extends GetxController {
 
   Future<void> fetchUsers() async {
     developer.log('Fetch users called');
-    var payload = await RestClient.rpc(Rpc.RPC_USER_LIST);
-    if (payload.metadata!.success) {
-      userList.value = (jsonDecode(payload.content!) as List).map((e) => User.fromJson(e)).toList();
-    } else {
-      displayWarning('Failed to fetch users');
-    }
+    _apiService.callApi(Rpc.RPC_USER_LIST, message: 'Failed to fetch users').then((e) => e as List).then((list) => userList.value = list.map((e) => User.fromJson(e)).toList());
   }
 
   Future<void> addNewUser() async {
@@ -44,26 +39,12 @@ class UserController extends GetxController {
     }
 
     var reqParams = {'username': username, 'password': password, 'realmBit': realmBit.value};
-    var payload = await RestClient.rpc(Rpc.RPC_USER_ADD, parameters: reqParams);
-    if (payload.metadata!.success) {
-      await fetchUsers();
-      Get.back();
-      clear();
-    } else {
-      displayWarning('Failed to add user $username');
-    }
+    _apiService.callApi(Rpc.RPC_USER_ADD, parameters: reqParams, message: 'Failed to add user $username').then((e) => fetchUsers()).then((e) => Get.back()).then((e) => clean());
   }
 
   Future<void> updateUserRoles() async {
     var reqParams = {'username': usernameEditingController.text, 'realmBit': realmBit.value};
-    var payload = await RestClient.rpc(Rpc.RPC_USER_UPDATE_ROLE, parameters: reqParams);
-    if (payload.metadata!.success) {
-      await fetchUsers();
-      clear();
-      Get.back();
-    } else {
-      displayWarning('Failed to update roles of ${usernameEditingController.text}');
-    }
+    _apiService.callApi(Rpc.RPC_USER_UPDATE_ROLE, parameters: reqParams, message: 'Failed to update roles of ${usernameEditingController.text}').then((e) => fetchUsers()).then((e) => Get.back()).then((e) => clean());
   }
 
   Future<void> updatePassword() async {
@@ -77,13 +58,7 @@ class UserController extends GetxController {
     }
 
     var reqParams = {'username': username, 'password': password};
-    var payload = await RestClient.rpc(Rpc.RPC_USER_PASSWD, parameters: reqParams);
-    if (payload.metadata!.success) {
-      Get.back();
-      clear();
-    } else {
-      displayWarning('Failed to change password $username');
-    }
+    _apiService.callApi(Rpc.RPC_USER_PASSWD, parameters: reqParams, message: 'Failed to change password $username').then((e) => Get.back()).then((e) => clean());
   }
 
   Future<void> deleteUser(User user) async {
@@ -94,28 +69,17 @@ class UserController extends GetxController {
     var isTrue = await displayAlertModal('Delete user', 'You want to delete user ${user.username}.\n\nAre you sure ?');
     if (isTrue) {
       var reqParams = {'username': user.username};
-      var payload = await RestClient.rpc(Rpc.RPC_USER_REMOVE, parameters: reqParams);
-      if (payload.metadata!.success) {
-        await fetchUsers();
-        clear();
-        Get.back();
-      } else {
-        displayWarning('Failed to delete user ${user.username}');
-      }
+      _apiService.callApi(Rpc.RPC_USER_REMOVE, parameters: reqParams, message: 'Failed to delete user ${user.username}').then((e) => fetchUsers()).then((e) => Get.back()).then((e) => clean());
     }
   }
 
   Future<void> lockOrUnlockUser(User user) async {
     var reqParams = {'username': user.username};
     var lock = user.lock;
-    var payload = await RestClient.rpc(lock ? Rpc.RPC_USER_UNLOCK : Rpc.RPC_USER_LOCK, parameters: reqParams);
-    if (payload.metadata!.success) {
-      displaySuccess(lock ? 'User ${user.username} activated' : 'User ${user.username} disabled');
-      await fetchUsers();
-      clear();
-    } else {
-      displayWarning(lock ? 'Failed to activate ${user.username}' : 'Failed to disable ${user.username}');
-    }
+    _apiService
+        .callApi(lock ? Rpc.RPC_USER_UNLOCK : Rpc.RPC_USER_LOCK, parameters: reqParams, message: lock ? 'Failed to activate ${user.username}' : 'Failed to disable ${user.username}')
+        .then((e) => fetchUsers())
+        .then((e) => clean());
   }
 
   bool isSelected(int bit) {
@@ -132,7 +96,7 @@ class UserController extends GetxController {
     }
   }
 
-  void clear() {
+  void clean() {
     usernameEditingController.clear();
     passwordEditingController.clear();
     passwordConfirmationEditingController.clear();

@@ -20,7 +20,7 @@ class NetworkInterfacesPageState extends State<NetworkInterfacesPage> {
 
   @override
   void initState() {
-    _networkController.fetchEthernets();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _networkController.fetchEthernets());
     super.initState();
   }
 

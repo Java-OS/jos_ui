@@ -18,7 +18,7 @@ class _SettingsEnvironmentsPageState extends State<SettingsEnvironmentsPage> {
 
   @override
   void initState() {
-    _environmentController.fetchSystemEnvironments();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _environmentController.fetchSystemEnvironments());
     super.initState();
   }
 

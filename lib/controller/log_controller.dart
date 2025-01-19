@@ -9,12 +9,14 @@ import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/model/log.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
+import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 import 'package:xterm/core.dart';
 import 'package:xterm/ui.dart';
 
 class LogController extends GetxController {
+  final _apiService = Get.put(ApiService());
   final TextEditingController idEditingController = TextEditingController();
   final TextEditingController packageEditingController = TextEditingController();
   final TextEditingController patternEditingController = TextEditingController();
@@ -99,13 +101,9 @@ class LogController extends GetxController {
   }
 
   Future<void> fetchAppenders() async {
-    var payload = await RestClient.rpc(Rpc.RPC_LOG_APPENDER_LIST);
-    if (payload.metadata!.success) {
-      var json = jsonDecode(payload.content!);
-      logAppenders.value = (json as List).map((e) => LogInfo.fromJson(e)).toList();
-    } else {
-      displayWarning('Failed to fetch log appenders');
-    }
+    _apiService.callApi(Rpc.RPC_LOG_APPENDER_LIST,message: 'Failed to fetch log appenders')
+    .then((e) => e as List)
+    .then((e) => logAppenders.value = e.map((e) => LogInfo.fromMap(e)).toList());
   }
 
   Future<void> addFileAppender() async {
@@ -119,14 +117,10 @@ class LogController extends GetxController {
       'fileTotalSize': int.parse(fileTotalSizeEditingController.text),
       'fileMaxHistory': int.parse(fileMaxHistoryEditingController.text),
     };
-    var payload = await RestClient.rpc(Rpc.RPC_LOG_APPENDER_ADD, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchAppenders();
-      Get.back();
-      clear();
-    } else {
-      displayWarning('Failed to add log appender');
-    }
+    _apiService.callApi(Rpc.RPC_LOG_APPENDER_ADD, parameters: reqParam,message: 'Failed to add log appender')
+    .then((e) => fetchAppenders())
+    .then((e) => Get.back())
+    .then((e) => clean());
   }
 
   Future<void> addSyslogAppender() async {
@@ -140,38 +134,29 @@ class LogController extends GetxController {
       'syslogPort': int.parse(syslogPortEditingController.text),
       'syslogFacility': syslogFacilityEditingController.text,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_LOG_APPENDER_ADD, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchAppenders();
-      Get.back();
-      clear();
-    } else {
-      displayWarning('Failed to add log appender');
-    }
+    _apiService.callApi(Rpc.RPC_LOG_APPENDER_ADD, parameters: reqParam,message: 'Failed to add log appender')
+    .then((e) => fetchAppenders())
+    .then((e) => Get.back())
+    .then((e) => clean());
   }
 
   Future<void> removeAppender(int id) async {
     var reqParam = {'id': id};
-    var payload = await RestClient.rpc(Rpc.RPC_LOG_APPENDER_REMOVE, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchAppenders();
-      clear();
-    } else {
-      displayWarning('Failed to add log appender');
-    }
+    _apiService.callApi(Rpc.RPC_LOG_APPENDER_REMOVE, parameters: reqParam,message: 'Failed to add log appender')
+    .then((e) => fetchAppenders())
+    .then((e) => clean());
   }
 
   Future<void> fetchSystemLog() async {
-    var payload = await RestClient.rpc(Rpc.RPC_LOG_SYSTEM);
-    if (payload.metadata!.success) {
-      var jsonObject = jsonDecode(payload.content!);
-      for (var value in jsonObject) {
+    _apiService.callApi(Rpc.RPC_LOG_SYSTEM)
+    .then((map) {
+      for (var value in map) {
         systemLog.value += '$value\n';
       }
-    }
+    });
   }
 
-  void clear() {
+  void clean() {
     packageEditingController.clear();
     typeEditingController.clear();
     syslogHostEditingController.clear();

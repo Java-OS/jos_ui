@@ -19,7 +19,6 @@ class FirewallChainPageState extends State<FirewallChainPage> {
 
   @override
   void initState() {
-    _firewallController.tableFetch();
     super.initState();
   }
 

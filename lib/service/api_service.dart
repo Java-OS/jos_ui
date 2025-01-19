@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/service/rest_client.dart';
@@ -12,7 +14,7 @@ class ApiService extends GetxController {
     if (payload.metadata!.success) {
       var content = payload.content;
       isLoading.value = false;
-      return content;
+      return content != null ? jsonDecode(content) : [];
     } else {
       switch (type) {
         case MessageType.info:

@@ -20,7 +20,7 @@ class _SettingsBackupPageState extends State<SettingsBackupPage> {
 
   @override
   void initState() {
-    _backupController.fetchBackups();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _backupController.fetchBackups());
     super.initState();
   }
 

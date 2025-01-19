@@ -8,7 +8,7 @@ class FilesystemTree {
 
   FilesystemTree({required this.name, required this.fullPath, this.childs = const <FilesystemTree>[], required this.isFile});
 
-  factory FilesystemTree.fromJson(Map<String, dynamic> map) {
+  factory FilesystemTree.fromMap(Map<String, dynamic> map) {
     var name = map['name'];
     var fullPath = map['fullPath'];
     var isFile = map['file'];
@@ -17,7 +17,7 @@ class FilesystemTree {
         : (map['childs'] == null && !isFile)
             ? []
             : map['childs'] as List;
-    var mappedChilds = childs.map((e) => FilesystemTree.fromJson(e)).toList();
+    var mappedChilds = childs.map((e) => FilesystemTree.fromMap(e)).toList();
     return FilesystemTree(name: name, fullPath: fullPath, childs: mappedChilds, isFile: isFile);
   }
 

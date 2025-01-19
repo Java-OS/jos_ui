@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/oci_controller.dart';
@@ -17,11 +16,10 @@ class OciNetworksPage extends StatefulWidget {
 
 class _OciImagesPageState extends State<OciNetworksPage> {
   final _containerController = Get.put(OciController());
-  var _waitingNetworksLoad = false;
 
   @override
   void initState() {
-    loadNetworks();
+    WidgetsBinding.instance.addPostFrameCallback((e) => _containerController.listNetworks());
     super.initState();
   }
 
@@ -35,37 +33,27 @@ class _OciImagesPageState extends State<OciNetworksPage> {
         ),
       ],
       child: Obx(
-        () => Visibility(
-          visible: !_waitingNetworksLoad,
-          replacement: Expanded(child: SpinKitCircle(color: Colors.blueAccent)),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _containerController.networkList.length,
-            itemBuilder: (BuildContext context, int index) {
-              var network = _containerController.networkList[index];
-              return Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: TileItem(
-                  index: index,
-                  title: Text(network.name),
-                  actions: IconButton(
-                    splashRadius: 20,
-                    icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
-                    onPressed: () => _containerController.removeNetwork(network.name),
-                  ),
-                  onClick: () => displayNetworkInfo(network),
+        () => ListView.builder(
+          shrinkWrap: true,
+          itemCount: _containerController.networkList.length,
+          itemBuilder: (BuildContext context, int index) {
+            var network = _containerController.networkList[index];
+            return Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: TileItem(
+                index: index,
+                title: Text(network.name),
+                actions: IconButton(
+                  splashRadius: 20,
+                  icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+                  onPressed: () => _containerController.removeNetwork(network.name),
                 ),
-              );
-            },
-          ),
+                onClick: () => displayNetworkInfo(network),
+              ),
+            );
+          },
         ),
       ),
     );
-  }
-
-  void loadNetworks() async {
-    setState(() => _waitingNetworksLoad = true);
-    await _containerController.listNetworks();
-    setState(() => _waitingNetworksLoad = false);
   }
 }

@@ -14,7 +14,7 @@ class LogInfo {
 
   LogInfo({required this.id, required this.packageName, required this.pattern, required this.type, required this.level, required this.syslogHost, required this.syslogPort, required this.syslogFacility, required this.fileArchivePattern, required this.fileMaxSize, required this.fileTotalSize, required this.fileMaxHistory});
 
-  factory LogInfo.fromJson(Map<String, dynamic> json) {
+  factory LogInfo.fromMap(Map<String, dynamic> json) {
     return LogInfo(
       id: json['id'],
       packageName: json['packageName'],

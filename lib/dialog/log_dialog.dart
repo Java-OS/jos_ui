@@ -346,7 +346,7 @@ Future<void> displayFileLogAppender(LogInfo? logInfo) async {
         ],
       );
     },
-  ).then((value) => _logController.clear());
+  ).then((value) => _logController.clean());
 }
 
 Future<void> displaySysLogAppender(LogInfo? logInfo) async {
@@ -405,7 +405,7 @@ Future<void> displaySysLogAppender(LogInfo? logInfo) async {
         ],
       );
     },
-  ).then((value) => _logController.clear());
+  ).then((value) => _logController.clean());
 }
 
 Future<void> displaySystemLogDialog() async {

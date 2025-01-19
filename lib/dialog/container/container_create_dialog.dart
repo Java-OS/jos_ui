@@ -8,6 +8,7 @@ import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/dialog/environment_dialog.dart';
 import 'package:jos_ui/model/container/network_info.dart';
 import 'package:jos_ui/model/container/protocol.dart';
+import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/radio_tile_widget.dart';
 import 'package:jos_ui/widget/tab_widget.dart';
@@ -16,6 +17,7 @@ import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 final _containerController = Get.put(OciController());
+final _apiService = Get.put(ApiService());
 
 Future<void> displayCreateContainer() async {
   showDialog(
@@ -190,7 +192,7 @@ Widget searchImagesTab() {
         Obx(
           () => Expanded(
             child: Visibility(
-              visible: _containerController.waitingImageSearch.isFalse,
+              visible: _apiService.isLoading.isFalse,
               replacement: Center(child: SpinKitCircle(color: Colors.blueAccent)),
               child: ListView.builder(
                 shrinkWrap: true,

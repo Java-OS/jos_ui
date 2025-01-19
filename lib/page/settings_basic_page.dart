@@ -17,8 +17,10 @@ class _SettingsBasicPageState extends State<SettingsBasicPage> {
 
   @override
   void initState() {
-    _systemController.fetchHostname();
-    _systemController.fetchDnsNameserver();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _systemController.fetchHostname();
+      _systemController.fetchDnsNameserver();
+    });
     super.initState();
   }
 

@@ -17,7 +17,7 @@ class _SettingsUserPageState extends State<SettingsUserPage> {
 
   @override
   void initState() {
-    _userController.fetchUsers();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _userController.fetchUsers());
     super.initState();
   }
 

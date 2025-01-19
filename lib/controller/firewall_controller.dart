@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
@@ -7,8 +6,6 @@ import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/firewall/chain.dart';
 import 'package:jos_ui/model/firewall/table.dart';
 import 'package:jos_ui/service/api_service.dart';
-import 'package:jos_ui/service/rest_client.dart';
-import 'package:jos_ui/widget/toast.dart';
 
 class FirewallController extends GetxController {
   final _apiService = Get.put(ApiService());
@@ -30,13 +27,7 @@ class FirewallController extends GetxController {
 
   /* -------------- Table Methods -------------- */
   Future<void> tableFetch() async {
-    var payload = await RestClient.rpc(Rpc.RPC_FIREWALL_TABLE_LIST);
-    if (payload.metadata!.success) {
-      var result = jsonDecode(payload.content!) as List;
-      tableList.value = result.map((item) => FirewallTable.fromJson(item)).toList();
-    } else {
-      displayError('Failed to fetch firewall tables');
-    }
+    _apiService.callApi(Rpc.RPC_FIREWALL_TABLE_LIST, message: 'Failed to fetch firewall tables').then((e) => e as List).then((list) => tableList.value = list.map((item) => FirewallTable.fromJson(item)).toList());
   }
 
   Future<void> tableAdd() async {
@@ -44,36 +35,17 @@ class FirewallController extends GetxController {
       'name': tableNameEditingController.text,
       'type': tableType.value.value,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_FIREWALL_TABLE_ADD, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await tableFetch();
-      Get.back();
-      clear();
-    } else {
-      displayWarning('Failed to add table');
-    }
+    _apiService.callApi(Rpc.RPC_FIREWALL_TABLE_ADD, parameters: reqParam, message: 'Failed to add table').then((e) => tableFetch()).then((e) => Get.back()).then((e) => clear());
   }
 
   Future<void> tableDelete(int id) async {
     var reqParam = {'id': id};
-    var payload = await RestClient.rpc(Rpc.RPC_FIREWALL_TABLE_REMOVE, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await tableFetch();
-    } else {
-      displayWarning('Failed to remove table');
-    }
+    _apiService.callApi(Rpc.RPC_FIREWALL_TABLE_REMOVE, parameters: reqParam, message: 'Failed to remove table').then((e) => tableFetch());
   }
 
   Future<void> tableRename() async {
     var reqParam = {'id': tableHandle.value, 'name': tableNameEditingController.text};
-    var payload = await RestClient.rpc(Rpc.RPC_FIREWALL_TABLE_RENAME, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await tableFetch();
-      Get.back();
-      clear();
-    } else {
-      displayWarning('Failed to remove table');
-    }
+    _apiService.callApi(Rpc.RPC_FIREWALL_TABLE_RENAME, parameters: reqParam, message: 'Failed to remove table').then((e) => tableFetch()).then((e) => Get.back()).then((e) => clear());
   }
 
   /* -------------- Chain Methods -------------- */
@@ -81,13 +53,10 @@ class FirewallController extends GetxController {
     var reqParam = {
       'tableHandle': tableHandle.value,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_FIREWALL_CHAIN_LIST, parameters: reqParam);
-    if (payload.metadata!.success) {
-      var result = jsonDecode(payload.content!) as List;
-      chainList.value = result.map((item) => FirewallChain.fromJson(item, tableHandle.value!)).toList();
-    } else {
-      displayError('Failed to fetch firewall chains');
-    }
+    _apiService
+        .callApi(Rpc.RPC_FIREWALL_CHAIN_LIST, parameters: reqParam, message: 'Failed to fetch firewall chains')
+        .then((e) => e as List)
+        .then((e) => chainList.value = e.map((item) => FirewallChain.fromJson(item, tableHandle.value!)).toList());
   }
 
   Future<void> chainAdd() async {
@@ -98,14 +67,7 @@ class FirewallController extends GetxController {
       'hook': chainHook.value?.name,
       'policy': chainPolicy.value?.name,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_FIREWALL_CHAIN_ADD, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await chainFetch();
-      Get.back();
-      clear();
-    } else {
-      displayWarning('Failed to add chain');
-    }
+    _apiService.callApi(Rpc.RPC_FIREWALL_CHAIN_ADD, parameters: reqParam, message: 'Failed to add chain').then((e) => chainFetch()).then((e) => Get.back()).then((e) => clear());
   }
 
   Future<void> chainDelete(int tableHandle, int chainHandle) async {
@@ -113,12 +75,7 @@ class FirewallController extends GetxController {
       'tableId': tableHandle,
       'chainId': chainHandle,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_FIREWALL_CHAIN_REMOVE, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await chainFetch();
-    } else {
-      displayWarning('Failed to remove chain');
-    }
+    _apiService.callApi(Rpc.RPC_FIREWALL_CHAIN_REMOVE, parameters: reqParam, message: 'Failed to remove chain').then((e) => chainFetch());
   }
 
   Future<void> chainUpdate() async {
@@ -132,14 +89,7 @@ class FirewallController extends GetxController {
       'priority': chainPriority.value,
     };
 
-    var payload = await RestClient.rpc(Rpc.RPC_FIREWALL_CHAIN_UPDATE, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await chainFetch();
-      Get.back();
-      clear();
-    } else {
-      displayWarning('Failed to update chain');
-    }
+    _apiService.callApi(Rpc.RPC_FIREWALL_CHAIN_UPDATE, parameters: reqParam, message: 'Failed to update chain').then((e) => chainFetch()).then((e) => Get.back()).then((e) => clear());
   }
 
   Future<void> chainSwitch() async {

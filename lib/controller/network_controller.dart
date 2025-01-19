@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
@@ -6,10 +5,10 @@ import 'package:get/get.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/model/network/route.dart' as route;
-import 'package:jos_ui/service/rest_client.dart';
-import 'package:jos_ui/widget/toast.dart';
+import 'package:jos_ui/service/api_service.dart';
 
 class NetworkController extends GetxController {
+  final _apiService = Get.put(ApiService());
   final TextEditingController gatewayEditingController = TextEditingController();
   final TextEditingController addressEditingController = TextEditingController();
   final TextEditingController netmaskEditingController = TextEditingController();
@@ -29,33 +28,18 @@ class NetworkController extends GetxController {
   var networks = <String, String>{}.obs;
 
   Future<void> fetchEthernets() async {
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_ETHERNET_INFORMATION, parameters: {'ethernet': ''});
-    if (payload.metadata!.success) {
-      var result = jsonDecode(payload.content!) as List;
-      ethernetList.value = result.map((item) => Ethernet.fromJson(item)).toList();
-    } else {
-      displayError('Failed to fetch network interfaces');
-    }
+    _apiService
+        .callApi(Rpc.RPC_NETWORK_ETHERNET_INFORMATION, parameters: {'ethernet': ''}, message: 'Failed to fetch network interfaces')
+        .then((e) => e as List)
+        .then((e) => ethernetList.value = e.map((item) => Ethernet.fromJson(item)).toList());
   }
 
   Future<void> fetchRoutes() async {
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_ROUTE_LIST);
-    if (payload.metadata!.success) {
-      var json = jsonDecode(payload.content!);
-      var result = json as List;
-      routeList.value = result.map((item) => route.Route.fromJson(item)).toList();
-    } else {
-      displayError('failed to fetch network routes');
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_ROUTE_LIST, message: 'failed to fetch network routes').then((e) => e as List).then((e) => routeList.value = e.map((item) => route.Route.fromJson(item)).toList());
   }
 
   Future<void> addDefaultGateway() async {
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_ROUTE_DEFAULT_GATEWAY, parameters: {'gateway': gatewayEditingController.text});
-    if (payload.metadata!.success) {
-      await fetchRoutes();
-      Get.back();
-    }
-    clear();
+    _apiService.callApi(Rpc.RPC_NETWORK_ROUTE_DEFAULT_GATEWAY, parameters: {'gateway': gatewayEditingController.text}).then((e) => fetchRoutes()).then((e) => Get.back()).then((e) => clean());
   }
 
   Future<void> addHostRoute() async {
@@ -66,12 +50,7 @@ class NetworkController extends GetxController {
       'ethernet': routeSelectedEthernet.value?.iface ?? '',
       'metrics': metricsEditingController.text.isNotEmpty ? int.parse(metricsEditingController.text) : 600,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_ROUTE_ADD, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchRoutes();
-      Get.back();
-      clear();
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_ROUTE_ADD, parameters: reqParam).then((e) => fetchRoutes()).then((e) => Get.back()).then((e) => clean());
   }
 
   Future<void> addNetworkRoute() async {
@@ -82,20 +61,11 @@ class NetworkController extends GetxController {
       'ethernet': routeSelectedEthernet.value?.iface ?? '',
       'metrics': metricsEditingController.text.isNotEmpty ? int.parse(metricsEditingController.text) : 600,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_ROUTE_ADD, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchRoutes();
-      Get.back();
-      clear();
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_ROUTE_ADD, parameters: reqParam).then((e) => fetchRoutes()).then((e) => Get.back()).then((e) => clean());
   }
 
   Future<void> deleteRoute(int index) async {
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_ROUTE_DELETE, parameters: {'index': index});
-    if (payload.metadata!.success) {
-      await fetchRoutes();
-    }
-    clear();
+    _apiService.callApi(Rpc.RPC_NETWORK_ROUTE_DELETE, parameters: {'index': index}).then((e) => fetchRoutes()).then((e) => clean());
   }
 
   Future<void> setIp(String iface) async {
@@ -105,50 +75,27 @@ class NetworkController extends GetxController {
       'netmask': netmaskEditingController.text,
     };
 
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_ETHERNET_SET_IP, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchEthernets();
-      Get.back();
-      clear();
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_ETHERNET_SET_IP, parameters: reqParam).then((e) => fetchEthernets()).then((e) => Get.back()).then((e) => clean());
   }
 
   Future<void> ifDown(String iface) async {
     var reqParam = {'ethernet': iface};
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_ETHERNET_DOWN, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchEthernets();
-      clear();
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_ETHERNET_DOWN, parameters: reqParam).then((e) => fetchEthernets()).then((e) => clean());
   }
 
   Future<void> ifUp(String iface) async {
     var reqParam = {'ethernet': iface};
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_ETHERNET_UP, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchEthernets();
-      clear();
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_ETHERNET_UP, parameters: reqParam).then((e) => fetchEthernets()).then((e) => clean());
   }
 
   Future<void> flush(String iface) async {
     var reqParam = {'ethernet': iface};
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_ETHERNET_FLUSH, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchEthernets();
-      clear();
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_ETHERNET_FLUSH, parameters: reqParam).then((e) => fetchEthernets()).then((e) => clean());
   }
 
   Future<void> fetchHosts() async {
     developer.log('fetch hosts');
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_HOSTS_LIST);
-    if (payload.metadata!.success) {
-      var map = jsonDecode(payload.content!) as Map;
-      hosts.value = Map.from(map);
-    } else {
-      displayWarning('Failed to fetch hosts');
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_HOSTS_LIST, message: 'Failed to fetch hosts').then((e) => hosts.value = Map.from(e));
   }
 
   void addHost() async {
@@ -159,14 +106,7 @@ class NetworkController extends GetxController {
       'ip': ip,
       'hostname': hostname,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_HOSTS_ADD, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchHosts();
-      clear();
-      Get.back();
-    } else {
-      displayWarning('Failed to add host');
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_HOSTS_ADD, parameters: reqParam, message: 'Failed to add host').then((e) => fetchHosts()).then((e) => Get.back()).then((e) => clean());
   }
 
   void removeHost(String hostname) async {
@@ -174,23 +114,12 @@ class NetworkController extends GetxController {
     var reqParam = {
       'hostname': hostname,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_HOSTS_DELETE, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchHosts();
-    } else {
-      displayWarning('Failed to remove host');
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_HOSTS_DELETE, parameters: reqParam, message: 'Failed to remove host').then((e) => fetchHosts());
   }
 
   Future<void> fetchNetworks() async {
     developer.log('fetch networks');
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_NETWORK_LIST);
-    if (payload.metadata!.success) {
-      var map = jsonDecode(payload.content!) as Map;
-      networks.value = Map.from(map);
-    } else {
-      displayWarning('Failed to fetch networks');
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_NETWORK_LIST, message: 'Failed to fetch networks').then((e) => networks.value = Map.from(e));
   }
 
   void addNetwork() async {
@@ -201,14 +130,7 @@ class NetworkController extends GetxController {
       'network': network,
       'name': name,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_NETWORK_ADD, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchNetworks();
-      clear();
-      Get.back();
-    } else {
-      displayWarning('Failed to add network');
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_NETWORK_ADD, parameters: reqParam, message: 'Failed to add network').then((e) => fetchNetworks()).then((e) => Get.back()).then((e) => clean());
   }
 
   void removeNetwork(String name) async {
@@ -216,15 +138,10 @@ class NetworkController extends GetxController {
     var reqParam = {
       'name': name,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_NETWORK_NETWORK_DELETE, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchNetworks();
-    } else {
-      displayWarning('Failed to remove network');
-    }
+    _apiService.callApi(Rpc.RPC_NETWORK_NETWORK_DELETE, parameters: reqParam, message: 'Failed to remove network').then((e) => fetchNetworks());
   }
 
-  void clear() {
+  void clean() {
     gatewayEditingController.clear();
     addressEditingController.clear();
     netmaskEditingController.clear();

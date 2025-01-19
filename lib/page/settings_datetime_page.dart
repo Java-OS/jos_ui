@@ -21,8 +21,10 @@ class _SettingsDatetimePageState extends State<SettingsDatetimePage> {
 
   @override
   void initState() {
-    _dateTimeController.fetchNtpInfo();
-    _dateTimeController.fetchSystemDateTime();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _dateTimeController.fetchNtpInfo();
+      _dateTimeController.fetchSystemDateTime();
+    });
     var map = timeZoneDatabase.locations;
     for (String x in map.keys) {
       var name = map[x]!.name;

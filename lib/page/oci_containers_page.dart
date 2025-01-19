@@ -21,11 +21,10 @@ class OciContainersPage extends StatefulWidget {
 
 class _OciContainersPageState extends State<OciContainersPage> {
   final _containerController = Get.put(OciController());
-  var _waitingContainersLoad = false;
 
   @override
   void initState() {
-    loadContainers();
+    WidgetsBinding.instance.addPostFrameCallback((e) => _containerController.listContainers());
     super.initState();
   }
 
@@ -34,12 +33,12 @@ class _OciContainersPageState extends State<OciContainersPage> {
     return CardContent(
       controllers: [
         OutlinedButton(
-          onPressed: () => pruneContainers(),
+          onPressed: () => _containerController.pruneContainer(),
           child: Icon(MdiIcons.deleteSweepOutline, size: 16, color: Colors.black),
         ),
         SizedBox(width: 8),
         OutlinedButton(
-          onPressed: () => loadContainers(),
+          onPressed: () => _containerController.listContainers(),
           child: Icon(Icons.refresh, size: 16, color: Colors.black),
         ),
         SizedBox(width: 8),
@@ -49,77 +48,73 @@ class _OciContainersPageState extends State<OciContainersPage> {
         ),
       ],
       child: Obx(
-        () => Visibility(
-          visible: !_waitingContainersLoad,
-          replacement: Expanded(child: SpinKitCircle(color: Colors.blueAccent)),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _containerController.containerList.length,
-            itemBuilder: (BuildContext context, int index) {
-              var container = _containerController.containerList[index];
-              return Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: TileItem(
-                  leading: Visibility(
-                    visible: container.id.isNotEmpty,
-                    replacement: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: SpinKitThreeBounce(
-                        color: Colors.blue,
-                        size: 20.0,
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      radius: 18,
-                      child: Text((index + 1).toString(), style: TextStyle(fontSize: 12)),
+        () => ListView.builder(
+          shrinkWrap: true,
+          itemCount: _containerController.containerList.length,
+          itemBuilder: (BuildContext context, int index) {
+            var container = _containerController.containerList[index];
+            return Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: TileItem(
+                leading: Visibility(
+                  visible: container.id.isNotEmpty,
+                  replacement: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: SpinKitThreeBounce(
+                      color: Colors.blue,
+                      size: 20.0,
                     ),
                   ),
-                  index: index,
-                  title: Text(container.names[0]),
-                  subTitle: Text(truncate(container.id), style: TextStyle(fontSize: 12)),
-                  actions: SizedBox(
-                    width: 140,
-                    child: Visibility(
-                      visible: container.state.isNotEmpty,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            splashRadius: 20,
-                            icon: Icon(Icons.receipt_long_rounded, size: 16, color: Colors.black),
-                            onPressed: () => streamLogs(container).then((_) => displayContainerLogDialog()),
-                          ),
-                          IconButton(
-                            splashRadius: 20,
-                            icon: Icon(container.state == 'running' ? MdiIcons.stopCircleOutline : MdiIcons.playCircleOutline, size: 16, color: Colors.black),
-                            onPressed: () => container.state == 'running' ? _containerController.stopContainer(container.id) : _containerController.startContainer(container.id),
-                          ),
-                          Visibility(
-                            visible: container.state == 'running',
-                            child: IconButton(
-                              splashRadius: 20,
-                              icon: Icon(MdiIcons.skullOutline, size: 16, color: Colors.red),
-                              onPressed: () => _containerController.killContainer(container.id),
-                            ),
-                          ),
-                          Visibility(
-                            visible: container.state != 'running',
-                            child: IconButton(
-                              splashRadius: 20,
-                              icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
-                              onPressed: () => _containerController.removeContainer(container.names[0], container.id),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                  child: CircleAvatar(
+                    radius: 18,
+                    child: Text((index + 1).toString(), style: TextStyle(fontSize: 12)),
                   ),
-                  onClick: () => displayContainerInfo(container),
                 ),
-              );
-            },
-          ),
+                index: index,
+                title: Text(container.names[0]),
+                subTitle: Text(truncate(container.id), style: TextStyle(fontSize: 12)),
+                actions: SizedBox(
+                  width: 140,
+                  child: Visibility(
+                    visible: container.state.isNotEmpty,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          splashRadius: 20,
+                          icon: Icon(Icons.receipt_long_rounded, size: 16, color: Colors.black),
+                          onPressed: () => streamLogs(container).then((_) => displayContainerLogDialog()),
+                        ),
+                        IconButton(
+                          splashRadius: 20,
+                          icon: Icon(container.state == 'running' ? MdiIcons.stopCircleOutline : MdiIcons.playCircleOutline, size: 16, color: Colors.black),
+                          onPressed: () => container.state == 'running' ? _containerController.stopContainer(container.id) : _containerController.startContainer(container.id),
+                        ),
+                        Visibility(
+                          visible: container.state == 'running',
+                          child: IconButton(
+                            splashRadius: 20,
+                            icon: Icon(MdiIcons.skullOutline, size: 16, color: Colors.red),
+                            onPressed: () => _containerController.killContainer(container.id),
+                          ),
+                        ),
+                        Visibility(
+                          visible: container.state != 'running',
+                          child: IconButton(
+                            splashRadius: 20,
+                            icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+                            onPressed: () => _containerController.removeContainer(container.names[0], container.id),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                onClick: () => displayContainerInfo(container),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -127,18 +122,6 @@ class _OciContainersPageState extends State<OciContainersPage> {
 
   Future<void> streamLogs(ContainerInfo container) async {
     _containerController.ociSSEConsumer(container.names.first, EventCode.ociContainerLogs);
-  }
-
-  void loadContainers() async {
-    setState(() => _waitingContainersLoad = true);
-    await _containerController.listContainers();
-    setState(() => _waitingContainersLoad = false);
-  }
-
-  void pruneContainers() async {
-    setState(() => _waitingContainersLoad = true);
-    await _containerController.pruneContainer();
-    setState(() => _waitingContainersLoad = false);
   }
 
   Future<void> openCreateContainerDialog() async {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
@@ -19,11 +18,10 @@ class OciVolumesPage extends StatefulWidget {
 class _OciImagesPageState extends State<OciVolumesPage> {
   final _containerController = Get.put(OciController());
   final _filesystemController = Get.put(FilesystemController());
-  var _waitingVolumeLoad = false;
 
   @override
   void initState() {
-    loadVolumes();
+    WidgetsBinding.instance.addPostFrameCallback((e) => _containerController.listVolumes());
     super.initState();
   }
 
@@ -32,7 +30,7 @@ class _OciImagesPageState extends State<OciVolumesPage> {
     return CardContent(
       controllers: [
         OutlinedButton(
-          onPressed: () => pruneVolumes(),
+          onPressed: () => _containerController.pruneVolume(),
           child: Icon(MdiIcons.deleteSweepOutline, size: 16, color: Colors.black),
         ),
         SizedBox(width: 8),
@@ -42,44 +40,28 @@ class _OciImagesPageState extends State<OciVolumesPage> {
         ),
       ],
       child: Obx(
-        () => Visibility(
-          visible: !_waitingVolumeLoad,
-          replacement: Expanded(child: SpinKitCircle(color: Colors.blueAccent)),
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _containerController.volumeList.length,
-            itemBuilder: (BuildContext context, int index) {
-              var volume = _containerController.volumeList[index];
-              return Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: TileItem(
-                  index: index,
-                  title: Text(volume.name!),
-                  actions: IconButton(
-                    splashRadius: 20,
-                    icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
-                    onPressed: () => _containerController.removeVolume(volume.name!),
-                  ),
-                  onClick: () => fetchTreeAndDisplay(volume.mountPoint),
+        () => ListView.builder(
+          shrinkWrap: true,
+          itemCount: _containerController.volumeList.length,
+          itemBuilder: (BuildContext context, int index) {
+            var volume = _containerController.volumeList[index];
+            return Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: TileItem(
+                index: index,
+                title: Text(volume.name!),
+                actions: IconButton(
+                  splashRadius: 20,
+                  icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+                  onPressed: () => _containerController.removeVolume(volume.name!),
                 ),
-              );
-            },
-          ),
+                onClick: () => fetchTreeAndDisplay(volume.mountPoint),
+              ),
+            );
+          },
         ),
       ),
     );
-  }
-
-  void loadVolumes() async {
-    setState(() => _waitingVolumeLoad = true);
-    await _containerController.listVolumes();
-    setState(() => _waitingVolumeLoad = false);
-  }
-
-  void pruneVolumes() async {
-    setState(() => _waitingVolumeLoad = true);
-    await _containerController.pruneVolume();
-    setState(() => _waitingVolumeLoad = false);
   }
 
   fetchTreeAndDisplay(String path) {

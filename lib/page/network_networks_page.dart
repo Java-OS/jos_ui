@@ -17,7 +17,7 @@ class NetworkNetworksPageState extends State<NetworkNetworksPage> {
 
   @override
   void initState() {
-    _networkController.fetchNetworks();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _networkController.fetchNetworks());
     super.initState();
   }
 

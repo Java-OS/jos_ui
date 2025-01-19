@@ -19,7 +19,7 @@ class FirewallTablePageState extends State<FirewallTablePage> {
 
   @override
   void initState() {
-    _firewallController.tableFetch();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _firewallController.tableFetch());
     super.initState();
   }
 

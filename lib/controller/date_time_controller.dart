@@ -1,13 +1,13 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/message_buffer.dart';
-import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/widget/toast.dart';
 
 class DateTimeController extends GetxController {
+  final _apiService = Get.put(ApiService());
   final TextEditingController ntpServerEditingController = TextEditingController();
   final TextEditingController ntpIntervalEditingController = TextEditingController();
   final TextEditingController timeZoneEditingController = TextEditingController();
@@ -36,13 +36,11 @@ class DateTimeController extends GetxController {
 
   void fetchNtpInfo() async {
     developer.log('Fetch NTP Information called');
-    var payload = await RestClient.rpc(Rpc.RPC_NTP_INFORMATION);
-    if (payload.metadata!.success) {
-      var json = jsonDecode(payload.content!);
-      bool serverNtpIsActive = json['activate'];
+    _apiService.callApi(Rpc.RPC_NTP_INFORMATION).then((map) {
+      bool serverNtpIsActive = map['activate'];
 
-      ntpServerEditingController.text = json['server'];
-      ntpIntervalEditingController.text = json['interval'].toString();
+      ntpServerEditingController.text = map['server'];
+      ntpIntervalEditingController.text = map['interval'].toString();
 
       if (!serverNtpIsActive) {
         fetchSystemDateTime();
@@ -50,30 +48,28 @@ class DateTimeController extends GetxController {
         isNtpActive.value = serverNtpIsActive;
         syncNTP();
       }
-    }
+    });
   }
 
   void fetchSystemDateTime() async {
     developer.log('Fetch system date time called');
-    var payload = await RestClient.rpc(Rpc.RPC_DATE_TIME_INFORMATION);
-    if (payload.metadata!.success) {
-      var json = jsonDecode(payload.content!);
-      serverDate.value = json['zonedDateTime'].split(' ')[0];
-      serverTime.value = json['zonedDateTime'].split(' ')[1];
-      serverTimeZone.value = json['zonedDateTime'].split(' ')[2];
-    }
+    _apiService.callApi(Rpc.RPC_DATE_TIME_INFORMATION).then((map) {
+      serverDate.value = map['zonedDateTime'].split(' ')[0];
+      serverTime.value = map['zonedDateTime'].split(' ')[1];
+      serverTimeZone.value = map['zonedDateTime'].split(' ')[2];
+    });
   }
 
   void updateDateTime() {
     developer.log('Update date time called');
     String param = '$serverDate $serverTime';
-    RestClient.rpc(Rpc.RPC_SYSTEM_SET_DATE_TIME, parameters: {'dateTime': param});
+    _apiService.callApi(Rpc.RPC_SYSTEM_SET_DATE_TIME, parameters: {'dateTime': param});
     displayInfo('System date & time updated');
   }
 
   Future<void> activateNtp() async {
     developer.log('Activate NTP called');
-    await RestClient.rpc(Rpc.RPC_NTP_ACTIVATE, parameters: {'activate': isNtpActive.value});
+    _apiService.callApi(Rpc.RPC_NTP_ACTIVATE, parameters: {'activate': isNtpActive.value});
     String activeMessage = 'NTP client activated';
     String disabledMessage = 'NTP client disabled';
     if (isNtpActive.value) displayInfo(isNtpActive.value ? activeMessage : disabledMessage);
@@ -82,39 +78,37 @@ class DateTimeController extends GetxController {
   Future<void> setNtpConfiguration() async {
     developer.log('Set NTP configuration called');
     var params = {'server': ntpServerEditingController.text, 'interval': int.parse(ntpIntervalEditingController.text)};
-    await RestClient.rpc(Rpc.RPC_NTP_SERVER_NAME, parameters: params);
+    _apiService.callApi(Rpc.RPC_NTP_SERVER_NAME, parameters: params);
     displayInfo('NTP configuration updated');
   }
 
   Future<void> syncNTP() async {
     developer.log('Sync NTP Called');
-    var payload = await RestClient.rpc(Rpc.RPC_NTP_SYNC);
-    if (payload.metadata!.success) {
-      var json = jsonDecode(payload.content!);
-      leapIndicator.value = json['leapIndicator'].toString();
-      version.value = json['version'].toString();
-      mode.value = json['mode'].toString();
-      stratum.value = json['stratum'].toString();
-      poll.value = json['poll'].toString();
-      precision.value = json['precision'].toString();
-      rootDelay.value = json['rootDelay'].toString();
-      rootDispersion.value = json['rootDispersion'].toString();
-      referenceIdentifier.value = json['referenceIdentifier'].toString();
-      referenceTimestamp.value = json['referenceTimestamp'].toString();
-      originateTimestamp.value = json['originateTimestamp'].toString();
-      receiveTimestamp.value = json['receiveTimestamp'].toString();
-      transmitTimestamp.value = json['transmitTimestamp'].toString();
-    }
+    _apiService.callApi(Rpc.RPC_NTP_SYNC).then((map) {
+      leapIndicator.value = map['leapIndicator'].toString();
+      version.value = map['version'].toString();
+      mode.value = map['mode'].toString();
+      stratum.value = map['stratum'].toString();
+      poll.value = map['poll'].toString();
+      precision.value = map['precision'].toString();
+      rootDelay.value = map['rootDelay'].toString();
+      rootDispersion.value = map['rootDispersion'].toString();
+      referenceIdentifier.value = map['referenceIdentifier'].toString();
+      referenceTimestamp.value = map['referenceTimestamp'].toString();
+      originateTimestamp.value = map['originateTimestamp'].toString();
+      receiveTimestamp.value = map['receiveTimestamp'].toString();
+      transmitTimestamp.value = map['transmitTimestamp'].toString();
+    });
   }
 
   Future<void> hcToSys() async {
     developer.log('Hardware clock to sys called');
-    await RestClient.rpc(Rpc.RPC_DATE_TIME_SYNC_HCTOSYS);
+    _apiService.callApi(Rpc.RPC_DATE_TIME_SYNC_HCTOSYS);
   }
 
   Future<void> sysToHc() async {
     developer.log('System to hardware clock called');
-    await RestClient.rpc(Rpc.RPC_DATE_TIME_SYNC_SYSTOHC);
+    _apiService.callApi(Rpc.RPC_DATE_TIME_SYNC_SYSTOHC);
   }
 
   void apply() async {
@@ -127,12 +121,11 @@ class DateTimeController extends GetxController {
 
   Future<void> updateTimezone(String zone) async {
     var reqParam = {'timezone': zone.split('\t')[0]};
-    var payload = await RestClient.rpc(Rpc.RPC_SYSTEM_SET_TIMEZONE, parameters: reqParam);
-    if (payload.metadata!.success) {
+    _apiService.callApi(Rpc.RPC_SYSTEM_SET_TIMEZONE, parameters: reqParam).then((e) {
       displayInfo('Timezone successfully updated');
       if (isNtpActive.isTrue) {
         fetchNtpInfo();
       }
-    }
+    });
   }
 }

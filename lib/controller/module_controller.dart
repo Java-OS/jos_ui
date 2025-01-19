@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:file_picker/file_picker.dart';
@@ -6,20 +5,15 @@ import 'package:get/get.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/module.dart';
 import 'package:jos_ui/service/rest_client.dart';
-import 'package:jos_ui/widget/toast.dart';
+
+import '../service/api_service.dart';
 
 class ModuleController extends GetxController {
+  final _apiService = Get.put(ApiService());
   var moduleList = <Module>[].obs;
 
   Future<void> fetchModules() async {
-    var payload = await RestClient.rpc(Rpc.RPC_MODULE_LIST);
-    if (payload.metadata!.success) {
-      var json = jsonDecode(payload.content!);
-      var result = json as List;
-      moduleList.value = result.map((item) => Module.fromMap(item)).toList();
-    } else {
-      displayError('Failed to fetch network interfaces');
-    }
+    _apiService.callApi(Rpc.RPC_MODULE_LIST, message: 'Failed to fetch modules').then((e) => e as List).then((e) => moduleList.value = e.map((item) => Module.fromMap(item)).toList());
   }
 
   Future<void> removeModule(String moduleName, String version) async {
@@ -28,10 +22,7 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_MODULE_REMOVE, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchModules();
-    }
+    _apiService.callApi(Rpc.RPC_MODULE_REMOVE, parameters: reqParam).then((e) => fetchModules());
   }
 
   Future<void> enableModule(String moduleName, String version) async {
@@ -40,10 +31,7 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_MODULE_ENABLE, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchModules();
-    }
+    _apiService.callApi(Rpc.RPC_MODULE_ENABLE, parameters: reqParam).then((e) => fetchModules());
   }
 
   Future<void> disableModule(String moduleName, String version) async {
@@ -52,10 +40,7 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_MODULE_DISABLE, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchModules();
-    }
+    _apiService.callApi(Rpc.RPC_MODULE_DISABLE, parameters: reqParam).then((e) => fetchModules());
   }
 
   Future<void> startService(String moduleName, String version) async {
@@ -64,10 +49,7 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_MODULE_START, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchModules();
-    }
+    _apiService.callApi(Rpc.RPC_MODULE_START, parameters: reqParam).then((e) => fetchModules());
   }
 
   Future<void> stopService(String moduleName, String version) async {
@@ -76,10 +58,7 @@ class ModuleController extends GetxController {
     var reqParam = {
       'moduleName': fullName,
     };
-    var payload = await RestClient.rpc(Rpc.RPC_MODULE_STOP, parameters: reqParam);
-    if (payload.metadata!.success) {
-      await fetchModules();
-    }
+    _apiService.callApi(Rpc.RPC_MODULE_STOP, parameters: reqParam).then((e) => fetchModules());
   }
 
   Future<void> uploadModule() async {
