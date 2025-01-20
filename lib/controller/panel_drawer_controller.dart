@@ -41,7 +41,7 @@ class PanelDrawerController extends GetxController {
       'icon': MdiIcons.cogs,
       'font-size': 16,
       'icon-size': 24,
-      'path' : '/setting',
+      'path' : '/system',
       'submenu': [
         {'title': 'Basic', 'path': Routes.settingBasic.routeName, 'icon': Icons.settings, 'font-size': 12, 'icon-size': 16},
         {'title': 'Kernel Modules', 'path': Routes.settingKernelModules.routeName, 'icon': MdiIcons.cpu64Bit, 'font-size': 12, 'icon-size': 16},
