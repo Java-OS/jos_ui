@@ -12,8 +12,22 @@ class DropDownMenu<T> extends StatefulWidget {
   final String? label;
   final TextStyle? labelStyle;
   final Function? onClear;
+  final bool? disableRadius;
 
-  const DropDownMenu({super.key, required this.value, this.hint, required this.items, required this.onChanged, this.displayClearButton = true, this.requiredValue = false, this.disabled = false, this.label, this.labelStyle, this.onClear});
+  const DropDownMenu({
+    super.key,
+    required this.value,
+    this.hint,
+    required this.items,
+    required this.onChanged,
+    this.displayClearButton = true,
+    this.requiredValue = false,
+    this.disabled = false,
+    this.label,
+    this.labelStyle,
+    this.onClear,
+    this.disableRadius,
+  });
 
   @override
   State<DropDownMenu> createState() => _DropDownMenuState<T>();
@@ -28,18 +42,24 @@ class _DropDownMenuState<T> extends State<DropDownMenu<T>> {
       alignment: Alignment.center,
       children: [
         DropdownButtonFormField<T>(
-          style: TextStyle(fontSize: 14),
+          style: TextStyle(fontSize: 12),
           hint: widget.hint,
           decoration: InputDecoration(
             labelText: widget.label,
             labelStyle: widget.labelStyle,
-            border: OutlineInputBorder(),
             hintStyle: TextStyle(fontSize: 12),
             isDense: true,
-            contentPadding: EdgeInsets.all(12),
+            contentPadding: EdgeInsets.all(8),
+            enabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 0.2, color: Colors.black), borderRadius: getBorderRadius()),
+            focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 0.2, color: Colors.blueAccent), borderRadius: getBorderRadius()),
+            border: OutlineInputBorder(borderRadius: getBorderRadius()),
           ),
           items: widget.disabled ? [] : widget.items,
-          value: widget.requiredValue ? widget.value : isClearButtonVisible ? widget.value : null,
+          value: widget.requiredValue
+              ? widget.value
+              : isClearButtonVisible
+                  ? widget.value
+                  : null,
           onChanged: widget.disabled ? null : (value) => callOnChangeFunction(value),
         ),
         Visibility(
@@ -60,6 +80,8 @@ class _DropDownMenuState<T> extends State<DropDownMenu<T>> {
     );
   }
 
+  BorderRadius getBorderRadius() => (widget.disableRadius == null || widget.disableRadius == false) ? BorderRadius.all(Radius.circular(3)) : BorderRadius.zero;
+
   void callOnChangeFunction(dynamic value) {
     setState(() => isClearButtonVisible = true);
     widget.onChanged(value);
@@ -67,6 +89,6 @@ class _DropDownMenuState<T> extends State<DropDownMenu<T>> {
 
   void callClearButton() {
     setState(() => isClearButtonVisible = false);
-    if (widget.onClear != null ) widget.onClear!();
+    if (widget.onClear != null) widget.onClear!();
   }
 }

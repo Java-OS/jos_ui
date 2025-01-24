@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 
-enum Type {
+enum VerdictType {
   accept('accept'),
   drop('drop'),
   queue('queue'),
@@ -12,15 +12,15 @@ enum Type {
 
   final String value;
 
-  const Type(this.value);
+  const VerdictType(this.value);
 
-  factory Type.fromValue(String value) {
-    return Type.values.firstWhere((item) => item.value == value);
+  factory VerdictType.fromValue(String value) {
+    return VerdictType.values.firstWhere((item) => item.value == value);
   }
 }
 
 class VerdictStatement implements Statement {
-  final Type type;
+  final VerdictType type;
   final String? chainName;
 
   VerdictStatement(this.type, this.chainName);
@@ -29,19 +29,19 @@ class VerdictStatement implements Statement {
     var key = map.keys.first;
     switch (key) {
       case 'accept':
-        return VerdictStatement(Type.accept, null);
+        return VerdictStatement(VerdictType.accept, null);
       case 'drop':
-        return VerdictStatement(Type.drop, null);
+        return VerdictStatement(VerdictType.drop, null);
       case 'queue':
-        return VerdictStatement(Type.queue, null);
+        return VerdictStatement(VerdictType.queue, null);
       case 'continue':
-        return VerdictStatement(Type.cont, null);
+        return VerdictStatement(VerdictType.cont, null);
       case 'return':
-        return VerdictStatement(Type.ret, null);
+        return VerdictStatement(VerdictType.ret, null);
       case 'jump':
-        return VerdictStatement(Type.jump, map['jump']['target']);
+        return VerdictStatement(VerdictType.jump, map['jump']['target']);
       case 'goto':
-        return VerdictStatement(Type.jump, map['goto']['target']);
+        return VerdictStatement(VerdictType.jump, map['goto']['target']);
       default:
         throw ArgumentError('Unsupported verdict type: $key');
     }

@@ -3,13 +3,15 @@ import 'package:get/get.dart';
 import 'package:jos_ui/controller/firewall_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/model/firewall/chain.dart';
-import 'package:jos_ui/widget/text_field_box_widget.dart';
-
-import '../../widget/drop_down_widget.dart';
+import 'package:jos_ui/model/firewall/protocol.dart';
+import 'package:jos_ui/model/firewall/statement/nat_statement.dart';
+import 'package:jos_ui/model/firewall/statement/verdict_statement.dart';
+import 'package:jos_ui/widget/rule_drop_down.dart';
+import 'package:jos_ui/widget/rule_input_text.dart';
 
 FirewallController _firewallController = Get.put(FirewallController());
 
-Future<void> displayFirewallRuleFilterModal(bool isUpdate) async {
+Future<void> displayFirewallRuleFilterModal(ChainType type, bool isUpdate) async {
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
@@ -20,49 +22,37 @@ Future<void> displayFirewallRuleFilterModal(bool isUpdate) async {
         titlePadding: EdgeInsets.zero,
         children: [
           Column(
+            spacing: 4,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFieldBox(controller: _firewallController.chainNameEditingController, label: 'Name'),
-              SizedBox(height: 10),
-              Obx(
-                () => DropDownMenu<ChainType>(
-                  displayClearButton: _firewallController.chainType.value != null,
-                  requiredValue: _firewallController.chainType.value != null,
-                  value: _firewallController.chainType.value,
-                  label: 'Type' ,
-                  items: ChainType.getChainTypes(_firewallController.tableType.value).map((e) => DropdownMenuItem<ChainType>(value: e, child: Text(e.name))).toList(),
-                  onChanged: (value) {
-                    discardValues();
-                    _firewallController.chainType.value = value;
-                  },
-                  onClear: () => discardValues(),
-                ),
+              RuleInputText(
+                label: 'Src. Address',
               ),
-              SizedBox(height: 10),
-              Obx(
-                () => DropDownMenu<ChainHook>(
-                  displayClearButton: _firewallController.chainHook.value != null,
-                  requiredValue: _firewallController.chainHook.value != null,
-                  value: _firewallController.chainHook.value,
-                  label: 'Hook',
-                  items: _firewallController.chainType.value == null ? [] :  ChainHook.getHooks(_firewallController.chainType.value!).map((e) => DropdownMenuItem<ChainHook>(value: e, child: Text(e.name))).toList(),
-                  onChanged: (value) => _firewallController.chainHook.value = value,
-                  onClear: () => discardValues(),
-                ),
+              RuleInputText(
+                label: 'Dst. Address',
               ),
-              SizedBox(height: 10),
-              Obx(
-                () => DropDownMenu<ChainPolicy>(
-                  displayClearButton: _firewallController.chainPolicy.value != null,
-                  requiredValue: _firewallController.chainPolicy.value != null,
-                  value: _firewallController.chainPolicy.value,
-                  label: 'Policy',
-                  items:  _firewallController.chainType.value == null ? [] : ChainPolicy.values.map((e) => DropdownMenuItem<ChainPolicy>(value: e, child: Text(e.name))).toList(),
-                  onChanged: (value) => _firewallController.chainPolicy.value = value,
-                  onClear: () => discardValues(),
-                ),
+              RuleDropDown(label: 'Protocol', onDropDownChange: (e) {}, dropDownItems: protocolItems(), dropDownValue: Protocol.tcp),
+              RuleInputText(
+                label: 'Src. Port',
               ),
+              RuleInputText(
+                label: 'Dst. Port',
+              ),
+              RuleInputText(
+                label: 'In. Interface',
+              ),
+              RuleInputText(
+                label: 'Out. Interface',
+              ),
+              RuleDropDown(
+                label: 'Action',
+                onDropDownChange: (e) {},
+                dropDownItems: actionItems(type),
+                dropDownValue: null,
+              ),
+              RuleInputText(label: 'Log. Level', displayCheckBox: false),
+              RuleInputText(label: 'Log. Prefix', displayCheckBox: false),
               SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerRight,
@@ -79,8 +69,14 @@ Future<void> displayFirewallRuleFilterModal(bool isUpdate) async {
   ).then((e) => _firewallController.clear());
 }
 
-void discardValues() {
-  _firewallController.chainType.value = null;
-  _firewallController.chainHook.value = null;
-  _firewallController.chainPolicy.value = null;
+List<DropdownMenuItem<dynamic>> actionItems(ChainType type) {
+  if (type == ChainType.nat) {
+    return VerdictType.values.map((e) => DropdownMenuItem<VerdictType>(value: e, child: Text(e.name))).toList();
+  } else {
+    return NatType.values.map((e) => DropdownMenuItem<NatType>(value: e, child: Text(e.name))).toList();
+  }
+}
+
+List<DropdownMenuItem<Protocol>> protocolItems() {
+  return Protocol.values.map((e) => DropdownMenuItem<Protocol>(value: e, child: Text(e.name))).toList();
 }

@@ -20,11 +20,11 @@ Future<void> displayFirewallChainModal(bool isUpdate) async {
         titlePadding: EdgeInsets.zero,
         children: [
           Column(
+            spacing: 10,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFieldBox(controller: _firewallController.chainNameEditingController, label: 'Name'),
-              SizedBox(height: 10),
               Obx(
                 () => DropDownMenu<ChainType>(
                   displayClearButton: _firewallController.chainType.value != null,
@@ -39,7 +39,6 @@ Future<void> displayFirewallChainModal(bool isUpdate) async {
                   onClear: () => discardValues(),
                 ),
               ),
-              SizedBox(height: 10),
               Obx(
                 () => DropDownMenu<ChainHook>(
                   displayClearButton: _firewallController.chainHook.value != null,
@@ -51,19 +50,20 @@ Future<void> displayFirewallChainModal(bool isUpdate) async {
                   onClear: () => discardValues(),
                 ),
               ),
-              SizedBox(height: 10),
               Obx(
-                () => DropDownMenu<ChainPolicy>(
-                  displayClearButton: _firewallController.chainPolicy.value != null,
-                  requiredValue: _firewallController.chainPolicy.value != null,
-                  value: _firewallController.chainPolicy.value,
-                  label: 'Policy',
-                  items:  _firewallController.chainType.value == null ? [] : ChainPolicy.values.map((e) => DropdownMenuItem<ChainPolicy>(value: e, child: Text(e.name))).toList(),
-                  onChanged: (value) => _firewallController.chainPolicy.value = value,
-                  onClear: () => discardValues(),
+                () => Visibility(
+                  visible: _firewallController.chainType.value != ChainType.nat,
+                  child: DropDownMenu<ChainPolicy>(
+                    displayClearButton: _firewallController.chainPolicy.value != null,
+                    requiredValue: _firewallController.chainPolicy.value != null,
+                    value: _firewallController.chainPolicy.value,
+                    label: 'Policy',
+                    items:  _firewallController.chainType.value == null ? [] : ChainPolicy.values.map((e) => DropdownMenuItem<ChainPolicy>(value: e, child: Text(e.name))).toList(),
+                    onChanged: (value) => _firewallController.chainPolicy.value = value,
+                    onClear: () => discardValues(),
+                  ),
                 ),
               ),
-              SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(

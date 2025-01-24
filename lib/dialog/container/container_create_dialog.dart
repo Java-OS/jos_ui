@@ -7,7 +7,7 @@ import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/dialog/environment_dialog.dart';
 import 'package:jos_ui/model/container/network_info.dart';
-import 'package:jos_ui/model/container/protocol.dart';
+import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/radio_tile_widget.dart';

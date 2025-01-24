@@ -19,7 +19,7 @@ enum ChainHook {
 
   static List<ChainHook> getHooks(ChainType type) {
     if (type == ChainType.filter) {
-      return [ChainHook.prerouting, ChainHook.input, ChainHook.forward, ChainHook.output, ChainHook.postrouting];
+      return [ChainHook.input, ChainHook.forward, ChainHook.output];
     } else if (type == ChainType.nat) {
       return [ChainHook.prerouting, ChainHook.input, ChainHook.output, ChainHook.postrouting];
     } else {
@@ -30,7 +30,7 @@ enum ChainHook {
 
 enum ChainType {
   filter('filter'),
-  route('route'),
+  // route('route'),
   nat('nat');
 
   final String value;
@@ -43,7 +43,8 @@ enum ChainType {
 
   static List<ChainType> getChainTypes(FirewallTableType tableType) {
     if (tableType == FirewallTableType.inet || tableType == FirewallTableType.ipv4 || tableType == FirewallTableType.ipv6) {
-      return [ChainType.filter, ChainType.nat, ChainType.route];
+      // return [ChainType.filter, ChainType.nat, ChainType.route];
+      return [ChainType.filter, ChainType.nat];
     } else {
       return [ChainType.filter];
     }

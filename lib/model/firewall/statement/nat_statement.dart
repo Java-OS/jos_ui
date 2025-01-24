@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/widget/key_value.dart';
 
-enum Type {
+enum NatType {
   snat('SNAT'),
   dnat('DNAT'),
   redirect('REDIRECT'),
@@ -10,10 +10,10 @@ enum Type {
 
   final String value;
 
-  const Type(this.value);
+  const NatType(this.value);
 
-  factory Type.fromValue(String value) {
-    return Type.values.firstWhere((item) => item.value == value);
+  factory NatType.fromValue(String value) {
+    return NatType.values.firstWhere((item) => item.value == value);
   }
 }
 
@@ -33,7 +33,7 @@ enum Flag {
 
 class NatStatement implements Statement {
   final List<Flag> flags;
-  final Type type;
+  final NatType type;
   final String? address;
   final int? port;
 
@@ -44,25 +44,25 @@ class NatStatement implements Statement {
       var addr = map['snat']['addr'];
       var port = map['snat']['port'];
       var flags = map['snat']['flags'] != null ? (map['snat']['flags'] as List).map((e) => Flag.fromValue(e)).toList() : <Flag>[];
-      return NatStatement(flags, Type.snat, addr, port);
+      return NatStatement(flags, NatType.snat, addr, port);
     } else if (map.containsKey('dnat')) {
       var addr = map['dnat']['addr'];
       var port = map['dnat']['port'];
       var flags = map['dnat']['flags'] != null ? (map['dnat']['flags'] as List).map((e) => Flag.fromValue(e)).toList() : <Flag>[];
-      return NatStatement(flags, Type.dnat, addr, port);
+      return NatStatement(flags, NatType.dnat, addr, port);
     } else if (map.containsKey('redirect')) {
       var port = map['redirect']['port'];
       var flags = map['redirect']['flags'] != null ? (map['redirect']['flags'] as List).map((e) => Flag.fromValue(e)).toList() : <Flag>[];
-      return NatStatement(flags, Type.redirect, null, port);
+      return NatStatement(flags, NatType.redirect, null, port);
     } else {
       var flags = map['masquerade']['flags'] != null ? (map['masquerade']['flags'] as List).map((e) => Flag.fromValue(e)).toList() : <Flag>[];
-      return NatStatement(flags, Type.masquerade, null, null);
+      return NatStatement(flags, NatType.masquerade, null, null);
     }
   }
 
   @override
   Widget display() {
-    if (type == Type.dnat || type == Type.snat) {
+    if (type == NatType.dnat || type == NatType.snat) {
       return KeyValue(
         k: type.name,
         v: port != null ? '$address : $port' : '$address',
@@ -71,7 +71,7 @@ class NatStatement implements Statement {
         keyTextColor: Colors.white,
         valueTextColor: Colors.white,
       );
-    } else if (type == Type.redirect) {
+    } else if (type == NatType.redirect) {
       return KeyValue(
         k: type.name,
         v: '$port',

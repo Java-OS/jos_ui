@@ -1,5 +1,5 @@
 enum Protocol {
   tcp,
   udp,
-  sctp;
+  icmp;
 }

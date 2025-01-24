@@ -1,6 +1,6 @@
 import 'package:jos_ui/model/container/network_connect.dart';
 import 'package:jos_ui/model/container/port_mapping.dart';
-import 'package:jos_ui/model/container/protocol.dart';
+import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/model/container/volume_parameter.dart';
 
 class CreateContainer {

@@ -12,10 +12,33 @@ class TextFieldBox extends StatefulWidget {
   final TextInputType? keyboardType;
   final Function? onClick;
   final Color? backgroundColor;
-  final Color? color;
-  final bool? removeRadius;
+  final bool? disableRadius;
+  final EdgeInsets contentPadding;
+  final double cursorHeight;
+  final TextStyle textStyle;
+  final TextStyle hintStyle;
+  final Widget? prefixIcon;
 
-  const TextFieldBox({super.key, required this.controller, this.label, this.onSubmit, this.isPassword = false, this.isEnable = true, this.maxLines, this.maxLength, this.onClick, this.keyboardType, this.isExpanded, this.backgroundColor, this.color, this.removeRadius});
+  const TextFieldBox({
+    super.key,
+    required this.controller,
+    this.label,
+    this.onSubmit,
+    this.isPassword = false,
+    this.isEnable = true,
+    this.maxLines,
+    this.maxLength,
+    this.onClick,
+    this.keyboardType,
+    this.isExpanded,
+    this.backgroundColor,
+    this.disableRadius,
+    this.contentPadding = const EdgeInsets.all(8),
+    this.cursorHeight = 16,
+    this.textStyle = const TextStyle(fontSize: 14, color: Colors.black),
+    this.hintStyle = const TextStyle(fontSize: 12),
+    this.prefixIcon,
+  });
 
   @override
   State<TextFieldBox> createState() => _TextFieldBoxState();
@@ -46,10 +69,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
                   enabled: widget.isEnable,
                   onSubmitted: (e) => widget.onSubmit!(e),
                   controller: widget.controller,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: widget.color ?? (widget.isEnable! ? Colors.black : Colors.black.withAlpha(150)),
-                  ),
+                  style: widget.textStyle,
                   obscureText: widget.isPassword,
                   enableSuggestions: !widget.isPassword,
                   autocorrect: !widget.isPassword,
@@ -59,13 +79,17 @@ class _TextFieldBoxState extends State<TextFieldBox> {
                   textInputAction: TextInputAction.none,
                   maxLines: widget.isPassword ? 1 : widget.maxLines,
                   maxLength: widget.maxLength,
+                  cursorHeight: widget.cursorHeight,
                   decoration: InputDecoration(
+                    prefixIcon: widget.prefixIcon,
                     counterText: '',
                     label: Text(widget.label ?? ''),
-                    border: OutlineInputBorder(borderRadius: (widget.removeRadius == null || widget.removeRadius == false) ? BorderRadius.all(Radius.circular(3)) : BorderRadius.zero),
-                    hintStyle: TextStyle(fontSize: 12),
+                    enabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 0.2, color: Colors.black), borderRadius: getBorderRadius()),
+                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 0.2, color: Colors.blueAccent), borderRadius: getBorderRadius()),
+                    border: OutlineInputBorder(borderRadius: getBorderRadius()),
+                    hintStyle: widget.hintStyle,
                     isDense: true,
-                    contentPadding: EdgeInsets.all(14),
+                    contentPadding: widget.contentPadding,
                     fillColor: widget.backgroundColor ?? Colors.white,
                     filled: true,
                   ),
@@ -81,7 +105,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
             child: Padding(
               padding: const EdgeInsets.only(right: 30.0),
               child: IconButton(
-                onPressed: () => {setState(() => clear())},
+                onPressed: () => setState(() => clear()),
                 icon: Icon(Icons.cancel_outlined, color: Colors.red, size: 14),
                 splashRadius: 12,
               ),
@@ -91,6 +115,8 @@ class _TextFieldBoxState extends State<TextFieldBox> {
       ],
     );
   }
+
+  BorderRadius getBorderRadius() => (widget.disableRadius == null || widget.disableRadius == false) ? BorderRadius.all(Radius.circular(3)) : BorderRadius.zero;
 
   void clear() {
     isClearButtonVisible = false;
