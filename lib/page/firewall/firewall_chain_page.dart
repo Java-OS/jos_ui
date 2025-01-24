@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/firewall_controller.dart';
 import 'package:jos_ui/dialog/firewall/firewall_chain_dialog.dart';
 import 'package:jos_ui/model/firewall/chain.dart';
@@ -19,6 +20,7 @@ class FirewallChainPageState extends State<FirewallChainPage> {
 
   @override
   void initState() {
+    if (_firewallController.tableHandle.value == null) WidgetsBinding.instance.addPostFrameCallback((_) => Get.offAllNamed(Routes.firewallTables.routeName));
     super.initState();
   }
 
@@ -28,76 +30,79 @@ class FirewallChainPageState extends State<FirewallChainPage> {
       controllers: [
         OutlinedButton(onPressed: () => displayFirewallChainModal(false), child: Icon(Icons.add, size: 16, color: Colors.black)),
       ],
-      child: SingleChildScrollView(
-        child: Obx(
-          () => ReorderableListView.builder(
-            buildDefaultDragHandles: false,
-            proxyDecorator: (child, i, d) => child,
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            itemCount: _firewallController.chainList.length,
-            itemBuilder: (context, index) {
-              var chain = _firewallController.chainList[index];
-              return Padding(
-                key: ValueKey(chain),
-                padding: const EdgeInsets.all(4.0),
-                child: ReorderableDragStartListener(
-                  index: index,
-                  child: TileItem(
-                    onClick: () => print('Hello'),
-                    actions: SizedBox(
-                      width: 100,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.end,
+      child: Expanded(
+        child: SingleChildScrollView(
+          child: Obx(
+            () => ListView.builder(
+              scrollDirection: Axis.vertical,
+              physics: const ClampingScrollPhysics(),
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              itemCount: _firewallController.chainList.length,
+              itemBuilder: (context, index) {
+                var chain = _firewallController.chainList[index];
+                return Padding(
+                  key: ValueKey(chain),
+                  padding: const EdgeInsets.all(4.0),
+                  child: ReorderableDragStartListener(
+                    index: index,
+                    child: TileItem(
+                      onClick: () => gotoRulePage(chain),
+                      actions: SizedBox(
+                        width: 100,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              onPressed: () => _firewallController.chainDelete(chain.table.handle!, chain.handle!),
+                              splashRadius: 12,
+                              icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+                            ),
+                            IconButton(
+                              onPressed: () => updateChain(chain),
+                              splashRadius: 12,
+                              icon: Icon(MdiIcons.pencil, size: 16, color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                      leading: Container(
+                        width: 70,
+                        padding: EdgeInsets.only(left: 4, right: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          border: Border.all(width: 0.1, color: Colors.grey),
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                        ),
+                        child: Text(
+                          chain.type?.name ?? 'regular',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      index: index,
+                      title: Row(
+                        spacing: 4,
                         children: [
-                          IconButton(
-                            onPressed: () => _firewallController.chainDelete(chain.table.handle!, chain.handle!),
-                            splashRadius: 12,
-                            icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
-                          ),
-                          IconButton(
-                            onPressed: () => updateChain(chain),
-                            splashRadius: 12,
-                            icon: Icon(MdiIcons.pencil, size: 16, color: Colors.black),
-                          ),
+                          Text(chain.name),
+                          SizedBox(width: 12),
+                          Visibility(visible: chain.hook != null, child: chainMetadata(chain.hook?.name ?? '', Colors.white)),
+                          Visibility(visible: chain.policy != null, child: chainMetadata(chain.policy?.name ?? '', Colors.white)),
                         ],
                       ),
                     ),
-                    subTitle: Row(
-                      children: [
-                        chainMetadata(chain.type?.name ?? 'Regular', Colors.white),
-                        SizedBox(width: 8),
-                        Visibility(visible: chain.hook != null, child: chainMetadata(chain.hook?.name ?? '', Colors.white)),
-                        SizedBox(width: 8),
-                        Visibility(visible: chain.policy != null, child: chainMetadata(chain.policy?.name ?? '', Colors.white)),
-                        SizedBox(width: 8),
-                      ],
-                    ),
-                    leading: CircleAvatar(
-                      radius: 18,
-                      child: Text(chain.handle.toString(), style: TextStyle(fontSize: 12)),
-                    ),
-                    index: index,
-                    title: Text(chain.name),
                   ),
-                ),
-              );
-            },
-            onReorder: (int oldIndex, int newIndex) => updateOrder(oldIndex, newIndex),
+                );
+              },
+            ),
           ),
         ),
       ),
     );
-  }
-
-  void updateOrder(int oldIndex, int newIndex) {
-    setState(() {
-      if (oldIndex < newIndex) newIndex--;
-      var chain = _firewallController.chainList.removeAt(oldIndex);
-      _firewallController.chainList.insert(newIndex, chain);
-      _firewallController.chainSwitch();
-    });
   }
 
   Container chainMetadata(String text, Color color) {
@@ -108,7 +113,7 @@ class FirewallChainPageState extends State<FirewallChainPage> {
         borderRadius: BorderRadius.all(Radius.circular(3)),
         border: Border.all(color: Colors.black45, width: 0.1),
       ),
-      child: Text(text),
+      child: Text(text,style: TextStyle(color: Colors.black,fontSize: 12),),
     );
   }
 
@@ -122,5 +127,9 @@ class FirewallChainPageState extends State<FirewallChainPage> {
     _firewallController.chainNameEditingController.text = chain.name;
 
     displayFirewallChainModal(true);
+  }
+
+  Future<void> gotoRulePage(FirewallChain chain) async {
+    _firewallController.ruleFetch(chain).then((_) => Get.toNamed(Routes.firewallRules.routeName));
   }
 }

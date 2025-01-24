@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/firewall/chain.dart';
+import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/model/firewall/table.dart';
 import 'package:jos_ui/service/api_service.dart';
 
@@ -15,6 +16,7 @@ class FirewallController extends GetxController {
   /* table parameters */
   var tableList = <FirewallTable>[].obs;
   var chainList = <FirewallChain>[].obs;
+  var ruleList = <FirewallRule>[].obs;
   var tableHandle = Rxn<int>();
   var chainHandle = Rxn<int>();
 
@@ -27,7 +29,7 @@ class FirewallController extends GetxController {
 
   /* -------------- Table Methods -------------- */
   Future<void> tableFetch() async {
-    _apiService.callApi(Rpc.RPC_FIREWALL_TABLE_LIST, message: 'Failed to fetch firewall tables').then((e) => e as List).then((list) => tableList.value = list.map((item) => FirewallTable.fromJson(item)).toList());
+    _apiService.callApi(Rpc.RPC_FIREWALL_TABLE_LIST, message: 'Failed to fetch firewall tables').then((e) => e as List).then((list) => tableList.value = list.map((item) => FirewallTable.fromMap(item)).toList());
   }
 
   Future<void> tableAdd() async {
@@ -56,7 +58,7 @@ class FirewallController extends GetxController {
     _apiService
         .callApi(Rpc.RPC_FIREWALL_CHAIN_LIST, parameters: reqParam, message: 'Failed to fetch firewall chains')
         .then((e) => e as List)
-        .then((e) => chainList.value = e.map((item) => FirewallChain.fromJson(item, tableHandle.value!)).toList());
+        .then((e) => chainList.value = e.map((item) => FirewallChain.fromMap(item, tableHandle.value!)).toList());
   }
 
   Future<void> chainAdd() async {
@@ -92,14 +94,20 @@ class FirewallController extends GetxController {
     _apiService.callApi(Rpc.RPC_FIREWALL_CHAIN_UPDATE, parameters: reqParam, message: 'Failed to update chain').then((e) => chainFetch()).then((e) => Get.back()).then((e) => clear());
   }
 
-  Future<void> chainSwitch() async {
+  /* -------------- Rule Methods -------------- */
+  Future<void> ruleFetch(FirewallChain chain) async {
     var reqParam = {
-      'tableId': tableHandle.value,
-      'chainIds': chainList.map((item) => item.handle).toList(),
+      'tableId': chain.table.handle,
+      'chainId': chain.handle,
     };
 
-    _apiService.callApi(Rpc.RPC_FIREWALL_CHAIN_SWITCH, parameters: reqParam, message: 'Failed to switch chain').then((e) => chainFetch()).then((e) => clear());
+    await _apiService
+        .callApi(Rpc.RPC_FIREWALL_RULE_LIST, parameters: reqParam, message: 'Failed to fetch rules')
+        .then((e) => e as List)
+        .then((e) => ruleList.value = e.map((item) => FirewallRule.fromMap(item, chain)).toList());
   }
+
+  Future<void> ruleSwitch() async {}
 
   void clear() {
     developer.log('clear parameters');

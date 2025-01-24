@@ -34,6 +34,7 @@ enum Routes {
   firewall('/firewall', 'Firewall'),
   firewallTables('/firewall/tables', 'Tables'),
   firewallChains('/firewall/tables/chains', 'Chains'),
+  firewallRules('/firewall/tables/chains/rules', 'Rules'),
   filesystem('/filesystem', 'Filesystem'),
   modules('/modules', 'Modules');
 

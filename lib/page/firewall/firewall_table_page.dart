@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/firewall_controller.dart';
 import 'package:jos_ui/dialog/firewall/firewall_table_dialog.dart';
 import 'package:jos_ui/model/firewall/table.dart';
@@ -29,46 +30,61 @@ class FirewallTablePageState extends State<FirewallTablePage> {
       controllers: [
         OutlinedButton(onPressed: () => displayFirewallTableModal(false), child: Icon(Icons.add, size: 16, color: Colors.black)),
       ],
-      child: SingleChildScrollView(
-        child: Obx(
-          () => ListView.builder(
-            shrinkWrap: true,
-            itemCount: _firewallController.tableList.length,
-            itemBuilder: (context, index) {
-              var table = _firewallController.tableList[index];
-              return Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: TileItem(
-                  onClick: () => gotoChainPage(table.handle!),
-                  actions: SizedBox(
-                    width: 100,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          onPressed: () => _firewallController.tableDelete(table.handle!),
-                          splashRadius: 12,
-                          icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
-                        ),
-                        IconButton(
-                          onPressed: () => renameTable(table),
-                          splashRadius: 12,
-                          icon: Icon(MdiIcons.pencil, size: 16, color: Colors.black),
-                        ),
-                      ],
+      child: Expanded(
+        child: SingleChildScrollView(
+          child: Obx(
+            () => ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: _firewallController.tableList.length,
+              itemBuilder: (context, index) {
+                var table = _firewallController.tableList[index];
+                return Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: TileItem(
+                    onClick: () => gotoChainPage(table.handle!),
+                    actions: SizedBox(
+                      width: 100,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: () => _firewallController.tableDelete(table.handle!),
+                            splashRadius: 12,
+                            icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+                          ),
+                          IconButton(
+                            onPressed: () => renameTable(table),
+                            splashRadius: 12,
+                            icon: Icon(MdiIcons.pencil, size: 16, color: Colors.black),
+                          ),
+                        ],
+                      ),
                     ),
+                    leading: Container(
+                      width: 70,
+                      padding: EdgeInsets.only(left: 4, right: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.brown,
+                        border: Border.all(width: 0.1, color: Colors.grey),
+                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                      ),
+                      child: Text(
+                        table.type.name,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    index: index,
+                    title: Text(table.name),
                   ),
-                  subTitle: Text(table.type.name),
-                  leading: CircleAvatar(
-                    radius: 18,
-                    child: Text(table.handle.toString(), style: TextStyle(fontSize: 12)),
-                  ),
-                  index: index,
-                  title: Text(table.name),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -85,6 +101,6 @@ class FirewallTablePageState extends State<FirewallTablePage> {
   Future<void> gotoChainPage(int tableHandle) async {
     _firewallController.tableHandle.value = tableHandle;
     await _firewallController.chainFetch();
-    Get.toNamed('/firewall/tables/chains');
+    Get.toNamed(Routes.firewallChains.routeName);
   }
 }

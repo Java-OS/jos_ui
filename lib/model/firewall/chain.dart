@@ -74,7 +74,7 @@ class FirewallChain {
 
   FirewallChain(this.table, this.name, this.handle, this.type, this.hook, this.priority, this.policy);
 
-  factory FirewallChain.fromJson(Map<String, dynamic> map, int tableHandle) {
+  factory FirewallChain.fromMap(Map<String, dynamic> map, int tableHandle) {
     var tableName = map['chain']['table'];
     var tableType = map['chain']['family'];
     var table = FirewallTable(tableHandle, tableName, FirewallTableType.fromValue(tableType));

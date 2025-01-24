@@ -22,7 +22,7 @@ class FirewallTable {
 
   FirewallTable(this.handle, this.name, this.type);
 
-  factory FirewallTable.fromJson(Map<String, dynamic> map) {
+  factory FirewallTable.fromMap(Map<String, dynamic> map) {
     var handle = map['table']['handle'];
     var name = map['table']['name'];
     var type = FirewallTableType.fromValue(map['table']['family']);
