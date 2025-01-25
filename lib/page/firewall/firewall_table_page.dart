@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/firewall_controller.dart';
+import 'package:jos_ui/dialog/firewall/firewall_rule_dialog.dart';
 import 'package:jos_ui/dialog/firewall/firewall_table_dialog.dart';
+import 'package:jos_ui/model/firewall/chain.dart';
 import 'package:jos_ui/model/firewall/table.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -28,7 +30,8 @@ class FirewallTablePageState extends State<FirewallTablePage> {
   Widget build(BuildContext context) {
     return CardContent(
       controllers: [
-        OutlinedButton(onPressed: () => displayFirewallTableModal(false), child: Icon(Icons.add, size: 16, color: Colors.black)),
+        // OutlinedButton(onPressed: () => displayFirewallTableModal(false), child: Icon(Icons.add, size: 16, color: Colors.black)),
+        OutlinedButton(onPressed: () => displayFirewallRuleFilterModal(ChainType.nat,false), child: Icon(Icons.add, size: 16, color: Colors.black)),
       ],
       child: Expanded(
         child: SingleChildScrollView(

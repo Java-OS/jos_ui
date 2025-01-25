@@ -18,6 +18,7 @@ class TextFieldBox extends StatefulWidget {
   final TextStyle textStyle;
   final TextStyle hintStyle;
   final Widget? prefixIcon;
+  final double maxWidth;
 
   const TextFieldBox({
     super.key,
@@ -38,6 +39,7 @@ class TextFieldBox extends StatefulWidget {
     this.textStyle = const TextStyle(fontSize: 14, color: Colors.black),
     this.hintStyle = const TextStyle(fontSize: 12),
     this.prefixIcon,
+    this.maxWidth = 25,
   });
 
   @override
@@ -82,8 +84,9 @@ class _TextFieldBoxState extends State<TextFieldBox> {
                   cursorHeight: widget.cursorHeight,
                   decoration: InputDecoration(
                     prefixIcon: widget.prefixIcon,
+                    prefixIconConstraints: BoxConstraints(maxHeight: widget.maxWidth),
                     counterText: '',
-                    label: Text(widget.label ?? ''),
+                    label: Text(widget.label ?? '', style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal)),
                     enabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 0.2, color: Colors.black), borderRadius: getBorderRadius()),
                     focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 0.2, color: Colors.blueAccent), borderRadius: getBorderRadius()),
                     border: OutlineInputBorder(borderRadius: getBorderRadius()),
