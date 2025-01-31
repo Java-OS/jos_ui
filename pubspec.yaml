@@ -124,9 +124,6 @@ flutter:
     - family: NotoSans
       fonts:
         - asset: assets/fonts/NotoSans-Regular.ttf
-    - family: Noto Sans Symbols
-      fonts:
-        - asset: assets/fonts/NotoSansSymbols2-Regular.ttf
     - family: IBMPlexMono
       fonts:
         - asset: assets/fonts/IBMPlexMono-Regular.ttf

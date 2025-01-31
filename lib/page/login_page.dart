@@ -47,19 +47,19 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(height: 40),
                     Padding(
                       padding: const EdgeInsets.only(left: 80.0),
-                      child: Text('⬤   Open Source Software Under GPL v2'),
+                      child: Row(spacing: 16,children: [Icon(Icons.circle_sharp,size: 16),Text('Open Source Software Under GPL v2')]),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 80.0),
-                      child: Text('⬤   Easy to use'),
+                      child: Row(spacing: 16,children: [Icon(Icons.circle_sharp,size: 16),Text('Easy to use')]),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 80.0),
-                      child: Text('⬤   Fast and Secure'),
+                      child: Row(spacing: 16,children: [Icon(Icons.circle_sharp,size: 16),Text('Fast and Secure')]),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 80.0),
-                      child: Text('⬤   Modular'),
+                      child: Row(spacing: 16,children: [Icon(Icons.circle_sharp,size: 16),Text('Modular')]),
                     )
                   ],
                 ),
