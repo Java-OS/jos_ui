@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class TextFieldBox extends StatefulWidget {
   final TextEditingController? controller;
   final String? label;
   final Function(String)? onSubmit;
+  final Function(String?)? validator;
+  final List<TextInputFormatter>? inputFormatters;
   final bool isPassword;
   final bool? isEnable;
   final bool? isExpanded;
@@ -40,6 +43,8 @@ class TextFieldBox extends StatefulWidget {
     this.hintStyle = const TextStyle(fontSize: 12),
     this.prefixIcon,
     this.maxWidth = 25,
+    this.validator,
+    this.inputFormatters,
   });
 
   @override
@@ -66,10 +71,11 @@ class _TextFieldBoxState extends State<TextFieldBox> {
               child: Material(
                 elevation: hovered ? 3 : 0,
                 shadowColor: Colors.black,
-                child: TextField(
+                child: TextFormField(
+                  inputFormatters: widget.inputFormatters,
                   expands: widget.isExpanded ?? false,
                   enabled: widget.isEnable,
-                  onSubmitted: (e) => widget.onSubmit!(e),
+                  onFieldSubmitted: (e) => widget.onSubmit!(e),
                   controller: widget.controller,
                   style: widget.textStyle,
                   obscureText: widget.isPassword,
@@ -82,6 +88,7 @@ class _TextFieldBoxState extends State<TextFieldBox> {
                   maxLines: widget.isPassword ? 1 : widget.maxLines,
                   maxLength: widget.maxLength,
                   cursorHeight: widget.cursorHeight,
+                  validator: (e) => widget.validator != null ?  widget.validator!(e) : null,
                   decoration: InputDecoration(
                     prefixIcon: widget.prefixIcon,
                     prefixIconConstraints: BoxConstraints(maxHeight: widget.maxWidth),

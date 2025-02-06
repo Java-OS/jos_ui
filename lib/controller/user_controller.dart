@@ -76,10 +76,7 @@ class UserController extends GetxController {
   Future<void> lockOrUnlockUser(User user) async {
     var reqParams = {'username': user.username};
     var lock = user.lock;
-    _apiService
-        .callApi(lock ? Rpc.RPC_USER_UNLOCK : Rpc.RPC_USER_LOCK, parameters: reqParams, message: lock ? 'Failed to activate ${user.username}' : 'Failed to disable ${user.username}')
-        .then((e) => fetchUsers())
-        .then((e) => clean());
+    _apiService.callApi(lock ? Rpc.RPC_USER_UNLOCK : Rpc.RPC_USER_LOCK, parameters: reqParams, message: lock ? 'Failed to activate ${user.username}' : 'Failed to disable ${user.username}').then((e) => fetchUsers()).then((e) => clean());
   }
 
   bool isSelected(int bit) {

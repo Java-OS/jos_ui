@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jos_ui/widget/text_field_box_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class RuleInputText extends StatefulWidget {
-  final TextEditingController? controller ;
+  final TextEditingController? controller;
+
+  final Function(bool isNot)? onNot;
+  final Function()? onDeactivate;
+  final Function(String?)? validator;
+  final List<TextInputFormatter>? inputFormatters;
   final String label;
-  final bool onEdit;
   final bool enable;
   final bool displayCheckBox;
   final bool displayCloseButton;
@@ -16,12 +21,15 @@ class RuleInputText extends StatefulWidget {
     super.key,
     this.controller,
     required this.label,
-    this.onEdit = false,
     this.displayCheckBox = true,
     this.displayCloseButton = true,
     this.maxLength,
     this.maxWidth = 128,
     this.enable = true,
+    this.onNot,
+    this.onDeactivate,
+    this.validator,
+    this.inputFormatters,
   });
 
   @override
@@ -35,43 +43,29 @@ class _RuleInputTextState extends State<RuleInputText> {
   var isNot = false;
 
   @override
-  void initState() {
-    if (widget.controller != null) {
-      var controller = widget.controller!;
-      controller.addListener(() {
-        var text = controller.text;
-        if (isNot && !text.startsWith('!')) {
-          text = '!$text';
-          print('Text : $text');
-          controller.text = text;
-        }
-      });
-    }
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      cursor: (widget.onEdit || !widget.enable) ? SystemMouseCursors.basic : SystemMouseCursors.click,
+      cursor: !widget.enable ? SystemMouseCursors.basic : SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: () => setState(() => (widget.onEdit || !widget.enable) ? false : isActivated = !isActivated),
+        onTap: () => setState(() => isActivated = !isActivated),
         child: Visibility(
-          visible: widget.onEdit || isActivated,
+          visible: widget.enable && isActivated,
           replacement: label(widget.label),
           child: Row(
             spacing: 8,
             children: [
               Expanded(
                 child: TextFieldBox(
+                  inputFormatters: widget.inputFormatters,
+                  validator: widget.validator,
                   maxLength: widget.maxLength,
                   maxWidth: widget.maxWidth,
                   maxLines: 1,
                   prefixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Visibility(visible:widget.displayCloseButton ,child: closeButton()),
-                      Visibility(visible:widget.displayCheckBox, child: notButton()),
+                      Visibility(visible: widget.displayCloseButton, child: closeButton()),
+                      Visibility(visible: widget.displayCheckBox, child: notButton()),
                       SizedBox(width: 8),
                     ],
                   ),
@@ -93,12 +87,11 @@ class _RuleInputTextState extends State<RuleInputText> {
   Widget closeButton() {
     return MouseRegion(
       cursor: hoverCloseBtn ? SystemMouseCursors.click : SystemMouseCursors.basic,
-      onHover: (e) => setState(() => hoverCloseBtn = true),
-      onExit: (e) => setState(() => hoverCloseBtn = false),
       child: GestureDetector(
         onTap: () => setState(() {
           isNot = false;
           isActivated = false;
+          if (widget.onDeactivate != null) widget.onDeactivate!();
         }),
         child: Container(
           decoration: BoxDecoration(
@@ -122,7 +115,10 @@ class _RuleInputTextState extends State<RuleInputText> {
       onHover: (e) => setState(() => hoverNotBtn = true),
       onExit: (e) => setState(() => hoverNotBtn = false),
       child: GestureDetector(
-        onTap: () => setState(() => isNot = !isNot),
+        onTap: () {
+          setState(() => isNot = !isNot);
+          if (widget.onNot != null) widget.onNot!(isNot);
+        },
         child: Container(
           decoration: BoxDecoration(
             border: Border(right: BorderSide(width: 0.2, color: Colors.black)),
@@ -131,7 +127,7 @@ class _RuleInputTextState extends State<RuleInputText> {
             padding: const EdgeInsets.only(left: 4.0, right: 4.0),
             child: Icon(
               Icons.priority_high_rounded,
-              color: (isNot || hoverNotBtn) ? Colors.black : Colors.black26,
+              color: isNot ? Colors.black : Colors.black26,
             ),
           ),
         ),

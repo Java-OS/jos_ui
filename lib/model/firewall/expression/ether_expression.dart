@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/widget/key_value.dart';
 
-enum Field {
+enum EtherField {
   daddr('daddr'),
   saddr('saddr'),
   type('type');
 
   final String value;
 
-  const Field(this.value);
+  const EtherField(this.value);
 
-  factory Field.fromValue(String value) {
-    return Field.values.firstWhere((item) => item.value == value);
+  factory EtherField.fromValue(String value) {
+    return EtherField.values.firstWhere((item) => item.value == value);
   }
 }
 
 class EtherExpression implements Expression {
-  final Field field;
+  final EtherField field;
   final Operation operation;
   final dynamic value;
 
@@ -25,7 +25,7 @@ class EtherExpression implements Expression {
 
   factory EtherExpression.fromMap(Map<String, dynamic> map) {
     var operation = Operation.fromValue(map['match']['op']);
-    var field = Field.fromValue(map['match']['left']['payload']['field']);
+    var field = EtherField.fromValue(map['match']['left']['payload']['field']);
     var value = map['match']['right'];
     return EtherExpression(field, operation, value);
   }

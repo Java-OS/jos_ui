@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/widget/key_value.dart';
 
-enum Field {
+enum VlanField {
   cfi('cfi'),
   id('id'),
   pcp('pcp');
 
   final String value;
 
-  const Field(this.value);
+  const VlanField(this.value);
 
-  factory Field.fromValue(String value) {
-    return Field.values.firstWhere((item) => item.value == value);
+  factory VlanField.fromValue(String value) {
+    return VlanField.values.firstWhere((item) => item.value == value);
   }
 }
 
 class VlanExpression implements Expression {
-  final Field field;
+  final VlanField field;
   final Operation operation;
   final dynamic value;
 
@@ -25,7 +25,7 @@ class VlanExpression implements Expression {
 
   factory VlanExpression.fromMap(Map<String, dynamic> map) {
     var operation = Operation.fromValue(map['match']['op']);
-    var field = Field.fromValue(map['match']['left']['payload']['field']);
+    var field = VlanField.fromValue(map['match']['left']['payload']['field']);
     var value = map['match']['right'];
     return VlanExpression(field, operation, value);
   }
@@ -36,7 +36,7 @@ class VlanExpression implements Expression {
       'match': {
         'op': operation.value,
         'left': {
-          'payload': {'protocol': 'ether', 'field': field.value},
+          'payload': {'protocol': 'vlan', 'field': field.value},
         },
         'right': value,
       },

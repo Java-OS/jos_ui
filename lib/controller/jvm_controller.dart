@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/service/api_service.dart';
-import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/widget/toast.dart';
 
 class JvmController extends GetxController {

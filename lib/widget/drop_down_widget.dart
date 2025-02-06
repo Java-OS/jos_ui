@@ -55,15 +55,11 @@ class _DropDownMenuState<T> extends State<DropDownMenu<T>> {
             border: OutlineInputBorder(borderRadius: getBorderRadius()),
           ),
           items: widget.disabled ? [] : widget.items,
-          value: widget.requiredValue
-              ? widget.value
-              : isClearButtonVisible
-                  ? widget.value
-                  : null,
+          value: (widget.requiredValue || isClearButtonVisible) ? widget.value : null,
           onChanged: widget.disabled ? null : (value) => callOnChangeFunction(value),
         ),
         Visibility(
-          visible: widget.displayClearButton && isClearButtonVisible,
+          visible: widget.displayClearButton ,
           child: Align(
             alignment: Alignment.centerRight,
             child: Padding(

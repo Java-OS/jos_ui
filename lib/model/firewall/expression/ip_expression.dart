@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/widget/key_value.dart';
 
-enum Field {
+enum IpField {
   checksum('checksum'),
   daddr('daddr'),
   dscp('dscp'),
@@ -17,15 +17,15 @@ enum Field {
 
   final String value;
 
-  const Field(this.value);
+  const IpField(this.value);
 
-  factory Field.fromValue(String value) {
-    return Field.values.firstWhere((item) => item.value == value);
+  factory IpField.fromValue(String value) {
+    return IpField.values.firstWhere((item) => item.value == value);
   }
 }
 
 class IpExpression implements Expression {
-  final Field field;
+  final IpField field;
   final Operation operation;
   final String value;
 
@@ -33,7 +33,7 @@ class IpExpression implements Expression {
 
   factory IpExpression.fromMap(Map<String, dynamic> map) {
     var operation = Operation.fromValue(map['match']['op']);
-    var field = Field.fromValue(map['match']['left']['payload']['field']);
+    var field = IpField.fromValue(map['match']['left']['payload']['field']);
     var value = map['match']['right'];
 
     return IpExpression(field, operation, value);
@@ -45,7 +45,7 @@ class IpExpression implements Expression {
       'match': {
         'op': operation.value,
         'left': {
-          'payload': {'protocol': 'ether', 'field': field.value},
+          'payload': {'protocol': 'ip', 'field': field.value},
         },
         'right': value,
       },

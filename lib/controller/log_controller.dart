@@ -62,11 +62,7 @@ class LogController extends GetxController {
     };
     fetchResponse = await RestClient.sse(jsonEncode(content));
     isConnected.value = true;
-    fetchResponse!.stream
-        .where((event) => event.isNotEmpty)
-        .transform(const Utf8Decoder())
-        .transform(const LineSplitter())
-        .distinct().listen(
+    fetchResponse!.stream.where((event) => event.isNotEmpty).transform(const Utf8Decoder()).transform(const LineSplitter()).distinct().listen(
           (event) => writeToTerminal(event),
           cancelOnError: true,
           onError: (e) => developer.log(e),
@@ -101,9 +97,7 @@ class LogController extends GetxController {
   }
 
   Future<void> fetchAppenders() async {
-    _apiService.callApi(Rpc.RPC_LOG_APPENDER_LIST,message: 'Failed to fetch log appenders')
-    .then((e) => e as List)
-    .then((e) => logAppenders.value = e.map((e) => LogInfo.fromMap(e)).toList());
+    _apiService.callApi(Rpc.RPC_LOG_APPENDER_LIST, message: 'Failed to fetch log appenders').then((e) => e as List).then((e) => logAppenders.value = e.map((e) => LogInfo.fromMap(e)).toList());
   }
 
   Future<void> addFileAppender() async {
@@ -117,10 +111,7 @@ class LogController extends GetxController {
       'fileTotalSize': int.parse(fileTotalSizeEditingController.text),
       'fileMaxHistory': int.parse(fileMaxHistoryEditingController.text),
     };
-    _apiService.callApi(Rpc.RPC_LOG_APPENDER_ADD, parameters: reqParam,message: 'Failed to add log appender')
-    .then((e) => fetchAppenders())
-    .then((e) => Get.back())
-    .then((e) => clean());
+    _apiService.callApi(Rpc.RPC_LOG_APPENDER_ADD, parameters: reqParam, message: 'Failed to add log appender').then((e) => fetchAppenders()).then((e) => Get.back()).then((e) => clean());
   }
 
   Future<void> addSyslogAppender() async {
@@ -134,22 +125,16 @@ class LogController extends GetxController {
       'syslogPort': int.parse(syslogPortEditingController.text),
       'syslogFacility': syslogFacilityEditingController.text,
     };
-    _apiService.callApi(Rpc.RPC_LOG_APPENDER_ADD, parameters: reqParam,message: 'Failed to add log appender')
-    .then((e) => fetchAppenders())
-    .then((e) => Get.back())
-    .then((e) => clean());
+    _apiService.callApi(Rpc.RPC_LOG_APPENDER_ADD, parameters: reqParam, message: 'Failed to add log appender').then((e) => fetchAppenders()).then((e) => Get.back()).then((e) => clean());
   }
 
   Future<void> removeAppender(int id) async {
     var reqParam = {'id': id};
-    _apiService.callApi(Rpc.RPC_LOG_APPENDER_REMOVE, parameters: reqParam,message: 'Failed to add log appender')
-    .then((e) => fetchAppenders())
-    .then((e) => clean());
+    _apiService.callApi(Rpc.RPC_LOG_APPENDER_REMOVE, parameters: reqParam, message: 'Failed to add log appender').then((e) => fetchAppenders()).then((e) => clean());
   }
 
   Future<void> fetchSystemLog() async {
-    _apiService.callApi(Rpc.RPC_LOG_SYSTEM)
-    .then((map) {
+    _apiService.callApi(Rpc.RPC_LOG_SYSTEM).then((map) {
       for (var value in map) {
         systemLog.value += '$value\n';
       }

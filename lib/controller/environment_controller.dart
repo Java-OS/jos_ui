@@ -30,11 +30,7 @@ class EnvironmentController extends GetxController {
     developer.log('Add system batch environments called');
     var batch = batchEditingController.text;
 
-    _apiService
-        .callApi(Rpc.RPC_SYSTEM_ENVIRONMENT_BATCH_SET, parameters: {'batch': batch}, message: 'Failed to set batch environments')
-        .then((e) => fetchSystemEnvironments())
-        .then((e) => Get.back())
-        .then((e) => clean());
+    _apiService.callApi(Rpc.RPC_SYSTEM_ENVIRONMENT_BATCH_SET, parameters: {'batch': batch}, message: 'Failed to set batch environments').then((e) => fetchSystemEnvironments()).then((e) => Get.back()).then((e) => clean());
   }
 
   Future<void> deleteSystemEnvironment(String key) async {
@@ -45,11 +41,7 @@ class EnvironmentController extends GetxController {
   Future<void> updateEnvironment() async {
     var key = keyEditingController.text;
     var value = valueEditingController.text;
-    _apiService
-        .callApi(Rpc.RPC_SYSTEM_ENVIRONMENT_UPDATE, parameters: {'key': key, 'value': value}, message: 'Failed to update environment [$key]')
-        .then((e) => fetchSystemEnvironments())
-        .then((e) => Get.back())
-        .then((e) => clean());
+    _apiService.callApi(Rpc.RPC_SYSTEM_ENVIRONMENT_UPDATE, parameters: {'key': key, 'value': value}, message: 'Failed to update environment [$key]').then((e) => fetchSystemEnvironments()).then((e) => Get.back()).then((e) => clean());
   }
 
   void clean() {

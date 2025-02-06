@@ -5,6 +5,7 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/firewall_controller.dart';
 import 'package:jos_ui/dialog/firewall/firewall_rule_dialog.dart';
 import 'package:jos_ui/model/firewall/chain.dart';
+import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -17,6 +18,7 @@ class FirewallRulePage extends StatefulWidget {
 
 class FirewallRulePageState extends State<FirewallRulePage> {
   final _firewallController = Get.put(FirewallController());
+  final Map<int,ScrollController> _scrollControllers = {};
 
   @override
   void initState() {
@@ -41,6 +43,7 @@ class FirewallRulePageState extends State<FirewallRulePage> {
               shrinkWrap: true,
               itemCount: _firewallController.ruleList.length,
               itemBuilder: (context, index) {
+                _scrollControllers[index] = ScrollController();
                 var rule = _firewallController.ruleList[index];
                 return Padding(
                   key: ValueKey(rule),
@@ -56,7 +59,7 @@ class FirewallRulePageState extends State<FirewallRulePage> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                              onPressed: () => {},
+                              onPressed: () => deleteRule(rule),
                               splashRadius: 12,
                               icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
                             ),
@@ -69,10 +72,19 @@ class FirewallRulePageState extends State<FirewallRulePage> {
                         ),
                       ),
                       index: index,
-                      title: Row(
-                        spacing: 8,
-                        children: rule.expressionWidgets(),
+                      title: MouseRegion(
+                        onHover: (e) => _scrollControllers[index]!.animateTo(_scrollControllers[index]!.position.maxScrollExtent, duration: Duration(seconds: 1), curve:  Curves.easeInOut),
+                        onExit: (e) => _scrollControllers[index]!.animateTo(_scrollControllers[index]!.position.minScrollExtent, duration: Duration(seconds: 1), curve:  Curves.easeInOut),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          controller: _scrollControllers[index],
+                          child: Row(
+                            spacing: 8,
+                            children: rule.expressionWidgets(),
+                          ),
+                        ),
                       ),
+                      subTitle: rule.comment != null ? Text(rule.comment!,style: TextStyle(color: Colors.black87)) : null,
                     ),
                   ),
                 );
@@ -83,6 +95,11 @@ class FirewallRulePageState extends State<FirewallRulePage> {
         ),
       ),
     );
+  }
+
+  void deleteRule(FirewallRule rule) {
+    _firewallController.selectedRule.value = rule;
+    _firewallController.ruleDelete();
   }
 
   void updateOrder(int oldIndex, int newIndex) {

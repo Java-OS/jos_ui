@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/widget/key_value.dart';
 
-enum Field {
+enum MetaField {
   iifname('iifname'),
   oifname('oifname');
 
   final String value;
 
-  const Field(this.value);
+  const MetaField(this.value);
 
-  factory Field.fromValue(String value) {
-    return Field.values.firstWhere((item) => item.value == value);
+  factory MetaField.fromValue(String value) {
+    return MetaField.values.firstWhere((item) => item.value == value);
   }
 }
 
 class MetaExpression implements Expression {
-  final Field field;
+  final MetaField field;
   final Operation operation;
   final dynamic value;
 
@@ -24,7 +24,7 @@ class MetaExpression implements Expression {
 
   factory MetaExpression.fromMap(Map<String, dynamic> map) {
     var operation = Operation.fromValue(map['match']['op']);
-    var field = Field.fromValue(map['match']['left']['meta']['key']);
+    var field = MetaField.fromValue(map['match']['left']['meta']['key']);
     var value = map['match']['right'];
 
     return MetaExpression(field, operation, value);

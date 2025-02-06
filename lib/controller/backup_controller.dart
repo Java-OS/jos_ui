@@ -16,10 +16,7 @@ class BackupController extends GetxController {
 
   Future<void> fetchBackups() async {
     developer.log('Fetch system backups called');
-    _apiService
-        .callApi(Rpc.RPC_CONFIG_BACKUP_LIST, message: 'Failed to fetch backups')
-        .then((payload) => (payload as List).map((e) => e.toString()).toList())
-        .then((mappedItems) => backupList.assignAll(mappedItems));
+    _apiService.callApi(Rpc.RPC_CONFIG_BACKUP_LIST, message: 'Failed to fetch backups').then((payload) => (payload as List).map((e) => e.toString()).toList()).then((mappedItems) => backupList.assignAll(mappedItems));
   }
 
   Future<void> createBackup() async {

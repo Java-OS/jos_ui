@@ -28,10 +28,7 @@ class NetworkController extends GetxController {
   var networks = <String, String>{}.obs;
 
   Future<void> fetchEthernets() async {
-    _apiService
-        .callApi(Rpc.RPC_NETWORK_ETHERNET_INFORMATION, parameters: {'ethernet': ''}, message: 'Failed to fetch network interfaces')
-        .then((e) => e as List)
-        .then((e) => ethernetList.value = e.map((item) => Ethernet.fromJson(item)).toList());
+    _apiService.callApi(Rpc.RPC_NETWORK_ETHERNET_INFORMATION, parameters: {'ethernet': ''}, message: 'Failed to fetch network interfaces').then((e) => e as List).then((e) => ethernetList.value = e.map((item) => Ethernet.fromJson(item)).toList());
   }
 
   Future<void> fetchRoutes() async {

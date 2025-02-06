@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/widget/key_value.dart';
 
-enum Field {
+enum UdpField {
   checksum('checksum'),
   dport('dport'),
   length('length'),
@@ -10,15 +10,15 @@ enum Field {
 
   final String value;
 
-  const Field(this.value);
+  const UdpField(this.value);
 
-  factory Field.fromValue(String value) {
-    return Field.values.firstWhere((item) => item.value == value);
+  factory UdpField.fromValue(String value) {
+    return UdpField.values.firstWhere((item) => item.value == value);
   }
 }
 
 class UdpExpression implements Expression {
-  final Field field;
+  final UdpField field;
   final Operation operation;
   final dynamic value;
 
@@ -26,7 +26,7 @@ class UdpExpression implements Expression {
 
   factory UdpExpression.fromMap(Map<String, dynamic> map) {
     var operation = Operation.fromValue(map['match']['op']);
-    var field = Field.fromValue(map['match']['left']['payload']['field']);
+    var field = UdpField.fromValue(map['match']['left']['payload']['field']);
     var value = map['match']['right'];
 
     return UdpExpression(field, operation, value);
@@ -38,7 +38,7 @@ class UdpExpression implements Expression {
       'match': {
         'op': operation.value,
         'left': {
-          'payload': {'protocol': 'ether', 'field': field.value},
+          'payload': {'protocol': 'udp', 'field': field.value},
         },
         'right': value,
       },

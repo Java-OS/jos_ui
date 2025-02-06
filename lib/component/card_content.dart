@@ -37,7 +37,7 @@ class CardContent extends StatelessWidget {
                 child: Divider(height: 1),
               ),
               Obx(
-                ()=> Visibility(
+                () => Visibility(
                   visible: _apiService.isLoading.isFalse,
                   replacement: Expanded(child: SpinKitCircle(color: Colors.blueAccent)),
                   child: child,

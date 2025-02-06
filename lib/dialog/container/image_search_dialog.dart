@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/service/api_service.dart';
-import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
+import 'package:jos_ui/service/api_service.dart';
+import 'package:jos_ui/widget/tile_widget.dart';
 
 final _containerController = Get.put(OciController());
 final _apiService = Get.put(ApiService());
+
 Future<void> displayContainerSearchImage() async {
   showDialog(
     context: Get.context!,
@@ -30,7 +31,7 @@ Future<void> displayContainerSearchImage() async {
             width: 400,
             height: 250,
             child: Obx(
-                  () => Visibility(
+              () => Visibility(
                 visible: _apiService.isLoading.isFalse,
                 replacement: SpinKitCircle(color: Colors.blueAccent),
                 child: ListView.builder(
@@ -62,18 +63,18 @@ Future<void> displayContainerSearchImage() async {
                         actions: _containerController.isImageInstalled(searchImage.name)
                             ? null
                             : Visibility(
-                          visible: searchImage.tag != 'JOS_PULL_IMAGE',
-                          replacement: IconButton(
-                            onPressed: () => _containerController.cancelPullImage(searchImage.name),
-                            splashRadius: 22,
-                            icon: Icon(Icons.cancel),
-                          ),
-                          child: IconButton(
-                            onPressed: () => _containerController.pullImage(searchImage.name),
-                            splashRadius: 22,
-                            icon: Icon(Icons.download),
-                          ),
-                        ),
+                                visible: searchImage.tag != 'JOS_PULL_IMAGE',
+                                replacement: IconButton(
+                                  onPressed: () => _containerController.cancelPullImage(searchImage.name),
+                                  splashRadius: 22,
+                                  icon: Icon(Icons.cancel),
+                                ),
+                                child: IconButton(
+                                  onPressed: () => _containerController.pullImage(searchImage.name),
+                                  splashRadius: 22,
+                                  icon: Icon(Icons.download),
+                                ),
+                              ),
                       ),
                     );
                   },

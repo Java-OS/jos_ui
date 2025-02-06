@@ -5,6 +5,7 @@ class RuleDropDown<T> extends StatefulWidget {
   final String label;
   final bool active;
   final bool displayClearButton;
+  final bool enable;
 
   final List<DropdownMenuItem<T>> dropDownItems;
   final Function(dynamic) onDropDownChange;
@@ -20,6 +21,7 @@ class RuleDropDown<T> extends StatefulWidget {
     required this.dropDownItems,
     required this.dropDownValue,
     this.onClear,
+    this.enable = true,
   });
 
   @override
@@ -32,9 +34,9 @@ class _RuleDropDownState<T> extends State<RuleDropDown<T>> {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      cursor: widget.active ? SystemMouseCursors.basic : SystemMouseCursors.click,
+      cursor: !widget.enable ? SystemMouseCursors.basic : SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: () => setState(() => widget.active ? false : isActivated = !isActivated),
+        onTap: () => widget.enable ? setState(() => isActivated = !isActivated) : null,
         child: Visibility(
           visible: widget.active || isActivated,
           replacement: label(widget.label),
@@ -60,12 +62,13 @@ class _RuleDropDownState<T> extends State<RuleDropDown<T>> {
       decoration: BoxDecoration(
         color: isActivated ? Colors.black12 : Colors.transparent,
         border: Border.fromBorderSide(
-          BorderSide(width: 0.1, color: Colors.black),
+          BorderSide(width: 0.1, color: widget.enable ? Colors.black : Colors.grey),
         ),
       ),
       child: Text(
         label,
         textAlign: TextAlign.center,
+        style: TextStyle(color: widget.enable ? Colors.black : Colors.grey),
       ),
     );
   }

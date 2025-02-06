@@ -136,11 +136,24 @@ class FirewallRule {
     return list;
   }
 
-  List<Widget> statementWidgets() {
-    var list = <Widget>[];
-    for (var item in statements) {
-      list.add(item.display());
+  Map<String, dynamic> toMap() {
+    var list = [];
+    for (var item in expressions) {
+      list.add(item.toMap());
     }
-    return list;
+    for (var item in statements) {
+      list.add(item.toMap());
+    }
+
+    return {
+      'rule': {
+        'handle' : handle,
+        'family': chain.table.type.value,
+        'table': chain.table.name,
+        'chain': chain.name,
+        'comment': comment,
+        'expr': list,
+      }
+    };
   }
 }

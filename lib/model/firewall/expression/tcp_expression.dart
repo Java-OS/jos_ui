@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/widget/key_value.dart';
 
-enum Field {
+enum TcpField {
   ackseq('ackseq'),
   checksum('checksum'),
   doff('doff'),
@@ -15,15 +15,15 @@ enum Field {
 
   final String value;
 
-  const Field(this.value);
+  const TcpField(this.value);
 
-  factory Field.fromValue(String value) {
-    return Field.values.firstWhere((item) => item.value == value);
+  factory TcpField.fromValue(String value) {
+    return TcpField.values.firstWhere((item) => item.value == value);
   }
 }
 
 class TcpExpression implements Expression {
-  final Field field;
+  final TcpField field;
   final Operation operation;
   final dynamic value;
 
@@ -31,7 +31,7 @@ class TcpExpression implements Expression {
 
   factory TcpExpression.fromMap(Map<String, dynamic> map) {
     var operation = Operation.fromValue(map['match']['op']);
-    var field = Field.fromValue(map['match']['left']['payload']['field']);
+    var field = TcpField.fromValue(map['match']['left']['payload']['field']);
     var value = map['match']['right'];
 
     return TcpExpression(field, operation, value);
@@ -43,7 +43,7 @@ class TcpExpression implements Expression {
       'match': {
         'op': operation.value,
         'left': {
-          'payload': {'protocol': 'ether', 'field': field.value},
+          'payload': {'protocol': 'tcp', 'field': field.value},
         },
         'right': value,
       },

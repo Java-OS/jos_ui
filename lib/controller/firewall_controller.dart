@@ -2,17 +2,28 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/controller/network_controller.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/firewall/chain.dart';
+import 'package:jos_ui/model/firewall/expression/ip_expression.dart';
+import 'package:jos_ui/model/firewall/expression/meta_expression.dart';
+import 'package:jos_ui/model/firewall/expression/tcp_expression.dart';
+import 'package:jos_ui/model/firewall/expression/udp_expression.dart';
 import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
+import 'package:jos_ui/model/firewall/statement/log_statement.dart';
+import 'package:jos_ui/model/firewall/statement/verdict_statement.dart';
 import 'package:jos_ui/model/firewall/table.dart';
+import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/service/api_service.dart';
+import 'package:jos_ui/validation/validator.dart';
 
-class FirewallController extends GetxController {
+class FirewallController extends GetxController with Validator {
   final _apiService = Get.put(ApiService());
-  final TextEditingController tableNameEditingController = TextEditingController();
-  final TextEditingController chainNameEditingController = TextEditingController();
+  final _networkController = Get.put(NetworkController());
+
+  var tableNameEditingController = TextEditingController();
+  var chainNameEditingController = TextEditingController();
 
   /* table parameters */
   var tableList = <FirewallTable>[].obs;
@@ -21,6 +32,7 @@ class FirewallController extends GetxController {
   var tableHandle = Rxn<int>();
   var chainHandle = Rxn<int>();
   var selectedChain = Rxn<FirewallChain>();
+  var selectedRule = Rxn<FirewallRule>();
 
   /* chain parameters */
   var tableType = FirewallTableType.inet.obs;
@@ -30,13 +42,48 @@ class FirewallController extends GetxController {
   var chainPriority = Rxn<int>();
 
   /* Rule config */
-  final TextEditingController srcAddressEditingController = TextEditingController();
-  final TextEditingController dstAddressEditingController = TextEditingController();
-  final TextEditingController logPrefixEditingController = TextEditingController();
-  final TextEditingController commentEditingController = TextEditingController();
+  // srd addr
+  var srcAddressEditingController = TextEditingController();
+  var isNotSrcAddr = false.obs;
+
+  // dst addr
+  var dstAddressEditingController = TextEditingController();
+  var isNotDstAddr = false.obs;
+
+  // protocol
   var protocol = Rxn<Protocol>();
-  var expressions = <Expression>[].obs;
-  var statements = <Statement>[].obs;
+
+  // src port
+  var srcPortEditingController = TextEditingController();
+  var isNotSrcPort = false.obs;
+
+  // dst port
+  var dstPortEditingController = TextEditingController();
+  var isNotDstPort = false.obs;
+
+  // src interface
+  var srcInterface = Rxn<Ethernet>();
+
+  // dst interface
+  var dstInterface = Rxn<Ethernet>();
+
+  // verdict Statement
+  var verdict = Rxn<VerdictType>();
+
+  // Target jump|goto chain
+  var targetChain = Rxn<FirewallChain>();
+
+  // LogLevel
+  var logLevel = Rxn<LogLevel>();
+
+  var logPrefixEditingController = TextEditingController();
+  var commentEditingController = TextEditingController();
+
+  @override
+  void onInit() {
+    _networkController.fetchEthernets();
+    super.onInit();
+  }
 
   /* -------------- Table Methods -------------- */
   Future<void> tableFetch() async {
@@ -114,25 +161,56 @@ class FirewallController extends GetxController {
   }
 
   Future<void> ruleAdd() async {
-    developer.log('>>> ${srcAddressEditingController.text}');
+    if (!formKey.currentState!.validate()) return;
+
+    // Expressions
+    var srcIpExpression = srcAddressEditingController.text.isNotEmpty ? IpExpression(IpField.saddr, isNotSrcAddr.isTrue ? Operation.ne : Operation.eq, srcAddressEditingController.text) : null;
+    var dstIpExpression = dstAddressEditingController.text.isNotEmpty ? IpExpression(IpField.daddr, isNotSrcAddr.isTrue ? Operation.ne : Operation.eq, dstAddressEditingController.text) : null;
+    var protocolExpression = protocol.value != null ? IpExpression(IpField.protocol, Operation.eq, protocol.value!.name) : null;
+    var srcPortExpression = srcPortEditingController.text.isNotEmpty
+        ? protocol.value == Protocol.tcp
+            ? TcpExpression(TcpField.sport, isNotSrcPort.isTrue ? Operation.ne : Operation.eq, srcPortEditingController.text)
+            : UdpExpression(UdpField.sport, isNotSrcPort.isTrue ? Operation.ne : Operation.eq, srcPortEditingController.text)
+        : null;
+    var dstPortExpression = dstPortEditingController.text.isNotEmpty
+        ? protocol.value == Protocol.tcp
+            ? TcpExpression(TcpField.dport, isNotDstPort.isTrue ? Operation.ne : Operation.eq, dstPortEditingController.text)
+            : UdpExpression(UdpField.dport, isNotDstPort.isTrue ? Operation.ne : Operation.eq, dstPortEditingController.text)
+        : null;
+    var srcInterfaceExpression = srcInterface.value != null ? MetaExpression(MetaField.iifname, Operation.eq, srcInterface.value!.iface) : null;
+    var dstInterfaceExpression = dstInterface.value != null ? MetaExpression(MetaField.oifname, Operation.eq, dstInterface.value!.iface) : null;
+
+    // Statements
+    var verdictStatement = verdict.value != null ? VerdictStatement(verdict.value!, targetChain.value?.name) : null;
+    var logStatement = logLevel.value != null ? LogStatement(logLevel.value, logPrefixEditingController.text) : null;
 
     var list = [];
-    var exprList = expressions.map((e) => e.toMap()).toList();
-    var sttList = statements.map((e) => e.toMap()).toList();
 
-    list.addAll(exprList);
-    list.addAll(sttList);
+    if (srcIpExpression != null) list.add(srcIpExpression.toMap());
+    if (dstIpExpression != null) list.add(dstIpExpression.toMap());
+    if (protocolExpression != null) list.add(protocolExpression.toMap());
+    if (srcPortExpression != null) list.add(srcPortExpression.toMap());
+    if (dstPortExpression != null) list.add(dstPortExpression.toMap());
+    if (srcInterfaceExpression != null) list.add(srcInterfaceExpression.toMap());
+    if (dstInterfaceExpression != null) list.add(dstInterfaceExpression.toMap());
+    if (verdictStatement != null) list.add(verdictStatement.toMap());
+    if (logStatement != null) list.add(logStatement.toMap());
 
     var reqParam = {
       'rule': {
         'family': selectedChain.value!.table.type.value,
         'table': selectedChain.value!.table.name,
         'chain': selectedChain.value!.name,
-        'comment': commentEditingController.value,
+        'comment': commentEditingController.text,
         'expr': list,
       }
     };
-    // _apiService.callApi(Rpc.RPC_FIREWALL_RULE_ADD, parameters: reqParam, message: 'Failed to add rule');
+    _apiService.callApi(Rpc.RPC_FIREWALL_RULE_ADD, parameters: reqParam, message: 'Failed to add rule').then((_) => ruleFetch(selectedChain.value!)).then((_) => Get.back()).then((_) => clear());
+  }
+
+  Future<void> ruleDelete() async {
+    var reqParam = selectedRule.value!.toMap();
+    _apiService.callApi(Rpc.RPC_FIREWALL_RULE_REMOVE, parameters: reqParam, message: 'Failed to remove rule').then((e) => ruleFetch(selectedChain.value!));
   }
 
   Future<void> ruleSwitch() async {}
@@ -141,6 +219,21 @@ class FirewallController extends GetxController {
     developer.log('clear parameters');
     tableNameEditingController.clear();
     chainNameEditingController.clear();
+
+    // Rule parameters
+    srcAddressEditingController.clear();
+    dstAddressEditingController.clear();
+    srcPortEditingController.clear();
+    dstPortEditingController.clear();
+    commentEditingController.clear();
+    logPrefixEditingController.clear();
+
+    protocol.value = null;
+    srcInterface.value = null;
+    dstInterface.value = null;
+    verdict.value = null;
+    targetChain.value = null;
+    logLevel.value = null;
 
     /* chain parameters */
     tableType = FirewallTableType.inet.obs;
