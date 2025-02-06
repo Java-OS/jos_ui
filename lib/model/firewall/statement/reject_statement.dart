@@ -75,4 +75,14 @@ class RejectStatement implements Statement {
       );
     }
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'reject': {
+        'type': type.value,
+        'expr': reason!.value,
+      }
+    };
+  }
 }

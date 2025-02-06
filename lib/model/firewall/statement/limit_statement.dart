@@ -89,4 +89,18 @@ class LimitStatement implements Statement {
       );
     }
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'limit' : {
+        'rate' : rate,
+        'burst' : burst,
+        'per' : timeUnit?.value,
+        'inv' : isOver,
+        'rate_unit': rateUnit?.name,
+        'burst_unit': burstUnit?.name
+      }
+    };
+  }
 }

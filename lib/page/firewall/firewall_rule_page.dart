@@ -28,7 +28,7 @@ class FirewallRulePageState extends State<FirewallRulePage> {
   Widget build(BuildContext context) {
     return CardContent(
       controllers: [
-        OutlinedButton(onPressed: () => displayFirewallRuleFilterModal(ChainType.nat,false), child: Icon(Icons.add, size: 16, color: Colors.black)),
+        OutlinedButton(onPressed: () => displayFirewallRuleFilterModal(false), child: Icon(Icons.add, size: 16, color: Colors.black)),
       ],
       child: Expanded(
         child: SingleChildScrollView(

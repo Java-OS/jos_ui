@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TextFieldBox extends StatefulWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String? label;
   final Function(String)? onSubmit;
   final bool isPassword;
@@ -22,7 +22,7 @@ class TextFieldBox extends StatefulWidget {
 
   const TextFieldBox({
     super.key,
-    required this.controller,
+    this.controller,
     this.label,
     this.onSubmit,
     this.isPassword = false,
@@ -123,6 +123,6 @@ class _TextFieldBoxState extends State<TextFieldBox> {
 
   void clear() {
     isClearButtonVisible = false;
-    widget.controller.text = '';
+    if (widget.controller != null) widget.controller!.text = '';
   }
 }

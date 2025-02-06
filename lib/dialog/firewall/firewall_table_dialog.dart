@@ -24,7 +24,7 @@ Future<void> displayFirewallTableModal(bool isRename) async {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFieldBox(controller: _firewallController.tableNameEditingController, label: 'Name'),
-              SizedBox(height: 10),
+              /*SizedBox(height: 10),
               Obx(
                 () => DropDownMenu<FirewallTableType>(
                   disabled: isRename,
@@ -35,7 +35,7 @@ Future<void> displayFirewallTableModal(bool isRename) async {
                   items: FirewallTableType.values.map((e) => DropdownMenuItem<FirewallTableType>(value: e, child: Text(e.name))).toList(),
                   onChanged: (value) => _firewallController.tableType.value = value,
                 ),
-              ),
+              ),*/
               SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerRight,

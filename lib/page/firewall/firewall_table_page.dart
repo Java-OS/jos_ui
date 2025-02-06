@@ -30,8 +30,7 @@ class FirewallTablePageState extends State<FirewallTablePage> {
   Widget build(BuildContext context) {
     return CardContent(
       controllers: [
-        // OutlinedButton(onPressed: () => displayFirewallTableModal(false), child: Icon(Icons.add, size: 16, color: Colors.black)),
-        OutlinedButton(onPressed: () => displayFirewallRuleFilterModal(ChainType.nat,false), child: Icon(Icons.add, size: 16, color: Colors.black)),
+        OutlinedButton(onPressed: () => displayFirewallTableModal(false), child: Icon(Icons.add, size: 16, color: Colors.black)),
       ],
       child: Expanded(
         child: SingleChildScrollView(

@@ -39,6 +39,7 @@ class IpExpression implements Expression {
     return IpExpression(field, operation, value);
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'match': {

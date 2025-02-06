@@ -51,10 +51,14 @@ enum MatchType {
 
 abstract class Expression {
   Widget display();
+
+  Map<String, dynamic> toMap();
 }
 
 abstract class Statement {
   Widget display();
+
+  Map<String, dynamic> toMap();
 }
 
 class FirewallRule {

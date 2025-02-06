@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/firewall/chain.dart';
+import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/model/firewall/table.dart';
 import 'package:jos_ui/service/api_service.dart';
@@ -19,6 +20,7 @@ class FirewallController extends GetxController {
   var ruleList = <FirewallRule>[].obs;
   var tableHandle = Rxn<int>();
   var chainHandle = Rxn<int>();
+  var selectedChain = Rxn<FirewallChain>();
 
   /* chain parameters */
   var tableType = FirewallTableType.inet.obs;
@@ -26,6 +28,15 @@ class FirewallController extends GetxController {
   var chainHook = Rxn<ChainHook>();
   var chainPolicy = Rxn<ChainPolicy>();
   var chainPriority = Rxn<int>();
+
+  /* Rule config */
+  final TextEditingController srcAddressEditingController = TextEditingController();
+  final TextEditingController dstAddressEditingController = TextEditingController();
+  final TextEditingController logPrefixEditingController = TextEditingController();
+  final TextEditingController commentEditingController = TextEditingController();
+  var protocol = Rxn<Protocol>();
+  var expressions = <Expression>[].obs;
+  var statements = <Statement>[].obs;
 
   /* -------------- Table Methods -------------- */
   Future<void> tableFetch() async {
@@ -55,10 +66,7 @@ class FirewallController extends GetxController {
     var reqParam = {
       'tableHandle': tableHandle.value,
     };
-    _apiService
-        .callApi(Rpc.RPC_FIREWALL_CHAIN_LIST, parameters: reqParam, message: 'Failed to fetch firewall chains')
-        .then((e) => e as List)
-        .then((e) => chainList.value = e.map((item) => FirewallChain.fromMap(item, tableHandle.value!)).toList());
+    _apiService.callApi(Rpc.RPC_FIREWALL_CHAIN_LIST, parameters: reqParam, message: 'Failed to fetch firewall chains').then((e) => e as List).then((e) => chainList.value = e.map((item) => FirewallChain.fromMap(item, tableHandle.value!)).toList());
   }
 
   Future<void> chainAdd() async {
@@ -96,15 +104,35 @@ class FirewallController extends GetxController {
 
   /* -------------- Rule Methods -------------- */
   Future<void> ruleFetch(FirewallChain chain) async {
+    selectedChain.value = chain;
     var reqParam = {
       'tableId': chain.table.handle,
       'chainId': chain.handle,
     };
 
-    await _apiService
-        .callApi(Rpc.RPC_FIREWALL_RULE_LIST, parameters: reqParam, message: 'Failed to fetch rules')
-        .then((e) => e as List)
-        .then((e) => ruleList.value = e.map((item) => FirewallRule.fromMap(item, chain)).toList());
+    await _apiService.callApi(Rpc.RPC_FIREWALL_RULE_LIST, parameters: reqParam, message: 'Failed to fetch rules').then((e) => e as List).then((e) => ruleList.value = e.map((item) => FirewallRule.fromMap(item, chain)).toList());
+  }
+
+  Future<void> ruleAdd() async {
+    developer.log('>>> ${srcAddressEditingController.text}');
+
+    var list = [];
+    var exprList = expressions.map((e) => e.toMap()).toList();
+    var sttList = statements.map((e) => e.toMap()).toList();
+
+    list.addAll(exprList);
+    list.addAll(sttList);
+
+    var reqParam = {
+      'rule': {
+        'family': selectedChain.value!.table.type.value,
+        'table': selectedChain.value!.table.name,
+        'chain': selectedChain.value!.name,
+        'comment': commentEditingController.value,
+        'expr': list,
+      }
+    };
+    // _apiService.callApi(Rpc.RPC_FIREWALL_RULE_ADD, parameters: reqParam, message: 'Failed to add rule');
   }
 
   Future<void> ruleSwitch() async {}

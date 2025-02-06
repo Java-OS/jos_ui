@@ -4,20 +4,22 @@ import 'package:jos_ui/widget/drop_down_widget.dart';
 class RuleDropDown<T> extends StatefulWidget {
   final String label;
   final bool active;
-  final bool isDropDown;
+  final bool displayClearButton;
 
   final List<DropdownMenuItem<T>> dropDownItems;
   final Function(dynamic) onDropDownChange;
+  final Function? onClear;
   final T dropDownValue;
 
   const RuleDropDown({
     super.key,
     required this.label,
     this.active = false,
-    this.isDropDown = false,
+    this.displayClearButton = false,
     required this.onDropDownChange,
     required this.dropDownItems,
     required this.dropDownValue,
+    this.onClear,
   });
 
   @override
@@ -38,10 +40,10 @@ class _RuleDropDownState<T> extends State<RuleDropDown<T>> {
           replacement: label(widget.label),
           child: DropDownMenu<T>(
             disableRadius: true,
-            displayClearButton: true,
+            displayClearButton: widget.displayClearButton,
             label: widget.label,
             labelStyle: TextStyle(fontSize: 14, color: Colors.black),
-            onClear: () => setState(() => isActivated = false),
+            onClear: () => callOnClearButton(),
             onChanged: (e) => widget.onDropDownChange(e),
             value: widget.dropDownValue,
             items: widget.dropDownItems,
@@ -66,5 +68,10 @@ class _RuleDropDownState<T> extends State<RuleDropDown<T>> {
         textAlign: TextAlign.center,
       ),
     );
+  }
+
+  void callOnClearButton() {
+    setState(() => isActivated = false);
+    if (widget.onClear != null) widget.onClear!();
   }
 }

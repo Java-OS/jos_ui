@@ -64,4 +64,14 @@ class LogStatement implements Statement {
       );
     }
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'log' : {
+        'prefix': prefix,
+        'level' : level?.value
+      }
+    };
+  }
 }

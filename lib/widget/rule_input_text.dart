@@ -3,8 +3,10 @@ import 'package:jos_ui/widget/text_field_box_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class RuleInputText extends StatefulWidget {
+  final TextEditingController? controller ;
   final String label;
-  final bool active;
+  final bool onEdit;
+  final bool enable;
   final bool displayCheckBox;
   final bool displayCloseButton;
   final int? maxLength;
@@ -12,12 +14,14 @@ class RuleInputText extends StatefulWidget {
 
   const RuleInputText({
     super.key,
+    this.controller,
     required this.label,
-    this.active = false,
+    this.onEdit = false,
     this.displayCheckBox = true,
     this.displayCloseButton = true,
     this.maxLength,
-    this.maxWidth = 256,
+    this.maxWidth = 128,
+    this.enable = true,
   });
 
   @override
@@ -25,20 +29,35 @@ class RuleInputText extends StatefulWidget {
 }
 
 class _RuleInputTextState extends State<RuleInputText> {
-  var controller = TextEditingController();
   var isActivated = false;
   var hoverCloseBtn = false;
   var hoverNotBtn = false;
   var isNot = false;
 
   @override
+  void initState() {
+    if (widget.controller != null) {
+      var controller = widget.controller!;
+      controller.addListener(() {
+        var text = controller.text;
+        if (isNot && !text.startsWith('!')) {
+          text = '!$text';
+          print('Text : $text');
+          controller.text = text;
+        }
+      });
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      cursor: widget.active ? SystemMouseCursors.basic : SystemMouseCursors.click,
+      cursor: (widget.onEdit || !widget.enable) ? SystemMouseCursors.basic : SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: () => setState(() => widget.active ? false : isActivated = !isActivated),
+        onTap: () => setState(() => (widget.onEdit || !widget.enable) ? false : isActivated = !isActivated),
         child: Visibility(
-          visible: widget.active || isActivated,
+          visible: widget.onEdit || isActivated,
           replacement: label(widget.label),
           child: Row(
             spacing: 8,
@@ -60,7 +79,7 @@ class _RuleInputTextState extends State<RuleInputText> {
                   contentPadding: EdgeInsets.all(6),
                   textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   cursorHeight: 16,
-                  controller: controller,
+                  controller: widget.controller,
                   disableRadius: true,
                 ),
               ),
@@ -125,14 +144,14 @@ class _RuleInputTextState extends State<RuleInputText> {
       width: double.infinity,
       padding: EdgeInsets.only(left: 4, right: 4),
       decoration: BoxDecoration(
-        color: isActivated ? Colors.black12 : Colors.transparent,
         border: Border.fromBorderSide(
-          BorderSide(width: 0.1, color: Colors.black),
+          BorderSide(width: 0.1, color: widget.enable ? Colors.black : Colors.grey),
         ),
       ),
       child: Text(
         label,
         textAlign: TextAlign.center,
+        style: TextStyle(color: widget.enable ? Colors.black : Colors.grey),
       ),
     );
   }

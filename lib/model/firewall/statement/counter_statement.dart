@@ -25,4 +25,11 @@ class CounterStatement implements Statement {
       valueTextColor: Colors.white,
     );
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'counter' : {}
+    };
+  }
 }

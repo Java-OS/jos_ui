@@ -3,23 +3,8 @@ import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/widget/key_value.dart';
 
 enum Field {
-  iifgroup('iifgroup'),
   iifname('iifname'),
-  iiftype('iiftype'),
-  l4proto('l4proto'),
-  length('length'),
-  mark('mark'),
-  nfproto('nfproto'),
-  oif('oif'),
-  oifgroup('oifgroup'),
-  oifname('oifname'),
-  oiftype('oiftype'),
-  pkttype('pkttype'),
-  priority('priority'),
-  protocol('protocol'),
-  rtclassid('rtclassid'),
-  skgid('skgid'),
-  skuid('skuid');
+  oifname('oifname');
 
   final String value;
 
@@ -45,6 +30,7 @@ class MetaExpression implements Expression {
     return MetaExpression(field, operation, value);
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'match': {

@@ -30,6 +30,7 @@ class EtherExpression implements Expression {
     return EtherExpression(field, operation, value);
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'match': {

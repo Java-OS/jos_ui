@@ -36,6 +36,7 @@ class Ip6Expression implements Expression {
     return Ip6Expression(field, operation, value);
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'match': {

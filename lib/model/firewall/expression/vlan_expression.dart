@@ -30,6 +30,7 @@ class VlanExpression implements Expression {
     return VlanExpression(field, operation, value);
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'match': {

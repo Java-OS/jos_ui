@@ -95,4 +95,30 @@ class NatStatement implements Statement {
       );
     }
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    if (type == NatType.snat || type == NatType.dnat) {
+      return {
+        type.value: {
+          'addr': address,
+          'port': port,
+          'flags': flags.map((e) => e.value).toList(),
+        }
+      };
+    } else if (type == NatType.redirect) {
+      return {
+        'redirect': {
+          'port': port,
+          'flags': flags.map((e) => e.value).toList(),
+        }
+      };
+    } else {
+      return {
+        'masquerade': {
+          'flags': flags.map((e) => e.value).toList(),
+        }
+      };
+    }
+  }
 }

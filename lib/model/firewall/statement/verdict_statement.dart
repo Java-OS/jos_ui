@@ -62,4 +62,19 @@ class VerdictStatement implements Statement {
       ),
     );
   }
+
+  @override
+  Map<String, dynamic> toMap() {
+    if (type == VerdictType.jump || type == VerdictType.goto) {
+      return {
+        type.value: {
+          'target': chainName,
+        }
+      };
+    } else {
+      return {
+        type.value: null,
+      };
+    }
+  }
 }
