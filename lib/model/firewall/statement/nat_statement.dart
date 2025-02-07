@@ -100,7 +100,7 @@ class NatStatement implements Statement {
   Map<String, dynamic> toMap() {
     if (type == NatType.snat || type == NatType.dnat) {
       return {
-        type.value: {
+        type.name: {
           'addr': address,
           'port': port,
           'flags': flags.map((e) => e.value).toList(),

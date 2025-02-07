@@ -33,9 +33,10 @@ class FirewallChainPageState extends State<FirewallChainPage> {
       child: Expanded(
         child: SingleChildScrollView(
           child: Obx(
-            () => ListView.builder(
+            () => ReorderableListView.builder(
               scrollDirection: Axis.vertical,
-              physics: const ClampingScrollPhysics(),
+              buildDefaultDragHandles: false,
+              proxyDecorator: (child, i, d) => child,
               padding: EdgeInsets.zero,
               shrinkWrap: true,
               itemCount: _firewallController.chainList.length,
@@ -97,7 +98,7 @@ class FirewallChainPageState extends State<FirewallChainPage> {
                     ),
                   ),
                 );
-              },
+              }, onReorder: (int oldIndex, int newIndex) => updateOrder(oldIndex, newIndex),
             ),
           ),
         ),
@@ -131,5 +132,14 @@ class FirewallChainPageState extends State<FirewallChainPage> {
 
   Future<void> gotoRulePage(FirewallChain chain) async {
     _firewallController.ruleFetch(chain).then((_) => Get.toNamed(Routes.firewallRules.routeName));
+  }
+
+  void updateOrder(int oldIndex, int newIndex) {
+    setState(() {
+      if (oldIndex < newIndex) newIndex--;
+      var rule = _firewallController.chainList.removeAt(oldIndex);
+      _firewallController.chainList.insert(newIndex, rule);
+      _firewallController.chainSwitch();
+    });
   }
 }

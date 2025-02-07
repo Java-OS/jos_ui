@@ -8,8 +8,8 @@ import 'package:jos_ui/widget/toast.dart';
 class ApiService extends GetxController {
   var isLoading = false.obs;
 
-  Future<dynamic> callApi(Rpc rpc, {Map<String, dynamic>? parameters, String? message, MessageType type = MessageType.warning}) async {
-    isLoading.value = true;
+  Future<dynamic> callApi(Rpc rpc, {Map<String, dynamic>? parameters, String? message, MessageType type = MessageType.warning, bool disableLoading = false}) async {
+    isLoading.value = !disableLoading;
     var payload = await RestClient.rpc(rpc, parameters: parameters);
     if (payload.metadata!.success) {
       var content = payload.content;

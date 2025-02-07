@@ -12,6 +12,7 @@ import 'package:jos_ui/model/firewall/expression/udp_expression.dart';
 import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/model/firewall/statement/log_statement.dart';
+import 'package:jos_ui/model/firewall/statement/nat_statement.dart';
 import 'package:jos_ui/model/firewall/statement/reject_statement.dart';
 import 'package:jos_ui/model/firewall/statement/verdict_statement.dart';
 import 'package:jos_ui/model/firewall/table.dart';
@@ -43,41 +44,23 @@ class FirewallController extends GetxController with Validator {
   var chainPriority = Rxn<int>();
 
   /* Rule config */
-  // srd addr
   var srcAddressEditingController = TextEditingController();
   var isNotSrcAddr = false.obs;
-
-  // dst addr
   var dstAddressEditingController = TextEditingController();
   var isNotDstAddr = false.obs;
-
-  // protocol
   var protocol = Rxn<Protocol>();
-
-  // src port
   var srcPortEditingController = TextEditingController();
   var isNotSrcPort = false.obs;
-
-  // dst port
   var dstPortEditingController = TextEditingController();
   var isNotDstPort = false.obs;
-
-  // src interface
   var srcInterface = Rxn<Ethernet>();
-
-  // dst interface
   var dstInterface = Rxn<Ethernet>();
-
-  // verdict Statement
-  var verdict = Rxn<VerdictType>();
-
-  // Reject Statement
+  var natType = Rxn<NatType>();
+  var natToAddressEditingController = TextEditingController();
+  var natToPortEditingController = TextEditingController();
+  var verdictType = Rxn<VerdictType>();
   var rejectReason = Rxn<Reason>();
-
-  // Target jump|goto chain
   var targetChain = Rxn<FirewallChain>();
-
-  // LogLevel
   var logLevel = Rxn<LogLevel>();
 
   var logPrefixEditingController = TextEditingController();
@@ -153,6 +136,14 @@ class FirewallController extends GetxController with Validator {
     _apiService.callApi(Rpc.RPC_FIREWALL_CHAIN_UPDATE, parameters: reqParam, message: 'Failed to update chain').then((e) => chainFetch()).then((e) => Get.back()).then((e) => clear());
   }
 
+  Future<void> chainSwitch() async {
+    var reqParam = {
+      'tableId': tableHandle.value,
+      'chainIds': chainList.map((e) => e.handle).toList(),
+    };
+    _apiService.callApi(Rpc.RPC_FIREWALL_CHAIN_SWITCH, parameters: reqParam, message: 'Failed to switch chain').then((e) => e as List).then((e) => chainList.value = e.map((item) => FirewallChain.fromMap(item, tableHandle.value!)).toList());
+  }
+
   /* -------------- Rule Methods -------------- */
   Future<void> ruleFetch(FirewallChain chain) async {
     selectedChain.value = chain;
@@ -184,10 +175,13 @@ class FirewallController extends GetxController with Validator {
     var srcInterfaceExpression = srcInterface.value != null ? MetaExpression(MetaField.iifname, Operation.eq, srcInterface.value!.iface) : null;
     var dstInterfaceExpression = dstInterface.value != null ? MetaExpression(MetaField.oifname, Operation.eq, dstInterface.value!.iface) : null;
 
-    // Statements
-    var verdictStatement = (verdict.value != null && verdict.value != VerdictType.reject) ? VerdictStatement(verdict.value!, targetChain.value?.name) : null;
+    // Filter Statements
+    var verdictStatement = (verdictType.value != null && verdictType.value != VerdictType.reject) ? VerdictStatement(verdictType.value!, targetChain.value?.name) : null;
     var rejectStatement = rejectReason.value != null ? RejectStatement(rejectReason.value) : null;
     var logStatement = logLevel.value != null ? LogStatement(logLevel.value, logPrefixEditingController.text) : null;
+
+    // Nat Statements
+    var natStatement = natType.value != null ? NatStatement([], natType.value!, natToAddressEditingController.text.isNotEmpty ? natToAddressEditingController.text : null, natToPortEditingController.text.isNotEmpty ? int.parse(natToPortEditingController.text) : null) : null;
 
     var list = [];
 
@@ -201,6 +195,7 @@ class FirewallController extends GetxController with Validator {
     if (logStatement != null) list.add(logStatement.toMap());
     if (verdictStatement != null) list.add(verdictStatement.toMap());
     if (rejectStatement != null) list.add(rejectStatement.toMap());
+    if (natStatement != null) list.add(natStatement.toMap());
 
     var reqParam = {
       'rule': {
@@ -219,7 +214,14 @@ class FirewallController extends GetxController with Validator {
     _apiService.callApi(Rpc.RPC_FIREWALL_RULE_REMOVE, parameters: reqParam, message: 'Failed to remove rule').then((e) => ruleFetch(selectedChain.value!));
   }
 
-  Future<void> ruleSwitch() async {}
+  Future<void> ruleSwitch() async {
+    var reqParam = {
+      'tableId': selectedChain.value!.table.handle,
+      'chainId': selectedChain.value!.handle,
+      'ruleIds': ruleList.map((e) => e.handle).toList(),
+    };
+    _apiService.callApi(Rpc.RPC_FIREWALL_RULE_SWITCH, parameters: reqParam, message: 'Failed to switch rule').then((e) => e as List).then((e) => ruleList.value = e.map((item) => FirewallRule.fromMap(item, selectedChain.value!)).toList());
+  }
 
   void clear() {
     developer.log('clear parameters');
@@ -233,11 +235,14 @@ class FirewallController extends GetxController with Validator {
     dstPortEditingController.clear();
     commentEditingController.clear();
     logPrefixEditingController.clear();
+    natToAddressEditingController.clear();
+    natToPortEditingController.clear();
 
+    natType.value = null;
     protocol.value = null;
     srcInterface.value = null;
     dstInterface.value = null;
-    verdict.value = null;
+    verdictType.value = null;
     targetChain.value = null;
     logLevel.value = null;
     rejectReason.value = null;

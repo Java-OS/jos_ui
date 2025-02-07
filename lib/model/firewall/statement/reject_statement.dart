@@ -12,7 +12,7 @@ enum Reason {
   adminProhibited('admin-prohibited'),
   noRoute('no-route'),
   addrUnreachable('addr-unreachable'),
-  tcpReset('tcp reset');
+  tcpReset('tcp-reset');
 
   final String value;
 
@@ -29,10 +29,10 @@ class RejectStatement implements Statement {
   RejectStatement(this.reason);
 
   factory RejectStatement.fromMap(Map<String, dynamic> map) {
-    if ((map['reject'] as Map).containsKey('type')) {
+    if ((map['reject'] as Map).containsValue('type') && (map['reject']['type'] as Map).containsValue('tcp-reset')) {
       return RejectStatement(Reason.tcpReset);
     } else {
-      var reason = (map['reject'] as Map).containsKey('reason') ? Reason.fromValue(map['reject']['reason']) : null;
+      var reason = (map['reject'] as Map).containsKey('expr') ? Reason.fromValue(map['reject']['expr']) : null;
       return RejectStatement(reason);
     }
   }
