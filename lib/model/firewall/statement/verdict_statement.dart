@@ -5,6 +5,7 @@ enum VerdictType {
   accept('accept'),
   drop('drop'),
   queue('queue'),
+  reject('reject'),
   cont('continue'),
   ret('return'),
   jump('jump'),

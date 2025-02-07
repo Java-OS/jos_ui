@@ -11,7 +11,8 @@ enum Reason {
   hostProhibited('host-prohibited'),
   adminProhibited('admin-prohibited'),
   noRoute('no-route'),
-  addrUnreachable('addr-unreachable');
+  addrUnreachable('addr-unreachable'),
+  tcpReset('tcp reset');
 
   final String value;
 
@@ -22,65 +23,44 @@ enum Reason {
   }
 }
 
-enum Type {
-  reject('reject'),
-  icmp('icmp'),
-  icmpv6('icmpv6'),
-  icmpx('icmpx');
-
-  final String value;
-
-  const Type(this.value);
-
-  factory Type.fromValue(String value) {
-    return Type.values.firstWhere((item) => item.value == value);
-  }
-}
-
 class RejectStatement implements Statement {
-  final Type type;
   final Reason? reason;
 
-  RejectStatement(this.type, this.reason);
+  RejectStatement(this.reason);
 
   factory RejectStatement.fromMap(Map<String, dynamic> map) {
-    var reason = (map['reject'] as Map).containsKey('reason') ? Reason.fromValue(map['reject']['reason']) : null;
-    var type = Type.fromValue(map['reject']['type']);
-    return RejectStatement(type, reason);
-  }
-
-  @override
-  Widget display() {
-    if (reason != null) {
-      return KeyValue(
-        k: 'reject',
-        v: reason!.value,
-        keyBackgroundColor: Colors.blueGrey,
-        valueBackgroundColor: Colors.teal[400]!,
-        keyTextColor: Colors.white,
-        valueTextColor: Colors.white,
-      );
+    if ((map['reject'] as Map).containsKey('type')) {
+      return RejectStatement(Reason.tcpReset);
     } else {
-      return Container(
-        padding: EdgeInsets.only(left: 8, right: 8),
-        decoration: BoxDecoration(
-          color: Colors.blueGrey,
-          border: Border.all(width: 0.1, color: Colors.grey),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-        ),
-        child: Text(
-          'reject',
-          style: TextStyle(color: Colors.white, fontSize: 14),
-        ),
-      );
+      var reason = (map['reject'] as Map).containsKey('reason') ? Reason.fromValue(map['reject']['reason']) : null;
+      return RejectStatement(reason);
     }
   }
 
   @override
+  Widget display() {
+    return KeyValue(
+      k: 'reason',
+      v: reason!.value,
+      keyBackgroundColor: Colors.blueGrey,
+      valueBackgroundColor: Colors.teal[400]!,
+      keyTextColor: Colors.white,
+      valueTextColor: Colors.white,
+    );
+  }
+
+  @override
   Map<String, dynamic> toMap() {
+    if (reason! == Reason.tcpReset) {
+      return {
+        'reject': {
+          'type': reason!.value,
+        }
+      };
+    }
     return {
       'reject': {
-        'type': type.value,
+        'type': 'icmp',
         'expr': reason!.value,
       }
     };

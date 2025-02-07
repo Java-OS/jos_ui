@@ -4,7 +4,6 @@ import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/firewall_controller.dart';
 import 'package:jos_ui/dialog/firewall/firewall_rule_dialog.dart';
-import 'package:jos_ui/model/firewall/chain.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -18,7 +17,9 @@ class FirewallRulePage extends StatefulWidget {
 
 class FirewallRulePageState extends State<FirewallRulePage> {
   final _firewallController = Get.put(FirewallController());
-  final Map<int,ScrollController> _scrollControllers = {};
+  final Map<int, ScrollController> _scrollControllers = {};
+
+  bool _isDragging = false;
 
   @override
   void initState() {
@@ -48,43 +49,47 @@ class FirewallRulePageState extends State<FirewallRulePage> {
                 return Padding(
                   key: ValueKey(rule),
                   padding: const EdgeInsets.all(4.0),
-                  child: ReorderableDragStartListener(
-                    index: index,
-                    child: TileItem(
-                      onClick: () => print('Hello'),
-                      actions: SizedBox(
-                        width: 100,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              onPressed: () => deleteRule(rule),
-                              splashRadius: 12,
-                              icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
-                            ),
-                            IconButton(
-                              onPressed: () => {},
-                              splashRadius: 12,
-                              icon: Icon(MdiIcons.pencil, size: 16, color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ),
+                  child: Listener(
+                    onPointerDown: (_) => setState(() => _isDragging = true),
+                    onPointerUp: (_) => setState(() => _isDragging = false),
+                    child: ReorderableDragStartListener(
                       index: index,
-                      title: MouseRegion(
-                        onHover: (e) => _scrollControllers[index]!.animateTo(_scrollControllers[index]!.position.maxScrollExtent, duration: Duration(seconds: 1), curve:  Curves.easeInOut),
-                        onExit: (e) => _scrollControllers[index]!.animateTo(_scrollControllers[index]!.position.minScrollExtent, duration: Duration(seconds: 1), curve:  Curves.easeInOut),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          controller: _scrollControllers[index],
-                          child: Row(
-                            spacing: 8,
-                            children: rule.expressionWidgets(),
+                      child: MouseRegion(
+                        onHover: _isDragging ? null : (e) => startAnimate(index),
+                        onExit: _isDragging ? null : (e) => revertAnimate(index),
+                        child: TileItem(
+                          onClick: () => print('Hello'),
+                          actions: SizedBox(
+                            width: 100,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                  onPressed: () => deleteRule(rule),
+                                  splashRadius: 12,
+                                  icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+                                ),
+                                IconButton(
+                                  onPressed: () => {},
+                                  splashRadius: 12,
+                                  icon: Icon(MdiIcons.pencil, size: 16, color: Colors.black),
+                                ),
+                              ],
+                            ),
                           ),
+                          index: index,
+                          title: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            controller: _scrollControllers[index],
+                            child: Row(
+                              spacing: 8,
+                              children: rule.expressionWidgets(),
+                            ),
+                          ),
+                          subTitle: rule.comment != null ? Text(rule.comment!, style: TextStyle(color: Colors.black87)) : null,
                         ),
                       ),
-                      subTitle: rule.comment != null ? Text(rule.comment!,style: TextStyle(color: Colors.black87)) : null,
                     ),
                   ),
                 );
@@ -96,6 +101,10 @@ class FirewallRulePageState extends State<FirewallRulePage> {
       ),
     );
   }
+
+  Future<void> revertAnimate(int index) => _scrollControllers[index]!.animateTo(_scrollControllers[index]!.position.minScrollExtent, duration: Duration(seconds: 1), curve: Curves.easeInOut);
+
+  Future<void> startAnimate(int index) => _scrollControllers[index]!.animateTo(_scrollControllers[index]!.position.maxScrollExtent, duration: Duration(seconds: 1), curve: Curves.easeInOut);
 
   void deleteRule(FirewallRule rule) {
     _firewallController.selectedRule.value = rule;

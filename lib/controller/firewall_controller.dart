@@ -12,6 +12,7 @@ import 'package:jos_ui/model/firewall/expression/udp_expression.dart';
 import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/model/firewall/statement/log_statement.dart';
+import 'package:jos_ui/model/firewall/statement/reject_statement.dart';
 import 'package:jos_ui/model/firewall/statement/verdict_statement.dart';
 import 'package:jos_ui/model/firewall/table.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
@@ -69,6 +70,9 @@ class FirewallController extends GetxController with Validator {
 
   // verdict Statement
   var verdict = Rxn<VerdictType>();
+
+  // Reject Statement
+  var rejectReason = Rxn<Reason>();
 
   // Target jump|goto chain
   var targetChain = Rxn<FirewallChain>();
@@ -181,7 +185,8 @@ class FirewallController extends GetxController with Validator {
     var dstInterfaceExpression = dstInterface.value != null ? MetaExpression(MetaField.oifname, Operation.eq, dstInterface.value!.iface) : null;
 
     // Statements
-    var verdictStatement = verdict.value != null ? VerdictStatement(verdict.value!, targetChain.value?.name) : null;
+    var verdictStatement = (verdict.value != null && verdict.value != VerdictType.reject) ? VerdictStatement(verdict.value!, targetChain.value?.name) : null;
+    var rejectStatement = rejectReason.value != null ? RejectStatement(rejectReason.value) : null;
     var logStatement = logLevel.value != null ? LogStatement(logLevel.value, logPrefixEditingController.text) : null;
 
     var list = [];
@@ -193,8 +198,9 @@ class FirewallController extends GetxController with Validator {
     if (dstPortExpression != null) list.add(dstPortExpression.toMap());
     if (srcInterfaceExpression != null) list.add(srcInterfaceExpression.toMap());
     if (dstInterfaceExpression != null) list.add(dstInterfaceExpression.toMap());
-    if (verdictStatement != null) list.add(verdictStatement.toMap());
     if (logStatement != null) list.add(logStatement.toMap());
+    if (verdictStatement != null) list.add(verdictStatement.toMap());
+    if (rejectStatement != null) list.add(rejectStatement.toMap());
 
     var reqParam = {
       'rule': {
@@ -234,6 +240,7 @@ class FirewallController extends GetxController with Validator {
     verdict.value = null;
     targetChain.value = null;
     logLevel.value = null;
+    rejectReason.value = null;
 
     /* chain parameters */
     tableType = FirewallTableType.inet.obs;

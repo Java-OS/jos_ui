@@ -8,6 +8,7 @@ import 'package:jos_ui/model/firewall/chain.dart';
 import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/model/firewall/statement/log_statement.dart';
 import 'package:jos_ui/model/firewall/statement/nat_statement.dart';
+import 'package:jos_ui/model/firewall/statement/reject_statement.dart';
 import 'package:jos_ui/model/firewall/statement/verdict_statement.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
 import 'package:jos_ui/widget/rule_drop_down.dart';
@@ -53,6 +54,7 @@ Future<void> displayFirewallRuleFilterModal(bool isUpdate) async {
                     RuleDropDown<Protocol>(
                       onClear: () {
                         _firewallController.protocol.value = null;
+                        _firewallController.rejectReason.value = null;
                         _firewallController.isNotSrcPort.value = false;
                         _firewallController.isNotDstPort.value = false;
                         _firewallController.srcPortEditingController.clear();
@@ -105,6 +107,7 @@ Future<void> displayFirewallRuleFilterModal(bool isUpdate) async {
                       onClear: () {
                         _firewallController.targetChain.value = null;
                         _firewallController.verdict.value = null;
+                        _firewallController.rejectReason.value = null;
                       },
                       onDropDownChange: (e) {
                         _firewallController.verdict.value = e;
@@ -112,6 +115,16 @@ Future<void> displayFirewallRuleFilterModal(bool isUpdate) async {
                       },
                       dropDownItems: actionItems(),
                       dropDownValue: _firewallController.verdict.value,
+                    ),
+                    RuleDropDown(
+                      enable: false,
+                      active: _firewallController.verdict.value == VerdictType.reject,
+                      displayClearButton: false,
+                      label: 'Reject with',
+                      onClear: () => _firewallController.rejectReason.value = null,
+                      onDropDownChange: (e) => _firewallController.rejectReason.value = e,
+                      dropDownItems: rejectReasonItems(),
+                      dropDownValue: _firewallController.rejectReason.value,
                     ),
                     RuleDropDown(
                       enable: false,
@@ -181,11 +194,7 @@ List<DropdownMenuItem<dynamic>> interfaceItems() {
 }
 
 List<DropdownMenuItem<dynamic>> chainItems() {
-  return _firewallController.chainList
-      .where((e) => e.type == null)
-      .where((e) => e.name != _firewallController.selectedChain.value!.name)
-      .map((e) => DropdownMenuItem<FirewallChain>(value: e, child: Text(e.name)))
-      .toList();
+  return _firewallController.chainList.where((e) => e.type == null).where((e) => e.name != _firewallController.selectedChain.value!.name).map((e) => DropdownMenuItem<FirewallChain>(value: e, child: Text(e.name))).toList();
 }
 
 List<DropdownMenuItem<Protocol>> protocolItems() {
@@ -194,4 +203,15 @@ List<DropdownMenuItem<Protocol>> protocolItems() {
 
 List<DropdownMenuItem<LogLevel>> logLevelItems() {
   return LogLevel.values.map((e) => DropdownMenuItem<LogLevel>(value: e, child: Text(e.name))).toList();
+}
+
+List<DropdownMenuItem<Reason>> rejectReasonItems() {
+  var isTcp = _firewallController.protocol.value == Protocol.tcp;
+  return Reason.values
+      .where((e) {
+        if (!isTcp) return e != Reason.tcpReset;
+        return true;
+      })
+      .map((e) => DropdownMenuItem<Reason>(value: e, child: Text(e.value.replaceAll('-', ' '))))
+      .toList();
 }

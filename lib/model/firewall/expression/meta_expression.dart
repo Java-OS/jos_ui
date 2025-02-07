@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
 import 'package:jos_ui/widget/key_value.dart';
 
 enum MetaField {
+  l4proto('l4proto'),
   iifname('iifname'),
   oifname('oifname');
 
@@ -36,9 +39,7 @@ class MetaExpression implements Expression {
       'match': {
         'op': operation.value,
         'left': {
-          'meta': {
-            'key': field.value
-          },
+          'meta': {'key': field.value},
         },
         'right': value,
       },
