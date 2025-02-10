@@ -30,178 +30,38 @@ Future<void> displayFirewallRuleFilterModal(bool isUpdate) async {
           SizedBox(
             width: 250,
             child: Obx(
-                  () =>
-                  Form(
-                    key: _firewallController.formKey,
-                    child: Column(
-                      spacing: 8,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RuleInputText(
-                          label: 'Src. Address',
-                          controller: _firewallController.srcAddressEditingController,
-                          onNot: (e) => _firewallController.isNotSrcAddr.value = e,
-                          onDeactivate: () => _firewallController.srcAddressEditingController.clear(),
-                          validator: (e) => _firewallController.validateIpAddress(e),
-                        ),
-                        RuleInputText(
-                          label: 'Dst. Address',
-                          controller: _firewallController.dstAddressEditingController,
-                          onNot: (e) => _firewallController.isNotDstAddr.value = e,
-                          onDeactivate: () => _firewallController.dstAddressEditingController.clear(),
-                          validator: (e) => _firewallController.validateIpAddress(e),
-                        ),
-                        RuleDropDown<Protocol>(
-                          onClear: () {
-                            _firewallController.protocol.value = null;
-                            _firewallController.rejectReason.value = null;
-                            _firewallController.isNotSrcPort.value = false;
-                            _firewallController.isNotDstPort.value = false;
-                            _firewallController.srcPortEditingController.clear();
-                            _firewallController.dstPortEditingController.clear();
-                          },
-                          displayClearButton: true,
-                          label: 'Protocol',
-                          onDropDownChange: (e) => _firewallController.protocol.value = e,
-                          dropDownItems: protocolItems(),
-                          dropDownValue: Protocol.tcp,
-                        ),
-                        RuleInputText(
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          label: 'Src. Port (0-65535)',
-                          controller: _firewallController.srcPortEditingController,
-                          onNot: (e) => _firewallController.isNotSrcPort.value = e,
-                          onDeactivate: () => _firewallController.srcPortEditingController.clear(),
-                          enable: _firewallController.protocol.value != null && _firewallController.protocol.value != Protocol.icmp,
-                          validator: (e) => _firewallController.validatePortNumber(e),
-                        ),
-                        RuleInputText(
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          label: 'Dst. Port (0-65535)',
-                          controller: _firewallController.dstPortEditingController,
-                          onNot: (e) => _firewallController.isNotDstPort.value = e,
-                          onDeactivate: () => _firewallController.dstPortEditingController.clear(),
-                          enable: _firewallController.protocol.value != null && _firewallController.protocol.value != Protocol.icmp,
-                          validator: (e) => _firewallController.validatePortNumber(e),
-                        ),
-                        RuleDropDown(
-                          displayClearButton: true,
-                          label: 'In. Interface',
-                          onClear: () => _firewallController.srcInterface.value = null,
-                          onDropDownChange: (e) => _firewallController.srcInterface.value = e,
-                          dropDownItems: interfaceItems(),
-                          dropDownValue: _firewallController.srcInterface.value,
-                        ),
-                        RuleDropDown(
-                          displayClearButton: true,
-                          label: 'Out. Interface',
-                          onClear: () => _firewallController.dstInterface.value = null,
-                          onDropDownChange: (e) => _firewallController.dstInterface.value = e,
-                          dropDownItems: interfaceItems(),
-                          dropDownValue: _firewallController.dstInterface.value,
-                        ),
-                        Visibility(
-                          visible: _firewallController.selectedChain.value!.type != ChainType.nat,
-                          replacement: RuleDropDown(
-                            displayClearButton: false,
-                            active: true,
-                            label: 'Action',
-                            onDropDownChange: (e) {
-                              _firewallController.natType.value = e;
-                            },
-                            dropDownItems: getNatItems(),
-                            dropDownValue: _firewallController.natType.value,
-                          ),
-                          child: RuleDropDown(
-                            displayClearButton: false,
-                            active: true,
-                            label: 'Action',
-                            onDropDownChange: (e) {
-                              _firewallController.verdictType.value = e;
-                              _firewallController.targetChain.value = null;
-                            },
-                            dropDownItems: VerdictType.values.map((e) => DropdownMenuItem<VerdictType>(value: e, child: Text(e.value))).toList(),
-                            dropDownValue: _firewallController.verdictType.value,
-                          ),
-                        ),
-                        Visibility(
-                          visible: _firewallController.selectedChain.value!.type != ChainType.nat,
-                          replacement: RuleInputText(
-                            enable: _firewallController.natType.value == NatType.snat || _firewallController.natType.value == NatType.dnat,
-                            label: 'To Address',
-                            onDeactivate: () => _firewallController.natToAddressEditingController.clear(),
-                            displayCheckBox: false,
-                            controller: _firewallController.natToAddressEditingController,
-                          ),
-                          child: RuleDropDown(
-                            enable: false,
-                            active: _firewallController.verdictType.value == VerdictType.reject,
-                            displayClearButton: false,
-                            label: 'Reject with',
-                            onClear: () => _firewallController.rejectReason.value = null,
-                            onDropDownChange: (e) => _firewallController.rejectReason.value = e,
-                            dropDownItems: rejectReasonItems(),
-                            dropDownValue: _firewallController.rejectReason.value,
-                          ),
-                        ),
-                        Visibility(
-                          visible: _firewallController.selectedChain.value!.type != ChainType.nat,
-                          replacement: RuleInputText(
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                            enable: _firewallController.natType.value != NatType.masquerade,
-                            label: 'To port (0-65535)',
-                            onDeactivate: () => _firewallController.natToPortEditingController.clear(),
-                            displayCheckBox: false,
-                            controller: _firewallController.natToPortEditingController,
-                          ),
-                          child: RuleDropDown(
-                            enable: false,
-                            active: chainItems().isNotEmpty && (_firewallController.verdictType.value == VerdictType.goto || _firewallController.verdictType.value == VerdictType.jump),
-                            displayClearButton: false,
-                            label: 'Target Chain',
-                            onClear: () => _firewallController.targetChain.value = null,
-                            onDropDownChange: (e) => _firewallController.targetChain.value = e,
-                            dropDownItems: chainItems(),
-                            dropDownValue: _firewallController.targetChain.value,
-                          ),
-                        ),
-                        RuleDropDown(
-                          displayClearButton: true,
-                          label: 'Log. Level',
-                          onClear: () {
-                            _firewallController.logLevel.value = null;
-                            _firewallController.logPrefixEditingController.clear();
-                          },
-                          onDropDownChange: (e) => _firewallController.logLevel.value = e,
-                          dropDownItems: logLevelItems(),
-                          dropDownValue: _firewallController.logLevel.value,
-                        ),
-                        RuleInputText(
-                          enable: _firewallController.logLevel.value != null,
-                          label: 'Log. Prefix',
-                          onDeactivate: () => _firewallController.logPrefixEditingController.clear(),
-                          displayCheckBox: false,
-                          controller: _firewallController.logPrefixEditingController,
-                        ),
-                        RuleInputText(
-                          label: 'Comment',
-                          onDeactivate: () => _firewallController.commentEditingController.clear(),
-                          displayCheckBox: false,
-                          controller: _firewallController.commentEditingController,
-                        ),
-                        SizedBox(height: 10),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                            // onPressed: () => isUpdate ? _firewallController.chainUpdate() : _firewallController.chainAdd(),
-                            onPressed: () => _firewallController.ruleAdd(),
-                            child: Text(isUpdate ? 'Update' : 'Add'),
-                          ),
-                        ),
-                      ],
+              () => Form(
+                key: _firewallController.formKey,
+                child: Column(
+                  spacing: 8,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    getSrcAddrWidget(),
+                    getDstAddrWidget(),
+                    getProtocolWidget(),
+                    getSrcPortWidget(),
+                    getDstPortWidget(),
+                    if (isFilter() || (isNat() && !isOutput())) getInputInterfaceWidget(),
+                    if (isFilter() || (isNat() && !isInput())) getOutputInterfaceWidget(),
+                    getActionWidget(),
+                    if (isFilter() || (isNat() && !isMasquerade() && (isDnat() || isSnat()))) getAddressRejectWidget(),
+                    if (isFilter() || (isNat() && !isMasquerade())) getPortChainWidget(),
+                    getLogLevelWidget(),
+                    getLogPrefixWidget(),
+                    getCommentWidget(),
+                    SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                        // onPressed: () => isUpdate ? _firewallController.chainUpdate() : _firewallController.chainAdd(),
+                        onPressed: () => _firewallController.ruleAdd(),
+                        child: Text(isUpdate ? 'Update' : 'Add'),
+                      ),
                     ),
-                  ),
+                  ],
+                ),
+              ),
             ),
           )
         ],
@@ -210,19 +70,260 @@ Future<void> displayFirewallRuleFilterModal(bool isUpdate) async {
   ).then((e) => _firewallController.clear());
 }
 
+Widget getCommentWidget() {
+  return RuleInputText(
+    label: 'Comment',
+    onDeactivate: () => _firewallController.commentEditingController.clear(),
+    displayCheckBox: false,
+    controller: _firewallController.commentEditingController,
+  );
+}
+
+Widget getLogPrefixWidget() {
+  return RuleInputText(
+    enable: _firewallController.logLevel.value != null,
+    label: 'Log. Prefix',
+    onDeactivate: () => _firewallController.logPrefixEditingController.clear(),
+    displayCheckBox: false,
+    controller: _firewallController.logPrefixEditingController,
+  );
+}
+
+Widget getLogLevelWidget() {
+  return RuleDropDown(
+    displayClearButton: true,
+    label: 'Log. Level',
+    onClear: () {
+      _firewallController.logLevel.value = null;
+      _firewallController.logPrefixEditingController.clear();
+    },
+    onDropDownChange: (e) => _firewallController.logLevel.value = e,
+    dropDownItems: logLevelItems(),
+    dropDownValue: _firewallController.logLevel.value,
+  );
+}
+
+Widget getPortChainWidget() {
+  return Visibility(
+    visible: !isNat(),
+    replacement: RuleInputText(
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      enable: _firewallController.natType.value != NatType.masquerade,
+      label: isSnat() ? 'From Port (0-65535)' : 'To Port (0-65535)',
+      onDeactivate: () => _firewallController.natToPortEditingController.clear(),
+      displayCheckBox: false,
+      controller: _firewallController.natToPortEditingController,
+    ),
+    child: RuleDropDown(
+      enable: false,
+      active: chainItems().isNotEmpty && (_firewallController.verdictType.value == VerdictType.goto || _firewallController.verdictType.value == VerdictType.jump),
+      displayClearButton: false,
+      label: 'Target Chain',
+      onClear: () => _firewallController.targetChain.value = null,
+      onDropDownChange: (e) => _firewallController.targetChain.value = e,
+      dropDownItems: chainItems(),
+      dropDownValue: _firewallController.targetChain.value,
+    ),
+  );
+}
+
+Widget getAddressRejectWidget() {
+  return Visibility(
+    visible: !isNat(),
+    replacement: RuleInputText(
+      enable: isSnat() || isDnat(),
+      label: isDnat() ? 'To Address' : 'From Address',
+      onDeactivate: () => _firewallController.natToAddressEditingController.clear(),
+      displayCheckBox: false,
+      controller: _firewallController.natToAddressEditingController,
+    ),
+    child: RuleDropDown(
+      enable: false,
+      active: _firewallController.verdictType.value == VerdictType.reject,
+      displayClearButton: false,
+      label: 'Reject with',
+      onClear: () => _firewallController.rejectReason.value = null,
+      onDropDownChange: (e) => _firewallController.rejectReason.value = e,
+      dropDownItems: rejectReasonItems(),
+      dropDownValue: _firewallController.rejectReason.value,
+    ),
+  );
+}
+
+Widget getActionWidget() {
+  return Visibility(
+    visible: !isNat(),
+    replacement: RuleDropDown(
+      displayClearButton: false,
+      active: true,
+      label: 'Action',
+      onDropDownChange: (e) => _firewallController.natType.value = e,
+      dropDownItems: getNatItems(),
+      dropDownValue: _firewallController.natType.value,
+    ),
+    child: RuleDropDown(
+      displayClearButton: false,
+      active: true,
+      label: 'Action',
+      onDropDownChange: (e) {
+        _firewallController.verdictType.value = e;
+        _firewallController.targetChain.value = null;
+      },
+      dropDownItems: VerdictType.values.map((e) => DropdownMenuItem<VerdictType>(value: e, child: Text(e.value))).toList(),
+      dropDownValue: _firewallController.verdictType.value,
+    ),
+  );
+}
+
+Widget getOutputInterfaceWidget() {
+  return Visibility(
+    visible: isFilter() || (isNat() && !isOutput()),
+    replacement: RuleInputText(
+      enable: false,
+      label: _firewallController.dstInterface.value != null ? 'Out. Interface (${_firewallController.dstInterface.value!.iface})' : 'Out. Interface',
+    ),
+    child: RuleDropDown(
+      displayClearButton: true,
+      label: 'Out. Interface',
+      onClear: () => _firewallController.dstInterface.value = null,
+      onDropDownChange: (e) => _firewallController.dstInterface.value = e,
+      dropDownItems: interfaceItems(),
+      dropDownValue: _firewallController.dstInterface.value,
+    ),
+  );
+}
+
+Widget getInputInterfaceWidget() {
+  return Visibility(
+    visible: isFilter() || (isNat() && !isInput()),
+    replacement: RuleInputText(
+      enable: false,
+      label: _firewallController.srcInterface.value != null ? 'In. Interface (${_firewallController.srcInterface.value!.iface})' : 'In. Interface',
+    ),
+    child: RuleDropDown(
+      displayClearButton: true,
+      label: 'In. Interface',
+      onClear: () => _firewallController.srcInterface.value = null,
+      onDropDownChange: (e) => _firewallController.srcInterface.value = e,
+      dropDownItems: interfaceItems(),
+      dropDownValue: _firewallController.srcInterface.value,
+    ),
+  );
+}
+
+Widget getDstPortWidget() {
+  return RuleInputText(
+    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+    label: 'Dst. Port (0-65535)',
+    controller: _firewallController.dstPortEditingController,
+    onNot: (e) => _firewallController.isNotDstPort.value = e,
+    onDeactivate: () => _firewallController.dstPortEditingController.clear(),
+    enable: _firewallController.protocol.value != null && _firewallController.protocol.value != Protocol.icmp,
+    validator: (e) => _firewallController.validatePortNumber(e),
+  );
+}
+
+Widget getSrcPortWidget() {
+  return RuleInputText(
+    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+    label: 'Src. Port (0-65535)',
+    controller: _firewallController.srcPortEditingController,
+    onNot: (e) => _firewallController.isNotSrcPort.value = e,
+    onDeactivate: () => _firewallController.srcPortEditingController.clear(),
+    enable: _firewallController.protocol.value != null && _firewallController.protocol.value != Protocol.icmp,
+    validator: (e) => _firewallController.validatePortNumber(e),
+  );
+}
+
+Widget getProtocolWidget() {
+  return RuleDropDown<Protocol>(
+    onClear: () {
+      _firewallController.protocol.value = null;
+      _firewallController.rejectReason.value = null;
+      _firewallController.isNotSrcPort.value = false;
+      _firewallController.isNotDstPort.value = false;
+      _firewallController.srcPortEditingController.clear();
+      _firewallController.dstPortEditingController.clear();
+    },
+    displayClearButton: true,
+    label: 'Protocol',
+    onDropDownChange: (e) => _firewallController.protocol.value = e,
+    dropDownItems: protocolItems(),
+    dropDownValue: Protocol.tcp,
+  );
+}
+
+Widget getDstAddrWidget() {
+  return Visibility(
+    visible: isFilter() || (isNat() && (isOutput() || isPrerouting() || isPostrouting())),
+    replacement: RuleDropDown(
+      displayClearButton: true,
+      label: 'Dst. Addresses',
+      onClear: () => _firewallController.dstInterface.value = null,
+      onDropDownChange: (e) {
+        if (isNat() && isInput()) {
+          _firewallController.srcInterface.value = e;
+        } else {
+          _firewallController.dstInterface.value = e;
+        }
+      },
+      dropDownItems: interfaceIpItems(),
+      dropDownValue: _firewallController.dstInterface.value,
+    ),
+    child: RuleInputText(
+      label: 'Dst. Address',
+      controller: _firewallController.dstAddressEditingController,
+      onNot: (e) => _firewallController.isNotDstAddr.value = e,
+      onDeactivate: () => _firewallController.dstAddressEditingController.clear(),
+      validator: (e) => _firewallController.validateIpAddress(e),
+    ),
+  );
+}
+
+Widget getSrcAddrWidget() {
+  return Visibility(
+    visible: isFilter() || (isNat() && (isInput() || isPrerouting() || isPostrouting())),
+    replacement: RuleDropDown(
+      displayClearButton: true,
+      label: 'Src. Addresses',
+      onClear: () => _firewallController.srcInterface.value = null,
+      onDropDownChange: (e) {
+        if (isNat() && isOutput()) {
+          _firewallController.dstInterface.value = e;
+        } else {
+          _firewallController.srcInterface.value = e;
+        }
+      },
+      dropDownItems: interfaceIpItems(),
+      dropDownValue: _firewallController.srcInterface.value,
+    ),
+    child: RuleInputText(
+      label: 'Src. Address',
+      controller: _firewallController.srcAddressEditingController,
+      onNot: (e) => _firewallController.isNotSrcAddr.value = e,
+      onDeactivate: () => _firewallController.srcAddressEditingController.clear(),
+      validator: (e) => _firewallController.validateIpAddress(e),
+    ),
+  );
+}
+
 List<DropdownMenuItem<NatType>> getNatItems() {
   var hook = _firewallController.chainHook.value;
   if (hook == ChainHook.prerouting || hook == ChainHook.output) {
-    return NatType.values.where((e) => e == NatType.dnat).map((e) => DropdownMenuItem<NatType>(value: e, child: Text(e.name))).toList();
-  } else if ((hook == ChainHook.postrouting || hook == ChainHook.postrouting)) {
-    return NatType.values.where((e) => e == NatType.snat).map((e) => DropdownMenuItem<NatType>(value: e, child: Text(e.name))).toList();
+    return NatType.values.where((e) => e == NatType.dnat || e == NatType.redirect).map((e) => DropdownMenuItem<NatType>(value: e, child: Text(e.name))).toList();
+  } else if (hook == ChainHook.postrouting) {
+    return NatType.values.where((e) => e == NatType.snat || e == NatType.masquerade).map((e) => DropdownMenuItem<NatType>(value: e, child: Text(e.name))).toList();
   } else {
-    return NatType.values.where((e) => e == NatType.masquerade || e == NatType.redirect).map((e) => DropdownMenuItem<NatType>(value: e, child: Text(e.name))).toList();
+    return NatType.values.where((e) => e == NatType.snat).map((e) => DropdownMenuItem<NatType>(value: e, child: Text(e.name))).toList();
   }
 }
 
 List<DropdownMenuItem<dynamic>> interfaceItems() {
   return _networkController.ethernetList.map((e) => DropdownMenuItem<Ethernet>(value: e, child: Text(e.iface))).toList();
+}
+
+List<DropdownMenuItem<dynamic>> interfaceIpItems() {
+  return _networkController.ethernetList.where((e) => e.ip != null).map((e) => DropdownMenuItem<Ethernet>(value: e, child: Text(e.ip!))).toList();
 }
 
 List<DropdownMenuItem<dynamic>> chainItems() {
@@ -241,9 +342,29 @@ List<DropdownMenuItem<Reason>> rejectReasonItems() {
   var isTcp = _firewallController.protocol.value == Protocol.tcp;
   return Reason.values
       .where((e) {
-    if (!isTcp) return e != Reason.tcpReset;
-    return true;
-  })
+        if (!isTcp) return e != Reason.tcpReset;
+        return true;
+      })
       .map((e) => DropdownMenuItem<Reason>(value: e, child: Text(e.value.replaceAll('-', ' '))))
       .toList();
 }
+
+bool isPrerouting() => _firewallController.chainHook.value != null && _firewallController.chainHook.value == ChainHook.prerouting;
+
+bool isPostrouting() => _firewallController.chainHook.value != null && _firewallController.chainHook.value == ChainHook.postrouting;
+
+bool isInput() => _firewallController.chainHook.value != null && _firewallController.chainHook.value == ChainHook.input;
+
+bool isOutput() => _firewallController.chainHook.value != null && _firewallController.chainHook.value == ChainHook.output;
+
+bool isNat() => _firewallController.chainType.value != null && _firewallController.chainType.value == ChainType.nat;
+
+bool isFilter() => _firewallController.chainType.value != null && _firewallController.chainType.value == ChainType.filter;
+
+bool isDnat() => _firewallController.natType.value == NatType.dnat;
+
+bool isSnat() => _firewallController.natType.value == NatType.snat;
+
+bool isMasquerade() => _firewallController.natType.value == NatType.masquerade;
+
+bool isRedirect() => _firewallController.natType.value == NatType.redirect;

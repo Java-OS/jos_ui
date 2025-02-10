@@ -5,6 +5,7 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/firewall_controller.dart';
 import 'package:jos_ui/dialog/firewall/firewall_chain_dialog.dart';
 import 'package:jos_ui/model/firewall/chain.dart';
+import 'package:jos_ui/model/firewall/statement/nat_statement.dart';
 import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -131,6 +132,8 @@ class FirewallChainPageState extends State<FirewallChainPage> {
   }
 
   Future<void> gotoRulePage(FirewallChain chain) async {
+    _firewallController.chainHook.value = chain.hook;
+    _firewallController.chainType.value = chain.type;
     _firewallController.ruleFetch(chain).then((_) => Get.toNamed(Routes.firewallRules.routeName));
   }
 
