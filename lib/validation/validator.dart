@@ -11,4 +11,8 @@ mixin Validator {
   String? validatePortNumber(String? value) {
     return GetUtils.isNumericOnly(value!) ? null : 'Invalid port number';
   }
+
+  String? validateOnlyEnglishCharacters(String? value) {
+    return GetUtils.isAlphabetOnly(value!) ? null : 'Invalid port number';
+  }
 }

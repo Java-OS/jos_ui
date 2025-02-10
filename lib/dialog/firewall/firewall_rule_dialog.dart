@@ -11,6 +11,7 @@ import 'package:jos_ui/model/firewall/statement/nat_statement.dart';
 import 'package:jos_ui/model/firewall/statement/reject_statement.dart';
 import 'package:jos_ui/model/firewall/statement/verdict_statement.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
+import 'package:jos_ui/validation/validator.dart';
 import 'package:jos_ui/widget/rule_drop_down.dart';
 import 'package:jos_ui/widget/rule_input_text.dart';
 
@@ -71,6 +72,7 @@ Future<void> displayFirewallRuleFilterModal(bool isUpdate) async {
 Widget getCommentWidget() {
   return RuleInputText(
     label: 'Comment',
+    validator: (e) => _firewallController.validateOnlyEnglishCharacters(e),
     onDeactivate: () => _firewallController.commentEditingController.clear(),
     displayCheckBox: false,
     controller: _firewallController.commentEditingController,
@@ -81,6 +83,7 @@ Widget getLogPrefixWidget() {
   return RuleInputText(
     enable: _firewallController.logLevel.value != null,
     label: 'Log. Prefix',
+    validator: (e) => _firewallController.validateOnlyEnglishCharacters(e),
     onDeactivate: () => _firewallController.logPrefixEditingController.clear(),
     displayCheckBox: false,
     controller: _firewallController.logPrefixEditingController,
