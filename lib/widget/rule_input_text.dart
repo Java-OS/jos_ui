@@ -49,7 +49,7 @@ class _RuleInputTextState extends State<RuleInputText> {
       child: GestureDetector(
         onTap: () => setState(() => isActivated = !isActivated),
         child: Visibility(
-          visible: widget.enable && isActivated,
+          visible: (widget.enable && isActivated) || (widget.controller != null && widget.controller!.text.isNotEmpty),
           replacement: label(widget.label),
           child: Row(
             spacing: 8,

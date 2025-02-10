@@ -155,7 +155,7 @@ class FirewallController extends GetxController with Validator {
     await _apiService.callApi(Rpc.RPC_FIREWALL_RULE_LIST, parameters: reqParam, message: 'Failed to fetch rules').then((e) => e as List).then((e) => ruleList.value = e.map((item) => FirewallRule.fromMap(item, chain)).toList());
   }
 
-  Future<void> ruleAdd() async {
+  Future<void> ruleAddOrUpdate(bool isUpdate) async {
     if (!formKey.currentState!.validate()) return;
 
     // Expressions
@@ -199,6 +199,7 @@ class FirewallController extends GetxController with Validator {
 
     var reqParam = {
       'rule': {
+        'handle' : selectedRule.value?.handle,
         'family': selectedChain.value!.table.type.value,
         'table': selectedChain.value!.table.name,
         'chain': selectedChain.value!.name,
@@ -206,7 +207,7 @@ class FirewallController extends GetxController with Validator {
         'expr': list,
       }
     };
-    _apiService.callApi(Rpc.RPC_FIREWALL_RULE_ADD, parameters: reqParam, message: 'Failed to add rule').then((_) => ruleFetch(selectedChain.value!)).then((_) => Get.back()).then((_) => clear());
+    _apiService.callApi(isUpdate ? Rpc.RPC_FIREWALL_RULE_UPDATE : Rpc.RPC_FIREWALL_RULE_ADD, parameters: reqParam, message: 'Failed to add rule').then((_) => ruleFetch(selectedChain.value!)).then((_) => Get.back()).then((_) => clear());
   }
 
   Future<void> ruleDelete() async {
@@ -249,8 +250,5 @@ class FirewallController extends GetxController with Validator {
 
     /* chain parameters */
     tableType = FirewallTableType.inet.obs;
-    chainType = Rxn<ChainType>();
-    chainHook = Rxn<ChainHook>();
-    chainPolicy = Rxn<ChainPolicy>();
   }
 }

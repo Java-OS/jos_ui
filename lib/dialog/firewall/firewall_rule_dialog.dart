@@ -50,12 +50,10 @@ Future<void> displayFirewallRuleFilterModal(bool isUpdate) async {
                     getLogLevelWidget(),
                     getLogPrefixWidget(),
                     getCommentWidget(),
-                    SizedBox(height: 10),
                     Align(
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
-                        // onPressed: () => isUpdate ? _firewallController.chainUpdate() : _firewallController.chainAdd(),
-                        onPressed: () => _firewallController.ruleAdd(),
+                        onPressed: () => _firewallController.ruleAddOrUpdate(isUpdate),
                         child: Text(isUpdate ? 'Update' : 'Add'),
                       ),
                     ),
@@ -91,7 +89,8 @@ Widget getLogPrefixWidget() {
 
 Widget getLogLevelWidget() {
   return RuleDropDown(
-    displayClearButton: true,
+    active: _firewallController.logLevel.value != null,
+    displayClearButton: _firewallController.logLevel.value != null,
     label: 'Log. Level',
     onClear: () {
       _firewallController.logLevel.value = null;
@@ -110,14 +109,17 @@ Widget getPortChainWidget() {
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       enable: _firewallController.natType.value != NatType.masquerade,
       label: isSnat() ? 'From Port (0-65535)' : 'To Port (0-65535)',
-      onDeactivate: () => _firewallController.natToPortEditingController.clear(),
+      onDeactivate: () {
+        if (isRedirect()) _firewallController.natType.value = null;
+        _firewallController.natToPortEditingController.clear();
+      },
       displayCheckBox: false,
       controller: _firewallController.natToPortEditingController,
     ),
     child: RuleDropDown(
       enable: false,
       active: chainItems().isNotEmpty && (_firewallController.verdictType.value == VerdictType.goto || _firewallController.verdictType.value == VerdictType.jump),
-      displayClearButton: false,
+      displayClearButton: _firewallController.targetChain.value != null,
       label: 'Target Chain',
       onClear: () => _firewallController.targetChain.value = null,
       onDropDownChange: (e) => _firewallController.targetChain.value = e,
@@ -140,7 +142,7 @@ Widget getAddressRejectWidget() {
     child: RuleDropDown(
       enable: false,
       active: _firewallController.verdictType.value == VerdictType.reject,
-      displayClearButton: false,
+      displayClearButton: _firewallController.rejectReason.value != null,
       label: 'Reject with',
       onClear: () => _firewallController.rejectReason.value = null,
       onDropDownChange: (e) => _firewallController.rejectReason.value = e,
@@ -154,7 +156,8 @@ Widget getActionWidget() {
   return Visibility(
     visible: !isNat(),
     replacement: RuleDropDown(
-      displayClearButton: false,
+      required: true,
+      displayClearButton: _firewallController.natType.value != null,
       active: true,
       label: 'Action',
       onDropDownChange: (e) => _firewallController.natType.value = e,
@@ -162,7 +165,8 @@ Widget getActionWidget() {
       dropDownValue: _firewallController.natType.value,
     ),
     child: RuleDropDown(
-      displayClearButton: false,
+      required: true,
+      displayClearButton: _firewallController.verdictType.value != null,
       active: true,
       label: 'Action',
       onDropDownChange: (e) {
@@ -183,7 +187,8 @@ Widget getOutputInterfaceWidget() {
       label: _firewallController.dstInterface.value != null ? 'Out. Interface (${_firewallController.dstInterface.value!.iface})' : 'Out. Interface',
     ),
     child: RuleDropDown(
-      displayClearButton: true,
+      active: _firewallController.dstInterface.value != null,
+      displayClearButton: _firewallController.dstInterface.value != null,
       label: 'Out. Interface',
       onClear: () => _firewallController.dstInterface.value = null,
       onDropDownChange: (e) => _firewallController.dstInterface.value = e,
@@ -201,7 +206,8 @@ Widget getInputInterfaceWidget() {
       label: _firewallController.srcInterface.value != null ? 'In. Interface (${_firewallController.srcInterface.value!.iface})' : 'In. Interface',
     ),
     child: RuleDropDown(
-      displayClearButton: true,
+      active: _firewallController.srcInterface.value != null,
+      displayClearButton: _firewallController.srcInterface.value != null,
       label: 'In. Interface',
       onClear: () => _firewallController.srcInterface.value = null,
       onDropDownChange: (e) => _firewallController.srcInterface.value = e,
@@ -237,6 +243,7 @@ Widget getSrcPortWidget() {
 
 Widget getProtocolWidget() {
   return RuleDropDown<Protocol>(
+    active: _firewallController.protocol.value != null,
     onClear: () {
       _firewallController.protocol.value = null;
       _firewallController.rejectReason.value = null;
@@ -245,7 +252,7 @@ Widget getProtocolWidget() {
       _firewallController.srcPortEditingController.clear();
       _firewallController.dstPortEditingController.clear();
     },
-    displayClearButton: true,
+    displayClearButton: _firewallController.protocol.value != null,
     label: 'Protocol',
     onDropDownChange: (e) => _firewallController.protocol.value = e,
     dropDownItems: protocolItems(),
@@ -257,7 +264,7 @@ Widget getDstAddrWidget() {
   return Visibility(
     visible: isFilter() || (isNat() && (isOutput() || isPrerouting() || isPostrouting())),
     replacement: RuleDropDown(
-      displayClearButton: true,
+      displayClearButton: _firewallController.dstInterface.value != null,
       label: 'Dst. Addresses',
       onClear: () => _firewallController.dstInterface.value = null,
       onDropDownChange: (e) {
@@ -284,7 +291,7 @@ Widget getSrcAddrWidget() {
   return Visibility(
     visible: isFilter() || (isNat() && (isInput() || isPrerouting() || isPostrouting())),
     replacement: RuleDropDown(
-      displayClearButton: true,
+      displayClearButton: _firewallController.srcInterface.value != null,
       label: 'Src. Addresses',
       onClear: () => _firewallController.srcInterface.value = null,
       onDropDownChange: (e) {

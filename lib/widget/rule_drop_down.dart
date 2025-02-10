@@ -6,6 +6,7 @@ class RuleDropDown<T> extends StatefulWidget {
   final bool active;
   final bool displayClearButton;
   final bool enable;
+  final bool required;
 
   final List<DropdownMenuItem<T>> dropDownItems;
   final Function(dynamic) onDropDownChange;
@@ -22,6 +23,7 @@ class RuleDropDown<T> extends StatefulWidget {
     required this.dropDownValue,
     this.onClear,
     this.enable = true,
+    this.required = false,
   });
 
   @override
@@ -41,6 +43,7 @@ class _RuleDropDownState<T> extends State<RuleDropDown<T>> {
           visible: widget.active || isActivated,
           replacement: label(widget.label),
           child: DropDownMenu<T>(
+            requiredValue: widget.required,
             disableRadius: true,
             displayClearButton: widget.displayClearButton,
             label: widget.label,

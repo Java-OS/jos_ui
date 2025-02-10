@@ -29,13 +29,12 @@ class LogStatement implements Statement {
   LogStatement(this.level, this.prefix);
 
   factory LogStatement.fromMap(Map<String, dynamic> map) {
-    if (map['log'].containsKey('level')) {
-      return LogStatement(LogLevel.fromValue(map['log']['level']), '');
-    } else if (map['log'].containsKey('prefix')) {
-      return LogStatement(null, map['log']['prefix']);
-    } else {
-      return LogStatement(null, null);
-    }
+    bool hasLevel = map['log'].containsKey('level') ;
+    bool hasPrefix = map['log'].containsKey('prefix');
+    if (hasLevel && hasPrefix) return LogStatement(LogLevel.fromValue(map['log']['level']), map['log']['prefix']);
+    if (hasLevel) return LogStatement(LogLevel.fromValue(map['log']['level']), null);
+    if (hasPrefix) return LogStatement(null, map['log']['prefix']);
+    return LogStatement(null, null);
   }
 
   @override
@@ -68,10 +67,7 @@ class LogStatement implements Statement {
   @override
   Map<String, dynamic> toMap() {
     return {
-      'log' : {
-        'prefix': prefix,
-        'level' : level?.value
-      }
+      'log': {'prefix': prefix, 'level': level?.value}
     };
   }
 }

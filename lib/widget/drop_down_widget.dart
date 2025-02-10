@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jos_ui/validation/validator.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class DropDownMenu<T> extends StatefulWidget {
@@ -44,6 +45,7 @@ class _DropDownMenuState<T> extends State<DropDownMenu<T>> {
         DropdownButtonFormField<T>(
           style: TextStyle(fontSize: 12),
           hint: widget.hint,
+          validator: (value) => (widget.requiredValue && value == null) ? 'field required' : null,
           decoration: InputDecoration(
             labelText: widget.label,
             labelStyle: widget.labelStyle,
@@ -55,7 +57,7 @@ class _DropDownMenuState<T> extends State<DropDownMenu<T>> {
             border: OutlineInputBorder(borderRadius: getBorderRadius()),
           ),
           items: widget.disabled ? [] : widget.items,
-          value: (widget.requiredValue || isClearButtonVisible) ? widget.value : null,
+          value: (widget.requiredValue || widget.displayClearButton) ? widget.value : null,
           onChanged: widget.disabled ? null : (value) => callOnChangeFunction(value),
         ),
         Visibility(
