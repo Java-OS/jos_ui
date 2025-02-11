@@ -134,7 +134,7 @@ class FirewallChainPageState extends State<FirewallChainPage> {
   Future<void> gotoRulePage(FirewallChain chain) async {
     _firewallController.chainHook.value = chain.hook;
     _firewallController.chainType.value = chain.type;
-    _firewallController.ruleFetch(chain).then((_) => Get.toNamed(Routes.firewallRules.routeName,arguments: chain.hook!.name));
+    _firewallController.ruleFetch(chain).then((_) => Get.toNamed(Routes.firewallRules.routeName,arguments: [chain.table.name, chain.name]));
   }
 
   void updateOrder(int oldIndex, int newIndex) {

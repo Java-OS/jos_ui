@@ -17,7 +17,7 @@ import 'package:jos_ui/utils.dart';
 import 'package:jos_ui/widget/toast.dart';
 
 class RestClient {
-  static final JvmController jvmController = getx.Get.put(JvmController());
+  static final JvmController jvmController = Get.put(JvmController());
   static final _http = http.Client();
   static final _h5Proto = H5Proto.init();
 
@@ -99,7 +99,7 @@ class RestClient {
   static Future<Payload> rpc(Rpc rpc, {Map<String, dynamic>? parameters}) async {
     developer.log('Request call rpc: [$rpc] [$parameters] [${_baseRpcUrl()}]');
     var token = StorageService.getItem('token');
-    if (token == null) getx.Get.toNamed('/login');
+    if (token == null) Get.toNamed('/login');
     var headers = {'Authorization': 'Bearer $token'};
     developer.log('Header send: [$headers]');
 
@@ -123,7 +123,7 @@ class RestClient {
       } else if (statusCode == 204) {
         return await decodeResponsePayload(response);
       } else if (statusCode == 401) {
-        getx.Get.offAllNamed(Routes.base.routeName);
+        Get.offAllNamed(Routes.base.routeName);
       } else {
         var payload = await decodeResponsePayload(response);
         displayWarning(payload.metadata!.message!, timeout: 5);
@@ -199,7 +199,7 @@ class RestClient {
   static Future<FetchResponse> sse(String content) async {
     developer.log('Start SSE Connection');
     var token = StorageService.getItem('token');
-    if (token == null) getx.Get.toNamed('/login');
+    if (token == null) Get.toNamed('/login');
 
     var header = {
       'authorization': 'Bearer $token',
@@ -223,7 +223,7 @@ class RestClient {
   static Future<Payload> download(String path, String? password) async {
     developer.log('Download file: [$path]');
     var token = StorageService.getItem('token');
-    if (token == null) getx.Get.toNamed('/login');
+    if (token == null) Get.toNamed('/login');
     var headers = {'Authorization': 'Bearer $token'};
     developer.log('Header send: [$headers]');
 

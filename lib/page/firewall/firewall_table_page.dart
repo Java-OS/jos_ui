@@ -103,6 +103,6 @@ class FirewallTablePageState extends State<FirewallTablePage> {
   Future<void> gotoChainPage(FirewallTable table) async {
     _firewallController.tableHandle.value = table.handle;
     await _firewallController.chainFetch();
-    Get.toNamed(Routes.firewallChains.routeName,arguments: {'desc': [table.name]});
+    Get.toNamed(Routes.firewallChains.routeName,arguments: [table.name]);
   }
 }
