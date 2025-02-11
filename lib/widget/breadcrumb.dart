@@ -1,3 +1,4 @@
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
@@ -34,7 +35,10 @@ class Breadcrumb extends StatelessWidget {
   }
 
   BreadcrumbItem createBredCrumbItem(String path, int index) {
-    var text = Text(Routes.find(path).title, style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'cairo'));
+    var parts = path.split('/');
+    String title = '';
+    parts[parts.length - 1].split('-').map((e) => StringUtils.toPascalCase(e)).forEach((e) => title = '$title $e');
+    var text = Text(title, style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'cairo'));
     return BreadcrumbItem(text: text, action: () => navigator!.pushNamed(path), index: index);
   }
 }

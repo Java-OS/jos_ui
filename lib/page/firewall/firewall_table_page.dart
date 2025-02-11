@@ -44,7 +44,7 @@ class FirewallTablePageState extends State<FirewallTablePage> {
                 return Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: TileItem(
-                    onClick: () => gotoChainPage(table.handle!),
+                    onClick: () => gotoChainPage(table),
                     actions: SizedBox(
                       width: 100,
                       child: Row(
@@ -100,9 +100,9 @@ class FirewallTablePageState extends State<FirewallTablePage> {
     displayFirewallTableModal(true);
   }
 
-  Future<void> gotoChainPage(int tableHandle) async {
-    _firewallController.tableHandle.value = tableHandle;
+  Future<void> gotoChainPage(FirewallTable table) async {
+    _firewallController.tableHandle.value = table.handle;
     await _firewallController.chainFetch();
-    Get.toNamed(Routes.firewallChains.routeName);
+    Get.toNamed(Routes.firewallChains.routeName,arguments: {'desc': [table.name]});
   }
 }

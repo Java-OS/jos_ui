@@ -9,41 +9,36 @@ final navigatorKey = GlobalKey<NavigatorState>();
 final globalKey = GlobalKey();
 
 enum Routes {
-  base('/', 'Login'),
-  login('/login', 'LogIn'),
-  logout('/logout', 'Logout'),
-  dashboard('/dashboard', 'Dashboard'),
-  oci('/oci', 'OCI'),
-  ociContainers('/oci/containers', 'Containers'),
-  ociImages('/oci/images', 'Images'),
-  ociVolumes('/oci/volumes', 'Volumes'),
-  ociNetworks('/oci/networks', 'Networks'),
-  ociSettings('/oci/settings', 'Settings'),
-  setting('/system', 'System Settings'),
-  settingBasic('/system/basic', 'Basic'),
-  settingKernelModules('/system/kernel-modules', 'Kernel Modules'),
-  settingKernelParameters('/system/kernel-parameters', 'Kernel Parameters'),
-  settingsDateTime('/system/datetime', 'Date & Time'),
-  settingsEnvironments('/system/env', 'Environment Variables'),
-  settingsUsers('/system/user', 'Users'),
-  settingsBackup('/system/backup', 'Backup & Restore'),
-  network('/network', 'Network'),
-  networkInterfaces('/network/interfaces', 'Ethernets'),
-  networkNetworks('/network/networks', 'Networks'),
-  networkHosts('/network/hosts', 'Hosts'),
-  firewall('/firewall', 'Firewall'),
-  firewallTables('/firewall/tables', 'Tables'),
-  firewallChains('/firewall/tables/chains', 'Chains'),
-  firewallRules('/firewall/tables/chains/rules', 'Rules'),
-  filesystem('/filesystem', 'Filesystem'),
-  modules('/modules', 'Modules');
+  base('/'),
+  login('/login'),
+  logout('/logout'),
+  dashboard('/dashboard'),
+  oci('/oci'),
+  ociContainers('/oci/containers'),
+  ociImages('/oci/images'),
+  ociVolumes('/oci/volumes'),
+  ociNetworks('/oci/networks'),
+  ociSettings('/oci/settings'),
+  setting('/system'),
+  settingBasic('/system/basic'),
+  settingKernelModules('/system/kernel-modules'),
+  settingKernelParameters('/system/kernel-parameters'),
+  settingsDateTime('/system/date-time'),
+  settingsEnvironments('/system/environment-variable'),
+  settingsUsers('/system/user'),
+  settingsBackup('/system/backup-restore'),
+  network('/network'),
+  networkInterfaces('/network/interfaces'),
+  networkNetworks('/network/networks'),
+  networkHosts('/network/hosts'),
+  firewall('/firewall'),
+  firewallTables('/firewall/tables'),
+  firewallChains('/firewall/tables/chains'),
+  firewallRules('/firewall/tables/chains/rules'),
+  filesystem('/filesystem'),
+  modules('/modules');
 
   final String routeName;
-  final String title;
 
-  const Routes(this.routeName, this.title);
-
-  static Routes find(String routeName) {
-    return Routes.values.toList().firstWhere((e) => e.routeName == routeName);
-  }
+  const Routes(this.routeName);
 }
