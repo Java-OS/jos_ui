@@ -48,9 +48,10 @@ class Breadcrumb extends StatelessWidget {
     var parts = path.split('/');
     String title = '';
     parts[parts.length - 1].split('-').map((e) => StringUtils.toPascalCase(e)).forEach((e) => title = '$title $e');
-    if (description != null) title = '$title : $description';
+    // if (description != null && description.isNotEmpty) title = '$title : $description';
+    if (description != null && description.isNotEmpty) title = description;
     var text = Text(title, style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'cairo'));
-    return BreadcrumbItem(text: text, action: () => Get.toNamed(path,arguments: [description]), index: index);
+    return BreadcrumbItem(text: text, action: () => Get.offNamed(path,arguments: [description]), index: index);
   }
 }
 

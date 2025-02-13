@@ -36,6 +36,7 @@ enum Routes {
   firewallChains('/firewall/tables/chains'),
   firewallRules('/firewall/tables/chains/rules'),
   filesystem('/filesystem'),
+  directoryTree('/filesystem/directory'),
   modules('/modules');
 
   final String routeName;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page/dashboard_page.dart';
+import 'package:jos_ui/page/directory_tree_page.dart';
 import 'package:jos_ui/page/filesystem_page.dart';
 import 'package:jos_ui/page/firewall/firewall_chain_page.dart';
 import 'package:jos_ui/page/firewall/firewall_rule_page.dart';
@@ -30,11 +31,11 @@ import 'package:toastification/toastification.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   initializeTimeZones();
-  runApp(const MyApp());
+  runApp(const JosApplication());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class JosApplication extends StatelessWidget {
+  const JosApplication({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +80,7 @@ class MyApp extends StatelessWidget {
           GetPage(name: Routes.firewallChains.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: FirewallChainPage())),
           GetPage(name: Routes.firewallRules.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: FirewallRulePage())),
           GetPage(name: Routes.filesystem.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: FilesystemPage())),
+          GetPage(name: Routes.directoryTree.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: DirectoryTreePage())),
           GetPage(name: Routes.modules.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: ModulePage())),
           GetPage(name: Routes.ociContainers.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciContainersPage())),
           GetPage(name: Routes.ociImages.routeName, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciImagesPage())),

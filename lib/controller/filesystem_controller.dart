@@ -20,14 +20,11 @@ class FilesystemController extends GetxController {
   var mountOnStartUp = false.obs;
   var filesystemTree = Rxn<FilesystemTree>();
   var path = ''.obs;
-  var listPath = <String>[].obs;
+  var selectedItems = <String>[].obs;
 
   Future<void> fetchPartitions() async {
     developer.log('Fetch filesystems');
-    _apiService
-        .callApi(Rpc.RPC_FILESYSTEM_LIST, message: 'Failed to fetch filesystems')
-        .then((map) => map as List)
-        .then((list) => partitions.value = list.map((e) => PartitionInformation.fromJson(e)).toList());
+    _apiService.callApi(Rpc.RPC_FILESYSTEM_LIST, message: 'Failed to fetch filesystems').then((map) => map as List).then((list) => partitions.value = list.map((e) => PartitionInformation.fromJson(e)).toList());
   }
 
   void mount() async {
@@ -63,39 +60,9 @@ class FilesystemController extends GetxController {
 
   Future<void> fetchFilesystemTree(String rootPath) async {
     var reqParam = {'rootDir': rootPath};
-    _apiService.callApi(Rpc.RPC_FILESYSTEM_DIRECTORY_TREE, parameters: reqParam).then((map) {
-      var tree = FilesystemTree.fromMap(map);
-      if (filesystemTree.value == null) {
-        filesystemTree.value = tree;
-      } else {
-        if (filesystemTree.value!.fullPath == tree.fullPath) {
-          filesystemTree.value!.childs!.clear();
-          filesystemTree.value!.childs!.addAll(tree.childs!);
-        }
-        var foundedTree = walkToFindFilesystemTree(filesystemTree.value!, rootPath);
-        if (foundedTree != null && foundedTree.childs!.isEmpty) {
-          foundedTree.childs!.addAll(tree.childs!);
-        }
-      }
-    }).then((e) => filesystemTree.refresh());
-  }
-
-  FilesystemTree? walkToFindFilesystemTree(FilesystemTree tree, String absolutePath) {
-    if (tree.fullPath == absolutePath) {
-      return tree;
-    }
-    var dirList = tree.childs!.where((element) => !element.isFile).toList();
-    if (dirList.isEmpty) return null;
-    for (FilesystemTree child in dirList) {
-      if (child.fullPath == absolutePath) {
-        return child;
-      } else {
-        var w = walkToFindFilesystemTree(child, absolutePath);
-        if (w == null) continue;
-        return w;
-      }
-    }
-    return null;
+    var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_DIRECTORY_TREE, parameters: reqParam);
+    FilesystemTree tree = FilesystemTree.fromMap(map);
+      filesystemTree.value = tree;
   }
 
   Future<void> delete(String filePath) async {

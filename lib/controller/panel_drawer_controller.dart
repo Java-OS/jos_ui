@@ -60,7 +60,7 @@ class PanelDrawerController extends GetxController {
 
   void routeTo(String? path) {
     selectedItem.value = path!;
-    Get.toNamed(path);
+    Get.offNamed(path);
   }
 
   bool isExpanded() {

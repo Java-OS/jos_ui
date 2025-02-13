@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/filesystem.dart';
@@ -128,7 +129,8 @@ class _FilesystemPageState extends State<FilesystemPage> {
     }
   }
 
-  fetchTreeAndDisplay(PartitionInformation partition) {
-    _filesystemController.fetchFilesystemTree(partition.mountPoint).then((value) => displayFilesystemTree(true, false));
+  fetchTreeAndDisplay(PartitionInformation partition) async {
+    await _filesystemController.fetchFilesystemTree(partition.mountPoint).then((_) => Get.toNamed(Routes.directoryTree.routeName, arguments: [partition.label]));
+    // .then((value) => displayFilesystemTree(true, false));
   }
 }
