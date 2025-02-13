@@ -9,16 +9,27 @@ class Breadcrumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var args = Get.arguments != null ? (Get.arguments as List).reversed.toList() : [];
     var currentRoute = Get.currentRoute;
     var list = <BreadcrumbItem>[];
 
     String path = '/';
     var split = currentRoute.split('/');
-    for (int i = 0; i < split.length; i++) {
+    var length = split.length;
+    for (int i = 1; i < length; i++) {
       var value = split[i];
       if (value.isNotEmpty) {
         path = path + value;
-        list.add(createBredCrumbItem(path, i));
+        if (args.isNotEmpty) {
+          var x = split.length - i;
+          if (x <= args.length) {
+            list.add(createBredCrumbItem(path, i, args[x - 1]));
+          } else {
+            list.add(createBredCrumbItem(path, i, null));
+          }
+        } else {
+          list.add(createBredCrumbItem(path, i, null));
+        }
         path = '$path/';
       }
     }
@@ -33,16 +44,13 @@ class Breadcrumb extends StatelessWidget {
     );
   }
 
-  BreadcrumbItem createBredCrumbItem(String path, int index) {
-    var args = Get.arguments;
+  BreadcrumbItem createBredCrumbItem(String path, int index, String? description) {
     var parts = path.split('/');
     String title = '';
     parts[parts.length - 1].split('-').map((e) => StringUtils.toPascalCase(e)).forEach((e) => title = '$title $e');
-    if (args != null && (args as List).isNotEmpty && parts.length > 3) {
-      title = args[parts.length - 4];
-    }
+    if (description != null) title = '$title : $description';
     var text = Text(title, style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'cairo'));
-    return BreadcrumbItem(text: text, action: () => Get.toNamed(path,arguments: args), index: index);
+    return BreadcrumbItem(text: text, action: () => Get.toNamed(path,arguments: [description]), index: index);
   }
 }
 
