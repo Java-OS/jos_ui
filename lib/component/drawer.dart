@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/controller/panel_drawer_controller.dart';
+import 'package:jos_ui/controller/global/panel_drawer_controller.dart';
 
 class DrawerComponent extends StatelessWidget {
   DrawerComponent({super.key});
