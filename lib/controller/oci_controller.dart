@@ -6,6 +6,7 @@ import 'package:fetch_client/fetch_client.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/toast.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/container/container.dart';
 import 'package:jos_ui/model/container/container_image.dart';
@@ -23,7 +24,6 @@ import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/service/rest_client.dart';
-import 'package:jos_ui/widget/toast.dart';
 import 'package:xterm/core.dart';
 import 'package:xterm/ui.dart';
 

@@ -2,9 +2,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/component/tile_widget.dart';
 import 'package:jos_ui/controller/backup_controller.dart';
 import 'package:jos_ui/dialog/upload_download_dialog.dart';
-import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SettingsBackupPage extends StatefulWidget {

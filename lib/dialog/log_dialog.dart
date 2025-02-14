@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/char_button.dart';
+import 'package:jos_ui/component/drop_down_widget.dart';
+import 'package:jos_ui/component/tab_widget.dart';
+import 'package:jos_ui/component/text_field_box_widget.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/controller/log_controller.dart';
@@ -8,10 +12,6 @@ import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
-import 'package:jos_ui/widget/char_button.dart';
-import 'package:jos_ui/widget/drop_down_widget.dart';
-import 'package:jos_ui/widget/tab_widget.dart';
-import 'package:jos_ui/widget/text_field_box_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:xterm/ui.dart';
 

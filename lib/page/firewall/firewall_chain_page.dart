@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/component/tile_widget.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/firewall_controller.dart';
 import 'package:jos_ui/dialog/firewall/firewall_chain_dialog.dart';
 import 'package:jos_ui/model/firewall/chain.dart';
-import 'package:jos_ui/model/firewall/statement/nat_statement.dart';
-import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class FirewallChainPage extends StatefulWidget {
@@ -21,7 +20,7 @@ class FirewallChainPageState extends State<FirewallChainPage> {
 
   @override
   void initState() {
-    if (_firewallController.tableHandle.value == null) WidgetsBinding.instance.addPostFrameCallback((_) => Get.offAllNamed(Routes.firewallTables.routeName));
+    if (_firewallController.tableHandle.value == null) WidgetsBinding.instance.addPostFrameCallback((_) => Get.offAllNamed(Routes.firewallTables.path));
     super.initState();
   }
 
@@ -99,7 +98,8 @@ class FirewallChainPageState extends State<FirewallChainPage> {
                     ),
                   ),
                 );
-              }, onReorder: (int oldIndex, int newIndex) => updateOrder(oldIndex, newIndex),
+              },
+              onReorder: (int oldIndex, int newIndex) => updateOrder(oldIndex, newIndex),
             ),
           ),
         ),
@@ -115,7 +115,10 @@ class FirewallChainPageState extends State<FirewallChainPage> {
         borderRadius: BorderRadius.all(Radius.circular(3)),
         border: Border.all(color: Colors.black45, width: 0.1),
       ),
-      child: Text(text,style: TextStyle(color: Colors.black,fontSize: 12),),
+      child: Text(
+        text,
+        style: TextStyle(color: Colors.black, fontSize: 12),
+      ),
     );
   }
 
@@ -134,7 +137,7 @@ class FirewallChainPageState extends State<FirewallChainPage> {
   Future<void> gotoRulePage(FirewallChain chain) async {
     _firewallController.chainHook.value = chain.hook;
     _firewallController.chainType.value = chain.type;
-    _firewallController.ruleFetch(chain).then((_) => Get.toNamed(Routes.firewallRules.routeName,arguments: [chain.table.name, chain.name]));
+    _firewallController.ruleFetch(chain).then((_) => Get.toNamed(Routes.firewallRules.path, arguments: [chain.table.name, chain.name]));
   }
 
   void updateOrder(int oldIndex, int newIndex) {

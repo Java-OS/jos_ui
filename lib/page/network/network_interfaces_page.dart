@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/component/char_button.dart';
 import 'package:jos_ui/controller/network_controller.dart';
 import 'package:jos_ui/dialog/network_ethernet_dialog.dart';
 import 'package:jos_ui/dialog/network_routes_dialog.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
-import 'package:jos_ui/widget/char_button.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class NetworkInterfacesPage extends StatefulWidget {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/rule_drop_down.dart';
+import 'package:jos_ui/component/rule_input_text.dart';
 import 'package:jos_ui/controller/firewall_controller.dart';
 import 'package:jos_ui/controller/network_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
@@ -11,9 +13,6 @@ import 'package:jos_ui/model/firewall/statement/nat_statement.dart';
 import 'package:jos_ui/model/firewall/statement/reject_statement.dart';
 import 'package:jos_ui/model/firewall/statement/verdict_statement.dart';
 import 'package:jos_ui/model/network/ethernet.dart';
-import 'package:jos_ui/validation/validator.dart';
-import 'package:jos_ui/widget/rule_drop_down.dart';
-import 'package:jos_ui/widget/rule_input_text.dart';
 
 FirewallController _firewallController = Get.put(FirewallController());
 NetworkController _networkController = Get.put(NetworkController());

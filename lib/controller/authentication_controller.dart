@@ -3,10 +3,10 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/toast.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/service/rest_client.dart';
 import 'package:jos_ui/service/storage_service.dart';
-import 'package:jos_ui/widget/toast.dart';
 
 class AuthenticationController extends GetxController {
   final TextEditingController usernameEditingController = TextEditingController();
@@ -26,7 +26,7 @@ class AuthenticationController extends GetxController {
     developer.log('Login called');
     var success = await RestClient.login(usernameEditingController.text, passwordEditingController.text, captchaEditingController.text);
     if (success) {
-      Get.offNamed(Routes.dashboard.routeName);
+      Get.offNamed(Routes.dashboard.path);
     } else {
       displayError('Login failed');
       requestPublicKey();
@@ -38,7 +38,7 @@ class AuthenticationController extends GetxController {
   void logout() {
     developer.log('Logout called');
     StorageService.removeItem('token');
-    Get.offAllNamed(Routes.login.routeName);
+    Get.offAllNamed(Routes.login.path);
   }
 
   void clean() {

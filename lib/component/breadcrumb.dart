@@ -1,6 +1,7 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/constant.dart';
 
 class Breadcrumb extends StatelessWidget {
   final double offset;
@@ -51,7 +52,11 @@ class Breadcrumb extends StatelessWidget {
     // if (description != null && description.isNotEmpty) title = '$title : $description';
     if (description != null && description.isNotEmpty) title = description;
     var text = Text(title, style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'cairo'));
-    return BreadcrumbItem(text: text, action: () => Get.offNamed(path,arguments: [description]), index: index);
+    return BreadcrumbItem(text: text, action: () => goto(path, description), index: index);
+  }
+
+  void goto(String path, String? description) {
+    Routes.isExists(path) ? Get.offNamed(path, arguments: [description]) : null;
   }
 }
 
@@ -63,10 +68,18 @@ class BreadcrumbItem extends StatelessWidget {
   final Text text;
   Color color;
   bool _isFirst = false;
-  final Function action;
+  final Function? action;
   final int index;
 
-  BreadcrumbItem({super.key, this.height = 40, this.offset = 0, required this.text, this.color = Colors.blueAccent, required this.action, required this.index});
+  BreadcrumbItem({
+    super.key,
+    this.height = 40,
+    this.offset = 0,
+    required this.text,
+    this.color = Colors.blueAccent,
+    this.action,
+    required this.index,
+  });
 
   set isFirst(bool value) {
     _isFirst = value;
@@ -82,7 +95,7 @@ class BreadcrumbItem extends StatelessWidget {
           // width: width,
           height: height,
           child: ElevatedButton(
-            onPressed: _isFirst ? null : () => action(),
+            onPressed: action != null ? () => action!() : null,
             style: ElevatedButton.styleFrom(
               side: BorderSide.none,
               disabledBackgroundColor: color,

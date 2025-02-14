@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/component/tile_widget.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/firewall_controller.dart';
 import 'package:jos_ui/controller/network_controller.dart';
@@ -14,7 +15,6 @@ import 'package:jos_ui/model/firewall/statement/log_statement.dart';
 import 'package:jos_ui/model/firewall/statement/nat_statement.dart';
 import 'package:jos_ui/model/firewall/statement/reject_statement.dart';
 import 'package:jos_ui/model/firewall/statement/verdict_statement.dart';
-import 'package:jos_ui/widget/tile_widget.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class FirewallRulePage extends StatefulWidget {
@@ -33,7 +33,7 @@ class FirewallRulePageState extends State<FirewallRulePage> {
 
   @override
   void initState() {
-    if (_firewallController.tableHandle.value == null) WidgetsBinding.instance.addPostFrameCallback((_) => Get.offAllNamed(Routes.firewallTables.routeName));
+    if (_firewallController.tableHandle.value == null) WidgetsBinding.instance.addPostFrameCallback((_) => Get.offAllNamed(Routes.firewallTables.path));
     super.initState();
   }
 

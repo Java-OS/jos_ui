@@ -13,13 +13,11 @@ enum Routes {
   login('/login'),
   logout('/logout'),
   dashboard('/dashboard'),
-  oci('/oci'),
   ociContainers('/oci/containers'),
   ociImages('/oci/images'),
   ociVolumes('/oci/volumes'),
   ociNetworks('/oci/networks'),
   ociSettings('/oci/settings'),
-  setting('/system'),
   settingBasic('/system/basic'),
   settingKernelModules('/system/kernel-modules'),
   settingKernelParameters('/system/kernel-parameters'),
@@ -27,19 +25,21 @@ enum Routes {
   settingsEnvironments('/system/environment-variable'),
   settingsUsers('/system/user'),
   settingsBackup('/system/backup-restore'),
-  network('/network'),
   networkInterfaces('/network/interfaces'),
   networkNetworks('/network/networks'),
   networkHosts('/network/hosts'),
-  firewall('/firewall'),
-  firewallTables('/firewall/tables'),
-  firewallChains('/firewall/tables/chains'),
-  firewallRules('/firewall/tables/chains/rules'),
+  firewallTables('/firewall'),
+  firewallChains('/firewall/chains'),
+  firewallRules('/firewall/chains/rules'),
   filesystem('/filesystem'),
   directoryTree('/filesystem/directory'),
   modules('/modules');
 
-  final String routeName;
+  final String path;
 
-  const Routes(this.routeName);
+  const Routes(this.path);
+
+  static bool isExists(String path) {
+    return Routes.values.any((e) => e.path == path);
+  }
 }

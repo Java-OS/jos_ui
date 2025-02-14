@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jos_ui/widget/drop_down_widget.dart';
+import 'package:jos_ui/component/drop_down_widget.dart';
 
 class RuleDropDown<T> extends StatefulWidget {
   final String label;

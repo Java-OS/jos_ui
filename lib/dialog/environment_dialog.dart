@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/text_field_box_widget.dart';
 import 'package:jos_ui/controller/environment_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/utils.dart';
-import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 EnvironmentController _environmentController = Get.put(EnvironmentController());
 

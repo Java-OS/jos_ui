@@ -8,13 +8,13 @@ import 'package:fetch_client/fetch_client.dart';
 import 'package:get/get.dart' as getx;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:jos_ui/component/toast.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/service/h5proto.dart';
 import 'package:jos_ui/service/storage_service.dart';
 import 'package:jos_ui/utils.dart';
-import 'package:jos_ui/widget/toast.dart';
 
 class RestClient {
   static final JvmController jvmController = Get.put(JvmController());
@@ -123,7 +123,7 @@ class RestClient {
       } else if (statusCode == 204) {
         return await decodeResponsePayload(response);
       } else if (statusCode == 401) {
-        Get.offAllNamed(Routes.base.routeName);
+        Get.offAllNamed(Routes.base.path);
       } else {
         var payload = await decodeResponsePayload(response);
         displayWarning(payload.metadata!.message!, timeout: 5);

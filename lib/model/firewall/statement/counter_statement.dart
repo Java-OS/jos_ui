@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
-import 'package:jos_ui/widget/key_value.dart';
+import 'package:jos_ui/component/key_value.dart';
 
 class CounterStatement implements Statement {
   final int packets;

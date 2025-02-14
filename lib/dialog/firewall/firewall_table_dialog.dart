@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/text_field_box_widget.dart';
 import 'package:jos_ui/controller/firewall_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
-import 'package:jos_ui/model/firewall/table.dart';
-import 'package:jos_ui/widget/text_field_box_widget.dart';
-
-import '../../widget/drop_down_widget.dart';
 
 FirewallController _firewallController = Get.put(FirewallController());
 

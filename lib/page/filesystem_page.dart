@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/bar_chart.dart';
 import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/component/char_button.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/filesystem.dart';
-import 'package:jos_ui/widget/bar_chart.dart';
-import 'package:jos_ui/widget/char_button.dart';
 
 class FilesystemPage extends StatefulWidget {
   const FilesystemPage({super.key});
@@ -130,7 +130,7 @@ class _FilesystemPageState extends State<FilesystemPage> {
   }
 
   fetchTreeAndDisplay(PartitionInformation partition) async {
-    await _filesystemController.fetchFilesystemTree(partition.mountPoint).then((_) => Get.toNamed(Routes.directoryTree.routeName, arguments: [partition.label]));
+    await _filesystemController.fetchFilesystemTree(partition.mountPoint).then((_) => Get.toNamed(Routes.directoryTree.path, arguments: [partition.label]));
     // .then((value) => displayFilesystemTree(true, false));
   }
 }

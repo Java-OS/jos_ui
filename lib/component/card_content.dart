@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/service/api_service.dart';
-import 'package:jos_ui/widget/breadcrumb.dart';
+import 'package:jos_ui/component/breadcrumb.dart';
 
 class CardContent extends StatelessWidget {
   final Widget child;

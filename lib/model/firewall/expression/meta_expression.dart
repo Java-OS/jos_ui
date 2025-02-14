@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:jos_ui/model/firewall/rule.dart';
-import 'package:jos_ui/widget/key_value.dart';
+import 'package:jos_ui/component/key_value.dart';
 
 enum MetaField {
   l4proto('l4proto'),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/text_field_box_widget.dart';
 import 'package:jos_ui/controller/kernel_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
-import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 final _kernelController = Get.put(KernelController());
 

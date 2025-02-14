@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/component/directory_path.dart';
+import 'package:jos_ui/component/file_view.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
-import 'package:jos_ui/widget/file_view.dart';
-import 'package:jos_ui/widget/text_field_box_widget.dart';
-
-import 'dart:developer' as developer;
 
 class DirectoryTreePage extends StatefulWidget {
   const DirectoryTreePage({super.key});
@@ -21,7 +19,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
 
   @override
   void initState() {
-    if (_filesystemController.filesystemTree.value == null) WidgetsBinding.instance.addPostFrameCallback((_) => Get.offAllNamed(Routes.filesystem.routeName));
+    if (_filesystemController.filesystemTree.value == null) WidgetsBinding.instance.addPostFrameCallback((_) => Get.offAllNamed(Routes.filesystem.path));
     super.initState();
   }
 
@@ -31,17 +29,17 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
       child: Expanded(
         child: SizedBox(
           width: double.infinity,
-          child: Column(
-            spacing: 4,
-            children: [
-              Container(
-                height: 30,
-                width: double.infinity,
-                decoration: BoxDecoration(border: Border.all(color: Colors.black12, width: 1)),
-                child: TextFieldBox(),
-              ),
-              Obx(
-                () => Expanded(
+          child: Obx(
+            () => Column(
+              spacing: 4,
+              children: [
+                if (hasDirectoryPath())
+                  DirectoryPath(
+                    path: _filesystemController.directoryPath.value,
+                    onClick: (e) => enterFolder(e),
+                  ),
+                SizedBox(height: 2),
+                Expanded(
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(border: Border.all(color: Colors.black12, width: 1)),
@@ -50,6 +48,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
                       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                         maxCrossAxisExtent: 150, // Maximum width of each item
                         mainAxisSpacing: 8, // Spacing between rows
+                        crossAxisSpacing: 8,
                         childAspectRatio: 1, // Aspect ratio of items (width/height)
                       ),
                       itemCount: _filesystemController.filesystemTree.value!.childs!.length, // Add this line
@@ -57,30 +56,34 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
                         var child = _filesystemController.filesystemTree.value!.childs![index];
                         return FileView(
                           filesystemTree: child,
-                          onDoubleClick: () => enterFolder(child),
+                          onDoubleClick: child.isFile ? null : () => enterFolder(child.fullPath),
                           onSelect: () => selectItem(child),
+                          onDeselect: () => deselectItem(child),
                         );
                       },
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
+  bool hasDirectoryPath() => _filesystemController.directoryPath.isNotEmpty;
+
   void selectItem(FilesystemTree fst) => _filesystemController.selectedItems.add(fst.fullPath);
+
+  void deselectItem(FilesystemTree fst) => _filesystemController.selectedItems.remove(fst.fullPath);
 
   bool isSelected(FilesystemTree fst) => _filesystemController.selectedItems.contains(fst.fullPath);
 
-  void enterFolder(FilesystemTree fst) {
-    if (!fst.isFile) {
-      _filesystemController.fetchFilesystemTree(fst.fullPath);
-      _filesystemController.selectedItems.clear();
-    }
+  void enterFolder(String fullPath) {
+    _filesystemController.directoryPath.value = fullPath;
+    _filesystemController.fetchFilesystemTree(fullPath);
+    _filesystemController.selectedItems.clear();
   }
 
   @override

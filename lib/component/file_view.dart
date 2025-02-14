@@ -28,11 +28,8 @@ class _FileViewState extends State<FileView> {
     return GestureDetector(
       onTap: () => setState(() {
         isSelected = !isSelected;
-        if (isSelected) {
-          widget.onSelect!();
-        } else {
-          widget.onDeselect!();
-        }
+        if (isSelected && widget.onSelect != null) widget.onSelect!();
+        if (!isSelected && widget.onDeselect != null) widget.onDeselect!();
       }),
       onDoubleTap: widget.onDoubleClick != null ? () => widget.onDoubleClick!() : null,
       child: Column(

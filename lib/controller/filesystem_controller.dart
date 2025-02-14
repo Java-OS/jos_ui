@@ -21,6 +21,7 @@ class FilesystemController extends GetxController {
   var filesystemTree = Rxn<FilesystemTree>();
   var path = ''.obs;
   var selectedItems = <String>[].obs;
+  var directoryPath = ''.obs;
 
   Future<void> fetchPartitions() async {
     developer.log('Fetch filesystems');
@@ -93,5 +94,6 @@ class FilesystemController extends GetxController {
     mountPointEditingController.clear();
     filesystemTypeEditingController.clear();
     filesystemTree = Rxn<FilesystemTree>();
+    directoryPath = ''.obs;
   }
 }

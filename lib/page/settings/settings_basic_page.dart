@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/component/text_field_box_widget.dart';
 import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/dialog/system_dialog.dart';
-import 'package:jos_ui/widget/text_field_box_widget.dart';
 
 class SettingsBasicPage extends StatefulWidget {
   const SettingsBasicPage({super.key});
