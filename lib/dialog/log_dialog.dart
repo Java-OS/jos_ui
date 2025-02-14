@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/char_button.dart';
-import 'package:jos_ui/component/drop_down_widget.dart';
-import 'package:jos_ui/component/tab_widget.dart';
-import 'package:jos_ui/component/text_field_box_widget.dart';
+import 'package:jos_ui/component/drop_down.dart';
+import 'package:jos_ui/component/tab.dart';
+import 'package:jos_ui/component/text_field_box.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/controller/log_controller.dart';

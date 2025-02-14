@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
-import 'package:jos_ui/component/text_field_box_widget.dart';
+import 'package:jos_ui/component/text_field_box.dart';
 import 'package:jos_ui/component/toast.dart';
 import 'package:jos_ui/controller/date_time_controller.dart';
 import 'package:searchfield/searchfield.dart';

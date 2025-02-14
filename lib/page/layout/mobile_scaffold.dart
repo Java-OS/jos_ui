@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jos_ui/component/drawer_component.dart';
+import 'package:jos_ui/component/drawer.dart';
 
 class MobileScaffold extends StatefulWidget {
   final Widget content;

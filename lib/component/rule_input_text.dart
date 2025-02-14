@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jos_ui/component/text_field_box_widget.dart';
+import 'package:jos_ui/component/text_field_box.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class RuleInputText extends StatefulWidget {

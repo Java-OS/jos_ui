@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/drop_down_widget.dart';
-import 'package:jos_ui/component/tab_widget.dart';
-import 'package:jos_ui/component/text_field_box_widget.dart';
+import 'package:jos_ui/component/drop_down.dart';
+import 'package:jos_ui/component/tab.dart';
+import 'package:jos_ui/component/text_field_box.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/network_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
