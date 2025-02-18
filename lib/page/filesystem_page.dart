@@ -130,7 +130,8 @@ class _FilesystemPageState extends State<FilesystemPage> {
   }
 
   fetchTreeAndDisplay(PartitionInformation partition) async {
-    await _filesystemController.fetchFilesystemTree(partition.mountPoint).then((_) => Get.toNamed(Routes.directoryTree.path, arguments: [partition.label]));
+    _filesystemController.directoryPath.value = partition.mountPoint;
+    await _filesystemController.fetchFilesystemTree(partition.mountPoint).then((_) => Get.toNamed(Routes.directoryTree.path));
     // .then((value) => displayFilesystemTree(true, false));
   }
 }

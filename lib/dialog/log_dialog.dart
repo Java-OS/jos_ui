@@ -287,7 +287,7 @@ List<DataRow> _getLogInfoRows(String type, BuildContext context) {
 }
 
 fetchTreeAndDisplay(String package) {
-  _filesystemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(false, true));
+  // _filesystemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(false, true));
 }
 
 Future<void> displayFileLogAppender(LogInfo? logInfo) async {

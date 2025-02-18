@@ -6,6 +6,7 @@ class FileView extends StatefulWidget {
   final Function? onDoubleClick;
   final Function? onSelect;
   final Function? onDeselect;
+  final bool isSelected;
 
   const FileView({
     super.key,
@@ -13,6 +14,7 @@ class FileView extends StatefulWidget {
     this.onSelect,
     this.onDeselect,
     this.onDoubleClick,
+    this.isSelected = false,
   });
 
   @override
@@ -21,16 +23,14 @@ class FileView extends StatefulWidget {
 
 class _FileViewState extends State<FileView> {
   bool onHover = false;
-  bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => setState(() {
-        isSelected = !isSelected;
-        if (isSelected && widget.onSelect != null) widget.onSelect!();
-        if (!isSelected && widget.onDeselect != null) widget.onDeselect!();
-      }),
+      onTap: () {
+        if (widget.onSelect != null && !widget.isSelected) widget.onSelect!();
+        if (widget.onDeselect != null && widget.isSelected) widget.onDeselect!();
+      },
       onDoubleTap: widget.onDoubleClick != null ? () => widget.onDoubleClick!() : null,
       child: Column(
         children: [
@@ -45,11 +45,11 @@ class _FileViewState extends State<FileView> {
               decoration: BoxDecoration(
                 color: onHover
                     ? Color.fromARGB(50, 171, 190, 204)
-                    : isSelected
+                    : widget.isSelected
                         ? Color.fromARGB(120, 171, 190, 204)
                         : null,
                 border: Border.all(
-                  color: (onHover || isSelected) ? Colors.grey : Colors.transparent,
+                  color: (onHover || widget.isSelected) ? Colors.grey : Colors.transparent,
                   width: 1,
                 ),
               ),

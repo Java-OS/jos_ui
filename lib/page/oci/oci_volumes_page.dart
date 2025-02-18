@@ -65,6 +65,6 @@ class _OciImagesPageState extends State<OciVolumesPage> {
   }
 
   fetchTreeAndDisplay(String path) {
-    _filesystemController.fetchFilesystemTree(path).then((value) => displayFilesystemTree(true, true));
+    // _filesystemController.fetchFilesystemTree(path).then((value) => displayFilesystemTree(true, true));
   }
 }

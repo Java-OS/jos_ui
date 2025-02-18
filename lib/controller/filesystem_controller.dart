@@ -63,20 +63,25 @@ class FilesystemController extends GetxController {
     var reqParam = {'rootDir': rootPath};
     var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_DIRECTORY_TREE, parameters: reqParam);
     FilesystemTree tree = FilesystemTree.fromMap(map);
-      filesystemTree.value = tree;
+    filesystemTree.value = tree;
   }
 
-  Future<void> delete(String filePath) async {
-    developer.log('Delete file $filePath');
-    var reqParam = {'path': filePath};
-    _apiService.callApi(Rpc.RPC_FILESYSTEM_DELETE_FILE, parameters: reqParam, message: 'Failed to delete $filePath');
+  Future<void> delete() async {
+    developer.log('Delete file $selectedItems');
+    var reqParam = {'paths': selectedItems};
+    var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_DELETE_FILE, parameters: reqParam);
+    FilesystemTree tree = FilesystemTree.fromMap(map);
+    filesystemTree.value = tree;
+    selectedItems.clear();
   }
 
   Future<void> createDir(String basePath) async {
     var path = newFolderEditingController.text;
     developer.log('Create new folder $basePath/$path');
     var reqParam = {'path': '$basePath/$path'};
-    _apiService.callApi(Rpc.RPC_FILESYSTEM_CREATE_DIRECTORY, parameters: reqParam, message: 'Failed to create new folder $path').then((e) => newFolderEditingController.clear());
+    _apiService.callApi(Rpc.RPC_FILESYSTEM_CREATE_DIRECTORY, parameters: reqParam, message: 'Failed to create new folder $path');
+    fetchFilesystemTree(directoryPath.value);
+    newFolderEditingController.clear();
   }
 
   void extractArchive(String path) async {

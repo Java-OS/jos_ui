@@ -27,6 +27,7 @@ class CardContent extends StatelessWidget {
                 children: [
                   Breadcrumb(),
                   Row(
+                    spacing: 4,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: controllers ?? [SizedBox.shrink()],
                   ),

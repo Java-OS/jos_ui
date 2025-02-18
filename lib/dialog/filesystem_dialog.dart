@@ -8,11 +8,11 @@ import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
 import 'package:jos_ui/service/rest_client.dart';
-import 'package:jos_ui/utils.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-var _systemController = Get.put(SystemController());
 var _filesystemController = Get.put(FilesystemController());
+
+final _verticalController = ScrollController();
+final _horizontalController = ScrollController();
 
 Future<void> displayMountFilesystemModal() async {
   showDialog(
@@ -57,131 +57,6 @@ Future<void> displayMountFilesystemModal() async {
   );
 }
 
-Future<void> displayFilesystemTree(bool enableMakeDirectory, bool enableUploadFiles) async {
-  var filesystemTree = _filesystemController.filesystemTree;
-  var basePath = filesystemTree.value!.fullPath;
-  var treeController = TreeController<FilesystemTree>(roots: filesystemTree.value!.childs ?? [], childrenProvider: (FilesystemTree node) => node.childs ?? []);
-  showDialog(
-    context: Get.context!,
-    builder: (BuildContext context) {
-      return SimpleDialog(
-        title: getModalHeaderAdvanced(
-          title: 'Filesystem directory tree',
-          actionButtons: [
-            Visibility(
-              visible: enableMakeDirectory,
-              child: IconButton(
-                onPressed: () => addFolderDialog(basePath, basePath, treeController),
-                padding: EdgeInsets.zero,
-                splashRadius: 10,
-                icon: Icon(MdiIcons.folderPlusOutline, size: 16, color: Colors.white),
-              ),
-            ),
-            Visibility(
-              visible: enableUploadFiles,
-              child: IconButton(
-                onPressed: () => uploadFile(basePath, treeController),
-                padding: EdgeInsets.zero,
-                splashRadius: 10,
-                icon: Icon(MdiIcons.uploadOutline, size: 16, color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        contentPadding: EdgeInsets.all(14),
-        titlePadding: EdgeInsets.zero,
-        children: [
-          SizedBox(
-            width: 600,
-            height: 300,
-            child: AnimatedTreeView(
-              treeController: treeController,
-              nodeBuilder: (BuildContext context, TreeEntry<FilesystemTree> entry) {
-                _systemController.dateTimeZone;
-                var nodePath = entry.node.fullPath;
-                var isFile = entry.node.isFile;
-                return InkWell(
-                  onTap: () {
-                    if (!entry.node.isFile) {
-                      _filesystemController.fetchFilesystemTree(entry.node.fullPath);
-                      treeController.toggleExpansion(entry.node);
-                    }
-                  },
-                  child: TreeIndentation(
-                    entry: entry,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            FolderButton(isOpen: !entry.node.isFile ? entry.isExpanded : null),
-                            Text(truncate(entry.node.name), style: TextStyle(fontSize: 12)),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Visibility(
-                              visible: isFile,
-                              child: IconButton(
-                                onPressed: () => _filesystemController.download(nodePath),
-                                splashRadius: 16,
-                                icon: Icon(
-                                  MdiIcons.download,
-                                  color: Colors.black,
-                                  size: 16,
-                                ),
-                              ),
-                            ),
-                            Visibility(
-                              visible: !isFile,
-                              child: IconButton(
-                                onPressed: () => addFolderDialog(basePath, nodePath, treeController),
-                                splashRadius: 16,
-                                icon: Icon(
-                                  MdiIcons.folderPlusOutline,
-                                  color: Colors.black,
-                                  size: 16,
-                                ),
-                              ),
-                            ),
-                            Visibility(
-                              visible: !isFile,
-                              child: IconButton(
-                                onPressed: () => uploadFile(nodePath, treeController),
-                                padding: EdgeInsets.zero,
-                                splashRadius: 16,
-                                icon: Icon(
-                                  MdiIcons.uploadOutline,
-                                  size: 16,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () => deleteConfirmationDialog(basePath, nodePath, treeController),
-                              splashRadius: 16,
-                              icon: Icon(
-                                MdiIcons.trashCanOutline,
-                                color: Colors.black,
-                                size: 16,
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      );
-    },
-  ).then((value) => _filesystemController.clear());
-}
-
 Future<void> uploadFile(String basePath, TreeController<FilesystemTree> treeController) async {
   var picked = await FilePicker.platform.pickFiles();
   if (picked != null) {
@@ -193,7 +68,7 @@ Future<void> uploadFile(String basePath, TreeController<FilesystemTree> treeCont
   }
 }
 
-Future<void> addFolderDialog(String basePath, String path, TreeController treeController) async {
+Future<void> addFolderDialog() async {
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
@@ -212,8 +87,7 @@ Future<void> addFolderDialog(String basePath, String path, TreeController treeCo
               ElevatedButton(
                 child: Text('Confirm'),
                 onPressed: () async {
-                  await _filesystemController.createDir(path);
-                  await _filesystemController.fetchFilesystemTree(basePath).then((_) => treeController.rebuild());
+                  await _filesystemController.createDir(_filesystemController.directoryPath.value);
                   Get.back();
                 },
               )
@@ -225,8 +99,8 @@ Future<void> addFolderDialog(String basePath, String path, TreeController treeCo
   );
 }
 
-Future<void> deleteConfirmationDialog(String basePath, String path, TreeController treeController) async {
-  var displayPath = path.replaceAll(basePath, '');
+Future<void> deleteConfirmationDialog() async {
+  var list = _filesystemController.selectedItems.map((e) => Text(e, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12))).toList();
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
@@ -236,35 +110,56 @@ Future<void> deleteConfirmationDialog(String basePath, String path, TreeControll
         contentPadding: EdgeInsets.all(14),
         titlePadding: EdgeInsets.zero,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Text('You want to delete: '),
+          Container(
+            constraints: BoxConstraints(maxHeight: 300, maxWidth: 280),
+            decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+            child: Scrollbar(
+              controller: _horizontalController,
+              thumbVisibility: true,
+              trackVisibility: true,
+              child: SingleChildScrollView(
+                controller: _horizontalController,
+                scrollDirection: Axis.horizontal,
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Scrollbar(
+                  controller: _verticalController,
+                  thumbVisibility: true,
+                  trackVisibility: true,
+                  child: SingleChildScrollView(
+                    controller: _verticalController,
+                    scrollDirection: Axis.vertical,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: list,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Text('Are you sure ?'),
+          SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Row(children: [Text('You want to delete: '), Text(displayPath, style: TextStyle(fontWeight: FontWeight.bold))]),
-              SizedBox(height: 8),
-              Text('Are you sure ?'),
-              SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    child: Text('Confirm'),
-                    onPressed: () async {
-                      await _filesystemController.delete(path);
-                      await _filesystemController.fetchFilesystemTree(basePath).then((_) => treeController.rebuild());
-                      Get.back();
-                    },
-                  ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    child: Text('Cancel'),
-                    onPressed: () => Get.back(),
-                  ),
-                ],
-              )
+              ElevatedButton(
+                child: Text('Confirm'),
+                onPressed: () async {
+                  await _filesystemController.delete();
+                  Get.back();
+                },
+              ),
+              SizedBox(width: 8),
+              ElevatedButton(
+                child: Text('Cancel'),
+                onPressed: () => Get.back(),
+              ),
             ],
-          )
+          ),
         ],
       );
     },

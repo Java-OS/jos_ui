@@ -16,11 +16,12 @@ class DirectoryPath extends StatelessWidget {
   Widget build(BuildContext context) {
     var list = <BreadcrumbItem>[];
     var pathItems = path.split('/').where((e) => e.isNotEmpty).toList();
+    pathItems.insert(0, '/');
+
     String p = '';
     for (var i = 0; i < pathItems.length; i++) {
       p = '$p/${pathItems[i]}';
-      var bc = createBredCrumbItem(pathItems[i], p, i);
-      list.add(bc);
+      list.add(createBredCrumbItem(pathItems[i], p, i));
     }
 
     list[0].isFirst = true;
@@ -64,7 +65,7 @@ class BreadcrumbItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Transform.translate(
-      offset: _isFirst ? Offset(0, 0) : Offset((-15 * (index)) as double, 0),
+      offset: _isFirst ? Offset(0, 0) : Offset((-10 * (index)) as double, 0),
       child: ClipPath(
         clipper: _isFirst ? _StartClipper() : _MiddleClipper(),
         child: SizedBox(
@@ -80,7 +81,7 @@ class BreadcrumbItem extends StatelessWidget {
               padding: EdgeInsets.zero,
             ),
             child: Padding(
-              padding: EdgeInsets.only(left: !_isFirst ? 15 : 20.0, right: _isFirst ? 25 : 20.0),
+              padding: EdgeInsets.only(left: 20.0, right: 20.0),
               child: text,
             ),
           ),
@@ -94,10 +95,11 @@ class _StartClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
-    double triangleWidth = 15;
+    double triangleWidth = 10;
 
     path.moveTo(0, 0);
-    path.lineTo(size.width, 0);
+    path.lineTo(size.width - triangleWidth, 0);
+    path.lineTo(size.width, size.height / 2);
     path.lineTo(size.width - triangleWidth, size.height);
     path.lineTo(0, size.height);
     path.close();
@@ -113,14 +115,14 @@ class _MiddleClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
-    double triangleWidth = 15;
+    double triangleWidth = 10;
 
-    path.moveTo(0 + triangleWidth, 0);
-    path.lineTo(size.width, 0);
-    // path.lineTo(size.width, size.height / 2);
+    path.moveTo(0, 0);
+    path.lineTo(size.width - triangleWidth, 0);
+    path.lineTo(size.width, size.height / 2);
     path.lineTo(size.width - triangleWidth, size.height);
     path.lineTo(0, size.height);
-    // path.lineTo(triangleWidth, size.height / 2);
+    path.lineTo(triangleWidth, size.height / 2);
     path.close();
 
     return path;
