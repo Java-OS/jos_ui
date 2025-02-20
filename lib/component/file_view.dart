@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
 
 class FileView extends StatefulWidget {
@@ -7,6 +8,8 @@ class FileView extends StatefulWidget {
   final Function? onSelect;
   final Function? onDeselect;
   final bool isSelected;
+  final Color iconColor;
+  final List<MenuItem>? contextMenuItems;
 
   const FileView({
     super.key,
@@ -15,6 +18,8 @@ class FileView extends StatefulWidget {
     this.onDeselect,
     this.onDoubleClick,
     this.isSelected = false,
+    this.iconColor = Colors.blueGrey,
+    this.contextMenuItems ,
   });
 
   @override
@@ -23,10 +28,13 @@ class FileView extends StatefulWidget {
 
 class _FileViewState extends State<FileView> {
   bool onHover = false;
+  double dx = 0;
+  double dy = 0;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onSecondaryTap: () => (widget.contextMenuItems == null || widget.contextMenuItems!.isEmpty) ? null : showContextMenu(context, contextMenu: getContextMenu()),
       onTap: () {
         if (widget.onSelect != null && !widget.isSelected) widget.onSelect!();
         if (widget.onDeselect != null && widget.isSelected) widget.onDeselect!();
@@ -36,20 +44,24 @@ class _FileViewState extends State<FileView> {
         children: [
           MouseRegion(
             cursor: SystemMouseCursors.click,
-            onHover: (e) => setState(() => onHover = true),
+            onHover: (e) => setState(() {
+              onHover = true;
+              dx = e.position.dx;
+              dy = e.position.dy;
+            }),
             onExit: (e) => setState(() => onHover = false),
             child: AnimatedContainer(
               padding: EdgeInsets.all(20),
               duration: Duration(milliseconds: 500),
               curve: Curves.easeInOut,
               decoration: BoxDecoration(
-                color: onHover
-                    ? Color.fromARGB(50, 171, 190, 204)
+                color: onHover && !widget.isSelected
+                    ? Color.fromARGB(50, 201, 200, 200)
                     : widget.isSelected
                         ? Color.fromARGB(120, 171, 190, 204)
                         : null,
                 border: Border.all(
-                  color: (onHover || widget.isSelected) ? Colors.grey : Colors.transparent,
+                  color: (onHover || widget.isSelected) ? Colors.blue : Colors.transparent,
                   width: 1,
                 ),
               ),
@@ -57,7 +69,7 @@ class _FileViewState extends State<FileView> {
                 children: [
                   Icon(
                     widget.filesystemTree.isFile ? Icons.insert_drive_file_outlined : Icons.folder,
-                    color: Colors.blueGrey,
+                    color: widget.iconColor,
                     size: 60,
                   ),
                   // SizedBox(height: 4),
@@ -72,6 +84,15 @@ class _FileViewState extends State<FileView> {
           ),
         ],
       ),
+    );
+  }
+
+  ContextMenu getContextMenu() {
+    return ContextMenu(
+      padding: EdgeInsets.all(1),
+      borderRadius: BorderRadius.zero,
+      entries: widget.contextMenuItems ?? [],
+      position: Offset(dx, dy),
     );
   }
 }

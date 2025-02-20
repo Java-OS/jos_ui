@@ -57,6 +57,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   flat_buffers: ^23.5.26
   xterm: ^4.0.0
+  flutter_context_menu: ^0.2.0
 
 dev_dependencies:
   flutter_test:

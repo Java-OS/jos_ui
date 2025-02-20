@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page/dashboard_page.dart';
@@ -30,6 +31,7 @@ import 'package:toastification/toastification.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  BrowserContextMenu.disableContextMenu();
   initializeTimeZones();
   runApp(const JosApplication());
 }

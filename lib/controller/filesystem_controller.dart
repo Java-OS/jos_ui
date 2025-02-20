@@ -21,7 +21,11 @@ class FilesystemController extends GetxController {
   var filesystemTree = Rxn<FilesystemTree>();
   var path = ''.obs;
   var selectedItems = <String>[].obs;
+  var copyItems = <String>[].obs;
+  var cuteItems = <String>[].obs;
   var directoryPath = ''.obs;
+
+  var treeView = Rxn<FilesystemTree>();
 
   Future<void> fetchPartitions() async {
     developer.log('Fetch filesystems');
@@ -59,28 +63,27 @@ class FilesystemController extends GetxController {
     _apiService.callApi(Rpc.RPC_FILESYSTEM_SWAP_OFF, parameters: reqParam, message: 'Failed to deactivate swap ${partition.blk}').then((e) => fetchPartitions());
   }
 
-  Future<void> fetchFilesystemTree(String rootPath) async {
-    var reqParam = {'rootDir': rootPath};
-    var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_DIRECTORY_TREE, parameters: reqParam);
-    FilesystemTree tree = FilesystemTree.fromMap(map);
-    filesystemTree.value = tree;
+  Future<void> fetchFilesystemTree() async {
+    var reqParam = {'rootDir': directoryPath.value};
+    var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_DIRECTORY_TREE, parameters: reqParam, disableLoading: true);
+    filesystemTree.value = FilesystemTree.fromMap(map);
   }
 
   Future<void> delete() async {
     developer.log('Delete file $selectedItems');
     var reqParam = {'paths': selectedItems};
     var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_DELETE_FILE, parameters: reqParam);
-    FilesystemTree tree = FilesystemTree.fromMap(map);
-    filesystemTree.value = tree;
+    filesystemTree.value = FilesystemTree.fromMap(map);
     selectedItems.clear();
   }
 
-  Future<void> createDir(String basePath) async {
-    var path = newFolderEditingController.text;
-    developer.log('Create new folder $basePath/$path');
-    var reqParam = {'path': '$basePath/$path'};
-    _apiService.callApi(Rpc.RPC_FILESYSTEM_CREATE_DIRECTORY, parameters: reqParam, message: 'Failed to create new folder $path');
-    fetchFilesystemTree(directoryPath.value);
+  Future<void> createDir() async {
+    var basePath = directoryPath.value;
+    var dirName = newFolderEditingController.text;
+    developer.log('Create new folder $basePath/$dirName');
+    var reqParam = {'path': '$basePath/$dirName'};
+    var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_CREATE_DIRECTORY, parameters: reqParam, message: 'Failed to create new folder $dirName');
+    filesystemTree.value = FilesystemTree.fromMap(map);
     newFolderEditingController.clear();
   }
 

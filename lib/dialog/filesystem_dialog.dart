@@ -1,10 +1,10 @@
+import 'package:basic_utils/basic_utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/text_field_box.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
-import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
 import 'package:jos_ui/service/rest_client.dart';
@@ -63,7 +63,7 @@ Future<void> uploadFile(String basePath, TreeController<FilesystemTree> treeCont
     var bytes = picked.files.single.bytes!;
     var fileName = picked.files.single.name;
     await RestClient.uploadFile(bytes, fileName, basePath);
-    await _filesystemController.fetchFilesystemTree(basePath);
+    await _filesystemController.fetchFilesystemTree();
     treeController.rebuild();
   }
 }
@@ -87,7 +87,7 @@ Future<void> addFolderDialog() async {
               ElevatedButton(
                 child: Text('Confirm'),
                 onPressed: () async {
-                  await _filesystemController.createDir(_filesystemController.directoryPath.value);
+                  await _filesystemController.createDir();
                   Get.back();
                 },
               )
@@ -100,7 +100,6 @@ Future<void> addFolderDialog() async {
 }
 
 Future<void> deleteConfirmationDialog() async {
-  var list = _filesystemController.selectedItems.map((e) => Text(e, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12))).toList();
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
@@ -112,28 +111,36 @@ Future<void> deleteConfirmationDialog() async {
         children: [
           Text('You want to delete: '),
           Container(
-            constraints: BoxConstraints(maxHeight: 300, maxWidth: 280),
             decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-            child: Scrollbar(
-              controller: _horizontalController,
-              thumbVisibility: true,
-              trackVisibility: true,
-              child: SingleChildScrollView(
-                controller: _horizontalController,
-                scrollDirection: Axis.horizontal,
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Scrollbar(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 300),
+              child: Scrollbar(
+                controller: _verticalController,
+                thumbVisibility: true,
+                trackVisibility: true,
+                child: SingleChildScrollView(
                   controller: _verticalController,
-                  thumbVisibility: true,
-                  trackVisibility: true,
-                  child: SingleChildScrollView(
-                    controller: _verticalController,
-                    scrollDirection: Axis.vertical,
-                    physics: AlwaysScrollableScrollPhysics(),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: list,
+                  scrollDirection: Axis.vertical,
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 280),
+                    child: Scrollbar(
+                      controller: _horizontalController,
+                      thumbVisibility: true,
+                      trackVisibility: true,
+                      child: SingleChildScrollView(
+                        controller: _horizontalController,
+                        scrollDirection: Axis.horizontal,
+                        physics: AlwaysScrollableScrollPhysics(),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: List.generate(_filesystemController.selectedItems.length, (index) {
+                            return Text(_filesystemController.selectedItems[index], style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12));
+                          }),
+                        ),
+                      ),
                     ),
                   ),
                 ),
