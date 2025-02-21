@@ -112,6 +112,7 @@ class Rpc {
   static const Rpc RPC_FILESYSTEM_CREATE_ARCHIVE = Rpc._(709);
   static const Rpc RPC_FILESYSTEM_EXTRACT_ARCHIVE = Rpc._(710);
   static const Rpc RPC_FILESYSTEM_CREATE_DIRECTORY = Rpc._(711);
+  static const Rpc RPC_FILESYSTEM_DOWNLOAD = Rpc._(712);
   static const Rpc RPC_USER_LIST = Rpc._(800);
   static const Rpc RPC_USER_ADD = Rpc._(801);
   static const Rpc RPC_USER_REMOVE = Rpc._(802);
@@ -271,6 +272,7 @@ class Rpc {
     709: RPC_FILESYSTEM_CREATE_ARCHIVE,
     710: RPC_FILESYSTEM_EXTRACT_ARCHIVE,
     711: RPC_FILESYSTEM_CREATE_DIRECTORY,
+    712: RPC_FILESYSTEM_DOWNLOAD,
     800: RPC_USER_LIST,
     801: RPC_USER_ADD,
     802: RPC_USER_REMOVE,
@@ -481,6 +483,58 @@ class _UploadTypeReader extends fb.Reader<UploadType> {
   @override
   UploadType read(fb.BufferContext bc, int offset) =>
       UploadType.fromValue(const fb.Int32Reader().read(bc, offset));
+}
+
+class EventCode {
+  final int value;
+  const EventCode._(this.value);
+
+  factory EventCode.fromValue(int value) {
+    final result = values[value];
+    if (result == null) {
+        throw StateError('Invalid value $value for bit flag enum EventCode');
+    }
+    return result;
+  }
+
+  static EventCode? _createOrNull(int? value) => 
+      value == null ? null : EventCode.fromValue(value);
+
+  static const int minValue = 0;
+  static const int maxValue = 5;
+  static bool containsValue(int value) => values.containsKey(value);
+
+  static const EventCode JVM_LOGS = EventCode._(0);
+  static const EventCode OCI_CONTAINER_NOTIFICATION = EventCode._(1);
+  static const EventCode OCI_IMAGE_NOTIFICATION = EventCode._(2);
+  static const EventCode OCI_CONTAINER_LOGS = EventCode._(3);
+  static const EventCode ARCHIVE = EventCode._(4);
+  static const EventCode TRANSFER = EventCode._(5);
+  static const Map<int, EventCode> values = {
+    0: JVM_LOGS,
+    1: OCI_CONTAINER_NOTIFICATION,
+    2: OCI_IMAGE_NOTIFICATION,
+    3: OCI_CONTAINER_LOGS,
+    4: ARCHIVE,
+    5: TRANSFER};
+
+  static const fb.Reader<EventCode> reader = _EventCodeReader();
+
+  @override
+  String toString() {
+    return 'EventCode{value: $value}';
+  }
+}
+
+class _EventCodeReader extends fb.Reader<EventCode> {
+  const _EventCodeReader();
+
+  @override
+  int get size => 4;
+
+  @override
+  EventCode read(fb.BufferContext bc, int offset) =>
+      EventCode.fromValue(const fb.Int32Reader().read(bc, offset));
 }
 
 class Packet {

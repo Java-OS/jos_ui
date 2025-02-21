@@ -20,7 +20,6 @@ import 'package:jos_ui/model/container/subnet.dart';
 import 'package:jos_ui/model/container/volume.dart';
 import 'package:jos_ui/model/container/volume_parameter.dart';
 import 'package:jos_ui/model/event.dart';
-import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/service/rest_client.dart';
@@ -108,13 +107,13 @@ class OciController extends GetxController {
   }
 
   Future<void> handleEvents(EventCode code, String? message) async {
-    if (code == EventCode.ociImageNotification) {
+    if (code == EventCode.OCI_IMAGE_NOTIFICATION) {
       if (message != null) displayInfo(message);
       listImages();
-    } else if (code == EventCode.ociContainerNotification) {
+    } else if (code == EventCode.OCI_CONTAINER_NOTIFICATION) {
       if (message != null) displayInfo(message);
       listContainers();
-    } else if (code == EventCode.ociContainerLogs) {
+    } else if (code == EventCode.OCI_CONTAINER_LOGS) {
       // if (logs.value.split('\n').length == 500) logs.value = logs.value.substring(logs.value.indexOf('\n') + 1);
       // logs.value += '$message\n';
       // logs.refresh();
@@ -152,7 +151,7 @@ class OciController extends GetxController {
   }
 
   void pullImage(String name) async {
-    ociSSEConsumer(null, EventCode.ociImageNotification);
+    ociSSEConsumer(null, EventCode.OCI_IMAGE_NOTIFICATION);
     developer.log('Pull image $name');
     var reqParams = {'name': name};
     searchImageList.removeWhere((item) => item.name == name);
@@ -262,7 +261,7 @@ class OciController extends GetxController {
   }
 
   void createContainer() async {
-    ociSSEConsumer(null, EventCode.ociContainerNotification);
+    ociSSEConsumer(null, EventCode.OCI_CONTAINER_NOTIFICATION);
     developer.log('Try to create container');
     var name = containerNameEditingController.text;
     var dnsSearch = containerDnsSearchEditingController.text;

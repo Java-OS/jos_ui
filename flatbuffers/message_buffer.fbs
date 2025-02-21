@@ -259,3 +259,12 @@ enum UploadType:int32 {
     UPLOAD_TYPE_SSL = 2,
     UPLOAD_TYPE_FILE = 3,
 }
+
+enum EventCode:int32 {
+    JVM_LOGS,
+    OCI_CONTAINER_NOTIFICATION,
+    OCI_IMAGE_NOTIFICATION,
+    OCI_CONTAINER_LOGS,
+    ARCHIVE,
+    TRANSFER,
+}

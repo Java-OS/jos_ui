@@ -1,5 +1,5 @@
+import 'package:contextmenu_plus/contextmenu_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
 
 class FileView extends StatefulWidget {
@@ -9,7 +9,7 @@ class FileView extends StatefulWidget {
   final Function? onDeselect;
   final bool isSelected;
   final Color iconColor;
-  final List<MenuItem>? contextMenuItems;
+  final List<Widget>? contextMenuItems;
 
   const FileView({
     super.key,
@@ -19,7 +19,7 @@ class FileView extends StatefulWidget {
     this.onDoubleClick,
     this.isSelected = false,
     this.iconColor = Colors.blueGrey,
-    this.contextMenuItems ,
+    this.contextMenuItems,
   });
 
   @override
@@ -34,7 +34,10 @@ class _FileViewState extends State<FileView> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onSecondaryTap: () => (widget.contextMenuItems == null || widget.contextMenuItems!.isEmpty) ? null : showContextMenu(context, contextMenu: getContextMenu()),
+      onSecondaryTap: () {
+        showContextMenu(Offset(dx, dy), context, (builder) => widget.contextMenuItems!, 0, 170);
+        widget.onSelect!();
+      },
       onTap: () {
         if (widget.onSelect != null && !widget.isSelected) widget.onSelect!();
         if (widget.onDeselect != null && widget.isSelected) widget.onDeselect!();
@@ -87,12 +90,12 @@ class _FileViewState extends State<FileView> {
     );
   }
 
-  ContextMenu getContextMenu() {
-    return ContextMenu(
-      padding: EdgeInsets.all(1),
-      borderRadius: BorderRadius.zero,
-      entries: widget.contextMenuItems ?? [],
-      position: Offset(dx, dy),
-    );
-  }
+// ContextMenu getContextMenu() {
+//   return ContextMenu(
+//     padding: EdgeInsets.all(1),
+//     borderRadius: BorderRadius.zero,
+//     entries: widget.contextMenuItems ?? [],
+//     position: Offset(dx, dy),
+//   );
+// }
 }

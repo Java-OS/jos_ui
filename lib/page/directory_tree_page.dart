@@ -1,5 +1,5 @@
+import 'package:contextmenu_plus/contextmenu_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/directory_path.dart';
@@ -147,7 +147,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
                             deselectAllItems();
                           },
                           onSecondaryTap: () {
-                            showContextMenu(context, contextMenu: getContextMenu());
+                            showContextMenu(Offset(dx, dy), context, (builder) => getContextMenu(), 0, 170);
                           },
                           child: GridView.builder(
                             padding: EdgeInsets.all(8),
@@ -163,9 +163,9 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
 
                               return FileView(
                                 contextMenuItems: [
-                                  if (!isItemOnAction(child.fullPath)) MenuItem(label: 'Copy', icon: Icons.copy, onSelected: () => setCopyItems()),
-                                  if (!isItemOnAction(child.fullPath)) MenuItem(label: 'Move', icon: Icons.cut, onSelected: () => setCutItems()),
-                                  MenuItem(label: 'Delete', icon: MdiIcons.trashCanOutline, onSelected: () => _filesystemController.delete()),
+                                  if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Copy', style: TextStyle(fontSize: 14)), leading: Icon(Icons.copy, size: 18), onTap: () => {setCopyItems(), Get.back()}),
+                                  if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Cute', style: TextStyle(fontSize: 14)), leading: Icon(Icons.cut, size: 18), onTap: () => {setCutItems(), Get.back()}),
+                                  ListTile(title: Text('Delete', style: TextStyle(fontSize: 14)), leading: Icon(MdiIcons.trashCanOutline, size: 18), onTap: () => {_filesystemController.delete(), Get.back()}),
                                 ],
                                 isSelected: isSelected(child.fullPath),
                                 filesystemTree: child,
@@ -238,21 +238,11 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
     _filesystemController.selectedItems.clear();
   }
 
-  ContextMenu getContextMenu() {
-    return ContextMenu(
-      padding: EdgeInsets.all(1),
-      borderRadius: BorderRadius.zero,
-      entries: [
-        if (isAnyItemOnAction())
-          MenuItem(
-            label: 'Paste',
-            icon: Icons.paste,
-            onSelected: () => _filesystemController.paste(),
-          ),
-        MenuItem(label: 'New Folder', icon: Icons.create_new_folder, onSelected: () => addFolderDialog()),
-      ],
-      position: Offset(dx, dy),
-    );
+  List<Widget> getContextMenu() {
+    return [
+      if (isAnyItemOnAction()) ListTile(title: Text('Paste', style: TextStyle(fontSize: 14)), leading: Icon(Icons.paste, size: 18), onTap: () => {_filesystemController.paste(), Get.back()}),
+      ListTile(title: Text('New Folder', style: TextStyle(fontSize: 14)), leading: Icon(Icons.create_new_folder, size: 18), onTap: () => addFolderDialog()),
+    ];
   }
 
   @override

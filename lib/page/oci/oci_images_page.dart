@@ -5,8 +5,8 @@ import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/tile.dart';
 import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/image_search_dialog.dart';
+import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/container/container_image.dart';
-import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -89,6 +89,6 @@ class _OciImagesPageState extends State<OciImagesPage> {
   }
 
   Future<void> streamLogs(ContainerImage ci) async {
-    _containerController.ociSSEConsumer(ci.name, EventCode.ociContainerLogs);
+    _containerController.ociSSEConsumer(ci.name, EventCode.OCI_CONTAINER_LOGS);
   }
 }

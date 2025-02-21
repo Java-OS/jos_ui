@@ -7,8 +7,8 @@ import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/container_create_dialog.dart';
 import 'package:jos_ui/dialog/container/container_information.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
+import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/container/container_info.dart';
-import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -121,7 +121,7 @@ class _OciContainersPageState extends State<OciContainersPage> {
   }
 
   Future<void> streamLogs(ContainerInfo container) async {
-    _containerController.ociSSEConsumer(container.names.first, EventCode.ociContainerLogs);
+    _containerController.ociSSEConsumer(container.names.first, EventCode.OCI_CONTAINER_LOGS);
   }
 
   Future<void> openCreateContainerDialog() async {

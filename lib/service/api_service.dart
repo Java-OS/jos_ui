@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/toast.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/service/rest_client.dart';
+import 'dart:developer' as developer;
 
 class ApiService extends GetxController {
   var isLoading = false.obs;
@@ -14,7 +15,12 @@ class ApiService extends GetxController {
     if (payload.metadata!.success) {
       var content = payload.content;
       isLoading.value = false;
-      return content != null ? jsonDecode(content) : [];
+      if (content != null) {
+        var decode = jsonDecode(content);
+        return decode;
+      } else {
+        return [];
+      }
     } else {
       switch (type) {
         case MessageType.info:

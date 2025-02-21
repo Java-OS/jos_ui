@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:jos_ui/model/event_code.dart';
+import 'package:jos_ui/message_buffer.dart';
 
 class Event {
   final String message;
@@ -11,7 +11,7 @@ class Event {
   factory Event.fromJson(String json) {
     var map = jsonDecode(json);
     var message = map['message'] ?? '';
-    var eventCode = EventCode.getValue(map['code'] ?? '');
+    var eventCode = map['code'] ?? '';
 
     return Event(message, eventCode);
   }
@@ -20,7 +20,7 @@ class Event {
     var str = utf8.decode(bytes);
     var map = jsonDecode(str);
     var message = map['message'] ?? '';
-    var eventCode = EventCode.getValue(map['code'] ?? '');
+    var eventCode = map['code'] ?? '';
 
     return Event(message, eventCode);
   }

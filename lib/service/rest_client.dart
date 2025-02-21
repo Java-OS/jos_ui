@@ -232,7 +232,8 @@ class RestClient {
       'password': password,
     };
 
-    var packet = await _h5Proto.encode(ProtocolUtils.serializePayload(null, jsonEncode(parameters)));
+    var serializeMetadata = ProtocolUtils.serializeMetadata(false, null, null, null, null);
+    var packet = await _h5Proto.encode(ProtocolUtils.serializePayload(serializeMetadata, jsonEncode(parameters)));
 
     try {
       var response = await _http.post(Uri.parse(_baseDownloadUrl()), body: packet, headers: headers);

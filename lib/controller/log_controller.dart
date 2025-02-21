@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/toast.dart';
 import 'package:jos_ui/message_buffer.dart';
-import 'package:jos_ui/model/event_code.dart';
 import 'package:jos_ui/model/log.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
@@ -58,7 +57,7 @@ class LogController extends GetxController {
     developer.log('SSE controller try Connect $packageName $level');
     var content = {
       'message': {'package': packageName, 'level': level},
-      'code': EventCode.jvmLogs.value
+      'code': EventCode.JVM_LOGS.value
     };
     fetchResponse = await RestClient.sse(jsonEncode(content));
     isConnected.value = true;
