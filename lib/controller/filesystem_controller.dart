@@ -19,7 +19,6 @@ class FilesystemController extends GetxController {
   var selectedPartition = Rxn<PartitionInformation>();
   var mountOnStartUp = false.obs;
   var filesystemTree = Rxn<FilesystemTree>();
-  var path = ''.obs;
   var selectedItems = <String>[].obs;
   var copyItems = <String>[].obs;
   var cuteItems = <String>[].obs;
@@ -90,7 +89,21 @@ class FilesystemController extends GetxController {
   void extractArchive(String path) async {
     developer.log('Extract archive $path');
     var reqParam = {'target': path};
-    _apiService.callApi(Rpc.RPC_FILESYSTEM_EXTRACT_ARCHIVE, parameters: reqParam, message: 'Failed to create directory $path').then((e) => fetchPartitions());
+    var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_EXTRACT_ARCHIVE, parameters: reqParam, message: 'Failed to create directory $path');
+    filesystemTree.value = FilesystemTree.fromMap(map);
+  }
+
+  void paste() async {
+    developer.log('Copy/Move files to ${directoryPath.value}');
+    var reqParam = {
+      'list' : copyItems.isNotEmpty ? copyItems.toList() : cuteItems.toList(),
+      'target': directoryPath.value,
+    };
+    var map = await _apiService.callApi(copyItems.isNotEmpty ? Rpc.RPC_FILESYSTEM_COPY_FILE : Rpc.RPC_FILESYSTEM_MOVE_FILE, parameters: reqParam, message: 'Failed copy/move files to ${directoryPath.value}');
+    filesystemTree.value = FilesystemTree.fromMap(map);
+
+    copyItems.clear();
+    cuteItems.clear();
   }
 
   void download(String filePath) async {
