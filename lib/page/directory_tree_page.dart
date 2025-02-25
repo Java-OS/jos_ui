@@ -18,6 +18,7 @@ class DirectoryTreePage extends StatefulWidget {
 }
 
 class _DirectoryTreePageState extends State<DirectoryTreePage> {
+  final _directoryPathScrollController = ScrollController();
   final _filesystemController = Get.put(FilesystemController());
   double dx = 0;
   double dy = 0;
@@ -34,21 +35,38 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
     return Obx(
       () => CardContent(
         controllers: [
-          if (_filesystemController.selectedItems.isNotEmpty)
+          if (isAnyItemOnAction())
             Tooltip(
-              message: 'Download',
+              message: 'Paste',
               child: OutlinedButton(
-                onPressed: isAnySelected() ? () => {} : null,
-                child: Icon(Icons.upload_outlined, size: 16, color: isAnySelected() ? Colors.black : Colors.grey),
+                onPressed: () => _filesystemController.paste(),
+                child: Icon(Icons.paste, size: 16, color: Colors.black),
               ),
             ),
-          Tooltip(
-            message: 'Upload',
-            child: OutlinedButton(
-              onPressed: () {},
-              child: Icon(Icons.download_outlined, size: 16, color: Colors.black),
+          if (isAnySelected())
+            Tooltip(
+              message: 'Delete',
+              child: OutlinedButton(
+                onPressed: () => deleteConfirmationDialog(),
+                child: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+              ),
             ),
-          ),
+          if (isAnySelected())
+            Tooltip(
+              message: 'Copy',
+              child: OutlinedButton(
+                onPressed: () => setCopyItems(),
+                child: Icon(Icons.copy_outlined, size: 16, color: Colors.black),
+              ),
+            ),
+          if (isAnySelected())
+            Tooltip(
+              message: 'Cut',
+              child: OutlinedButton(
+                onPressed: () => setCutItems(),
+                child: Icon(Icons.cut_outlined, size: 16, color: Colors.black),
+              ),
+            ),
           Tooltip(
             message: 'Create new folder',
             child: OutlinedButton(
@@ -74,61 +92,78 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (hasDirectoryPath()) DirectoryPath(path: _filesystemController.directoryPath.value, onClick: (e) => enterFolder(e)),
-                      Row(
-                        spacing: 4,
-                        children: [
-                          if (_filesystemController.cuteItems.isNotEmpty)
-                            MouseRegion(
-                              onHover: (e) => setState(() => isOnHover = true),
-                              onExit: (e) => setState(() => isOnHover = false),
-                              cursor: SystemMouseCursors.click,
-                              child: GestureDetector(
-                                onTap: () => _filesystemController.cuteItems.clear(),
-                                child: KeyValue(
-                                  k: 'Cute',
-                                  v: '${_filesystemController.cuteItems.length}',
-                                  keyTextColor: Colors.white,
-                                  valueTextColor: Colors.white,
-                                  keyBackgroundColor: Colors.brown,
-                                  valueBackgroundColor: Colors.pinkAccent,
-                                ),
-                              ),
-                            ),
-                          if (_filesystemController.copyItems.isNotEmpty)
-                            MouseRegion(
-                              onHover: (e) => setState(() => isOnHover = true),
-                              onExit: (e) => setState(() => isOnHover = false),
-                              cursor: SystemMouseCursors.click,
-                              child: GestureDetector(
-                                onTap: () => _filesystemController.copyItems.clear(),
-                                child: KeyValue(
-                                  k: 'Copy',
-                                  v: '${_filesystemController.copyItems.length}',
-                                  keyTextColor: Colors.white,
-                                  valueTextColor: Colors.white,
-                                  keyBackgroundColor: Colors.brown,
-                                  valueBackgroundColor: Colors.pinkAccent,
-                                ),
-                              ),
-                            ),
-                          MouseRegion(
-                            onHover: (e) => setState(() => isOnHover = true),
-                            onExit: (e) => setState(() => isOnHover = false),
-                            cursor: SystemMouseCursors.click,
-                            child: GestureDetector(
-                              onTap: () => _filesystemController.selectedItems.clear(),
-                              child: KeyValue(
-                                k: 'selected',
-                                v: '${_filesystemController.selectedItems.length}/${_filesystemController.filesystemTree.value!.childs!.length}',
-                                keyTextColor: Colors.white,
-                                valueTextColor: Colors.white,
-                                keyBackgroundColor: Colors.brown,
-                                valueBackgroundColor: Colors.pinkAccent,
+                      if (hasDirectoryPath())
+                        Expanded(
+                          child: Scrollbar(
+                            controller: _directoryPathScrollController,
+                            child: SingleChildScrollView(
+                              controller: _directoryPathScrollController,
+                              physics: AlwaysScrollableScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              child: DirectoryPath(
+                                path: _filesystemController.directoryPath.value,
+                                onClick: (e) => enterFolder(e),
                               ),
                             ),
                           ),
-                        ],
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0),
+                        child: Row(
+                          spacing: 4,
+                          children: [
+                            if (_filesystemController.cuteItems.isNotEmpty)
+                              MouseRegion(
+                                onHover: (e) => setState(() => isOnHover = true),
+                                onExit: (e) => setState(() => isOnHover = false),
+                                cursor: SystemMouseCursors.click,
+                                child: GestureDetector(
+                                  onTap: () => _filesystemController.cuteItems.clear(),
+                                  child: KeyValue(
+                                    k: 'Cut',
+                                    v: '${_filesystemController.cuteItems.length}',
+                                    keyTextColor: Colors.white,
+                                    valueTextColor: Colors.white,
+                                    keyBackgroundColor: Colors.brown,
+                                    valueBackgroundColor: Colors.pinkAccent,
+                                  ),
+                                ),
+                              ),
+                            if (_filesystemController.copyItems.isNotEmpty)
+                              MouseRegion(
+                                onHover: (e) => setState(() => isOnHover = true),
+                                onExit: (e) => setState(() => isOnHover = false),
+                                cursor: SystemMouseCursors.click,
+                                child: GestureDetector(
+                                  onTap: () => _filesystemController.copyItems.clear(),
+                                  child: KeyValue(
+                                    k: 'Copy',
+                                    v: '${_filesystemController.copyItems.length}',
+                                    keyTextColor: Colors.white,
+                                    valueTextColor: Colors.white,
+                                    keyBackgroundColor: Colors.brown,
+                                    valueBackgroundColor: Colors.pinkAccent,
+                                  ),
+                                ),
+                              ),
+                            MouseRegion(
+                              onHover: (e) => setState(() => isOnHover = true),
+                              onExit: (e) => setState(() => isOnHover = false),
+                              cursor: SystemMouseCursors.click,
+                              child: GestureDetector(
+                                onTap: () => _filesystemController.selectedItems.clear(),
+                                child: KeyValue(
+                                  k: 'selected',
+                                  v: '${_filesystemController.selectedItems.length}/${_filesystemController.filesystemTree.value!.childs!.length}',
+                                  keyTextColor: Colors.white,
+                                  valueTextColor: Colors.white,
+                                  keyBackgroundColor: Colors.brown,
+                                  valueBackgroundColor: Colors.pinkAccent,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   ),
@@ -164,8 +199,8 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
                               return FileView(
                                 contextMenuItems: [
                                   if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Copy', style: TextStyle(fontSize: 14)), leading: Icon(Icons.copy, size: 18), onTap: () => {setCopyItems(), Get.back()}),
-                                  if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Cute', style: TextStyle(fontSize: 14)), leading: Icon(Icons.cut, size: 18), onTap: () => {setCutItems(), Get.back()}),
-                                  ListTile(title: Text('Delete', style: TextStyle(fontSize: 14)), leading: Icon(MdiIcons.trashCanOutline, size: 18), onTap: () => {_filesystemController.delete(), Get.back()}),
+                                  if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Cut', style: TextStyle(fontSize: 14)), leading: Icon(Icons.cut, size: 18), onTap: () => {setCutItems(), Get.back()}),
+                                  ListTile(title: Text('Delete', style: TextStyle(fontSize: 14)), leading: Icon(MdiIcons.trashCanOutline, size: 18), onTap: () => deleteConfirmationDialog()),
                                 ],
                                 isSelected: isSelected(child.fullPath),
                                 filesystemTree: child,
@@ -224,7 +259,11 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
 
   bool hasDirectoryPath() => _filesystemController.directoryPath.isNotEmpty;
 
-  void selectItem(String fullPath) => _filesystemController.selectedItems.add(fullPath);
+  void selectItem(String fullPath) {
+    if (!_filesystemController.selectedItems.contains(fullPath)) {
+      _filesystemController.selectedItems.add(fullPath);
+    }
+  }
 
   void deselectItem(String fullPath) => _filesystemController.selectedItems.remove(fullPath);
 
