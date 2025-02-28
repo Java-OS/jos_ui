@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/controller/event_controller.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/filesystem.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
@@ -10,6 +11,8 @@ import 'package:jos_ui/service/rest_client.dart';
 
 class FilesystemController extends GetxController {
   final _apiService = Get.put(ApiService());
+  final _eventController = Get.put(EventController());
+
   final TextEditingController partitionEditingController = TextEditingController();
   final TextEditingController mountPointEditingController = TextEditingController();
   final TextEditingController filesystemTypeEditingController = TextEditingController();
@@ -76,6 +79,7 @@ class FilesystemController extends GetxController {
     var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_DELETE_FILE, parameters: reqParam);
     filesystemTree.value = FilesystemTree.fromMap(map);
     selectedItems.clear();
+    _eventController.eventFetch();
   }
 
   Future<void> createDir() async {
@@ -97,6 +101,7 @@ class FilesystemController extends GetxController {
     };
     var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_CREATE_ARCHIVE, parameters: reqParam, message: 'Failed to create archive $fileName');
     filesystemTree.value = FilesystemTree.fromMap(map);
+    _eventController.eventFetch();
   }
 
   void extractArchive(String path) async {
@@ -104,10 +109,11 @@ class FilesystemController extends GetxController {
     var reqParam = {'target': path};
     var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_EXTRACT_ARCHIVE, parameters: reqParam, message: 'Failed extract archive $path');
     filesystemTree.value = FilesystemTree.fromMap(map);
+    _eventController.eventFetch();
   }
 
   void paste() async {
-    developer.log('Copy/Move files to ${directoryPath.value}');
+    developer.log('Copy or Move files to ${directoryPath.value}');
     var reqParam = {
       'list' : copyItems.isNotEmpty ? copyItems.toList() : cuteItems.toList(),
       'target': directoryPath.value,
@@ -117,10 +123,7 @@ class FilesystemController extends GetxController {
 
     copyItems.clear();
     cuteItems.clear();
-  }
-
-  void download(String filePath) async {
-    await RestClient.download(filePath, null);
+    _eventController.eventFetch();
   }
 
   void clear() {

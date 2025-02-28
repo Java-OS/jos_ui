@@ -121,7 +121,7 @@ class _OciContainersPageState extends State<OciContainersPage> {
   }
 
   Future<void> streamLogs(ContainerInfo container) async {
-    _containerController.ociSSEConsumer(container.names.first, EventCode.OCI_CONTAINER_LOGS);
+    // _containerController.ociSSEConsumer(container.names.first, EventCode.OCI_LOG);
   }
 
   Future<void> openCreateContainerDialog() async {

@@ -4,7 +4,7 @@ import 'package:jos_ui/message_buffer.dart';
 
 class Event {
   final String message;
-  final EventCode code;
+  final SseConnectionType code;
 
   Event(this.message, this.code);
 

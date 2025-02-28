@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page/dashboard_page.dart';
 import 'package:jos_ui/page/directory_tree_page.dart';
+import 'package:jos_ui/page/event_page.dart';
 import 'package:jos_ui/page/filesystem_page.dart';
 import 'package:jos_ui/page/firewall/firewall_chain_page.dart';
 import 'package:jos_ui/page/firewall/firewall_rule_page.dart';
@@ -89,6 +90,7 @@ class JosApplication extends StatelessWidget {
           GetPage(name: Routes.ociNetworks.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciNetworksPage())),
           GetPage(name: Routes.ociVolumes.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciVolumesPage())),
           GetPage(name: Routes.ociSettings.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciSettingsPage())),
+          GetPage(name: Routes.events.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: EventPage())),
         ],
       ),
     );

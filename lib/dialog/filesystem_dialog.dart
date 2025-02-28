@@ -1,4 +1,3 @@
-import 'package:basic_utils/basic_utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fancy_tree_view/flutter_fancy_tree_view.dart';
@@ -6,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/text_field_box.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
+import 'package:jos_ui/dialog/progress_dialog.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
 import 'package:jos_ui/service/rest_client.dart';
 
@@ -156,8 +156,8 @@ Future<void> deleteConfirmationDialog() async {
               ElevatedButton(
                 child: Text('Confirm'),
                 onPressed: () async {
-                  await _filesystemController.delete();
                   Get.back();
+                  await _filesystemController.delete();
                 },
               ),
               SizedBox(width: 8),
@@ -170,5 +170,5 @@ Future<void> deleteConfirmationDialog() async {
         ],
       );
     },
-  );
+  ).then((_) => displayEvent());
 }

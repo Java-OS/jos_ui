@@ -112,7 +112,6 @@ class Rpc {
   static const Rpc RPC_FILESYSTEM_CREATE_ARCHIVE = Rpc._(709);
   static const Rpc RPC_FILESYSTEM_EXTRACT_ARCHIVE = Rpc._(710);
   static const Rpc RPC_FILESYSTEM_CREATE_DIRECTORY = Rpc._(711);
-  static const Rpc RPC_FILESYSTEM_DOWNLOAD = Rpc._(712);
   static const Rpc RPC_USER_LIST = Rpc._(800);
   static const Rpc RPC_USER_ADD = Rpc._(801);
   static const Rpc RPC_USER_REMOVE = Rpc._(802);
@@ -184,6 +183,10 @@ class Rpc {
   static const Rpc RPC_CONTAINER_PRUNE = Rpc._(2032);
   static const Rpc RPC_CONTAINER_SETTING_REGISTRIES_LOAD = Rpc._(2033);
   static const Rpc RPC_CONTAINER_SETTING_REGISTRIES_SAVE = Rpc._(2034);
+  static const Rpc RPC_EVENT_LIST = Rpc._(2100);
+  static const Rpc RPC_EVENT_READ = Rpc._(2101);
+  static const Rpc RPC_EVENT_READ_ALL = Rpc._(2102);
+  static const Rpc RPC_EVENT_GET = Rpc._(2103);
   static const Rpc RPC_FIREWALL_SET_RENAME = Rpc._(11112);
   static const Map<int, Rpc> values = {
     0: RPC_SYSTEM_SHUTDOWN,
@@ -272,7 +275,6 @@ class Rpc {
     709: RPC_FILESYSTEM_CREATE_ARCHIVE,
     710: RPC_FILESYSTEM_EXTRACT_ARCHIVE,
     711: RPC_FILESYSTEM_CREATE_DIRECTORY,
-    712: RPC_FILESYSTEM_DOWNLOAD,
     800: RPC_USER_LIST,
     801: RPC_USER_ADD,
     802: RPC_USER_REMOVE,
@@ -344,6 +346,10 @@ class Rpc {
     2032: RPC_CONTAINER_PRUNE,
     2033: RPC_CONTAINER_SETTING_REGISTRIES_LOAD,
     2034: RPC_CONTAINER_SETTING_REGISTRIES_SAVE,
+    2100: RPC_EVENT_LIST,
+    2101: RPC_EVENT_READ,
+    2102: RPC_EVENT_READ_ALL,
+    2103: RPC_EVENT_GET,
     11112: RPC_FIREWALL_SET_RENAME};
 
   static const fb.Reader<Rpc> reader = _RpcReader();
@@ -485,56 +491,96 @@ class _UploadTypeReader extends fb.Reader<UploadType> {
       UploadType.fromValue(const fb.Int32Reader().read(bc, offset));
 }
 
-class EventCode {
+class SseConnectionType {
   final int value;
-  const EventCode._(this.value);
+  const SseConnectionType._(this.value);
 
-  factory EventCode.fromValue(int value) {
+  factory SseConnectionType.fromValue(int value) {
     final result = values[value];
     if (result == null) {
-        throw StateError('Invalid value $value for bit flag enum EventCode');
+        throw StateError('Invalid value $value for bit flag enum SseConnectionType');
     }
     return result;
   }
 
-  static EventCode? _createOrNull(int? value) => 
-      value == null ? null : EventCode.fromValue(value);
+  static SseConnectionType? _createOrNull(int? value) => 
+      value == null ? null : SseConnectionType.fromValue(value);
 
   static const int minValue = 0;
-  static const int maxValue = 5;
+  static const int maxValue = 2;
   static bool containsValue(int value) => values.containsKey(value);
 
-  static const EventCode JVM_LOGS = EventCode._(0);
-  static const EventCode OCI_CONTAINER_NOTIFICATION = EventCode._(1);
-  static const EventCode OCI_IMAGE_NOTIFICATION = EventCode._(2);
-  static const EventCode OCI_CONTAINER_LOGS = EventCode._(3);
-  static const EventCode ARCHIVE = EventCode._(4);
-  static const EventCode TRANSFER = EventCode._(5);
-  static const Map<int, EventCode> values = {
-    0: JVM_LOGS,
-    1: OCI_CONTAINER_NOTIFICATION,
-    2: OCI_IMAGE_NOTIFICATION,
-    3: OCI_CONTAINER_LOGS,
-    4: ARCHIVE,
-    5: TRANSFER};
+  static const SseConnectionType JVM_LOG = SseConnectionType._(0);
+  static const SseConnectionType OCI_LOG = SseConnectionType._(1);
+  static const SseConnectionType EVENT = SseConnectionType._(2);
+  static const Map<int, SseConnectionType> values = {
+    0: JVM_LOG,
+    1: OCI_LOG,
+    2: EVENT};
 
-  static const fb.Reader<EventCode> reader = _EventCodeReader();
+  static const fb.Reader<SseConnectionType> reader = _SseConnectionTypeReader();
 
   @override
   String toString() {
-    return 'EventCode{value: $value}';
+    return 'SseConnectionType{value: $value}';
   }
 }
 
-class _EventCodeReader extends fb.Reader<EventCode> {
-  const _EventCodeReader();
+class _SseConnectionTypeReader extends fb.Reader<SseConnectionType> {
+  const _SseConnectionTypeReader();
 
   @override
   int get size => 4;
 
   @override
-  EventCode read(fb.BufferContext bc, int offset) =>
-      EventCode.fromValue(const fb.Int32Reader().read(bc, offset));
+  SseConnectionType read(fb.BufferContext bc, int offset) =>
+      SseConnectionType.fromValue(const fb.Int32Reader().read(bc, offset));
+}
+
+class EventStatus {
+  final int value;
+  const EventStatus._(this.value);
+
+  factory EventStatus.fromValue(int value) {
+    final result = values[value];
+    if (result == null) {
+        throw StateError('Invalid value $value for bit flag enum EventStatus');
+    }
+    return result;
+  }
+
+  static EventStatus? _createOrNull(int? value) => 
+      value == null ? null : EventStatus.fromValue(value);
+
+  static const int minValue = 0;
+  static const int maxValue = 2;
+  static bool containsValue(int value) => values.containsKey(value);
+
+  static const EventStatus PROGRESS = EventStatus._(0);
+  static const EventStatus FAILURE = EventStatus._(1);
+  static const EventStatus SUCCESS = EventStatus._(2);
+  static const Map<int, EventStatus> values = {
+    0: PROGRESS,
+    1: FAILURE,
+    2: SUCCESS};
+
+  static const fb.Reader<EventStatus> reader = _EventStatusReader();
+
+  @override
+  String toString() {
+    return 'EventStatus{value: $value}';
+  }
+}
+
+class _EventStatusReader extends fb.Reader<EventStatus> {
+  const _EventStatusReader();
+
+  @override
+  int get size => 4;
+
+  @override
+  EventStatus read(fb.BufferContext bc, int offset) =>
+      EventStatus.fromValue(const fb.Int32Reader().read(bc, offset));
 }
 
 class Packet {
@@ -813,6 +859,128 @@ class MetadataObjectBuilder extends fb.ObjectBuilder {
     fbBuilder.addInt32(2, _error);
     fbBuilder.addBool(3, _needRestart);
     fbBuilder.addOffset(4, messageOffset);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+class Event {
+  Event._(this._bc, this._bcOffset);
+  factory Event(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<Event> reader = _EventReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  String? get uid => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 4);
+  String? get username => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 6);
+  EventStatus get eventStatus => EventStatus.fromValue(const fb.Int32Reader().vTableGet(_bc, _bcOffset, 8, 0));
+  double get percentage => const fb.Float64Reader().vTableGet(_bc, _bcOffset, 10, 0.0);
+  bool get read => const fb.BoolReader().vTableGet(_bc, _bcOffset, 12, false);
+  String? get message => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 14);
+
+  @override
+  String toString() {
+    return 'Event{uid: ${uid}, username: ${username}, eventStatus: ${eventStatus}, percentage: ${percentage}, read: ${read}, message: ${message}}';
+  }
+}
+
+class _EventReader extends fb.TableReader<Event> {
+  const _EventReader();
+
+  @override
+  Event createObject(fb.BufferContext bc, int offset) => 
+    Event._(bc, offset);
+}
+
+class EventBuilder {
+  EventBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(6);
+  }
+
+  int addUidOffset(int? offset) {
+    fbBuilder.addOffset(0, offset);
+    return fbBuilder.offset;
+  }
+  int addUsernameOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+  int addEventStatus(EventStatus? eventStatus) {
+    fbBuilder.addInt32(2, eventStatus?.value);
+    return fbBuilder.offset;
+  }
+  int addPercentage(double? percentage) {
+    fbBuilder.addFloat64(3, percentage);
+    return fbBuilder.offset;
+  }
+  int addRead(bool? read) {
+    fbBuilder.addBool(4, read);
+    return fbBuilder.offset;
+  }
+  int addMessageOffset(int? offset) {
+    fbBuilder.addOffset(5, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class EventObjectBuilder extends fb.ObjectBuilder {
+  final String? _uid;
+  final String? _username;
+  final EventStatus? _eventStatus;
+  final double? _percentage;
+  final bool? _read;
+  final String? _message;
+
+  EventObjectBuilder({
+    String? uid,
+    String? username,
+    EventStatus? eventStatus,
+    double? percentage,
+    bool? read,
+    String? message,
+  })
+      : _uid = uid,
+        _username = username,
+        _eventStatus = eventStatus,
+        _percentage = percentage,
+        _read = read,
+        _message = message;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? uidOffset = _uid == null ? null
+        : fbBuilder.writeString(_uid!);
+    final int? usernameOffset = _username == null ? null
+        : fbBuilder.writeString(_username!);
+    final int? messageOffset = _message == null ? null
+        : fbBuilder.writeString(_message!);
+    fbBuilder.startTable(6);
+    fbBuilder.addOffset(0, uidOffset);
+    fbBuilder.addOffset(1, usernameOffset);
+    fbBuilder.addInt32(2, _eventStatus?.value);
+    fbBuilder.addFloat64(3, _percentage);
+    fbBuilder.addBool(4, _read);
+    fbBuilder.addOffset(5, messageOffset);
     return fbBuilder.endTable();
   }
 

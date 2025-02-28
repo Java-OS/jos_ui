@@ -52,6 +52,7 @@ class PanelDrawerController extends GetxController {
         {'title': 'Backup', 'path': Routes.settingsBackup.path, 'icon': Icons.copy_sharp, 'font-size': 12, 'icon-size': 16},
       ],
     },
+    {'title': 'Events', 'path': Routes.events.path, 'icon': Icons.notifications_sharp, 'font-size': 16, 'icon-size': 24},
   ];
 
   var selectedItem = ''.obs;
@@ -60,7 +61,7 @@ class PanelDrawerController extends GetxController {
 
   void routeTo(String? path) {
     selectedItem.value = path!;
-    Get.offNamed(path);
+    Get.toNamed(path);
   }
 
   bool isExpanded() {

@@ -8,6 +8,7 @@ import 'package:jos_ui/component/key_value.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
+import 'package:jos_ui/dialog/progress_dialog.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class DirectoryTreePage extends StatefulWidget {
@@ -39,7 +40,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
             Tooltip(
               message: 'Paste',
               child: OutlinedButton(
-                onPressed: () => _filesystemController.paste(),
+                onPressed: () => {displayEvent(), _filesystemController.paste()},
                 child: Icon(Icons.paste, size: 16, color: Colors.black),
               ),
             ),
@@ -47,7 +48,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
             Tooltip(
               message: 'Delete',
               child: OutlinedButton(
-                onPressed: () => deleteConfirmationDialog(),
+                onPressed: () => deleteItems(),
                 child: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
               ),
             ),
@@ -224,6 +225,10 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
     );
   }
 
+  Future<void> deleteItems() async {
+    deleteConfirmationDialog();
+  }
+
   void selectAllItems() {
     _filesystemController.selectedItems.clear();
     _filesystemController.selectedItems.addAll(_filesystemController.filesystemTree.value!.childs!.map((e) => e.fullPath).toList());
@@ -279,7 +284,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
 
   List<Widget> getContextMenu() {
     return [
-      if (isAnyItemOnAction()) ListTile(title: Text('Paste', style: TextStyle(fontSize: 14)), leading: Icon(Icons.paste, size: 18), onTap: () => {_filesystemController.paste(), Get.back()}),
+      if (isAnyItemOnAction()) ListTile(title: Text('Paste', style: TextStyle(fontSize: 14)), leading: Icon(Icons.paste, size: 18), onTap: () => {displayEvent(), _filesystemController.paste(), Get.back()}),
       ListTile(title: Text('New Folder', style: TextStyle(fontSize: 14)), leading: Icon(Icons.create_new_folder, size: 18), onTap: () => addFolderDialog()),
     ];
   }

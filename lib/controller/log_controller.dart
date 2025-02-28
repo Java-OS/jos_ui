@@ -57,7 +57,7 @@ class LogController extends GetxController {
     developer.log('SSE controller try Connect $packageName $level');
     var content = {
       'message': {'package': packageName, 'level': level},
-      'code': EventCode.JVM_LOGS.value
+      'code': SseConnectionType.JVM_LOG.value
     };
     fetchResponse = await RestClient.sse(jsonEncode(content));
     isConnected.value = true;

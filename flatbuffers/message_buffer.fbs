@@ -228,6 +228,14 @@ enum RPC:int32 {
     RPC_CONTAINER_PRUNE = 2032,
     RPC_CONTAINER_SETTING_REGISTRIES_LOAD = 2033,
     RPC_CONTAINER_SETTING_REGISTRIES_SAVE = 2034,
+
+    /*
+     * SSE Events
+     * */
+     RPC_EVENT_LIST = 2100,
+     RPC_EVENT_READ = 2101,
+     RPC_EVENT_READ_ALL = 2102,
+     RPC_EVENT_GET = 2103,
 }
 
 /*
@@ -260,11 +268,23 @@ enum UploadType:int32 {
     UPLOAD_TYPE_FILE = 3,
 }
 
-enum EventCode:int32 {
-    JVM_LOGS,
-    OCI_CONTAINER_NOTIFICATION,
-    OCI_IMAGE_NOTIFICATION,
-    OCI_CONTAINER_LOGS,
-    ARCHIVE,
-    TRANSFER,
+enum SseConnectionType:int32 {
+    JVM_LOG,
+    OCI_LOG,
+    EVENT,
+}
+
+enum EventStatus:int32 {
+   PROGRESS,
+   FAILURE,
+   SUCCESS
+}
+
+table Event {
+    uid:string;
+    username:string;
+    event_status:EventStatus;
+    percentage:double;
+    read:bool;
+    message:string;
 }

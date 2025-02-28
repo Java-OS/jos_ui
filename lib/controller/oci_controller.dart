@@ -78,52 +78,52 @@ class OciController extends GetxController {
   var registries = <String>{}.obs;
 
   FetchResponse? fetchResponse;
-  late StreamSubscription<Event> sseListener;
+  // late StreamSubscription<Event> sseListener;
   var sseConnected = false;
 
-  Future<void> ociSSEConsumer(String? message, EventCode event) async {
-    if (sseConnected) return;
-    developer.log('SSE Container Logs Consumer activated');
-    sseConnected = true;
-    var content = {
-      'message': message,
-      'code': event.value,
-    };
-    fetchResponse = await RestClient.sse(jsonEncode(content));
-    sseListener = fetchResponse!.stream.where((event) => event.isNotEmpty).transform(const Utf8Decoder()).transform(const LineSplitter()).map((e) => Event.fromJson(e)).distinct().listen(
-          (e) {
-            var code = e.code;
-            var message = e.message.trim();
-            handleEvents(code, message);
-          },
-          cancelOnError: true,
-          onError: (e) {
-            developer.log('$e');
-            handleEvents(event, null);
-            closeStreamListener();
-          },
-          onDone: () => closeStreamListener(),
-        );
-  }
+  // Future<void> ociSSEConsumer(String? message, EventCode event) async {
+  //   if (sseConnected) return;
+  //   developer.log('SSE Container Logs Consumer activated');
+  //   sseConnected = true;
+  //   var content = {
+  //     'message': message,
+  //     'code': event.value,
+  //   };
+  //   fetchResponse = await RestClient.sse(jsonEncode(content));
+  //   sseListener = fetchResponse!.stream.where((event) => event.isNotEmpty).transform(const Utf8Decoder()).transform(const LineSplitter()).map((e) => Event.fromJson(e)).distinct().listen(
+  //         (e) {
+  //           var code = e.code;
+  //           var message = e.message.trim();
+  //           handleEvents(code, message);
+  //         },
+  //         cancelOnError: true,
+  //         onError: (e) {
+  //           developer.log('$e');
+  //           handleEvents(event, null);
+  //           closeStreamListener();
+  //         },
+  //         onDone: () => closeStreamListener(),
+  //       );
+  // }
 
-  Future<void> handleEvents(EventCode code, String? message) async {
-    if (code == EventCode.OCI_IMAGE_NOTIFICATION) {
-      if (message != null) displayInfo(message);
-      listImages();
-    } else if (code == EventCode.OCI_CONTAINER_NOTIFICATION) {
-      if (message != null) displayInfo(message);
-      listContainers();
-    } else if (code == EventCode.OCI_CONTAINER_LOGS) {
-      // if (logs.value.split('\n').length == 500) logs.value = logs.value.substring(logs.value.indexOf('\n') + 1);
-      // logs.value += '$message\n';
-      // logs.refresh();
-      terminal.write('$message\r\n');
-    }
-  }
+  // Future<void> handleEvents(EventCode code, String? message) async {
+  //   if (code == EventCode.NOTIFICATION) {
+  //     if (message != null) displayInfo(message);
+  //     listImages();
+  //   } else if (code == EventCode.NOTIFICATION) {
+  //     if (message != null) displayInfo(message);
+  //     listContainers();
+  //   } else if (code == EventCode.OCI_LOG) {
+  //     // if (logs.value.split('\n').length == 500) logs.value = logs.value.substring(logs.value.indexOf('\n') + 1);
+  //     // logs.value += '$message\n';
+  //     // logs.refresh();
+  //     terminal.write('$message\r\n');
+  //   }
+  // }
 
   void closeStreamListener() {
     developer.log('Disconnect SSE');
-    sseListener.cancel();
+    // sseListener.cancel();
     fetchResponse?.cancel();
     sseConnected = false;
   }
@@ -151,7 +151,7 @@ class OciController extends GetxController {
   }
 
   void pullImage(String name) async {
-    ociSSEConsumer(null, EventCode.OCI_IMAGE_NOTIFICATION);
+    // ociSSEConsumer(null, EventCode.NOTIFICATION);
     developer.log('Pull image $name');
     var reqParams = {'name': name};
     searchImageList.removeWhere((item) => item.name == name);
@@ -261,7 +261,7 @@ class OciController extends GetxController {
   }
 
   void createContainer() async {
-    ociSSEConsumer(null, EventCode.OCI_CONTAINER_NOTIFICATION);
+    // ociSSEConsumer(null, EventCode.NOTIFICATION);
     developer.log('Try to create container');
     var name = containerNameEditingController.text;
     var dnsSearch = containerDnsSearchEditingController.text;

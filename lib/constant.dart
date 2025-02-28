@@ -33,6 +33,7 @@ enum Routes {
   firewallRules('/firewall/chains/rules'),
   filesystem('/filesystem'),
   directoryTree('/filesystem/directory'),
+  events('/events'),
   modules('/modules');
 
   final String path;

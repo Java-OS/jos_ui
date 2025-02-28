@@ -89,6 +89,6 @@ class _OciImagesPageState extends State<OciImagesPage> {
   }
 
   Future<void> streamLogs(ContainerImage ci) async {
-    _containerController.ociSSEConsumer(ci.name, EventCode.OCI_CONTAINER_LOGS);
+    // _containerController.ociSSEConsumer(ci.name, EventCode.OCI_LOG);
   }
 }
