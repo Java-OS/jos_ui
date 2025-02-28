@@ -1,6 +1,7 @@
 import 'package:contextmenu_plus/contextmenu_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class FileView extends StatefulWidget {
   final FilesystemTree filesystemTree;
@@ -35,7 +36,7 @@ class _FileViewState extends State<FileView> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onSecondaryTap: () {
-        showContextMenu(Offset(dx, dy), context, (builder) => widget.contextMenuItems!, 0, 170);
+        showContextMenu(Offset(dx, dy), context, (builder) => widget.contextMenuItems!, 0, 200);
         widget.onSelect!();
       },
       onTap: () {
@@ -71,7 +72,7 @@ class _FileViewState extends State<FileView> {
               child: Column(
                 children: [
                   Icon(
-                    widget.filesystemTree.isFile ? Icons.insert_drive_file_outlined : Icons.folder,
+                    getIcon(widget.filesystemTree),
                     color: widget.iconColor,
                     size: 60,
                   ),
@@ -90,12 +91,51 @@ class _FileViewState extends State<FileView> {
     );
   }
 
-// ContextMenu getContextMenu() {
-//   return ContextMenu(
-//     padding: EdgeInsets.all(1),
-//     borderRadius: BorderRadius.zero,
-//     entries: widget.contextMenuItems ?? [],
-//     position: Offset(dx, dy),
-//   );
-// }
+  IconData getIcon(FilesystemTree fst) {
+    var mime = fst.mime;
+    switch (mime) {
+      case 'inode/directory':
+        return Icons.folder;
+      case 'text/plain':
+      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+      case 'application/vnd.oasis.opendocument.text':
+        return Icons.text_snippet_outlined;
+      case 'application/pdf':
+        return MdiIcons.filePdfBox;
+      case 'audio/mpeg':
+      case 'audio/x-wav':
+        return Icons.audio_file_outlined;
+      case 'video/mp4':
+      case 'video/quicktime':
+      case 'video/x-cdxa':
+      case 'video/x-flv':
+      case 'video/x-matroska':
+        return Icons.video_file_outlined;
+      case 'inode/chardevice':
+        return MdiIcons.devices;
+      case 'inode/symlink':
+        return fst.isFile ? MdiIcons.fileLinkOutline : MdiIcons.folderOutline;
+      case 'inode/blockdevice':
+        return MdiIcons.harddisk;
+      case 'inode/fifo':
+        return Icons.route;
+      case 'application/x-tar':
+      case 'application/x-bzip2':
+      case 'application/gzip':
+      case 'application/x-xz':
+      case 'application/zip':
+      case 'application/java-archive':
+        return MdiIcons.archiveOutline;
+      case 'application/x-pie-executable':
+      case 'application/x-executable':
+      case 'application/x-sharedlib':
+      case 'text/x-shellscript':
+      case 'text/x-script.python':
+        return MdiIcons.applicationOutline;
+      case 'text/html':
+        return Icons.html_outlined;
+      default :
+        return MdiIcons.fileOutline;
+    }
+  }
 }

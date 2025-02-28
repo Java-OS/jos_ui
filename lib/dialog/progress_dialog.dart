@@ -10,7 +10,7 @@ var _sseController = Get.put(SSEController());
 Future<void> displayEvent() async {
   _sseController.consumeEvents();
   showDialog(
-    // barrierDismissible: false,
+    barrierDismissible: false,
     context: Get.context!,
     builder: (BuildContext context) {
       return AlertDialog(
@@ -27,15 +27,20 @@ Future<void> displayEvent() async {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(isEventEmpty() ? 'Please wait ...' : _eventController.listEvents.last.message!, style: TextStyle(fontSize: 12, color: Colors.white)),
-                  LinearProgressIndicator(color: Colors.lightGreenAccent, value: isEventEmpty() ? null : _eventController.listEvents.last.percentage),
+                  Text(getMessage(), style: TextStyle(fontSize: 12, color: Colors.white)),
+                  LinearProgressIndicator(color: Colors.lightGreenAccent, value: _eventController.listEvents.isEmpty ? null : _eventController.listEvents.first.percentage),
                   SizedBox(height: 8),
                   Align(
                     alignment: Alignment.bottomRight,
                     child: OutlinedButton(
                       onPressed: () => Get.back(),
                       style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey)),
-                      child: Text(isEventEmpty() ? 'Close' : _eventController.listEvents.last.eventStatus == EventStatus.PROGRESS ? 'Run in background' : 'Close',
+                      child: Text(
+                        _eventController.listEvents.isEmpty
+                            ? 'Close'
+                            : _eventController.listEvents.first.eventStatus == EventStatus.PROGRESS
+                                ? 'Run in background'
+                                : 'Close',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -47,9 +52,9 @@ Future<void> displayEvent() async {
         ),
       );
     },
-  ).then((_) => _sseController.disconnectSse());
+  ).then((_) => _sseController.disconnectSse()).then((_) => _eventController.listEvents.clear());
 }
 
-bool isEventEmpty() {
-  return _eventController.listEvents.isEmpty;
+String getMessage() {
+  return _eventController.listEvents.isEmpty ? 'Please wait ...' : _eventController.listEvents.first.message!;
 }

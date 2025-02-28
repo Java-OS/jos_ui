@@ -36,20 +36,27 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
     return Obx(
       () => CardContent(
         controllers: [
+          Tooltip(
+            message: 'Compress files to zip',
+            child: OutlinedButton(
+              onPressed: _filesystemController.selectedItems.isEmpty ? null : () => compressDialog(),
+              child: Icon(MdiIcons.zipBoxOutline, size: 16),
+            ),
+          ),
           if (isAnyItemOnAction())
             Tooltip(
               message: 'Paste',
               child: OutlinedButton(
                 onPressed: () => {displayEvent(), _filesystemController.paste()},
-                child: Icon(Icons.paste, size: 16, color: Colors.black),
+                child: Icon(Icons.paste, size: 16),
               ),
             ),
           if (isAnySelected())
             Tooltip(
               message: 'Delete',
               child: OutlinedButton(
-                onPressed: () => deleteItems(),
-                child: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black),
+                onPressed: () => deleteConfirmationDialog(false),
+                child: Icon(MdiIcons.trashCanOutline, size: 16),
               ),
             ),
           if (isAnySelected())
@@ -57,7 +64,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
               message: 'Copy',
               child: OutlinedButton(
                 onPressed: () => setCopyItems(),
-                child: Icon(Icons.copy_outlined, size: 16, color: Colors.black),
+                child: Icon(Icons.copy_outlined, size: 16),
               ),
             ),
           if (isAnySelected())
@@ -65,21 +72,21 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
               message: 'Cut',
               child: OutlinedButton(
                 onPressed: () => setCutItems(),
-                child: Icon(Icons.cut_outlined, size: 16, color: Colors.black),
+                child: Icon(Icons.cut_outlined, size: 16),
               ),
             ),
           Tooltip(
             message: 'Create new folder',
             child: OutlinedButton(
               onPressed: () => addFolderDialog(),
-              child: Icon(Icons.create_new_folder_outlined, size: 16, color: Colors.black),
+              child: Icon(Icons.create_new_folder_outlined, size: 16),
             ),
           ),
           Tooltip(
             message: 'Select all files',
             child: OutlinedButton(
               onPressed: () => selectAllItems(),
-              child: Icon(Icons.select_all, size: 16, color: Colors.black),
+              child: Icon(Icons.select_all, size: 16),
             ),
           ),
         ],
@@ -183,6 +190,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
                             deselectAllItems();
                           },
                           onSecondaryTap: () {
+                            deselectAllItems();
                             showContextMenu(Offset(dx, dy), context, (builder) => getContextMenu(), 0, 170);
                           },
                           child: GridView.builder(
@@ -201,7 +209,9 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
                                 contextMenuItems: [
                                   if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Copy', style: TextStyle(fontSize: 14)), leading: Icon(Icons.copy, size: 18), onTap: () => {setCopyItems(), Get.back()}),
                                   if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Cut', style: TextStyle(fontSize: 14)), leading: Icon(Icons.cut, size: 18), onTap: () => {setCutItems(), Get.back()}),
-                                  ListTile(title: Text('Delete', style: TextStyle(fontSize: 14)), leading: Icon(MdiIcons.trashCanOutline, size: 18), onTap: () => deleteConfirmationDialog()),
+                                  ListTile(title: Text('Delete', style: TextStyle(fontSize: 14)), leading: Icon(MdiIcons.trashCanOutline, size: 18), onTap: () => deleteConfirmationDialog(true)),
+                                  ListTile(title: Text('Compress to zip', style: TextStyle(fontSize: 14)), leading: Icon(Icons.archive, size: 18), onTap: () => compressDialog()),
+                                  if (child.mime == 'application/zip') ListTile(title: Text('Decompress', style: TextStyle(fontSize: 14)), leading: Icon(Icons.unarchive, size: 18), onTap: () => {displayEvent(), _filesystemController.extractArchive(child.fullPath)}),
                                 ],
                                 isSelected: isSelected(child.fullPath),
                                 filesystemTree: child,
@@ -223,10 +233,6 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
         ),
       ),
     );
-  }
-
-  Future<void> deleteItems() async {
-    deleteConfirmationDialog();
   }
 
   void selectAllItems() {

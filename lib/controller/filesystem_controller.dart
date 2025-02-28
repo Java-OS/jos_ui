@@ -26,7 +26,6 @@ class FilesystemController extends GetxController {
   var selectedItems = <String>[].obs;
   var copyItems = <String>[].obs;
   var cuteItems = <String>[].obs;
-  var archiveItems = <String>[].obs;
   var directoryPath = ''.obs;
 
   var treeView = Rxn<FilesystemTree>();
@@ -92,11 +91,11 @@ class FilesystemController extends GetxController {
     newFolderEditingController.clear();
   }
 
-  void createArchive() async {
+  Future<void> createArchive() async {
     var fileName = archiveFileNameEditingController.text;
     developer.log('compress archive $fileName');
     var reqParam = {
-      'list' : archiveItems.toList(),
+      'list' : selectedItems.toList(),
       'archiveName': fileName
     };
     var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_CREATE_ARCHIVE, parameters: reqParam, message: 'Failed to create archive $fileName');
@@ -106,10 +105,11 @@ class FilesystemController extends GetxController {
 
   void extractArchive(String path) async {
     developer.log('Extract archive $path');
-    var reqParam = {'target': path};
+    var reqParam = {'zipFile': path};
     var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_EXTRACT_ARCHIVE, parameters: reqParam, message: 'Failed extract archive $path');
     filesystemTree.value = FilesystemTree.fromMap(map);
     _eventController.eventFetch();
+    selectedItems.clear();
   }
 
   void paste() async {

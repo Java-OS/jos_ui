@@ -54,6 +54,7 @@ Future<void> displayMountFilesystemModal() async {
 }
 
 Future<void> addFolderDialog() async {
+  Get.back();
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
@@ -72,7 +73,7 @@ Future<void> addFolderDialog() async {
               ElevatedButton(
                 child: Text('Confirm'),
                 onPressed: () async {
-                  await _filesystemController.createDir();
+                  _filesystemController.createDir();
                   Get.back();
                 },
               )
@@ -84,7 +85,8 @@ Future<void> addFolderDialog() async {
   );
 }
 
-Future<void> deleteConfirmationDialog() async {
+Future<void> deleteConfirmationDialog(bool closeContextMenu) async {
+  if (closeContextMenu) Get.back();
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
@@ -142,7 +144,8 @@ Future<void> deleteConfirmationDialog() async {
                 child: Text('Confirm'),
                 onPressed: () async {
                   Get.back();
-                  await _filesystemController.delete();
+                  _filesystemController.delete();
+                  displayEvent();
                 },
               ),
               SizedBox(width: 8),
@@ -155,5 +158,38 @@ Future<void> deleteConfirmationDialog() async {
         ],
       );
     },
-  ).then((_) => displayEvent());
+  );
+}
+
+Future<void> compressDialog() async {
+  Get.back();
+  showDialog(
+    context: Get.context!,
+    builder: (BuildContext context) {
+      return SimpleDialog(
+        title: getModalHeader('Create archive'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        contentPadding: EdgeInsets.all(14),
+        titlePadding: EdgeInsets.zero,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFieldBox(controller: _filesystemController.archiveFileNameEditingController, label: 'file name'),
+              SizedBox(height: 8),
+              ElevatedButton(
+                child: Text('Confirm'),
+                onPressed: () async {
+                  Get.back();
+                  _filesystemController.createArchive();
+                  displayEvent();
+                },
+              )
+            ],
+          )
+        ],
+      );
+    },
+  );
 }
