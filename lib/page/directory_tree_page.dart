@@ -211,7 +211,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
                                   if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Cut', style: TextStyle(fontSize: 14)), leading: Icon(Icons.cut, size: 18), onTap: () => {setCutItems(), Get.back()}),
                                   ListTile(title: Text('Delete', style: TextStyle(fontSize: 14)), leading: Icon(MdiIcons.trashCanOutline, size: 18), onTap: () => deleteConfirmationDialog(true)),
                                   ListTile(title: Text('Compress to zip', style: TextStyle(fontSize: 14)), leading: Icon(Icons.archive, size: 18), onTap: () => compressDialog()),
-                                  if (child.mime == 'application/zip') ListTile(title: Text('Decompress', style: TextStyle(fontSize: 14)), leading: Icon(Icons.unarchive, size: 18), onTap: () => {displayEvent(), _filesystemController.extractArchive(child.fullPath)}),
+                                  if (child.mime == 'application/zip') ListTile(title: Text('Decompress', style: TextStyle(fontSize: 14)), leading: Icon(Icons.unarchive, size: 18), onTap: () => {Get.back(), displayEvent(), _filesystemController.extractArchive(child.fullPath)}),
                                 ],
                                 isSelected: isSelected(child.fullPath),
                                 filesystemTree: child,
@@ -290,7 +290,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
 
   List<Widget> getContextMenu() {
     return [
-      if (isAnyItemOnAction()) ListTile(title: Text('Paste', style: TextStyle(fontSize: 14)), leading: Icon(Icons.paste, size: 18), onTap: () => {displayEvent(), _filesystemController.paste(), Get.back()}),
+      if (isAnyItemOnAction()) ListTile(title: Text('Paste', style: TextStyle(fontSize: 14)), leading: Icon(Icons.paste, size: 18), onTap: () => {Get.back(), displayEvent(), _filesystemController.paste(), Get.back()}),
       ListTile(title: Text('New Folder', style: TextStyle(fontSize: 14)), leading: Icon(Icons.create_new_folder, size: 18), onTap: () => addFolderDialog()),
     ];
   }
