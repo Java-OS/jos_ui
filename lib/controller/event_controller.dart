@@ -25,7 +25,10 @@ class EventController extends GetxController {
 
   Future<void> eventReadAll() async {
     developer.log('Mark all events as read');
-    _apiService.callApi(Rpc.RPC_EVENT_READ_ALL, message: 'Failed to mark all events as read', disableLoading: true).then((e) => e as List).then((list) => listEvents.value = list.map((e) => base64Decode(e)).map((e) => Event(e)).toList());
+    _apiService.callApi(Rpc.RPC_EVENT_READ_ALL, message: 'Failed to mark all events as read', disableLoading: true)
+        .then((e) => e as List)
+        .then((list) => listEvents.value = list.map((e) => base64Decode(e)).map((e) => Event(e))
+        .toList());
   }
 
   Future<void> eventGet(String uid) async {

@@ -25,14 +25,14 @@ class EventPageState extends State<EventPage> {
 
   @override
   Widget build(BuildContext context) {
-    return CardContent(
-      controllers: [
-        OutlinedButton(onPressed: _eventController.hasUnreadEvent() ? () => _eventController.eventReadAll() : null, child: Icon(Icons.done_all_outlined, size: 16)),
-      ],
-      child: Expanded(
-        child: SingleChildScrollView(
-          child: Obx(
-            () => ListView.builder(
+    return Obx(
+      () => CardContent(
+        controllers: [
+          OutlinedButton(onPressed: !_eventController.hasUnreadEvent() ? null : () => _eventController.eventReadAll(), child: Icon(Icons.done_all_outlined, size: 16)),
+        ],
+        child: Expanded(
+          child: SingleChildScrollView(
+            child: ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemCount: _eventController.listEvents.length,
