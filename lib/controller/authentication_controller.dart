@@ -43,7 +43,6 @@ class AuthenticationController extends GetxController {
   }
 
   Future<void> checkToken() async {
-    developer.log('>>>>>>>>>>>>> Check is login');
     if (StorageService.exists('token')) {
       var success = await RestClient.verifyToken();
       if (success) {
