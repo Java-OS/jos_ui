@@ -37,8 +37,23 @@ class AuthenticationController extends GetxController {
 
   void logout() {
     developer.log('Logout called');
+    clean();
     StorageService.removeItem('token');
     Get.offAllNamed(Routes.login.path);
+  }
+
+  Future<void> checkToken() async {
+    developer.log('>>>>>>>>>>>>> Check is login');
+    if (StorageService.exists('token')) {
+      var success = await RestClient.verifyToken();
+      if (success) {
+        Get.offNamed(Routes.dashboard.path);
+      } else {
+        logout();
+      }
+    } else {
+      logout();
+    }
   }
 
   void clean() {

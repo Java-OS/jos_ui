@@ -10,6 +10,7 @@ import 'package:jos_ui/page/firewall/firewall_chain_page.dart';
 import 'package:jos_ui/page/firewall/firewall_rule_page.dart';
 import 'package:jos_ui/page/firewall/firewall_table_page.dart';
 import 'package:jos_ui/page/layout/responsive_layout.dart';
+import 'package:jos_ui/page/loading_page.dart';
 import 'package:jos_ui/page/login_page.dart';
 import 'package:jos_ui/page/module_page.dart';
 import 'package:jos_ui/page/network/network_hosts_page.dart';
@@ -66,7 +67,7 @@ class JosApplication extends StatelessWidget {
         initialRoute: Routes.base.path,
         navigatorKey: navigatorKey,
         getPages: [
-          GetPage(name: Routes.base.path, transitionDuration: Duration.zero, page: () => LoginPage()),
+          GetPage(name: Routes.base.path, transitionDuration: Duration.zero, page: () => LoadingPage()),
           GetPage(name: Routes.login.path, transitionDuration: Duration.zero, page: () => LoginPage()),
           GetPage(name: Routes.dashboard.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: DashboardPage())),
           GetPage(name: Routes.settingBasic.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: SettingsBasicPage())),

@@ -25,6 +25,8 @@ class RestClient {
 
   static String _baseLoginUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/login";
 
+  static String _baseVerifyTokenUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/verify";
+
   static String _baseRpcUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/rpc";
 
   static String _baseUploadUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/upload";
@@ -89,6 +91,30 @@ class RestClient {
       }
       StorageService.removeItem('activation-key');
       developer.log('Login Failed');
+      return false;
+    } catch (e) {
+      developer.log('[Http Error] $rpc ${e.toString()}');
+      StorageService.removeItem('activation-key');
+    }
+    return false;
+  }
+
+  static Future<bool> verifyToken() async {
+    var token = StorageService.getItem('token');
+    var headers = {'authorization': 'Bearer $token'};
+    developer.log('Header send: [$headers]');
+
+    try {
+      var response = await _http.post(Uri.parse(_baseVerifyTokenUrl()), headers: headers);
+      var statusCode = response.statusCode;
+      if (statusCode == 204) {
+        storeToken(response.headers);
+        developer.log('Login success');
+        return true;
+      }
+      StorageService.removeItem('activation-key');
+      developer.log('Login Failed');
+      return false;
     } catch (e) {
       developer.log('[Http Error] $rpc ${e.toString()}');
       StorageService.removeItem('activation-key');
