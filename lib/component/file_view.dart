@@ -131,7 +131,16 @@ class _FileViewState extends State<FileView> {
       case 'application/x-sharedlib':
       case 'text/x-shellscript':
       case 'text/x-script.python':
+      case 'application/javascript':
+      case 'text/x-php':
         return MdiIcons.applicationOutline;
+      case 'image/jpeg' :
+      case 'image/png' :
+      case 'image/gif' :
+      case 'image/svg+xml' :
+      case 'image/vnd.microsoft.icon' :
+      case 'image/x-icon' :
+        return Icons.image;
       case 'text/html':
         return Icons.html_outlined;
       default :
