@@ -4,7 +4,6 @@ import 'dart:developer' as developer;
 
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/model/log.dart';
 import 'package:jos_ui/service/storage_service.dart';
 import 'package:web_socket_client/web_socket_client.dart';
 import 'package:xterm/xterm.dart';
