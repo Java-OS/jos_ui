@@ -7,7 +7,6 @@ import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/filesystem.dart';
 import 'package:jos_ui/model/filesystem_tree.dart';
 import 'package:jos_ui/service/api_service.dart';
-import 'package:jos_ui/service/rest_client.dart';
 
 class FilesystemController extends GetxController {
   final _apiService = Get.put(ApiService());
@@ -94,10 +93,7 @@ class FilesystemController extends GetxController {
   Future<void> createArchive() async {
     var fileName = archiveFileNameEditingController.text;
     developer.log('compress archive $fileName');
-    var reqParam = {
-      'list' : selectedItems.toList(),
-      'archiveName': fileName
-    };
+    var reqParam = {'list': selectedItems.toList(), 'archiveName': fileName};
     var map = await _apiService.callApi(Rpc.RPC_FILESYSTEM_CREATE_ARCHIVE, parameters: reqParam, message: 'Failed to create archive $fileName');
     filesystemTree.value = FilesystemTree.fromMap(map);
     _eventController.eventFetch();
@@ -115,7 +111,7 @@ class FilesystemController extends GetxController {
   void paste() async {
     developer.log('Copy or Move files to ${directoryPath.value}');
     var reqParam = {
-      'list' : copyItems.isNotEmpty ? copyItems.toList() : cuteItems.toList(),
+      'list': copyItems.isNotEmpty ? copyItems.toList() : cuteItems.toList(),
       'target': directoryPath.value,
     };
     var map = await _apiService.callApi(copyItems.isNotEmpty ? Rpc.RPC_FILESYSTEM_COPY_FILE : Rpc.RPC_FILESYSTEM_MOVE_FILE, parameters: reqParam, message: 'Failed copy/move files to ${directoryPath.value}');

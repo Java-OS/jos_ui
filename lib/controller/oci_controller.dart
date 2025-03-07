@@ -19,7 +19,6 @@ import 'package:jos_ui/model/container/port_mapping.dart';
 import 'package:jos_ui/model/container/subnet.dart';
 import 'package:jos_ui/model/container/volume.dart';
 import 'package:jos_ui/model/container/volume_parameter.dart';
-import 'package:jos_ui/model/event.dart';
 import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/service/rest_client.dart';
@@ -78,6 +77,7 @@ class OciController extends GetxController {
   var registries = <String>{}.obs;
 
   FetchResponse? fetchResponse;
+
   // late StreamSubscription<Event> sseListener;
   var sseConnected = false;
 

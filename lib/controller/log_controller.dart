@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:fetch_client/fetch_client.dart';
@@ -10,12 +9,13 @@ import 'package:jos_ui/model/log.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
 import 'package:jos_ui/service/api_service.dart';
-import 'package:jos_ui/service/rest_client.dart';
+import 'package:jos_ui/service/websocket/jvm_log_websocket_service.dart';
 import 'package:xterm/core.dart';
 import 'package:xterm/ui.dart';
 
 class LogController extends GetxController {
   final _apiService = Get.put(ApiService());
+  final _jvmLogWebsocketService = Get.put(JvmLogWebsocketService());
   final TextEditingController idEditingController = TextEditingController();
   final TextEditingController packageEditingController = TextEditingController();
   final TextEditingController patternEditingController = TextEditingController();
@@ -26,10 +26,8 @@ class LogController extends GetxController {
   final TextEditingController fileMaxSizeEditingController = TextEditingController();
   final TextEditingController fileTotalSizeEditingController = TextEditingController();
   final TextEditingController fileMaxHistoryEditingController = TextEditingController();
-  final terminalController = TerminalController();
-  final terminal = Terminal(maxLines: 1000, platform: TerminalTargetPlatform.web, reflowEnabled: true);
+
   var logAppenders = <LogInfo>[].obs;
-  var isConnected = false.obs;
   var isTail = false.obs;
   var logLevel = LogLevel.all.obs;
   var systemLog = ''.obs;
@@ -39,60 +37,6 @@ class LogController extends GetxController {
   void onInit() {
     super.onInit();
     patternEditingController.text = '[%-5level] %date [%thread] %logger{10} [%file:%line] %msg%n';
-  }
-
-  Future<void> connect() async {
-    if (packageEditingController.text.isEmpty) {
-      developer.log('target package is empty');
-      displayWarning('Target package is empty');
-      return;
-    }
-
-    if (isConnected.isTrue) {
-      developer.log('SSE already connected');
-      disconnect(false, false);
-    }
-    var packageName = packageEditingController.text;
-    var level = logLevel.value.name;
-    developer.log('SSE controller try Connect $packageName $level');
-    var content = {
-      'message': {'package': packageName, 'level': level},
-      'code': SseConnectionType.JVM_LOG.value
-    };
-    fetchResponse = await RestClient.sse(jsonEncode(content));
-    isConnected.value = true;
-    fetchResponse!.stream.where((event) => event.isNotEmpty).transform(const Utf8Decoder()).transform(const LineSplitter()).distinct().listen(
-          (event) => writeToTerminal(event),
-          cancelOnError: true,
-          onError: (e) => developer.log(e),
-        );
-  }
-
-  void writeToTerminal(String event) async {
-    var log = Log.fromText(event);
-    var formattedLog = '${log.dateTime} [${log.level}] ${log.logger} [${log.thread}] ${log.message}\r\n';
-    terminal.write(formattedLog);
-  }
-
-  Future<void> disconnect(bool clearQueue, bool closeModal) async {
-    if (clearQueue) {
-      developer.log('Clear queue');
-    }
-
-    if (closeModal) {
-      developer.log('Logger modal closed');
-    }
-
-    isTail.value = false;
-
-    developer.log('Disconnect SSE');
-    fetchResponse?.cancel();
-    isConnected.value = false;
-  }
-
-  Future<void> changeLevel(LogLevel level) async {
-    logLevel.value = level;
-    if (isConnected.isTrue) connect();
   }
 
   Future<void> fetchAppenders() async {

@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:jos_ui/component/toast.dart';
-import 'package:jos_ui/controller/event_controller.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/service/rest_client.dart';
-import 'dart:developer' as developer;
 
 class ApiService extends GetxController {
   var isLoading = false.obs;

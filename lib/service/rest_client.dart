@@ -21,20 +21,6 @@ class RestClient {
   static final _http = http.Client();
   static final _h5Proto = H5Proto.init();
 
-  static String _baseH5ProtoUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/h5proto";
-
-  static String _baseLoginUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/login";
-
-  static String _baseVerifyTokenUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/verify";
-
-  static String _baseRpcUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/rpc";
-
-  static String _baseUploadUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/upload";
-
-  static String _baseSseUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/sse";
-
-  static String _baseDownloadUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/download";
-
   static Future<String?> sendEcdhPublicKey() async {
     developer.log('Request to send ecdh public key');
     _h5Proto.storePrivateKey();
@@ -43,7 +29,7 @@ class RestClient {
     try {
       var payloadBytes = ProtocolUtils.serializePayload(null, publicKey);
       var packetBytes = ProtocolUtils.serializePacket(null, null, payloadBytes);
-      var uri = Uri.parse(_baseH5ProtoUrl());
+      var uri = Uri.parse(baseH5ProtoUrl());
       var response = await _http.post(uri, body: packetBytes);
       var statusCode = response.statusCode;
       if (statusCode == 200) {
@@ -69,7 +55,7 @@ class RestClient {
   }
 
   static Future<bool> login(String username, String password, String salt) async {
-    developer.log('Login request [$username] [$password] [${_baseLoginUrl()}]');
+    developer.log('Login request [$username] [$password] [${baseLoginUrl()}]');
     StorageService.addItem('activation-key', salt.toUpperCase());
     var data = {
       'username': username,
@@ -82,7 +68,7 @@ class RestClient {
     var packet = await _h5Proto.encode(ProtocolUtils.serializePayload(null, jsonEncode(data)));
 
     try {
-      var response = await _http.post(Uri.parse(_baseLoginUrl()), body: packet, headers: headers);
+      var response = await _http.post(Uri.parse(baseLoginUrl()), body: packet, headers: headers);
       var statusCode = response.statusCode;
       if (statusCode == 204) {
         storeToken(response.headers);
@@ -105,7 +91,7 @@ class RestClient {
     developer.log('Header send: [$headers]');
 
     try {
-      var response = await _http.post(Uri.parse(_baseVerifyTokenUrl()), headers: headers);
+      var response = await _http.post(Uri.parse(baseVerifyTokenUrl()), headers: headers);
       var statusCode = response.statusCode;
       if (statusCode == 204) {
         storeToken(response.headers);
@@ -123,7 +109,7 @@ class RestClient {
   }
 
   static Future<Payload> rpc(Rpc rpc, {Map<String, dynamic>? parameters}) async {
-    developer.log('Request call rpc: [$rpc] [$parameters] [${_baseRpcUrl()}]');
+    developer.log('Request call rpc: [$rpc] [$parameters] [${baseRpcUrl()}]');
     var token = StorageService.getItem('token');
     if (token == null) Get.toNamed('/login');
     var headers = {'Authorization': 'Bearer $token'};
@@ -139,7 +125,7 @@ class RestClient {
     // debugPrint('Hash : ${base64Encode(packet.hash)}');
     // debugPrint('Content : ${base64Encode(packet.content)}');
     try {
-      var response = await _http.post(Uri.parse(_baseRpcUrl()), body: packet, headers: headers);
+      var response = await _http.post(Uri.parse(baseRpcUrl()), body: packet, headers: headers);
       var statusCode = response.statusCode;
       developer.log('Response received with http code: $statusCode');
 
@@ -187,7 +173,7 @@ class RestClient {
     };
 
     try {
-      var request = http.MultipartRequest('POST', Uri.parse('${_baseUploadUrl()}/${type.value}'));
+      var request = http.MultipartRequest('POST', Uri.parse('${baseUploadUrl()}/${type.value}'));
       request.headers.addAll(headers);
       var fileOrder = http.MultipartFile.fromBytes('file', bytes, filename: fileName);
       request.files.add(fileOrder);
@@ -209,7 +195,7 @@ class RestClient {
     };
 
     try {
-      var request = http.MultipartRequest('POST', Uri.parse('${_baseUploadUrl()}/${UploadType.UPLOAD_TYPE_FILE.value}'));
+      var request = http.MultipartRequest('POST', Uri.parse('${baseUploadUrl()}/${UploadType.UPLOAD_TYPE_FILE.value}'));
       request.headers.addAll(headers);
       var fileOrder = http.MultipartFile.fromBytes('file', bytes, filename: fileName);
       request.files.add(fileOrder);
@@ -238,7 +224,7 @@ class RestClient {
     var serializeMetadata = ProtocolUtils.serializeMetadata(false, null, null, null, null);
     var packet = await _h5Proto.encode(ProtocolUtils.serializePayload(serializeMetadata, content));
 
-    var request = http.Request('POST', Uri.parse(_baseSseUrl()));
+    var request = http.Request('POST', Uri.parse(baseSseUrl()));
     request.bodyBytes = packet;
     request.headers.addAll(header);
 
@@ -262,7 +248,7 @@ class RestClient {
     var packet = await _h5Proto.encode(ProtocolUtils.serializePayload(serializeMetadata, jsonEncode(parameters)));
 
     try {
-      var response = await _http.post(Uri.parse(_baseDownloadUrl()), body: packet, headers: headers);
+      var response = await _http.post(Uri.parse(baseDownloadUrl()), body: packet, headers: headers);
       var statusCode = response.statusCode;
       developer.log('Response received with http code: $statusCode');
 

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/event_controller.dart';
-import 'package:jos_ui/controller/global/sse_controller.dart';
+import 'package:jos_ui/service/websocket/event_websocket_service.dart';
 import 'package:jos_ui/message_buffer.dart';
 
 var _eventController = Get.put(EventController());
-var _sseController = Get.put(SSEController());
+var _eventWebsocketService = Get.put(EventWebsocketService());
 
 Future<void> displayEvent() async {
-  _sseController.consumeEvents();
+  _eventWebsocketService.consumeEvents();
   showDialog(
     barrierDismissible: false,
     context: Get.context!,
@@ -52,7 +52,7 @@ Future<void> displayEvent() async {
         ),
       );
     },
-  ).then((_) => _sseController.disconnectSse()).then((_) => _eventController.listEvents.clear());
+  ).then((_) => _eventWebsocketService.disconnectWebsocket()).then((_) => _eventController.listEvents.clear());
 }
 
 String getMessage() {

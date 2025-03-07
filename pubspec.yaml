@@ -59,6 +59,7 @@ dependencies:
   xterm: ^4.0.0
   contextmenu_plus: ^1.0.1
   intl: ^0.20.2
+  web_socket_client: ^0.1.5
 
 dev_dependencies:
   flutter_test:

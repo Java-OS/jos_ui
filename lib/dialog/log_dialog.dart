@@ -1,30 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/char_button.dart';
-import 'package:jos_ui/component/drop_down.dart';
 import 'package:jos_ui/component/tab.dart';
 import 'package:jos_ui/component/text_field_box.dart';
 import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/controller/log_controller.dart';
 import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
-import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
+import 'package:jos_ui/service/websocket/jvm_log_websocket_service.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:xterm/ui.dart';
 
 var _logController = Get.put(LogController());
-var _filesystemController = Get.put(FilesystemController());
 var _containerController = Get.put(OciController());
+final _jvmLogWebsocketService = Get.put(JvmLogWebsocketService());
 
-Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
-  if (logInfo != null) {
-    _logController.packageEditingController.text = logInfo.packageName;
-    _logController.patternEditingController.text = logInfo.pattern;
-    _logController.logLevel.value = LogLevel.getValue(logInfo.level);
-  }
+Future<void> displayLiveLoggerModal(LogInfo logInfo) async {
+  _jvmLogWebsocketService.consumeEvents(logInfo.packageName);
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
@@ -45,46 +39,12 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      SizedBox(
-                        width: 300,
-                        child: TextFieldBox(
-                          controller: _logController.packageEditingController,
-                          label: 'package name',
-                          onSubmit: (e) => _logController.connect(),
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      SizedBox(
-                        height: 36,
-                        width: 88,
-                        child: Obx(
-                          () => DropDownMenu<LogLevel>(
-                            displayClearButton: false,
-                            value: _logController.logLevel.value,
-                            hint: Text(_logController.logLevel.value.name),
-                            items: LogLevel.values.map((e) => DropdownMenuItem<LogLevel>(value: e, child: Text(e.name))).toList(),
-                            onChanged: (value) => _logController.changeLevel(value),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Obx(
-                        () => CharButton(
-                          width: 36,
-                          height: 36,
-                          backgroundColor: _logController.isConnected.isFalse ? Colors.white : Colors.grey[500],
-                          textStyle: TextStyle(color: _logController.isConnected.isFalse ? Colors.black : Colors.white, fontSize: 11),
-                          char: _logController.isConnected.isFalse ? 'Start' : 'Stop',
-                          onPressed: () => _logController.isConnected.isFalse ? _logController.connect() : _logController.disconnect(false, false),
-                        ),
-                      ),
-                      SizedBox(width: 8),
                       CharButton(
                         width: 36,
                         height: 36,
                         char: 'Clear',
                         textStyle: TextStyle(fontSize: 11, color: Colors.black),
-                        onPressed: () => _logController.terminal.buffer.clear(),
+                        onPressed: () => _jvmLogWebsocketService.terminal.buffer.clear(),
                       )
                     ],
                   ),
@@ -92,34 +52,19 @@ Future<void> displayLiveLoggerModal(LogInfo? logInfo) async {
                 Expanded(
                   child: TerminalView(
                     padding: EdgeInsets.only(top: 8, bottom: 8),
-                    _logController.terminal,
-                    controller: _logController.terminalController,
+                    _jvmLogWebsocketService.terminal,
+                    controller: _jvmLogWebsocketService.terminalController,
                     autofocus: true,
                     textStyle: TerminalStyle(fontSize: 11, fontFamily: 'IBMPlexMono'),
                   ),
                 )
-                // Expanded(
-                //   child: Container(
-                //     color: Colors.black,
-                //     width: double.infinity,
-                //     child: Theme(
-                //       data: ThemeData(scrollbarTheme: ScrollbarThemeData(thumbColor: WidgetStateProperty.all(Colors.white))),
-                //       child: Padding(
-                //         padding: EdgeInsets.all(4),
-                //         child: Obx(
-                //           () => SelectableText.rich(TextSpan(style: TextStyle(fontSize: 11), children: processLines())),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           )
         ],
       );
     },
-  ).then((value) => _logController.disconnect(true, true));
+  ).then((value) => _jvmLogWebsocketService.disconnectWebsocket());
 }
 
 Future<void> displayLoggerModal() async {
@@ -317,16 +262,6 @@ Future<void> displayFileLogAppender(LogInfo? logInfo) async {
                 SizedBox(height: 8),
                 TextFieldBox(controller: _logController.patternEditingController, label: 'Pattern'),
                 SizedBox(height: 8),
-                Obx(
-                  () => DropDownMenu<LogLevel>(
-                    displayClearButton: false,
-                    value: _logController.logLevel.value,
-                    hint: Text(_logController.logLevel.value.name),
-                    items: LogLevel.values.map((e) => DropdownMenuItem<LogLevel>(value: e, child: Text(e.name))).toList(),
-                    onChanged: (value) => _logController.changeLevel(value),
-                  ),
-                ),
-                SizedBox(height: 8),
                 TextFieldBox(controller: _logController.fileMaxSizeEditingController, label: 'File max size'),
                 SizedBox(height: 8),
                 TextFieldBox(controller: _logController.fileTotalSizeEditingController, label: 'File total history'),
@@ -375,16 +310,6 @@ Future<void> displaySysLogAppender(LogInfo? logInfo) async {
                 TextFieldBox(controller: _logController.packageEditingController, label: 'Package'),
                 SizedBox(height: 8),
                 TextFieldBox(controller: _logController.patternEditingController, label: 'Pattern'),
-                SizedBox(height: 8),
-                Obx(
-                  () => DropDownMenu<LogLevel>(
-                    displayClearButton: false,
-                    value: _logController.logLevel.value,
-                    hint: Text(_logController.logLevel.value.name),
-                    items: LogLevel.values.map((e) => DropdownMenuItem<LogLevel>(value: e, child: Text(e.name))).toList(),
-                    onChanged: (value) => _logController.changeLevel(value),
-                  ),
-                ),
                 SizedBox(height: 8),
                 TextFieldBox(controller: _logController.syslogHostEditingController, label: 'Syslog host'),
                 SizedBox(height: 8),

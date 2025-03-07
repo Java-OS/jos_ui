@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jos_ui/validation/validator.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class DropDownMenu<T> extends StatefulWidget {
@@ -61,7 +60,7 @@ class _DropDownMenuState<T> extends State<DropDownMenu<T>> {
           onChanged: widget.disabled ? null : (value) => callOnChangeFunction(value),
         ),
         Visibility(
-          visible: widget.displayClearButton ,
+          visible: widget.displayClearButton,
           child: Align(
             alignment: Alignment.centerRight,
             child: Padding(
