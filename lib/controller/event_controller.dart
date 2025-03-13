@@ -42,8 +42,8 @@ class EventController extends GetxController {
   }
 
   Future<void> eventAdd(Event event) async {
-    (listEvents as List<Event>).removeWhere((e) => e.uid == event.uid);
-    (listEvents as List<Event>).add(event);
+    listEvents.removeWhere((e) => e.uid == event.uid);
+    listEvents.add(event);
   }
 
   bool hasUnreadEvent() {

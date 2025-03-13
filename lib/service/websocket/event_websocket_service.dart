@@ -41,7 +41,7 @@ class EventWebsocketService extends GetxController {
     if (_channel != null) {
       developer.log('Event websocket disconnected');
       await _subscription!.cancel();
-      await _channel!.sink.close(1001,'disconnect connection');
+      await _channel!.sink.close(1000, 'disconnect connection');
     }
   }
 }

@@ -115,7 +115,7 @@ class FilesystemController extends GetxController {
       'target': directoryPath.value,
     };
     var map = await _apiService.callApi(copyItems.isNotEmpty ? Rpc.RPC_FILESYSTEM_COPY_FILE : Rpc.RPC_FILESYSTEM_MOVE_FILE, parameters: reqParam, message: 'Failed copy/move files to ${directoryPath.value}');
-    filesystemTree.value = FilesystemTree.fromMap(map);
+    if (map != null) filesystemTree.value = FilesystemTree.fromMap(map);
 
     copyItems.clear();
     cuteItems.clear();

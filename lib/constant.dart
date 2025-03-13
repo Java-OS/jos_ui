@@ -27,6 +27,8 @@ String baseEventWebSocketUrl() => "${StorageService.getItem('server_ip_address')
 
 String baseJvmLogWebSocketUrl() => "${StorageService.getItem('server_ip_address') ?? 'ws://127.0.0.1:7080'}/api/ws/jvm-logs";
 
+String baseKernelLogWebSocketUrl() => "${StorageService.getItem('server_ip_address') ?? 'ws://127.0.0.1:7080'}/api/ws/kmsg";
+
 enum Routes {
   base('/'),
   login('/login'),
