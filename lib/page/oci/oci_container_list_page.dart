@@ -3,23 +3,22 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/tile.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/oci_controller.dart';
-import 'package:jos_ui/dialog/container/container_create_dialog.dart';
 import 'package:jos_ui/dialog/container/container_information.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
-import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/container/container_info.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class OciContainersPage extends StatefulWidget {
-  const OciContainersPage({super.key});
+class OciContainerListPage extends StatefulWidget {
+  const OciContainerListPage({super.key});
 
   @override
-  State<OciContainersPage> createState() => _OciContainersPageState();
+  State<OciContainerListPage> createState() => _OciContainerListPageState();
 }
 
-class _OciContainersPageState extends State<OciContainersPage> {
+class _OciContainerListPageState extends State<OciContainerListPage> {
   final _containerController = Get.put(OciController());
 
   @override
@@ -43,7 +42,7 @@ class _OciContainersPageState extends State<OciContainersPage> {
         ),
         SizedBox(width: 8),
         OutlinedButton(
-          onPressed: () => openCreateContainerDialog(),
+          onPressed: () => Get.toNamed(Routes.ociContainerCreate.path),
           child: Icon(Icons.add, size: 16, color: Colors.black),
         ),
       ],
@@ -122,12 +121,5 @@ class _OciContainersPageState extends State<OciContainersPage> {
 
   Future<void> streamLogs(ContainerInfo container) async {
     // _containerController.ociSSEConsumer(container.names.first, EventCode.OCI_LOG);
-  }
-
-  Future<void> openCreateContainerDialog() async {
-    _containerController.listImages();
-    _containerController.listVolumes();
-    _containerController.listNetworks();
-    displayCreateContainer();
   }
 }

@@ -15,7 +15,7 @@ class PanelDrawerController extends GetxController {
       'icon-size': 24,
       'path' : '/oci',
       'submenu': [
-        {'title': 'Container', 'path': Routes.ociContainers.path, 'icon': MdiIcons.cubeOutline, 'font-size': 12, 'icon-size': 16},
+        {'title': 'Container', 'path': Routes.oci.path, 'icon': MdiIcons.cubeOutline, 'font-size': 12, 'icon-size': 16},
         {'title': 'Image', 'path': Routes.ociImages.path, 'icon': MdiIcons.layersTriple, 'font-size': 12, 'icon-size': 16},
         {'title': 'Volume', 'path': Routes.ociVolumes.path, 'icon': MdiIcons.sd, 'font-size': 12, 'icon-size': 16},
         {'title': 'Network', 'path': Routes.ociNetworks.path, 'icon': MdiIcons.networkOutline, 'font-size': 12, 'icon-size': 16},
