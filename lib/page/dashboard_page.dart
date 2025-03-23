@@ -59,7 +59,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   Widget displayBrandLabel() {
     return Center(
       child: SvgPicture.asset(
-        'assets/images/jos-logo.svg',
+        'assets/svg/jos-logo.svg',
         colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
         height: 80,
       ),

@@ -27,6 +27,8 @@ String baseEventWebSocketUrl() => "${StorageService.getItem('server_ip_address')
 
 String baseJvmLogWebSocketUrl() => "${StorageService.getItem('server_ip_address') ?? 'ws://127.0.0.1:7080'}/api/ws/jvm-logs";
 
+String baseContainerLogWebSocketUrl() => "${StorageService.getItem('server_ip_address') ?? 'ws://127.0.0.1:7080'}/api/ws/container-logs";
+
 String baseKernelLogWebSocketUrl() => "${StorageService.getItem('server_ip_address') ?? 'ws://127.0.0.1:7080'}/api/ws/kmsg";
 
 enum Routes {
@@ -56,7 +58,9 @@ enum Routes {
   filesystem('/filesystem'),
   directoryTree('/filesystem/directory'),
   events('/events'),
-  modules('/modules');
+  modules('/modules'),
+  moduleLogs('/modules/logs'),
+  ;
 
   final String path;
 

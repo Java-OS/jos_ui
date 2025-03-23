@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   fill="#000000"
+   version="1.1"
+   id="Capa_1"
+   width="740.8808"
+   height="738.37134"
+   viewBox="0 0 507.77284 506.05295"
+   xml:space="preserve"
+   sodipodi:docname="log-file-format-svgrepo-com.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs11" /><sodipodi:namedview
+   id="namedview9"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="0.08734375"
+   inkscape:cx="-526.65474"
+   inkscape:cy="51.520572"
+   inkscape:window-width="1318"
+   inkscape:window-height="740"
+   inkscape:window-x="48"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Capa_1" />
+
+<g
+   id="g2971"
+   transform="translate(-814.88571,332.00989)"><path
+     id="path2844"
+     style="fill:none;stroke:#000000;stroke-width:12.4668;stroke-linejoin:round;stroke-miterlimit:14.6"
+     d="m 893.36795,-325.77649 h 252.74055 0.4336 l 123.4526,127.42488 v 0.43617 339.90686 c 0,14.3033 -11.5149,25.81824 -25.8182,25.81824 H 893.36795 c -14.3033,0 -25.81824,-11.51494 -25.81824,-25.81824 v -441.94967 c 0,-14.30331 11.51494,-25.81824 25.81824,-25.81824 z"
+     sodipodi:nodetypes="sccccssssss" /><path
+     id="path2846"
+     style="fill:#000000;stroke:#000000;stroke-width:12.4668;stroke-linejoin:round;stroke-miterlimit:14.6"
+     d="m 1268.2292,-198.15361 -0.2421,0.39159 h -120.1586 v -126.19243 z"
+     sodipodi:nodetypes="ccccc" /><rect
+     style="fill:#000000;stroke:#000000;stroke-width:12.4668;stroke-linejoin:round;stroke-miterlimit:14.6;stroke-dasharray:none;stroke-opacity:1"
+     id="rect2850"
+     width="495.30603"
+     height="168.12781"
+     x="821.11914"
+     y="-108.21822"
+     ry="22.402472"
+     rx="22.402472" /><text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:83.4902px;font-family:Audiowide;-inkscape-font-specification:'Audiowide, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;stroke:none;stroke-width:12.4668;stroke-linejoin:round;stroke-miterlimit:14.6;stroke-dasharray:none;stroke-opacity:1"
+     x="835.70892"
+     y="5.0754032"
+     id="text2854"><tspan
+       sodipodi:role="line"
+       id="tspan2852"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:83.4902px;font-family:Audiowide;-inkscape-font-specification:'Audiowide, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;stroke:none;stroke-width:12.4668"
+       x="835.70892"
+       y="5.0754032">RSYSLOG</tspan></text></g></svg>

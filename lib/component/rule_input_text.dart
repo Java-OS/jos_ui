@@ -61,7 +61,7 @@ class _RuleInputTextState extends State<RuleInputText> {
                   maxLength: widget.maxLength,
                   maxWidth: widget.maxWidth,
                   maxLines: 1,
-                  prefixIcon: Row(
+                  prefix: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Visibility(visible: widget.displayCloseButton, child: closeButton()),

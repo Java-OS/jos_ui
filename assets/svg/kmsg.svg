@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   fill="#000000"
+   version="1.1"
+   id="Capa_1"
+   width="740.88074"
+   height="738.37134"
+   viewBox="0 0 507.7728 506.05295"
+   xml:space="preserve"
+   sodipodi:docname="log-file-format-svgrepo-com.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs11" /><sodipodi:namedview
+   id="namedview9"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="0.08734375"
+   inkscape:cx="-526.65474"
+   inkscape:cy="51.520572"
+   inkscape:window-width="1318"
+   inkscape:window-height="740"
+   inkscape:window-x="48"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Capa_1" />
+
+<g
+   id="g2945"
+   transform="translate(597.53708,54.737245)"><path
+     id="rect1265"
+     style="fill:none;stroke:#000000;stroke-width:12.4668;stroke-linejoin:round;stroke-miterlimit:14.6"
+     d="m -519.05488,-48.503844 h 252.74053 0.43359 l 123.45262,127.424881 v 0.43617 339.906863 c 0,14.3033 -11.51493,25.81824 -25.81824,25.81824 h -350.8085 c -14.3033,0 -25.81824,-11.51494 -25.81824,-25.81824 V -22.685605 c 0,-14.303305 11.51494,-25.818239 25.81824,-25.818239 z"
+     sodipodi:nodetypes="sccccssssss" /><path
+     id="rect2090"
+     style="fill:#000000;stroke:#000000;stroke-width:12.4668;stroke-linejoin:round;stroke-miterlimit:14.6"
+     d="m -144.19368,79.119037 -0.24208,0.39159 H -264.59433 V -46.6818 Z"
+     sodipodi:nodetypes="ccccc" /><rect
+     style="fill:#000000;stroke:#000000;stroke-width:12.4668;stroke-linejoin:round;stroke-miterlimit:14.6;stroke-dasharray:none;stroke-opacity:1"
+     id="rect2094"
+     width="495.30603"
+     height="168.12781"
+     x="-591.30365"
+     y="169.05443"
+     ry="22.402472"
+     rx="22.402472" /><text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:83.4902px;font-family:Audiowide;-inkscape-font-specification:'Audiowide, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;stroke:none;stroke-width:12.4668;stroke-linejoin:round;stroke-miterlimit:14.6;stroke-dasharray:none;stroke-opacity:1"
+     x="-485.31491"
+     y="282.35788"
+     id="text2312"><tspan
+       sodipodi:role="line"
+       id="tspan2310"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:83.4902px;font-family:Audiowide;-inkscape-font-specification:'Audiowide, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;stroke:none;stroke-width:12.4668"
+       x="-485.31491"
+       y="282.35788">KMSG</tspan></text></g></svg>

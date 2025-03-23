@@ -1,238 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/iconic_icons.dart';
+import 'package:fluttericon/linearicons_free_icons.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/char_button.dart';
-import 'package:jos_ui/component/tab.dart';
+import 'package:jos_ui/component/drop_down.dart';
 import 'package:jos_ui/component/text_field_box.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/log_controller.dart';
-import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/model/log_info.dart';
 import 'package:jos_ui/model/log_level.dart';
 import 'package:jos_ui/service/websocket/jvm_log_websocket_service.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:xterm/ui.dart';
 
+import '../service/websocket/container_log_websocket_service.dart';
+
 var _logController = Get.put(LogController());
-var _containerController = Get.put(OciController());
 final _jvmLogWebsocketService = Get.put(JvmLogWebsocketService());
+final _containerLogWebsocketService = Get.put(ContainerLogWebsocketService());
 
 Future<void> displayLiveLoggerModal(LogInfo logInfo) async {
   _jvmLogWebsocketService.consumeEvents(logInfo.packageName);
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
-      return SimpleDialog(
-        title: getModalHeader('Log'),
+      return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        contentPadding: EdgeInsets.zero,
-        titlePadding: EdgeInsets.zero,
-        children: [
-          SizedBox(
-            width: 800,
-            height: 400,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+        child: Obx(
+          () => SizedBox(
+            width: _jvmLogWebsocketService.isMaximize.value ? double.infinity : 800,
+            height: _jvmLogWebsocketService.isMaximize.value ? double.infinity : 400,
+            child: Stack(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      CharButton(
-                        width: 36,
-                        height: 36,
-                        char: 'Clear',
-                        textStyle: TextStyle(fontSize: 11, color: Colors.black),
-                        onPressed: () => _jvmLogWebsocketService.terminal.buffer.clear(),
-                      )
-                    ],
-                  ),
+                TerminalView(
+                  padding: EdgeInsets.only(top: 8, bottom: 8),
+                  _jvmLogWebsocketService.terminal,
+                  controller: _jvmLogWebsocketService.terminalController,
+                  autofocus: true,
+                  textStyle: TerminalStyle(fontSize: 11, fontFamily: 'IBMPlexMono'),
                 ),
-                Expanded(
-                  child: TerminalView(
-                    padding: EdgeInsets.only(top: 8, bottom: 8),
-                    _jvmLogWebsocketService.terminal,
-                    controller: _jvmLogWebsocketService.terminalController,
-                    autofocus: true,
-                    textStyle: TerminalStyle(fontSize: 11, fontFamily: 'IBMPlexMono'),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Row(
+                    spacing: 4,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: Icon(_jvmLogWebsocketService.isConnected.value == true ? Iconic.pause : Iconic.play, color: Colors.white, size: 16),
+                        onPressed: () => _jvmLogWebsocketService.isConnected.value == true ? _jvmLogWebsocketService.disconnectWebsocket() : _jvmLogWebsocketService.consumeEvents(logInfo.packageName),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.clear_all, color: Colors.white, size: 16),
+                        onPressed: () => _jvmLogWebsocketService.terminalReset(),
+                      ),
+                      IconButton(
+                        icon: Icon(_jvmLogWebsocketService.isConnected.value == true ? LineariconsFree.frame_contract : LineariconsFree.frame_expand, color: Colors.white, size: 16),
+                        onPressed: () => _jvmLogWebsocketService.isConnected.value = !_jvmLogWebsocketService.isConnected.value,
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close, color: Colors.white, size: 18),
+                        onPressed: () => Get.back(),
+                      ),
+                    ],
                   ),
                 )
               ],
             ),
-          )
-        ],
+          ),
+        ),
       );
     },
-  ).then((value) => _jvmLogWebsocketService.disconnectWebsocket());
-}
-
-Future<void> displayLoggerModal() async {
-  _logController.fetchAppenders().then(
-        (value) => showDialog(
-          context: Get.context!,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: getModalHeader('Logs'),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-              contentPadding: EdgeInsets.zero,
-              titlePadding: EdgeInsets.zero,
-              backgroundColor: secondaryColor,
-              scrollable: true,
-              content: SizedBox(
-                width: 900,
-                height: 300,
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: TabBox(
-                    tabs: const [
-                      TabItem(text: 'File', icon: Icons.file_copy_outlined, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
-                      TabItem(text: 'Syslog', icon: Icons.terminal_rounded, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
-                    ],
-                    contents: [
-                      Obx(() => fileLoggerTab(context)),
-                      Obx(() => syslogLoggerTab(context)),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      );
-}
-
-Widget fileLoggerTab(BuildContext context) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: const EdgeInsets.only(left: 14.0, top: 8),
-        child: OutlinedButton(onPressed: () => displayFileLogAppender(null), child: Icon(Icons.add, size: 16, color: Colors.black)),
-      ),
-      Padding(
-        padding: EdgeInsets.all(4.0),
-        child: SizedBox(
-          width: 900,
-          child: DataTable(
-            dataRowMinHeight: 22,
-            dataRowMaxHeight: 32,
-            columnSpacing: 4,
-            columns: _getLogInfoColumns('FILE'),
-            rows: _getLogInfoRows('FILE', context),
-          ),
-        ),
-      ),
-    ],
-  );
-}
-
-Widget syslogLoggerTab(BuildContext context) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: const EdgeInsets.only(left: 14.0, top: 8),
-        child: OutlinedButton(onPressed: () => displaySysLogAppender(null), child: Icon(Icons.add, size: 16, color: Colors.black)),
-      ),
-      Padding(
-        padding: EdgeInsets.all(4.0),
-        child: SizedBox(
-          width: 900,
-          child: DataTable(
-            dataRowMinHeight: 22,
-            dataRowMaxHeight: 32,
-            columnSpacing: 4,
-            columns: _getLogInfoColumns('SYSLOG'),
-            rows: _getLogInfoRows('SYSLOG', context),
-          ),
-        ),
-      ),
-    ],
-  );
-}
-
-List<DataColumn> _getLogInfoColumns(String type) {
-  var columns = <DataColumn>[];
-
-  var idColumn = DataColumn(label: Text('Id', style: TextStyle(fontWeight: FontWeight.bold)));
-  var packageColumn = DataColumn(label: Text('Package', style: TextStyle(fontWeight: FontWeight.bold)));
-  var patternColumn = DataColumn(label: Expanded(child: Text('Pattern', style: TextStyle(fontWeight: FontWeight.bold))));
-  var levelColumn = DataColumn(label: Expanded(child: Text('Level', style: TextStyle(fontWeight: FontWeight.bold))));
-
-  if (type == 'SYSLOG') {
-    var hostColumn = DataColumn(label: Expanded(child: Text('Host', style: TextStyle(fontWeight: FontWeight.bold))));
-    var portColumn = DataColumn(label: Expanded(child: Text('Port', style: TextStyle(fontWeight: FontWeight.bold))));
-    var facilityColumn = DataColumn(label: Expanded(child: Text('Facility', style: TextStyle(fontWeight: FontWeight.bold))));
-    columns.addAll([idColumn, packageColumn, patternColumn, levelColumn, hostColumn, portColumn, facilityColumn]);
-  } else {
-    var fileMaxSizeColumn = DataColumn(label: Expanded(child: Text('MFS (MB)', style: TextStyle(fontWeight: FontWeight.bold))));
-    var fileTotalSizeColumn = DataColumn(label: Expanded(child: Text('TS (MB)', style: TextStyle(fontWeight: FontWeight.bold))));
-    var fileMaxHistoryColumn = DataColumn(label: Expanded(child: Text('HC', style: TextStyle(fontWeight: FontWeight.bold))));
-    columns.addAll([idColumn, packageColumn, patternColumn, levelColumn, fileMaxSizeColumn, fileTotalSizeColumn, fileMaxHistoryColumn]);
-  }
-
-  columns.add(DataColumn(label: Expanded(child: SizedBox.shrink())));
-  return columns;
-}
-
-List<DataRow> _getLogInfoRows(String type, BuildContext context) {
-  var dataRowList = <DataRow>[];
-  var list = _logController.logAppenders.where((item) => item.type == type).toList();
-  for (var logInfo in list) {
-    if (type == 'SYSLOG') {
-      var syslogRow = DataRow(
-        cells: [
-          DataCell(Text(logInfo.id.toString(), style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.packageName, style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.pattern, style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.level, style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.syslogHost!, style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.syslogPort.toString(), style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.syslogFacility!, style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(
-            Row(
-              children: [
-                IconButton(onPressed: () => displaySysLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.pencilOutline, size: 16)),
-                IconButton(onPressed: () => displayLiveLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
-                IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.trashCanOutline, size: 16)),
-              ],
-            ),
-          ),
-        ],
-      );
-      dataRowList.add(syslogRow);
-    } else {
-      var row = DataRow(
-        cells: [
-          DataCell(Text(logInfo.id.toString(), style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.packageName, style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.pattern, style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.level, style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.fileMaxSize.toString(), style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.fileTotalSize.toString(), style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(Text(logInfo.fileMaxHistory.toString(), style: TextStyle(fontSize: 12, color: Colors.black))),
-          DataCell(
-            Row(
-              children: [
-                IconButton(onPressed: () => displayFileLogAppender(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.pencilOutline, size: 16)),
-                IconButton(onPressed: () => displayLiveLoggerModal(logInfo), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.receipt_long_rounded, size: 16)),
-                IconButton(onPressed: () => fetchTreeAndDisplay(logInfo.packageName), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(Icons.folder_open, size: 16)),
-                IconButton(onPressed: () => _logController.removeAppender(logInfo.id), splashRadius: 12, splashColor: Colors.transparent, icon: Icon(MdiIcons.trashCanOutline, size: 16)),
-              ],
-            ),
-          )
-        ],
-      );
-
-      dataRowList.add(row);
-    }
-  }
-  return dataRowList;
-}
-
-fetchTreeAndDisplay(String package) {
-  // _filesystemController.fetchFilesystemTree('/logs/$package').then((value) => displayFilesystemTree(false, true));
+  ).then((value) => _jvmLogWebsocketService.disconnectWebsocket()).then((_) => _jvmLogWebsocketService.terminalReset());
 }
 
 Future<void> displayFileLogAppender(LogInfo? logInfo) async {
@@ -261,6 +97,14 @@ Future<void> displayFileLogAppender(LogInfo? logInfo) async {
                 TextFieldBox(controller: _logController.packageEditingController, label: 'Package'),
                 SizedBox(height: 8),
                 TextFieldBox(controller: _logController.patternEditingController, label: 'Pattern'),
+                SizedBox(height: 8),
+                DropDownMenu<LogLevel>(
+                  requiredValue: true,
+                  displayClearButton: false,
+                  value: _logController.logLevel.value,
+                  items: List.generate(LogLevel.values.length, (index) => DropdownMenuItem(value: LogLevel.values[index], child: Text(LogLevel.values[index].name))),
+                  onChanged: (level) => _logController.logLevel.value = level,
+                ),
                 SizedBox(height: 8),
                 TextFieldBox(controller: _logController.fileMaxSizeEditingController, label: 'File max size'),
                 SizedBox(height: 8),
@@ -310,6 +154,14 @@ Future<void> displaySysLogAppender(LogInfo? logInfo) async {
                 TextFieldBox(controller: _logController.packageEditingController, label: 'Package'),
                 SizedBox(height: 8),
                 TextFieldBox(controller: _logController.patternEditingController, label: 'Pattern'),
+                SizedBox(height: 8),
+                DropDownMenu<LogLevel>(
+                  requiredValue: true,
+                  displayClearButton: false,
+                  value: _logController.logLevel.value,
+                  items: List.generate(LogLevel.values.length, (index) => DropdownMenuItem(value: LogLevel.values[index], child: Text(LogLevel.values[index].name))),
+                  onChanged: (level) => _logController.logLevel.value = level,
+                ),
                 SizedBox(height: 8),
                 TextFieldBox(controller: _logController.syslogHostEditingController, label: 'Syslog host'),
                 SizedBox(height: 8),
@@ -363,28 +215,56 @@ Future<void> displaySystemLogDialog() async {
   );
 }
 
-Future<void> displayContainerLogDialog() async {
+Future<void> displayContainerLogDialog(String containerName) async {
+  _containerLogWebsocketService.consumeEvents(containerName);
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: getModalHeader('Container Log'),
+      return Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-        contentPadding: EdgeInsets.zero,
-        titlePadding: EdgeInsets.zero,
-        content: Container(
-          width: 800,
-          height: 400,
-          color: Colors.black,
-          child: TerminalView(
-            padding: EdgeInsets.only(top: 8, bottom: 8),
-            _containerController.terminal,
-            controller: _containerController.terminalController,
-            autofocus: true,
-            textStyle: TerminalStyle(fontSize: 11, fontFamily: 'IBMPlexMono'),
+        child: Obx(
+          () => SizedBox(
+            width: _containerLogWebsocketService.isMaximize.value ? double.infinity : 800,
+            height: _containerLogWebsocketService.isMaximize.value ? double.infinity : 400,
+            child: Stack(
+              children: [
+                TerminalView(
+                  padding: EdgeInsets.only(top: 8, bottom: 8),
+                  _containerLogWebsocketService.terminal,
+                  controller: _containerLogWebsocketService.terminalController,
+                  autofocus: true,
+                  textStyle: TerminalStyle(fontSize: 11, fontFamily: 'IBMPlexMono'),
+                ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Row(
+                    spacing: 4,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: Icon(_containerLogWebsocketService.isConnected.value == true ? Iconic.pause : Iconic.play, color: Colors.white, size: 16),
+                        onPressed: () => _containerLogWebsocketService.isConnected.value == true ? _containerLogWebsocketService.disconnectWebsocket() : _containerLogWebsocketService.consumeEvents(containerName),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.clear_all, color: Colors.white, size: 16),
+                        onPressed: () => _containerLogWebsocketService.terminalReset(),
+                      ),
+                      IconButton(
+                        icon: Icon(_containerLogWebsocketService.isMaximize.value == true ? LineariconsFree.frame_contract : LineariconsFree.frame_expand, color: Colors.white, size: 16),
+                        onPressed: () => _containerLogWebsocketService.isMaximize.value = !_containerLogWebsocketService.isMaximize.value,
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close, color: Colors.white, size: 18),
+                        onPressed: () => Get.back(),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       );
     },
-  ).then((_) => _containerController.closeStreamListener());
+  ).then((_) => _containerLogWebsocketService.disconnectWebsocket()).then((_) => _containerLogWebsocketService.terminalReset());
 }

@@ -83,7 +83,7 @@ class _OciContainerListPageState extends State<OciContainerListPage> {
                         IconButton(
                           splashRadius: 20,
                           icon: Icon(Icons.receipt_long_rounded, size: 16, color: Colors.black),
-                          onPressed: () => streamLogs(container).then((_) => displayContainerLogDialog()),
+                          onPressed: () => displayContainerLogDialog(container.names[0]),
                         ),
                         IconButton(
                           splashRadius: 20,
@@ -117,9 +117,5 @@ class _OciContainerListPageState extends State<OciContainerListPage> {
         ),
       ),
     );
-  }
-
-  Future<void> streamLogs(ContainerInfo container) async {
-    // _containerController.ociSSEConsumer(container.names.first, EventCode.OCI_LOG);
   }
 }

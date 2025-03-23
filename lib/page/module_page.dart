@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/module_controller.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -47,8 +50,8 @@ class _ModulePageState extends State<ModulePage> {
           )),
       SizedBox(width: 8),
       OutlinedButton(
-        onPressed: () => displayLoggerModal(),
-        child: Icon(Icons.assignment_outlined, size: 16),
+        onPressed: () => Get.toNamed(Routes.moduleLogs.path),
+        child: Icon(ModernPictograms.article,size: 16),
       ),
     ];
   }
@@ -117,15 +120,6 @@ class _ModulePageState extends State<ModulePage> {
       splashRadius: 10,
       splashColor: Colors.transparent,
       icon: Icon(isEnable ? Icons.link_outlined : Icons.link_off_outlined, size: 16),
-    );
-  }
-
-  Widget getLogButton() {
-    return IconButton(
-      onPressed: () => displayLoggerModal(),
-      splashRadius: 10,
-      splashColor: Colors.transparent,
-      icon: Icon(Icons.assignment_outlined, size: 16),
     );
   }
 }

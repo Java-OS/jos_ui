@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -7,7 +8,7 @@ class PanelDrawerController extends GetxController {
 
   var menuItems = [
     {'title': 'Dashboard', 'path': Routes.dashboard.path, 'icon': Icons.dashboard, 'font-size': 16, 'icon-size': 24},
-    {'title': 'Modules', 'path': Routes.modules.path, 'icon': Icons.view_module, 'font-size': 16, 'icon-size': 24},
+    {'title': 'Modules', 'path': Routes.modules.path, 'icon': Icons.widgets, 'font-size': 16, 'icon-size': 24},
     {
       'title': 'OCI',
       'icon': MdiIcons.oci,
@@ -29,7 +30,7 @@ class PanelDrawerController extends GetxController {
       'icon-size': 24,
       'path' : '/network',
       'submenu': [
-        {'title': 'Interfaces', 'path': Routes.networkInterfaces.path, 'icon': Icons.info_outline, 'font-size': 12, 'icon-size': 16},
+        {'title': 'Interfaces', 'path': Routes.networkInterfaces.path, 'icon': FontAwesome5.ethernet, 'font-size': 12, 'icon-size': 16},
         {'title': 'Networks', 'path': Routes.networkNetworks.path, 'icon': Icons.hub_outlined, 'font-size': 12, 'icon-size': 16},
         {'title': 'Hosts', 'path': Routes.networkHosts.path, 'icon': Icons.devices_other_outlined, 'font-size': 12, 'icon-size': 16},
       ],

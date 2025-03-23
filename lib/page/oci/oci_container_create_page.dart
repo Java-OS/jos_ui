@@ -4,10 +4,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/radio_tile.dart';
-import 'package:jos_ui/component/tab.dart';
 import 'package:jos_ui/component/text_field_box.dart';
 import 'package:jos_ui/component/tile.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/dialog/environment_dialog.dart';
@@ -17,6 +15,7 @@ import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:tab_container/tab_container.dart';
 
 class OciContainerCreatePage extends StatefulWidget {
   const OciContainerCreatePage({super.key});
@@ -140,21 +139,26 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           contentPadding: EdgeInsets.zero,
           titlePadding: EdgeInsets.zero,
-          backgroundColor: secondaryColor,
           children: [
-            SizedBox(
-              width: 400,
-              height: 350,
-              child: TabBox(
-                expanded: true,
-                tabs: const [
-                  TabItem(text: 'Installed', icon: Icons.check_outlined, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
-                  TabItem(text: 'Search', icon: Icons.search, iconSize: 18, fontSize: 12, fontWeight: FontWeight.bold),
-                ],
-                contents: [
-                  installedImagesTab(),
-                  searchImagesTab(),
-                ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: 400,
+                height: 350,
+                child: TabContainer(
+                  childPadding: const EdgeInsets.all(0),
+                  color: Colors.blueAccent,
+                  selectedTextStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.white, fontFamily: 'cairo'),
+                  unselectedTextStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.blue, fontFamily: 'cairo'),
+                  tabs: [
+                    Text('Available Images', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, fontFamily: 'cairo')),
+                    Text('Search', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, fontFamily: 'cairo')),
+                  ],
+                  children: [
+                    installedImagesTab(),
+                    searchImagesTab(),
+                  ],
+                ),
               ),
             ),
             Padding(
@@ -174,7 +178,9 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
   }
 
   Widget installedImagesTab() {
-    return Padding(
+    return Container(
+      color: Colors.white,
+      height: double.infinity,
       padding: EdgeInsets.all(14.0),
       child: ListView.builder(
         shrinkWrap: true,
@@ -200,15 +206,22 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
   }
 
   Widget searchImagesTab() {
-    return Padding(
+    return Container(
+      color: Colors.white,
+      height: double.infinity,
       padding: EdgeInsets.all(14.0),
       child: Column(
         children: [
-          TextField(
+          TextFieldBox(
+            maxLines: 1,
             controller: _containerController.searchImageEditingController,
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.search),
-              suffix: ElevatedButton(onPressed: () => _containerController.searchImage(), child: Text('Search')),
+            prefix: Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 4),
+              child: Icon(Icons.search),
+            ),
+            suffix: Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: ElevatedButton(onPressed: () => _containerController.searchImage(), child: Text('Search')),
             ),
           ),
           SizedBox(height: 8),

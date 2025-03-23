@@ -11,9 +11,11 @@ import 'package:xterm/xterm.dart';
 class JvmLogWebsocketService extends GetxController {
   WebSocket? _socket;
   StreamSubscription? _subscription;
+  var isConnected = false.obs;
+  var isMaximize = false.obs;
 
   final terminalController = TerminalController();
-  final terminal = Terminal(maxLines: 1000, platform: TerminalTargetPlatform.web, reflowEnabled: true);
+  final terminal = Terminal(maxLines: 5000, platform: TerminalTargetPlatform.web, reflowEnabled: true);
 
   @override
   void onClose() {
@@ -32,15 +34,14 @@ class JvmLogWebsocketService extends GetxController {
     var url = Uri.parse('${baseJvmLogWebSocketUrl()}/$token');
     _socket = WebSocket(url);
     await _socket!.connection.firstWhere((state) => state is Connected);
-
     var content = {'package': packageName};
-
+    isConnected.value = true;
     _socket!.send(jsonEncode(content));
     _subscription = _socket!.messages.listen((e) => writeToTerminal(e), onError: (e) => developer.log('Receive error $e'), onDone: () => developer.log('websocket closed'), cancelOnError: true);
   }
 
   void writeToTerminal(String event) async {
-    terminal.write('$event\r\n');
+    if (isConnected.value) terminal.write('$event\r\n');
   }
 
   void disconnectWebsocket() async {
@@ -48,6 +49,13 @@ class JvmLogWebsocketService extends GetxController {
       developer.log('Jvm log websocket disconnected');
       await _subscription!.cancel();
       _socket!.close(1000, 'CLOSE_NORMAL');
+      isConnected.value = false;
     }
+  }
+
+  void terminalReset() {
+    terminalController.clearSelection();
+    terminal.eraseDisplay();
+    terminal.restoreCursor();
   }
 }

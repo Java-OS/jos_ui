@@ -49,6 +49,7 @@ dependencies:
   pointycastle: ^3.7.3
   fixnum: ^1.1.0
   material_design_icons_flutter: ^7.0.7296
+  fluttericon: ^2.0.0
   dropdown_button2: ^2.3.9
   toastification: ^2.0.0
   searchfield: ^1.0.1
@@ -60,6 +61,7 @@ dependencies:
   contextmenu_plus: ^1.0.1
   intl: ^0.20.2
   web_socket_client: ^0.1.5
+  tab_container: ^3.5.3
 
 dev_dependencies:
   flutter_test:
@@ -86,8 +88,13 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     #    - assets/images/background.jpg
-    - assets/images/jos-logo.svg
     - assets/images/jos-logo.png
+    - assets/svg/jos-logo.svg
+    - assets/svg/jvm-log.svg
+    - assets/svg/kmsg.svg
+    - assets/svg/log-config.svg
+    - assets/svg/rsyslog.svg
+    - assets/svg/syslog.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

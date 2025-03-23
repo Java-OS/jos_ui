@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
 
-import 'package:fetch_client/fetch_client.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -54,9 +53,6 @@ class OciController extends GetxController {
   /* Registries */
   final TextEditingController registryEditingController = TextEditingController();
 
-  final terminalController = TerminalController();
-  final terminal = Terminal(maxLines: 1000, platform: TerminalTargetPlatform.web, reflowEnabled: true);
-
   var searchImageList = <ImageSearch>[].obs;
   var containerImageList = <ContainerImage>[].obs;
   var volumeList = <Volume>[].obs;
@@ -75,58 +71,6 @@ class OciController extends GetxController {
   var selectedProtocol = Protocol.tcp.obs;
   var step = 0.obs;
   var registries = <String>{}.obs;
-
-  FetchResponse? fetchResponse;
-
-  // late StreamSubscription<Event> sseListener;
-  var sseConnected = false;
-
-  // Future<void> ociSSEConsumer(String? message, EventCode event) async {
-  //   if (sseConnected) return;
-  //   developer.log('SSE Container Logs Consumer activated');
-  //   sseConnected = true;
-  //   var content = {
-  //     'message': message,
-  //     'code': event.value,
-  //   };
-  //   fetchResponse = await RestClient.sse(jsonEncode(content));
-  //   sseListener = fetchResponse!.stream.where((event) => event.isNotEmpty).transform(const Utf8Decoder()).transform(const LineSplitter()).map((e) => Event.fromJson(e)).distinct().listen(
-  //         (e) {
-  //           var code = e.code;
-  //           var message = e.message.trim();
-  //           handleEvents(code, message);
-  //         },
-  //         cancelOnError: true,
-  //         onError: (e) {
-  //           developer.log('$e');
-  //           handleEvents(event, null);
-  //           closeStreamListener();
-  //         },
-  //         onDone: () => closeStreamListener(),
-  //       );
-  // }
-
-  // Future<void> handleEvents(EventCode code, String? message) async {
-  //   if (code == EventCode.NOTIFICATION) {
-  //     if (message != null) displayInfo(message);
-  //     listImages();
-  //   } else if (code == EventCode.NOTIFICATION) {
-  //     if (message != null) displayInfo(message);
-  //     listContainers();
-  //   } else if (code == EventCode.OCI_LOG) {
-  //     // if (logs.value.split('\n').length == 500) logs.value = logs.value.substring(logs.value.indexOf('\n') + 1);
-  //     // logs.value += '$message\n';
-  //     // logs.refresh();
-  //     terminal.write('$message\r\n');
-  //   }
-  // }
-
-  void closeStreamListener() {
-    developer.log('Disconnect SSE');
-    // sseListener.cancel();
-    fetchResponse?.cancel();
-    sseConnected = false;
-  }
 
   /* Image methods */
   Future<void> listImages() async {
@@ -446,11 +390,5 @@ class OciController extends GetxController {
     searchImageList.clear();
     searchImageEditingController.clear();
     volumeNameEditingController.clear();
-  }
-
-  @override
-  void onClose() {
-    closeStreamListener();
-    super.onClose();
   }
 }
