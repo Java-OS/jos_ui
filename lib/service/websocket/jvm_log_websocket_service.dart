@@ -55,6 +55,9 @@ class JvmLogWebsocketService extends GetxController {
 
   void terminalReset() {
     terminalController.clearSelection();
+    terminal.buffer.clear();
+    terminal.altBuffer.clear();
+    terminal.mainBuffer.clear();
     terminal.eraseDisplay();
     terminal.restoreCursor();
   }
