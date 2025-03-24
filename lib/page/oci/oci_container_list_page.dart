@@ -6,8 +6,8 @@ import 'package:jos_ui/component/tile.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/container_information.dart';
+import 'package:jos_ui/dialog/container/create_exec_instance_dialog.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
-import 'package:jos_ui/model/container/container_info.dart';
 import 'package:jos_ui/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -74,7 +74,7 @@ class _OciContainerListPageState extends State<OciContainerListPage> {
                 title: Text(container.names[0]),
                 subTitle: Text(truncate(container.id), style: TextStyle(fontSize: 12)),
                 actions: SizedBox(
-                  width: 140,
+                  width: 160,
                   child: Visibility(
                     visible: container.state.isNotEmpty,
                     child: Row(
@@ -89,6 +89,11 @@ class _OciContainerListPageState extends State<OciContainerListPage> {
                           splashRadius: 20,
                           icon: Icon(container.state == 'running' ? MdiIcons.stopCircleOutline : MdiIcons.playCircleOutline, size: 16, color: Colors.black),
                           onPressed: () => container.state == 'running' ? _containerController.stopContainer(container.id) : _containerController.startContainer(container.id),
+                        ),
+                        IconButton(
+                          splashRadius: 20,
+                          icon: Icon(Icons.terminal, size: 16, color: Colors.black),
+                          onPressed: () => displayExecInstance(container),
                         ),
                         Visibility(
                           visible: container.state == 'running',

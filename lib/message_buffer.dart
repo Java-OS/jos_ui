@@ -125,10 +125,8 @@ class Rpc {
   static const Rpc RPC_LOG_APPENDER_REMOVE = Rpc._(902);
   static const Rpc RPC_LOG_SYSTEM = Rpc._(903);
   static const Rpc RPC_LOG_KERNEL = Rpc._(904);
-  static const Rpc RPC_SSL_STATUS = Rpc._(1000);
-  static const Rpc RPC_SSL_JKS_UPLOAD = Rpc._(1001);
-  static const Rpc RPC_SSL_JKS_REMOVE = Rpc._(1002);
-  static const Rpc RPC_SSL_JKS_INFO = Rpc._(1003);
+  static const Rpc RPC_SSL_INSTALL_KEYSTORE = Rpc._(1000);
+  static const Rpc RPC_SSL_GENERATE_SELF_SIGNED = Rpc._(1001);
   static const Rpc RPC_FIREWALL_TABLE_ADD = Rpc._(1100);
   static const Rpc RPC_FIREWALL_TABLE_REMOVE = Rpc._(1101);
   static const Rpc RPC_FIREWALL_TABLE_LIST = Rpc._(1102);
@@ -183,6 +181,8 @@ class Rpc {
   static const Rpc RPC_CONTAINER_PRUNE = Rpc._(2032);
   static const Rpc RPC_CONTAINER_SETTING_REGISTRIES_LOAD = Rpc._(2033);
   static const Rpc RPC_CONTAINER_SETTING_REGISTRIES_SAVE = Rpc._(2034);
+  static const Rpc RPC_CONTAINER_CREATE_EXEC_INSTANCE = Rpc._(2035);
+  static const Rpc RPC_CONTAINER_RESIZE_TTY = Rpc._(2036);
   static const Rpc RPC_EVENT_LIST = Rpc._(2100);
   static const Rpc RPC_EVENT_READ = Rpc._(2101);
   static const Rpc RPC_EVENT_READ_ALL = Rpc._(2102);
@@ -288,10 +288,8 @@ class Rpc {
     902: RPC_LOG_APPENDER_REMOVE,
     903: RPC_LOG_SYSTEM,
     904: RPC_LOG_KERNEL,
-    1000: RPC_SSL_STATUS,
-    1001: RPC_SSL_JKS_UPLOAD,
-    1002: RPC_SSL_JKS_REMOVE,
-    1003: RPC_SSL_JKS_INFO,
+    1000: RPC_SSL_INSTALL_KEYSTORE,
+    1001: RPC_SSL_GENERATE_SELF_SIGNED,
     1100: RPC_FIREWALL_TABLE_ADD,
     1101: RPC_FIREWALL_TABLE_REMOVE,
     1102: RPC_FIREWALL_TABLE_LIST,
@@ -346,6 +344,8 @@ class Rpc {
     2032: RPC_CONTAINER_PRUNE,
     2033: RPC_CONTAINER_SETTING_REGISTRIES_LOAD,
     2034: RPC_CONTAINER_SETTING_REGISTRIES_SAVE,
+    2035: RPC_CONTAINER_CREATE_EXEC_INSTANCE,
+    2036: RPC_CONTAINER_RESIZE_TTY,
     2100: RPC_EVENT_LIST,
     2101: RPC_EVENT_READ,
     2102: RPC_EVENT_READ_ALL,

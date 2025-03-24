@@ -21,8 +21,6 @@ import 'package:jos_ui/model/container/volume_parameter.dart';
 import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/service/rest_client.dart';
-import 'package:xterm/core.dart';
-import 'package:xterm/ui.dart';
 
 class OciController extends GetxController {
   final _apiService = Get.put(ApiService());
@@ -52,6 +50,9 @@ class OciController extends GetxController {
 
   /* Registries */
   final TextEditingController registryEditingController = TextEditingController();
+
+  /* Exec Instance */
+  final TextEditingController execEditingController = TextEditingController();
 
   var searchImageList = <ImageSearch>[].obs;
   var containerImageList = <ContainerImage>[].obs;
@@ -346,6 +347,26 @@ class OciController extends GetxController {
       var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.UPLOAD_TYPE_MODULE, null);
       if (uploaded) ();
     }
+  }
+
+  Future<String> createExecInstance(String containerId) async {
+    developer.log('Create exec instance');
+    var reqParams = {
+      'containerId': containerId,
+      'cmd': execEditingController.text,
+    };
+    var result = await _apiService.callApi(Rpc.RPC_CONTAINER_CREATE_EXEC_INSTANCE, parameters: reqParams);
+    return result['Id'];
+  }
+
+  Future<void> createResizeTTY(String execId, int h, int w) async {
+    developer.log('Resize TTY to $h x $w');
+    var reqParams = {
+      'execId': execId,
+      'h': h,
+      'w': w,
+    };
+    await _apiService.callApi(Rpc.RPC_CONTAINER_RESIZE_TTY, parameters: reqParams);
   }
 
   /* Other methods */
