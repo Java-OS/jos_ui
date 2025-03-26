@@ -59,9 +59,10 @@ enum Routes {
   firewallRules('/firewall/chains/rules'),
   filesystem('/filesystem'),
   directoryTree('/filesystem/directory'),
-  events('/events'),
   modules('/modules'),
   moduleLogs('/modules/logs'),
+  events('/events'),
+  kernelLogs('/kernel-logs'),
   ;
 
   final String path;

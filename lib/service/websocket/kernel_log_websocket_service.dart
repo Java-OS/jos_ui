@@ -26,7 +26,7 @@ class KernelLogWebsocketService extends GetxController {
     super.dispose();
   }
 
-  Future<void> consumeEvents(String packageName) async {
+  Future<void> consumeEvents() async {
     var token = StorageService.getItem('token');
     var url = Uri.parse('${baseKernelLogWebSocketUrl()}/$token');
     _socket = WebSocket(url);

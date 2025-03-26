@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/global/panel_drawer_controller.dart';
 
@@ -22,14 +23,15 @@ class DrawerComponent extends StatelessWidget {
     var list = <Widget>[];
     for (var item in items) {
       var title = item['title'] as String;
-      var icon = item['icon'] as IconData;
+      var icon = item.containsKey('icon') ? item['icon'] as IconData : null;
+      var svg = item.containsKey('svg') ? item['svg'] as SvgPicture : null;
       var fontSize = item['font-size'] as double;
       var iconSize = item['icon-size'] as double;
       var submenu = item['submenu'];
       var path = item['path'] as String;
       if (submenu != null) {
         var tile = ExpansionTile(
-          leading: Icon(icon),
+          leading: svg ?? Icon(icon),
           title: Text(title),
           initiallyExpanded: _panelDrawerController.selectedItem.value.startsWith(path),
           onExpansionChanged: (_) => _panelDrawerController.submenuItem.value = path,
@@ -40,7 +42,7 @@ class DrawerComponent extends StatelessWidget {
         var tile = ListTile(
           leading: Padding(
             padding: isSubmenu ? EdgeInsets.only(left: 18.0) : EdgeInsets.zero,
-            child: Icon(icon, size: iconSize),
+            child: svg ?? Icon(icon, size: iconSize),
           ),
           title: Padding(
             padding: isSubmenu ? EdgeInsets.only(left: 18.0) : EdgeInsets.zero,
