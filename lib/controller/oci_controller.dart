@@ -355,7 +355,7 @@ class OciController extends GetxController {
       'containerId': containerId,
       'cmd': execEditingController.text,
     };
-    var result = await _apiService.callApi(Rpc.RPC_CONTAINER_CREATE_EXEC_INSTANCE, parameters: reqParams);
+    var result = await _apiService.callApi(Rpc.RPC_CONTAINER_CREATE_EXEC_INSTANCE, parameters: reqParams,disableLoading: true);
     return result['Id'];
   }
 

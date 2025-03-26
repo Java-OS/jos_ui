@@ -46,10 +46,6 @@ Future<void> displayTerminal(ContainerInfo container) async {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.clear_all, color: Colors.white, size: 16),
-                        onPressed: () => _containerExecWebSocketService.terminalReset(),
-                      ),
-                      IconButton(
                         icon: Icon(_containerExecWebSocketService.isConnected.value == true ? LineariconsFree.frame_contract : LineariconsFree.frame_expand, color: Colors.white, size: 16),
                         onPressed: () {
                           _containerExecWebSocketService.isMaximize.value = !_containerExecWebSocketService.isMaximize.value;
