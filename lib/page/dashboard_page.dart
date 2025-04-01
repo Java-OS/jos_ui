@@ -23,6 +23,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   Timer? _timer;
   double? _width;
   double height = 150;
+  Completer<void>? _requestCompleter;
 
   @override
   void initState() {
@@ -30,9 +31,14 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
     // Start fetching after the first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _timer = Timer.periodic(Duration(seconds: 5), (_) {
-        if (_width != null) {
-          _graphController.fetchGraph(_width!, height);
+      _timer = Timer.periodic(Duration(seconds: 5), (_) async {
+        if (_width != null && (_requestCompleter == null || _requestCompleter!.isCompleted)) {
+          try {
+            _requestCompleter = Completer<void>();
+            await _graphController.fetchGraph(_width!, height);
+          } finally {
+            _requestCompleter!.complete();
+          }
         }
       });
     });

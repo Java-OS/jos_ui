@@ -19,7 +19,7 @@ class GraphController extends GetxController {
       'width': width,
       'height': height,
     };
-    _apiService.callApi(Rpc.RPC_RRD_GRAPH_FETCH, parameters: reqParam, disableLoading: true).then((e) => e as List).then((e) => graphList.value = e.map((item) => Graph.fromMap(item)).toList());
+    await _apiService.callApi(Rpc.RPC_RRD_GRAPH_FETCH, parameters: reqParam, disableLoading: true).then((e) => e as List).then((e) => graphList.value = e.map((item) => Graph.fromMap(item)).toList());
   }
 
   Future<void> sortGraph() async {
