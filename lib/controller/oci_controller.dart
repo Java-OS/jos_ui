@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/toast.dart';
@@ -20,7 +19,6 @@ import 'package:jos_ui/model/container/volume.dart';
 import 'package:jos_ui/model/container/volume_parameter.dart';
 import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/service/api_service.dart';
-import 'package:jos_ui/service/rest_client.dart';
 
 class OciController extends GetxController {
   final _apiService = Get.put(ApiService());
@@ -341,21 +339,13 @@ class OciController extends GetxController {
     _apiService.callApi(Rpc.RPC_CONTAINER_SETTING_REGISTRIES_SAVE, parameters: reqParams).then((e) => loadRegistries());
   }
 
-  Future<void> uploadFileToVolume() async {
-    var picked = await FilePicker.platform.pickFiles();
-    if (picked != null) {
-      var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.UPLOAD_TYPE_MODULE, null);
-      if (uploaded) ();
-    }
-  }
-
   Future<String> createExecInstance(String containerId) async {
     developer.log('Create exec instance');
     var reqParams = {
       'containerId': containerId,
       'cmd': execEditingController.text,
     };
-    var result = await _apiService.callApi(Rpc.RPC_CONTAINER_CREATE_EXEC_INSTANCE, parameters: reqParams,disableLoading: true);
+    var result = await _apiService.callApi(Rpc.RPC_CONTAINER_CREATE_EXEC_INSTANCE, parameters: reqParams, disableLoading: true);
     return result['Id'];
   }
 

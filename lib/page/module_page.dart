@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/module_controller.dart';
-import 'package:jos_ui/dialog/log_dialog.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class ModulePage extends StatefulWidget {
@@ -42,16 +40,8 @@ class _ModulePageState extends State<ModulePage> {
   List<Widget> controllers(BuildContext context) {
     return [
       OutlinedButton(
-          onPressed: () => _moduleController.uploadModule(),
-          child: Icon(
-            Icons.add,
-            size: 16,
-            color: Colors.black,
-          )),
-      SizedBox(width: 8),
-      OutlinedButton(
         onPressed: () => Get.toNamed(Routes.moduleLogs.path),
-        child: Icon(ModernPictograms.article,size: 16),
+        child: Icon(ModernPictograms.article, size: 16),
       ),
     ];
   }

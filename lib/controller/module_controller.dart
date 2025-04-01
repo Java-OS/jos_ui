@@ -1,10 +1,8 @@
 import 'dart:developer' as developer;
 
-import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/module.dart';
-import 'package:jos_ui/service/rest_client.dart';
 
 import '../service/api_service.dart';
 
@@ -59,13 +57,5 @@ class ModuleController extends GetxController {
       'moduleName': fullName,
     };
     _apiService.callApi(Rpc.RPC_MODULE_STOP, parameters: reqParam).then((e) => fetchModules());
-  }
-
-  Future<void> uploadModule() async {
-    var picked = await FilePicker.platform.pickFiles();
-    if (picked != null) {
-      var uploaded = await RestClient.upload(picked.files.single.bytes!, picked.files.single.name, UploadType.UPLOAD_TYPE_MODULE, null);
-      if (uploaded) fetchModules();
-    }
   }
 }

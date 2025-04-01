@@ -23,7 +23,7 @@ class Rpc {
       value == null ? null : Rpc.fromValue(value);
 
   static const int minValue = 0;
-  static const int maxValue = 11112;
+  static const int maxValue = 2201;
   static bool containsValue(int value) => values.containsKey(value);
 
   static const Rpc RPC_SYSTEM_SHUTDOWN = Rpc._(0);
@@ -139,6 +139,7 @@ class Rpc {
   static const Rpc RPC_FIREWALL_SET_ADD = Rpc._(1109);
   static const Rpc RPC_FIREWALL_SET_LIST = Rpc._(1110);
   static const Rpc RPC_FIREWALL_SET_REMOVE = Rpc._(1111);
+  static const Rpc RPC_FIREWALL_SET_RENAME = Rpc._(1112);
   static const Rpc RPC_FIREWALL_SET_ELEMENT_ADD = Rpc._(1113);
   static const Rpc RPC_FIREWALL_SET_ELEMENT_REMOVE = Rpc._(1114);
   static const Rpc RPC_FIREWALL_RULE_ADD = Rpc._(1115);
@@ -187,7 +188,8 @@ class Rpc {
   static const Rpc RPC_EVENT_READ = Rpc._(2101);
   static const Rpc RPC_EVENT_READ_ALL = Rpc._(2102);
   static const Rpc RPC_EVENT_GET = Rpc._(2103);
-  static const Rpc RPC_FIREWALL_SET_RENAME = Rpc._(11112);
+  static const Rpc RPC_RRD_GRAPH_FETCH = Rpc._(2200);
+  static const Rpc RPC_RRD_GRAPH_SORT = Rpc._(2201);
   static const Map<int, Rpc> values = {
     0: RPC_SYSTEM_SHUTDOWN,
     1: RPC_SYSTEM_REBOOT,
@@ -302,6 +304,7 @@ class Rpc {
     1109: RPC_FIREWALL_SET_ADD,
     1110: RPC_FIREWALL_SET_LIST,
     1111: RPC_FIREWALL_SET_REMOVE,
+    1112: RPC_FIREWALL_SET_RENAME,
     1113: RPC_FIREWALL_SET_ELEMENT_ADD,
     1114: RPC_FIREWALL_SET_ELEMENT_REMOVE,
     1115: RPC_FIREWALL_RULE_ADD,
@@ -350,7 +353,8 @@ class Rpc {
     2101: RPC_EVENT_READ,
     2102: RPC_EVENT_READ_ALL,
     2103: RPC_EVENT_GET,
-    11112: RPC_FIREWALL_SET_RENAME};
+    2200: RPC_RRD_GRAPH_FETCH,
+    2201: RPC_RRD_GRAPH_SORT};
 
   static const fb.Reader<Rpc> reader = _RpcReader();
 
@@ -441,100 +445,6 @@ class _RealmReader extends fb.Reader<Realm> {
   @override
   Realm read(fb.BufferContext bc, int offset) =>
       Realm.fromValue(const fb.Int32Reader().read(bc, offset));
-}
-
-class UploadType {
-  final int value;
-  const UploadType._(this.value);
-
-  factory UploadType.fromValue(int value) {
-    final result = values[value];
-    if (result == null) {
-        throw StateError('Invalid value $value for bit flag enum UploadType');
-    }
-    return result;
-  }
-
-  static UploadType? _createOrNull(int? value) => 
-      value == null ? null : UploadType.fromValue(value);
-
-  static const int minValue = 0;
-  static const int maxValue = 3;
-  static bool containsValue(int value) => values.containsKey(value);
-
-  static const UploadType UPLOAD_TYPE_MODULE = UploadType._(0);
-  static const UploadType UPLOAD_TYPE_CONFIG = UploadType._(1);
-  static const UploadType UPLOAD_TYPE_SSL = UploadType._(2);
-  static const UploadType UPLOAD_TYPE_FILE = UploadType._(3);
-  static const Map<int, UploadType> values = {
-    0: UPLOAD_TYPE_MODULE,
-    1: UPLOAD_TYPE_CONFIG,
-    2: UPLOAD_TYPE_SSL,
-    3: UPLOAD_TYPE_FILE};
-
-  static const fb.Reader<UploadType> reader = _UploadTypeReader();
-
-  @override
-  String toString() {
-    return 'UploadType{value: $value}';
-  }
-}
-
-class _UploadTypeReader extends fb.Reader<UploadType> {
-  const _UploadTypeReader();
-
-  @override
-  int get size => 4;
-
-  @override
-  UploadType read(fb.BufferContext bc, int offset) =>
-      UploadType.fromValue(const fb.Int32Reader().read(bc, offset));
-}
-
-class SseConnectionType {
-  final int value;
-  const SseConnectionType._(this.value);
-
-  factory SseConnectionType.fromValue(int value) {
-    final result = values[value];
-    if (result == null) {
-        throw StateError('Invalid value $value for bit flag enum SseConnectionType');
-    }
-    return result;
-  }
-
-  static SseConnectionType? _createOrNull(int? value) => 
-      value == null ? null : SseConnectionType.fromValue(value);
-
-  static const int minValue = 0;
-  static const int maxValue = 2;
-  static bool containsValue(int value) => values.containsKey(value);
-
-  static const SseConnectionType JVM_LOG = SseConnectionType._(0);
-  static const SseConnectionType OCI_LOG = SseConnectionType._(1);
-  static const SseConnectionType EVENT = SseConnectionType._(2);
-  static const Map<int, SseConnectionType> values = {
-    0: JVM_LOG,
-    1: OCI_LOG,
-    2: EVENT};
-
-  static const fb.Reader<SseConnectionType> reader = _SseConnectionTypeReader();
-
-  @override
-  String toString() {
-    return 'SseConnectionType{value: $value}';
-  }
-}
-
-class _SseConnectionTypeReader extends fb.Reader<SseConnectionType> {
-  const _SseConnectionTypeReader();
-
-  @override
-  int get size => 4;
-
-  @override
-  SseConnectionType read(fb.BufferContext bc, int offset) =>
-      SseConnectionType.fromValue(const fb.Int32Reader().read(bc, offset));
 }
 
 class EventStatus {

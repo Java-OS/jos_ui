@@ -4,7 +4,6 @@ import 'dart:developer' as developer;
 import 'dart:html';
 import 'dart:typed_data';
 
-import 'package:fetch_client/fetch_client.dart';
 import 'package:get/get.dart' as getx;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -162,74 +161,6 @@ class RestClient {
   static void storeJvmNeedRestart(bool doJvmRestart) {
     developer.log('Receive header X-Jvm-Restart with value: [$doJvmRestart]');
     doJvmRestart ? jvmController.enableRestartJvm() : jvmController.disableRestartJvm();
-  }
-
-  static Future<bool> upload(Uint8List bytes, String fileName, UploadType type, String? password) async {
-    developer.log('selected file: $fileName');
-
-    var token = StorageService.getItem('token');
-    var headers = {
-      'authorization': 'Bearer $token',
-    };
-
-    try {
-      var request = http.MultipartRequest('POST', Uri.parse('${baseUploadUrl()}/${type.value}'));
-      request.headers.addAll(headers);
-      var fileOrder = http.MultipartFile.fromBytes('file', bytes, filename: fileName);
-      request.files.add(fileOrder);
-      if (password != null) request.fields['password'] = password;
-      var response = await request.send();
-      return response.statusCode == 200;
-    } catch (e) {
-      displayError('Invalid ${type.value} file');
-      return false;
-    }
-  }
-
-  static Future<bool> uploadFile(Uint8List bytes, String fileName, String path) async {
-    developer.log('selected file: $fileName');
-
-    var token = StorageService.getItem('token');
-    var headers = {
-      'authorization': 'Bearer $token',
-    };
-
-    try {
-      var request = http.MultipartRequest('POST', Uri.parse('${baseUploadUrl()}/${UploadType.UPLOAD_TYPE_FILE.value}'));
-      request.headers.addAll(headers);
-      var fileOrder = http.MultipartFile.fromBytes('file', bytes, filename: fileName);
-      request.files.add(fileOrder);
-      request.fields['path'] = path;
-      var response = await request.send();
-      return response.statusCode == 200;
-    } catch (e) {
-      displayError('Upload file failed');
-      return false;
-    }
-  }
-
-  static Future<FetchResponse> sse(String content) async {
-    developer.log('Start SSE Connection');
-    var token = StorageService.getItem('token');
-    if (token == null) Get.toNamed('/login');
-
-    var header = {
-      'authorization': 'Bearer $token',
-      'Connection': 'keep-alive',
-      'Content-type': 'text/event-stream',
-    };
-
-    developer.log('Header send: [$header]');
-
-    var serializeMetadata = ProtocolUtils.serializeMetadata(false, null, null, null, null);
-    var packet = await _h5Proto.encode(ProtocolUtils.serializePayload(serializeMetadata, content));
-
-    var request = http.Request('POST', Uri.parse(baseSseUrl()));
-    request.bodyBytes = packet;
-    request.headers.addAll(header);
-
-    final FetchClient fetchClient = FetchClient(mode: RequestMode.cors, cache: RequestCache.noCache);
-    return fetchClient.send(request);
   }
 
   static Future<Payload> download(String path, String? password) async {

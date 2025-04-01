@@ -1,9 +1,7 @@
 import 'dart:developer' as developer;
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/component/toast.dart';
 import 'package:jos_ui/dialog/alert_dialog.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/service/api_service.dart';
@@ -44,16 +42,5 @@ class BackupController extends GetxController {
     await RestClient.download('/etc/$fileName', passwordEditingController.text);
     Get.back();
     passwordEditingController.clear();
-  }
-
-  Future<void> uploadBackup(Uint8List bytes, String name) async {
-    var success = await RestClient.upload(bytes, name, UploadType.UPLOAD_TYPE_CONFIG, passwordEditingController.text);
-    if (success) {
-      fetchBackups();
-      Get.back();
-      passwordEditingController.clear();
-    } else {
-      displayWarning('Failed to upload config file');
-    }
   }
 }

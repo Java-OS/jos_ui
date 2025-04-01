@@ -1,14 +1,11 @@
-import 'dart:math' as math;
+import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:jos_ui/constant.dart';
-import 'package:jos_ui/controller/jvm_controller.dart';
-import 'package:jos_ui/controller/system_controller.dart';
-import 'package:jos_ui/dialog/power_dialog.dart';
-import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/component/card_content.dart';
+import 'package:jos_ui/component/drop_down.dart';
+import 'package:jos_ui/controller/graph_controller.dart';
+import 'package:jos_ui/model/graph_timeframe.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -18,234 +15,109 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> with SingleTickerProviderStateMixin {
-  late final AnimationController _animationController = AnimationController(duration: Duration(seconds: 2), vsync: this)..repeat();
-  final _systemController = Get.put(SystemController());
-  final _jvmController = Get.put(JvmController());
+  final _graphController = Get.put(GraphController());
 
-  bool _mouseHoverOnBasicBox = false;
-  bool _mouseHoverOnJVMBox = false;
-  bool _mouseHoverOnActionBox = false;
-  bool _mouseHoverOnHWBox = false;
+  double dx = 0;
+  double dy = 0;
+  int _hoverIndex = 0;
+  Timer? _timer;
+  double? _width;
+  double height = 150;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((e) => _systemController.fetchSystemInformation());
     super.initState();
+
+    // Start fetching after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _timer = Timer.periodic(Duration(seconds: 5), (_) {
+        if (_width != null) {
+          _graphController.fetchGraph(_width!, height);
+        }
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Text('Dashboard');
-    // return PageLayout(
-    //   child: Obx(() => mosaicView()),
-    // );
-  }
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints box) {
+        var width = box.maxWidth;
+        _width = width; // Store width in state
 
-  Widget mosaicView() {
-    return StaggeredGrid.count(
-      crossAxisCount: 8,
-      mainAxisSpacing: 4,
-      crossAxisSpacing: 4,
-      children: [
-        StaggeredGridTile.count(crossAxisCellCount: 3, mainAxisCellCount: 3, child: displayBasicInformation()),
-        StaggeredGridTile.count(crossAxisCellCount: 5, mainAxisCellCount: 2, child: displayJvmInformation()),
-        StaggeredGridTile.count(crossAxisCellCount: 2, mainAxisCellCount: 1, child: displayBrandLabel()),
-        StaggeredGridTile.count(crossAxisCellCount: 5, mainAxisCellCount: 2, child: displayActionButtons()),
-        StaggeredGridTile.count(crossAxisCellCount: 3, mainAxisCellCount: 3, child: displayHardwareInformation()),
-      ],
-    );
-  }
-
-  Widget displayBrandLabel() {
-    return Center(
-      child: SvgPicture.asset(
-        'assets/svg/jos-logo.svg',
-        colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
-        height: 80,
-      ),
-    );
-  }
-
-  Widget displayActionButtons() {
-    return MouseRegion(
-      onHover: (_) => setState(() => _mouseHoverOnActionBox = true),
-      onExit: (_) => setState(() => _mouseHoverOnActionBox = false),
-      child: Container(
-        decoration: BoxDecoration(color: dashboardMosaicBackgroundColor, border: Border.all(color: _mouseHoverOnActionBox ? Colors.white : Colors.transparent)),
-        child: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: 100,
-                height: 100,
-                child: actionButton(Icons.settings_power_outlined, 'System Power', Colors.redAccent, displayPowerModal, false),
+        return Obx(
+          () {
+            return CardContent(
+              controllers: [
+                SizedBox(
+                  width: 100,
+                  child: DropDownMenu<GraphTimeframe>(
+                    requiredValue: true,
+                    displayClearButton: false,
+                    value: _graphController.timeframe.value,
+                    items: List.generate(GraphTimeframe.values.length, (index) => DropdownMenuItem(value: GraphTimeframe.values[index], child: Text(GraphTimeframe.values[index].name))),
+                    onChanged: (tf) {
+                      _graphController.timeframe.value = tf;
+                      _graphController.fetchGraph(width, height);
+                    },
+                  ),
+                )
+              ],
+              child: Expanded(
+                child: ReorderableList(
+                  scrollDirection: Axis.vertical,
+                  padding: EdgeInsets.zero,
+                  physics: ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: _graphController.graphList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return chartWidget(index);
+                  },
+                  onReorder: (int oldIndex, int newIndex) => updateOrder(oldIndex, newIndex),
+                ),
               ),
-              SizedBox(
-                width: 100,
-                height: 100,
-                child: actionButton(Icons.refresh, 'JVM Restart', Colors.white, _jvmController.callJvmRestart, _jvmController.jvmNeedRestart.isTrue),
-              ),
-              SizedBox(
-                width: 100,
-                height: 100,
-                child: actionButton(Icons.recycling_outlined, 'JVM GC', Colors.white, _jvmController.callJvmGarbageCollector, false),
-              ),
-            ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget chartWidget(int index) {
+    var graph = _graphController.graphList[index];
+    return ReorderableDragStartListener(
+      key: ValueKey(graph.name),
+      index: index,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: MouseRegion(
+          onHover: (e) => setState(() => _hoverIndex = index),
+          onExit: (e) => setState(() => _hoverIndex = 0),
+          child: Material(
+            elevation: _hoverIndex == index ? 8 : 0,
+            child: Image.memory(
+              gaplessPlayback: true,
+              graph.bytes,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget displayJvmInformation() {
-    return MouseRegion(
-      onHover: (_) => setState(() => _mouseHoverOnJVMBox = true),
-      onExit: (_) => setState(() => _mouseHoverOnJVMBox = false),
-      child: Container(
-        decoration: BoxDecoration(color: dashboardMosaicBackgroundColor, border: Border.all(color: _mouseHoverOnJVMBox ? Colors.white : Colors.transparent)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('JVM Vendor', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(_systemController.jvmVendor.value, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  SizedBox(height: 12),
-                  Text('JVM Version', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(_systemController.jvmVersion.value, style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                ],
-              ),
-              SizedBox(width: 60),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('JVM Xmx', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(formatSize(_systemController.jvmMaxHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  SizedBox(height: 8),
-                  Text('JVM Xms', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(formatSize(_systemController.jvmTotalHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  SizedBox(height: 8),
-                  Text('JVM used heap', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                  Text(formatSize(_systemController.jvmUsedHeapSize.value), style: TextStyle(color: _mouseHoverOnJVMBox ? Colors.white : Colors.grey, fontSize: 12)),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget displayHardwareInformation() {
-    return MouseRegion(
-      onHover: (_) => setState(() => _mouseHoverOnHWBox = true),
-      onExit: (_) => setState(() => _mouseHoverOnHWBox = false),
-      child: Container(
-        decoration: BoxDecoration(color: dashboardMosaicBackgroundColor, border: Border.all(color: _mouseHoverOnHWBox ? Colors.white : Colors.transparent)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('CPU Model', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(_systemController.hwCpuInfo.value, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              SizedBox(height: 12),
-              Text('CPU Cores', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(_systemController.hwCpuCount.value, style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              SizedBox(height: 12),
-              Text('Total RAM', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(formatSize(_systemController.hwTotalMemory.value), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              SizedBox(height: 12),
-              Text('Used RAM', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(formatSize(_systemController.hwUsedMemory.value), style: TextStyle(color: _mouseHoverOnHWBox ? Colors.white : Colors.grey, fontSize: 12)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget displayBasicInformation() {
-    return MouseRegion(
-      onHover: (_) => setState(() => _mouseHoverOnBasicBox = true),
-      onExit: (_) => setState(() => _mouseHoverOnBasicBox = false),
-      child: Container(
-        decoration: BoxDecoration(color: dashboardMosaicBackgroundColor, border: Border.all(color: _mouseHoverOnBasicBox ? Colors.white : Colors.transparent)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('OS', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text('${_systemController.osType.value} ${_systemController.osVersion.value}', style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              SizedBox(height: 12),
-              Text('Hostname', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(_systemController.osHostname.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              SizedBox(height: 12),
-              Text('Username', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(_systemController.osUsername.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              SizedBox(height: 12),
-              Text('Date & Time', style: TextStyle(fontWeight: FontWeight.bold, color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-              Text(_systemController.dateTimeZone.value, style: TextStyle(color: _mouseHoverOnBasicBox ? Colors.white : Colors.grey, fontSize: 12)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget actionButton(IconData icon, String tooltipMessage, Color hoverColor, Function action, bool rotateIcon) {
-    return Tooltip(
-      preferBelow: false,
-      verticalOffset: 45,
-      message: tooltipMessage,
-      child: OutlinedButton(
-        style: ButtonStyle(
-          side: WidgetStateProperty.resolveWith<BorderSide>(
-            (Set<WidgetState> states) {
-              if (states.contains(WidgetState.hovered)) {
-                return BorderSide(color: hoverColor);
-              }
-              return BorderSide(color: Colors.white38);
-            },
-          ),
-          foregroundColor: WidgetStateProperty.resolveWith<Color>(
-            (Set<WidgetState> states) {
-              if (states.contains(WidgetState.hovered)) {
-                return hoverColor; // Set the hover icon color
-              }
-              return Colors.white38; // Set the default icon color
-            },
-          ),
-        ),
-        onPressed: () => action(),
-        // child: Icon(icon, size: 40),
-        child: Visibility(
-          visible: rotateIcon,
-          replacement: Icon(icon, size: 40),
-          child: AnimatedBuilder(
-            animation: _animationController,
-            builder: (_, child) => Transform.rotate(angle: _animationController.value * 2 * math.pi, child: child),
-            child: Icon(icon, size: 40),
-          ),
-        ),
-      ),
-    );
+  void updateOrder(int oldIndex, int newIndex) {
+    setState(() {
+      if (oldIndex < newIndex) newIndex--;
+      var rule = _graphController.graphList.removeAt(oldIndex);
+      _graphController.graphList.insert(newIndex, rule);
+      _graphController.sortGraph();
+    });
   }
 
   @override
   void dispose() {
-    // _animationController.dispose();
+    // TODO: implement dispose
     super.dispose();
+    _timer?.cancel();
   }
 }

@@ -2,9 +2,7 @@ import 'dart:convert';
 
 class Packet {
   final String? iv;
-
   final String? hash;
-
   final String cipher;
 
   Packet(this.iv, this.hash, this.cipher);

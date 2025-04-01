@@ -42,14 +42,6 @@ class _SettingsBackupPageState extends State<SettingsBackupPage> {
                   child: Icon(Icons.add, size: 16, color: Colors.black),
                 ),
               ),
-              Tooltip(
-                message: 'Upload backup',
-                preferBelow: false,
-                child: OutlinedButton(
-                  onPressed: () => chooseConfigFile(),
-                  child: Icon(Icons.upload_file_outlined, size: 16, color: Colors.black),
-                ),
-              ),
             ],
           ),
           SizedBox(height: 8),
@@ -104,14 +96,5 @@ class _SettingsBackupPageState extends State<SettingsBackupPage> {
         Visibility(visible: index != 0, child: IconButton(onPressed: () => _backupController.deleteBackup(index), icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black), splashRadius: 20)),
       ],
     );
-  }
-
-  Future<void> chooseConfigFile() async {
-    var picked = await FilePicker.platform.pickFiles();
-    if (picked != null) {
-      var bytes = picked.files.single.bytes!;
-      var name = picked.files.single.name;
-      displayUploadConfigModal(name, bytes);
-    }
   }
 }

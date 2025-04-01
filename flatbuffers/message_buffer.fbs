@@ -179,7 +179,7 @@ enum RPC:int32 {
     RPC_FIREWALL_SET_ADD = 1109,
     RPC_FIREWALL_SET_LIST = 1110,
     RPC_FIREWALL_SET_REMOVE = 1111,
-    RPC_FIREWALL_SET_RENAME = 11112,
+    RPC_FIREWALL_SET_RENAME = 1112,
     RPC_FIREWALL_SET_ELEMENT_ADD = 1113,
     RPC_FIREWALL_SET_ELEMENT_REMOVE = 1114,
     RPC_FIREWALL_RULE_ADD = 1115,
@@ -236,6 +236,12 @@ enum RPC:int32 {
      RPC_EVENT_READ = 2101,
      RPC_EVENT_READ_ALL = 2102,
      RPC_EVENT_GET = 2103,
+
+     /*
+     * RRD Graph
+     * */
+     RPC_RRD_GRAPH_FETCH = 2200,
+     RPC_RRD_GRAPH_SORT = 2201,
 }
 
 /*
@@ -259,19 +265,6 @@ enum Realm:int32 {
     REALM_CONTAINER_ENGINE = 4096,
     REALM_KERNEL = 8192,
     REALM_FIREWALL = 16384,
-}
-
-enum UploadType:int32 {
-    UPLOAD_TYPE_MODULE = 0,
-    UPLOAD_TYPE_CONFIG = 1,
-    UPLOAD_TYPE_SSL = 2,
-    UPLOAD_TYPE_FILE = 3,
-}
-
-enum SseConnectionType:int32 {
-    JVM_LOG,
-    OCI_LOG,
-    EVENT,
 }
 
 enum EventStatus:int32 {
