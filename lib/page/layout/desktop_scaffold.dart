@@ -17,9 +17,8 @@ class DesktopScaffold extends StatefulWidget {
 class _DesktopScaffoldState extends State<DesktopScaffold> {
   final _authController = Get.put(AuthenticationController());
 
-  bool _onHoverLogout = false;
-  bool _onHoverReboot = false;
-  bool _onHoverShutdown = false;
+  bool _hoverOnLogout = false;
+  bool _hoverOnPower = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,29 +37,29 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                     actions: [
                       MouseRegion(
                         cursor: SystemMouseCursors.click,
-                        onHover:(e) => setState(() => _onHoverReboot = true),
-                        onExit:(e) => setState(() => _onHoverReboot = false),
+                        onHover:(e) => setState(() => _hoverOnPower = true),
+                        onExit:(e) => setState(() => _hoverOnPower = false),
                         child: GestureDetector(
                           onTap: () => displayPowerModal(),
                           child: AnimatedContainer(
                             curve: Curves.easeInOut,
-                            color: _onHoverReboot ? Colors.blue : Colors.transparent,
+                            color: _hoverOnPower ? Colors.blue : Colors.transparent,
                             width: 60,
                             duration: Duration(milliseconds: 600),
-                            child: Icon(Icons.power_settings_new_outlined,color: _onHoverReboot ? Colors.white : Colors.black),
+                            child: Icon(Icons.power_settings_new_outlined,color: _hoverOnPower ? Colors.white : Colors.black),
                           ),
                         ),
                       ),
                       MouseRegion(
                         cursor: SystemMouseCursors.click,
-                        onHover:(e) => setState(() => _onHoverLogout = true),
-                        onExit:(e) => setState(() => _onHoverLogout = false),
+                        onHover:(e) => setState(() => _hoverOnLogout = true),
+                        onExit:(e) => setState(() => _hoverOnLogout = false),
                         child: AnimatedContainer(
                           curve: Curves.easeInOut,
-                          color: _onHoverLogout ? Colors.blue : Colors.transparent,
+                          color: _hoverOnLogout ? Colors.blue : Colors.transparent,
                           width: 60,
                           duration: Duration(milliseconds: 600),
-                          child: Icon(Icons.logout,color: _onHoverLogout ? Colors.white : Colors.black),
+                          child: Icon(Icons.logout,color: _hoverOnLogout ? Colors.white : Colors.black),
                         ),
                       ),
                     ],
