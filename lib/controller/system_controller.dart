@@ -12,7 +12,7 @@ class SystemController extends GetxController {
   final TextEditingController hostnameEditingController = TextEditingController();
 
   var osUsername = ''.obs;
-  var osType = ''.obs;
+  var osCodeName = ''.obs;
   var osVersion = ''.obs;
   var osHostname = ''.obs;
   var hwCpuInfo = ''.obs;
@@ -43,13 +43,13 @@ class SystemController extends GetxController {
     }
   }
 
-  void fetchSystemInformation() async {
+  Future<void> fetchSystemInformation() async {
     developer.log('Fetch System Full Information');
-    _apiService.callApi(Rpc.RPC_SYSTEM_FULL_INFORMATION).then((map) {
+    _apiService.callApi(Rpc.RPC_SYSTEM_FULL_INFORMATION,disableLoading: true).then((map) {
       dateTimeZone.value = map['os_date_time_zone'].toString();
       osUsername.value = map['os_username'].toString();
       osVersion.value = map['os_version'].toString();
-      osType.value = map['os_type'].toString();
+      osCodeName.value = map['os_codename'].toString();
       osHostname.value = map['os_hostname'].toString();
       hwCpuInfo.value = map['hw_cpu_info'].toString();
       hwCpuCount.value = map['hw_cpu_count'].toString();

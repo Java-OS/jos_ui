@@ -32,7 +32,7 @@ class Rpc {
   static const Rpc RPC_SYSTEM_ENVIRONMENT_SET = Rpc._(3);
   static const Rpc RPC_SYSTEM_ENVIRONMENT_GET = Rpc._(4);
   static const Rpc RPC_SYSTEM_ENVIRONMENT_UNSET = Rpc._(5);
-  static const Rpc RPC_SYSTEM_OS_TYPE = Rpc._(6);
+  static const Rpc RPC_SYSTEM_CODE_NAME = Rpc._(6);
   static const Rpc RPC_SYSTEM_TOTAL_MEMORY = Rpc._(7);
   static const Rpc RPC_SYSTEM_FREE_MEMORY = Rpc._(8);
   static const Rpc RPC_SYSTEM_USED_MEMORY = Rpc._(9);
@@ -197,7 +197,7 @@ class Rpc {
     3: RPC_SYSTEM_ENVIRONMENT_SET,
     4: RPC_SYSTEM_ENVIRONMENT_GET,
     5: RPC_SYSTEM_ENVIRONMENT_UNSET,
-    6: RPC_SYSTEM_OS_TYPE,
+    6: RPC_SYSTEM_CODE_NAME,
     7: RPC_SYSTEM_TOTAL_MEMORY,
     8: RPC_SYSTEM_FREE_MEMORY,
     9: RPC_SYSTEM_USED_MEMORY,
