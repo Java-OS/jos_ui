@@ -50,7 +50,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
       builder: (BuildContext context, BoxConstraints box) {
         var width = box.maxWidth;
         _width = width; // Store width in state
-
+        _graphController.fetchGraph(_width!, height);
         return Obx(
           () {
             return CardContent(

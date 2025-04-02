@@ -26,8 +26,8 @@ class JvmController extends GetxController {
     displaySuccess('CleanUp JVM Heap Space');
   }
 
-  void callJvmRestart() {
-    developer.log('JVM restart called');
+  void jvmRestart() {
+    developer.log('Restart JVM');
     _apiService.callApi(Rpc.RPC_JVM_RESTART);
     disableRestartJvm();
     displaySuccess('Restarting JVM, please wait ...');

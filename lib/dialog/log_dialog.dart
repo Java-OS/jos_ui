@@ -23,7 +23,7 @@ Future<void> displayLiveLoggerModal(LogInfo logInfo) async {
     context: Get.context!,
     builder: (BuildContext context) {
       return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.grey, width: 1)),
         child: Obx(
           () => SizedBox(
             width: _jvmLogWebsocketService.isMaximize.value ? double.infinity : 800,
@@ -52,8 +52,8 @@ Future<void> displayLiveLoggerModal(LogInfo logInfo) async {
                         onPressed: () => _jvmLogWebsocketService.terminalReset(),
                       ),
                       IconButton(
-                        icon: Icon(_jvmLogWebsocketService.isConnected.value == true ? LineariconsFree.frame_contract : LineariconsFree.frame_expand, color: Colors.white, size: 16),
-                        onPressed: () => _jvmLogWebsocketService.isConnected.value = !_jvmLogWebsocketService.isConnected.value,
+                        icon: Icon(_jvmLogWebsocketService.isMaximize.value == true ? LineariconsFree.frame_contract : LineariconsFree.frame_expand, color: Colors.white, size: 16),
+                        onPressed: () => _jvmLogWebsocketService.isMaximize.value = !_jvmLogWebsocketService.isMaximize.value,
                       ),
                       IconButton(
                         icon: Icon(Icons.close, color: Colors.white, size: 18),

@@ -19,7 +19,7 @@ Future<void> displayTerminal(ContainerInfo container) async {
     context: Get.context!,
     builder: (BuildContext context) {
       return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.grey, width: 1)),
         child: Obx(
           () => SizedBox(
             width: _containerExecWebSocketService.isMaximize.value ? double.infinity : 800,
