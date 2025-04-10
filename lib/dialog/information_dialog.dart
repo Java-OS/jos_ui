@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/system_controller.dart';
-import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/util/utils.dart';
 
 var _systemController = Get.put(SystemController());
 

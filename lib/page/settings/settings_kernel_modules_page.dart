@@ -4,7 +4,7 @@ import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/kernel_controller.dart';
 import 'package:jos_ui/dialog/kernel_dialog.dart';
 import 'package:jos_ui/model/kernel_mod_info.dart';
-import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/util/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SettingsKernelModulesPage extends StatefulWidget {

@@ -5,7 +5,8 @@ import 'package:jos_ui/controller/user_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/user.dart';
-import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/util/bitwise_utils.dart';
+import 'package:jos_ui/util/utils.dart';
 
 UserController _userController = Get.put(UserController());
 
@@ -102,7 +103,7 @@ Future<void> displayUpdatePassword(User user, BuildContext context) async {
 Future<void> displayUpdateRoles(User user, BuildContext context) async {
   _userController.usernameEditingController.text = user.username;
   _userController.realmBit.value = user.realmBit;
-  _userController.selectedRealms.value = ProtobufBitwiseUtils.getRealms(user.realmBit);
+  _userController.selectedRealms.value = BitwiseUtils.getRealms(user.realmBit);
   showDialog(
     context: context,
     builder: (BuildContext context) {

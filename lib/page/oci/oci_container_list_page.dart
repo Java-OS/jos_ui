@@ -8,7 +8,7 @@ import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/container_information.dart';
 import 'package:jos_ui/dialog/container/create_exec_instance_dialog.dart';
 import 'package:jos_ui/dialog/log_dialog.dart';
-import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/util/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class OciContainerListPage extends StatefulWidget {

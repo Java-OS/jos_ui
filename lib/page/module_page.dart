@@ -106,10 +106,10 @@ class _ModulePageState extends State<ModulePage> {
 
   Widget getLinkButton(String moduleName, String version, bool isEnable, bool isLock, bool containService, bool isStarted) {
     return IconButton(
-      onPressed: (containService && isStarted) || (isLock && isEnable) ? null : () => isEnable ? _moduleController.disableModule(moduleName, version) : _moduleController.enableModule(moduleName, version),
+      // onPressed: (containService && isStarted) || (isLock && isEnable) ? null : () => isEnable ? _moduleController.disableModule(moduleName, version) : _moduleController.enableModule(moduleName, version),
       splashRadius: 10,
       splashColor: Colors.transparent,
-      icon: Icon(isEnable ? Icons.link_outlined : Icons.link_off_outlined, size: 16),
+      icon: Icon(isEnable ? Icons.link_outlined : Icons.link_off_outlined, size: 16), onPressed: () {  },
     );
   }
 }

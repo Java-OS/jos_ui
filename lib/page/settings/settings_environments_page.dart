@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/controller/environment_controller.dart';
 import 'package:jos_ui/dialog/environment_dialog.dart';
-import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/util/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SettingsEnvironmentsPage extends StatefulWidget {

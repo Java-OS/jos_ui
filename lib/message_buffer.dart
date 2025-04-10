@@ -73,16 +73,11 @@ class Rpc {
   static const Rpc RPC_NTP_ACTIVATE = Rpc._(402);
   static const Rpc RPC_NTP_INFORMATION = Rpc._(403);
   static const Rpc RPC_MODULE_LIST = Rpc._(500);
-  static const Rpc RPC_MODULE_INSTALL = Rpc._(501);
-  static const Rpc RPC_MODULE_REMOVE = Rpc._(502);
-  static const Rpc RPC_MODULE_ENABLE = Rpc._(503);
-  static const Rpc RPC_MODULE_DISABLE = Rpc._(504);
-  static const Rpc RPC_MODULE_DEPENDENCIES = Rpc._(505);
-  static const Rpc RPC_MODULE_START = Rpc._(506);
-  static const Rpc RPC_MODULE_STOP = Rpc._(507);
-  static const Rpc RPC_MODULE_STOP_ALL = Rpc._(508);
-  static const Rpc RPC_MODULE_START_ALL = Rpc._(509);
-  static const Rpc RPC_MODULE_INIT = Rpc._(510);
+  static const Rpc RPC_MODULE_START = Rpc._(501);
+  static const Rpc RPC_MODULE_STOP = Rpc._(502);
+  static const Rpc RPC_MODULE_REMOVE = Rpc._(503);
+  static const Rpc RPC_MODULE_DEP_LAYERS = Rpc._(504);
+  static const Rpc RPC_MODULE_DEP_LAYER_REMOVE = Rpc._(505);
   static const Rpc RPC_NETWORK_ETHERNET_INFORMATION = Rpc._(600);
   static const Rpc RPC_NETWORK_ETHERNET_SET_IP = Rpc._(601);
   static const Rpc RPC_NETWORK_ETHERNET_UP = Rpc._(602);
@@ -238,16 +233,11 @@ class Rpc {
     402: RPC_NTP_ACTIVATE,
     403: RPC_NTP_INFORMATION,
     500: RPC_MODULE_LIST,
-    501: RPC_MODULE_INSTALL,
-    502: RPC_MODULE_REMOVE,
-    503: RPC_MODULE_ENABLE,
-    504: RPC_MODULE_DISABLE,
-    505: RPC_MODULE_DEPENDENCIES,
-    506: RPC_MODULE_START,
-    507: RPC_MODULE_STOP,
-    508: RPC_MODULE_STOP_ALL,
-    509: RPC_MODULE_START_ALL,
-    510: RPC_MODULE_INIT,
+    501: RPC_MODULE_START,
+    502: RPC_MODULE_STOP,
+    503: RPC_MODULE_REMOVE,
+    504: RPC_MODULE_DEP_LAYERS,
+    505: RPC_MODULE_DEP_LAYER_REMOVE,
     600: RPC_NETWORK_ETHERNET_INFORMATION,
     601: RPC_NETWORK_ETHERNET_SET_IP,
     602: RPC_NETWORK_ETHERNET_UP,
@@ -601,7 +591,7 @@ class Payload {
   final int _bcOffset;
 
   Metadata? get metadata => Metadata.reader.vTableGetNullable(_bc, _bcOffset, 4);
-  String? get content => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 6);
+  List<int>? get content => const fb.Int8ListReader().vTableGetNullable(_bc, _bcOffset, 6);
 
   @override
   String toString() {
@@ -642,11 +632,11 @@ class PayloadBuilder {
 
 class PayloadObjectBuilder extends fb.ObjectBuilder {
   final MetadataObjectBuilder? _metadata;
-  final String? _content;
+  final List<int>? _content;
 
   PayloadObjectBuilder({
     MetadataObjectBuilder? metadata,
-    String? content,
+    List<int>? content,
   })
       : _metadata = metadata,
         _content = content;
@@ -656,7 +646,7 @@ class PayloadObjectBuilder extends fb.ObjectBuilder {
   int finish(fb.Builder fbBuilder) {
     final int? metadataOffset = _metadata?.getOrCreateOffset(fbBuilder);
     final int? contentOffset = _content == null ? null
-        : fbBuilder.writeString(_content!);
+        : fbBuilder.writeListInt8(_content!);
     fbBuilder.startTable(2);
     fbBuilder.addOffset(0, metadataOffset);
     fbBuilder.addOffset(1, contentOffset);
@@ -685,13 +675,12 @@ class Metadata {
 
   bool get success => const fb.BoolReader().vTableGet(_bc, _bcOffset, 4, false);
   int get rpc => const fb.Int32Reader().vTableGet(_bc, _bcOffset, 6, 0);
-  int get error => const fb.Int32Reader().vTableGet(_bc, _bcOffset, 8, 0);
-  bool get needRestart => const fb.BoolReader().vTableGet(_bc, _bcOffset, 10, false);
-  String? get message => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 12);
+  bool get needRestart => const fb.BoolReader().vTableGet(_bc, _bcOffset, 8, false);
+  String? get message => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 10);
 
   @override
   String toString() {
-    return 'Metadata{success: ${success}, rpc: ${rpc}, error: ${error}, needRestart: ${needRestart}, message: ${message}}';
+    return 'Metadata{success: ${success}, rpc: ${rpc}, needRestart: ${needRestart}, message: ${message}}';
   }
 }
 
@@ -709,7 +698,7 @@ class MetadataBuilder {
   final fb.Builder fbBuilder;
 
   void begin() {
-    fbBuilder.startTable(5);
+    fbBuilder.startTable(4);
   }
 
   int addSuccess(bool? success) {
@@ -720,16 +709,12 @@ class MetadataBuilder {
     fbBuilder.addInt32(1, rpc);
     return fbBuilder.offset;
   }
-  int addError(int? error) {
-    fbBuilder.addInt32(2, error);
-    return fbBuilder.offset;
-  }
   int addNeedRestart(bool? needRestart) {
-    fbBuilder.addBool(3, needRestart);
+    fbBuilder.addBool(2, needRestart);
     return fbBuilder.offset;
   }
   int addMessageOffset(int? offset) {
-    fbBuilder.addOffset(4, offset);
+    fbBuilder.addOffset(3, offset);
     return fbBuilder.offset;
   }
 
@@ -741,20 +726,17 @@ class MetadataBuilder {
 class MetadataObjectBuilder extends fb.ObjectBuilder {
   final bool? _success;
   final int? _rpc;
-  final int? _error;
   final bool? _needRestart;
   final String? _message;
 
   MetadataObjectBuilder({
     bool? success,
     int? rpc,
-    int? error,
     bool? needRestart,
     String? message,
   })
       : _success = success,
         _rpc = rpc,
-        _error = error,
         _needRestart = needRestart,
         _message = message;
 
@@ -763,12 +745,11 @@ class MetadataObjectBuilder extends fb.ObjectBuilder {
   int finish(fb.Builder fbBuilder) {
     final int? messageOffset = _message == null ? null
         : fbBuilder.writeString(_message!);
-    fbBuilder.startTable(5);
+    fbBuilder.startTable(4);
     fbBuilder.addBool(0, _success);
     fbBuilder.addInt32(1, _rpc);
-    fbBuilder.addInt32(2, _error);
-    fbBuilder.addBool(3, _needRestart);
-    fbBuilder.addOffset(4, messageOffset);
+    fbBuilder.addBool(2, _needRestart);
+    fbBuilder.addOffset(3, messageOffset);
     return fbBuilder.endTable();
   }
 
@@ -891,6 +872,130 @@ class EventObjectBuilder extends fb.ObjectBuilder {
     fbBuilder.addFloat64(3, _percentage);
     fbBuilder.addBool(4, _read);
     fbBuilder.addOffset(5, messageOffset);
+    return fbBuilder.endTable();
+  }
+
+  /// Convenience method to serialize to byte list.
+  @override
+  Uint8List toBytes([String? fileIdentifier]) {
+    final fbBuilder = fb.Builder(deduplicateTables: false);
+    fbBuilder.finish(finish(fbBuilder), fileIdentifier);
+    return fbBuilder.buffer;
+  }
+}
+class Transfer {
+  Transfer._(this._bc, this._bcOffset);
+  factory Transfer(List<int> bytes) {
+    final rootRef = fb.BufferContext.fromBytes(bytes);
+    return reader.read(rootRef, 0);
+  }
+
+  static const fb.Reader<Transfer> reader = _TransferReader();
+
+  final fb.BufferContext _bc;
+  final int _bcOffset;
+
+  String? get name => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 4);
+  String? get path => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 6);
+  List<int>? get hash => const fb.Int8ListReader().vTableGetNullable(_bc, _bcOffset, 8);
+  int get parts => const fb.Int32Reader().vTableGet(_bc, _bcOffset, 10, 0);
+  int get index => const fb.Int32Reader().vTableGet(_bc, _bcOffset, 12, 0);
+  List<int>? get bytes => const fb.Int8ListReader().vTableGetNullable(_bc, _bcOffset, 14);
+
+  @override
+  String toString() {
+    return 'Transfer{name: ${name}, path: ${path}, hash: ${hash}, parts: ${parts}, index: ${index}, bytes: ${bytes}}';
+  }
+}
+
+class _TransferReader extends fb.TableReader<Transfer> {
+  const _TransferReader();
+
+  @override
+  Transfer createObject(fb.BufferContext bc, int offset) => 
+    Transfer._(bc, offset);
+}
+
+class TransferBuilder {
+  TransferBuilder(this.fbBuilder);
+
+  final fb.Builder fbBuilder;
+
+  void begin() {
+    fbBuilder.startTable(6);
+  }
+
+  int addNameOffset(int? offset) {
+    fbBuilder.addOffset(0, offset);
+    return fbBuilder.offset;
+  }
+  int addPathOffset(int? offset) {
+    fbBuilder.addOffset(1, offset);
+    return fbBuilder.offset;
+  }
+  int addHashOffset(int? offset) {
+    fbBuilder.addOffset(2, offset);
+    return fbBuilder.offset;
+  }
+  int addParts(int? parts) {
+    fbBuilder.addInt32(3, parts);
+    return fbBuilder.offset;
+  }
+  int addIndex(int? index) {
+    fbBuilder.addInt32(4, index);
+    return fbBuilder.offset;
+  }
+  int addBytesOffset(int? offset) {
+    fbBuilder.addOffset(5, offset);
+    return fbBuilder.offset;
+  }
+
+  int finish() {
+    return fbBuilder.endTable();
+  }
+}
+
+class TransferObjectBuilder extends fb.ObjectBuilder {
+  final String? _name;
+  final String? _path;
+  final List<int>? _hash;
+  final int? _parts;
+  final int? _index;
+  final List<int>? _bytes;
+
+  TransferObjectBuilder({
+    String? name,
+    String? path,
+    List<int>? hash,
+    int? parts,
+    int? index,
+    List<int>? bytes,
+  })
+      : _name = name,
+        _path = path,
+        _hash = hash,
+        _parts = parts,
+        _index = index,
+        _bytes = bytes;
+
+  /// Finish building, and store into the [fbBuilder].
+  @override
+  int finish(fb.Builder fbBuilder) {
+    final int? nameOffset = _name == null ? null
+        : fbBuilder.writeString(_name!);
+    final int? pathOffset = _path == null ? null
+        : fbBuilder.writeString(_path!);
+    final int? hashOffset = _hash == null ? null
+        : fbBuilder.writeListInt8(_hash!);
+    final int? bytesOffset = _bytes == null ? null
+        : fbBuilder.writeListInt8(_bytes!);
+    fbBuilder.startTable(6);
+    fbBuilder.addOffset(0, nameOffset);
+    fbBuilder.addOffset(1, pathOffset);
+    fbBuilder.addOffset(2, hashOffset);
+    fbBuilder.addInt32(3, _parts);
+    fbBuilder.addInt32(4, _index);
+    fbBuilder.addOffset(5, bytesOffset);
     return fbBuilder.endTable();
   }
 

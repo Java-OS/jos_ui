@@ -23,23 +23,23 @@ class ModuleController extends GetxController {
     _apiService.callApi(Rpc.RPC_MODULE_REMOVE, parameters: reqParam).then((e) => fetchModules());
   }
 
-  Future<void> enableModule(String moduleName, String version) async {
-    var fullName = '$moduleName:$version';
-    developer.log('try to enable module $fullName');
-    var reqParam = {
-      'moduleName': fullName,
-    };
-    _apiService.callApi(Rpc.RPC_MODULE_ENABLE, parameters: reqParam).then((e) => fetchModules());
-  }
+  // Future<void> enableModule(String moduleName, String version) async {
+  //   var fullName = '$moduleName:$version';
+  //   developer.log('try to enable module $fullName');
+  //   var reqParam = {
+  //     'moduleName': fullName,
+  //   };
+  //   _apiService.callApi(Rpc.RPC_MODULE_ENABLE, parameters: reqParam).then((e) => fetchModules());
+  // }
 
-  Future<void> disableModule(String moduleName, String version) async {
-    var fullName = '$moduleName:$version';
-    developer.log('try to disable module $fullName');
-    var reqParam = {
-      'moduleName': fullName,
-    };
-    _apiService.callApi(Rpc.RPC_MODULE_DISABLE, parameters: reqParam).then((e) => fetchModules());
-  }
+  // Future<void> disableModule(String moduleName, String version) async {
+  //   var fullName = '$moduleName:$version';
+  //   developer.log('try to disable module $fullName');
+  //   var reqParam = {
+  //     'moduleName': fullName,
+  //   };
+  //   _apiService.callApi(Rpc.RPC_MODULE_DISABLE, parameters: reqParam).then((e) => fetchModules());
+  // }
 
   Future<void> startService(String moduleName, String version) async {
     var fullName = '$moduleName:$version';

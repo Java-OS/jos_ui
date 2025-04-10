@@ -15,7 +15,7 @@ class ApiService extends GetxController {
       var content = payload.content;
       isLoading.value = false;
       if (content != null) {
-        var decode = jsonDecode(content);
+        var decode = jsonDecode(utf8.decode(content));
         return decode;
       } else {
         return [];

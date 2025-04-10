@@ -7,7 +7,7 @@ import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/image_search_dialog.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/container/container_image.dart';
-import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/util/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class OciImagesPage extends StatefulWidget {

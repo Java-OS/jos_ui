@@ -13,7 +13,7 @@ import 'package:jos_ui/controller/jvm_controller.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/service/h5proto.dart';
 import 'package:jos_ui/service/storage_service.dart';
-import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/util/protobuf_utils.dart';
 
 class RestClient {
   static final JvmController jvmController = Get.put(JvmController());
@@ -26,16 +26,16 @@ class RestClient {
     var publicKey = _h5Proto.exportPublicKey();
 
     try {
-      var payloadBytes = ProtocolUtils.serializePayload(null, publicKey);
-      var packetBytes = ProtocolUtils.serializePacket(null, null, payloadBytes);
+      var payloadBytes = ProtobufUtils.serializePayload(null, publicKey);
+      var packetBytes = ProtobufUtils.serializePacket(null, null, payloadBytes);
       var uri = Uri.parse(baseH5ProtoUrl());
       var response = await _http.post(uri, body: packetBytes);
       var statusCode = response.statusCode;
       if (statusCode == 200) {
         var packet = Packet(response.bodyBytes);
         var responsePayload = Payload(Uint8List.fromList(packet.payload!));
-        var serverPublicKey = jsonDecode(responsePayload.content!)['public-key'];
-        var captcha = jsonDecode(responsePayload.content!)['captcha'];
+        var serverPublicKey = jsonDecode(utf8.decode(responsePayload.content!))['public-key'];
+        var captcha = jsonDecode(utf8.decode(responsePayload.content!))['captcha'];
         developer.log('Server public key $serverPublicKey');
         var publicKey = _h5Proto.bytesToPublicKey(base64Decode(serverPublicKey));
         _h5Proto.makeSharedSecret(publicKey);
@@ -64,7 +64,7 @@ class RestClient {
     var token = StorageService.getItem('token');
     var headers = {'authorization': 'Bearer $token'};
     developer.log('Header send: [$headers]');
-    var packet = await _h5Proto.encode(ProtocolUtils.serializePayload(null, jsonEncode(data)));
+    var packet = await _h5Proto.encode(ProtobufUtils.serializePayload(null, jsonEncode(data)));
 
     try {
       var response = await _http.post(Uri.parse(baseLoginUrl()), body: packet, headers: headers);
@@ -115,8 +115,8 @@ class RestClient {
     developer.log('Header send: [$headers]');
 
     var data = parameters != null ? jsonEncode(parameters) : null;
-    var metadata = ProtocolUtils.serializeMetadata(null, rpc.value, null, null, null);
-    var payload = ProtocolUtils.serializePayload(metadata, data);
+    var metadata = ProtobufUtils.serializeMetadata(null, rpc.value, null, null, null);
+    var payload = ProtobufUtils.serializePayload(metadata, data);
     var packet = await _h5Proto.encode(payload);
 
     // debugPrint('Parameters : ${jsonEncode(parameters)}');
@@ -146,8 +146,8 @@ class RestClient {
         developer.log('[Http Error] $rpc ${e.toString()}');
       }
     }
-    var serializeMetadata = ProtocolUtils.serializeMetadata(false, null, null, null, null);
-    return Payload(ProtocolUtils.serializePayload(serializeMetadata, null));
+    var serializeMetadata = ProtobufUtils.serializeMetadata(false, null, null, null, null);
+    return Payload(ProtobufUtils.serializePayload(serializeMetadata, null));
   }
 
   static void storeToken(Map<String, String> headers) {
@@ -175,8 +175,8 @@ class RestClient {
       'password': password,
     };
 
-    var serializeMetadata = ProtocolUtils.serializeMetadata(false, null, null, null, null);
-    var packet = await _h5Proto.encode(ProtocolUtils.serializePayload(serializeMetadata, jsonEncode(parameters)));
+    var serializeMetadata = ProtobufUtils.serializeMetadata(false, null, null, null, null);
+    var packet = await _h5Proto.encode(ProtobufUtils.serializePayload(serializeMetadata, jsonEncode(parameters)));
 
     try {
       var response = await _http.post(Uri.parse(baseDownloadUrl()), body: packet, headers: headers);
@@ -202,8 +202,8 @@ class RestClient {
     } catch (e) {
       developer.log('[Http Error] $rpc ${e.toString()}');
     }
-    var metadata = ProtocolUtils.serializeMetadata(false, null, null, null, null);
-    return Payload(ProtocolUtils.serializePayload(metadata, null));
+    var metadata = ProtobufUtils.serializeMetadata(false, null, null, null, null);
+    return Payload(ProtobufUtils.serializePayload(metadata, null));
   }
 
   static Future<Payload> decodeResponsePayload(http.Response response) async {

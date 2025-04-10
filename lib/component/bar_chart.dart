@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/util/utils.dart';
 
 class BarChart extends StatefulWidget {
   final int total;

@@ -8,13 +8,12 @@ table Packet {
 
 table Payload {
     metadata:Metadata ;
-    content:string  ;
+    content:[byte] ;
 }
 
 table Metadata {
     success:bool;
     rpc:int32;
-    error:int32;
     need_restart:bool;
     message:string;
 }
@@ -91,17 +90,13 @@ enum RPC:int32 {
      * Module RPC
      * */
     RPC_MODULE_LIST = 500,
-    RPC_MODULE_INSTALL = 501,
-    RPC_MODULE_REMOVE = 502,
-    RPC_MODULE_ENABLE = 503,
-    RPC_MODULE_DISABLE = 504,
-    RPC_MODULE_DEPENDENCIES = 505,
-    RPC_MODULE_START = 506,
-    RPC_MODULE_STOP = 507,
-    RPC_MODULE_STOP_ALL = 508,
-    RPC_MODULE_START_ALL = 509,
-    RPC_MODULE_INIT = 510,
+    RPC_MODULE_START = 501,
+    RPC_MODULE_STOP = 502,
+    RPC_MODULE_REMOVE = 503,
+    RPC_MODULE_DEP_LAYERS = 504,
+    RPC_MODULE_DEP_LAYER_REMOVE = 505,
 
+    //------------------
     /*
      * Network RPC
      * */
@@ -280,4 +275,13 @@ table Event {
     percentage:double;
     read:bool;
     message:string;
+}
+
+table Transfer {
+    name: string;
+    path: string;
+    hash: [byte];
+    parts: int;
+    index: int;
+    bytes: [byte];
 }

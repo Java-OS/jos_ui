@@ -13,7 +13,7 @@ import 'package:jos_ui/model/container/container_info.dart';
 import 'package:jos_ui/model/container/network_info.dart';
 import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/service/api_service.dart';
-import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/util/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:tab_container/tab_container.dart';
 

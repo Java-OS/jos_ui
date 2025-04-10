@@ -8,7 +8,7 @@ import 'package:fixnum/fixnum.dart';
 import 'package:flutter/foundation.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/service/storage_service.dart';
-import 'package:jos_ui/utils.dart';
+import 'package:jos_ui/util/protobuf_utils.dart';
 import 'package:pointycastle/export.dart';
 
 class H5Proto {
@@ -173,7 +173,7 @@ class H5Proto {
     var iv = secretBox.nonce;
     var data = secretBox.concatenation(nonce: false, mac: true);
 
-    return ProtocolUtils.serializePacket(Uint8List.fromList(iv), hash, data);
+    return ProtobufUtils.serializePacket(Uint8List.fromList(iv), hash, data);
   }
 
   Future<cryptography.SecretBox> _encrypt(Uint8List bytes, Uint8List key) async {
