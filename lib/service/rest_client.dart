@@ -124,10 +124,11 @@ class RestClient {
       var statusCode = response.statusCode;
       developer.log('Response received with http code: $statusCode');
 
-      storeToken(response.headers);
       if (statusCode == 200) {
+        storeToken(response.headers);
         return await decodeResponsePayload(response);
       } else if (statusCode == 204) {
+        storeToken(response.headers);
         return await decodeResponsePayload(response);
       } else if (statusCode == 401) {
         Get.offAllNamed(Routes.base.path);

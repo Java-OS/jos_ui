@@ -91,7 +91,7 @@ class H5Proto {
   }
 
   static Uint8List sha256(Uint8List data) {
-    var sha256digest = SHA512Digest();
+    var sha256digest = SHA256Digest();
     return sha256digest.process(data);
   }
 
@@ -168,7 +168,7 @@ class H5Proto {
     var secretBox = await _encrypt(payload, key);
     var iv = secretBox.nonce;
     var data = secretBox.concatenation(nonce: false, mac: true);
-
+    developer.log('Request hash: ${base64Encode(hash)}');
     return ProtobufUtils.serializePacket(Uint8List.fromList(iv), hash, data);
   }
 
