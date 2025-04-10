@@ -116,10 +116,6 @@ class H5Proto {
     return secureRandom;
   }
 
-  Int64 getCurrentTimestamp() {
-    return Int64(DateTime.now().millisecondsSinceEpoch);
-  }
-
   void storeSharedSecret(Uint8List sharedSecret) {
     StorageService.addItem('shared-secret', base64Encode(sharedSecret));
   }

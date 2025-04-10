@@ -21,6 +21,7 @@ class RestClient {
   static final _h5Proto = H5Proto.init();
 
   static Future<String?> sendEcdhPublicKey() async {
+    var uri = Uri.parse(baseHandshakeUrl());
     developer.log('Request to send ecdh public key');
     _h5Proto.storePrivateKey();
     var publicKey = _h5Proto.exportPublicKey();
@@ -28,7 +29,6 @@ class RestClient {
     try {
       var payloadBytes = ProtobufUtils.serializePayload(null, publicKey);
       var packetBytes = ProtobufUtils.serializePacket(null, null, payloadBytes);
-      var uri = Uri.parse(baseH5ProtoUrl());
       var response = await _http.post(uri, body: packetBytes);
       var statusCode = response.statusCode;
       if (statusCode == 200) {
@@ -119,10 +119,6 @@ class RestClient {
     var payload = ProtobufUtils.serializePayload(metadata, data);
     var packet = await _h5Proto.encode(payload);
 
-    // debugPrint('Parameters : ${jsonEncode(parameters)}');
-    // debugPrint('IV : ${base64Encode(packet.iv)}');
-    // debugPrint('Hash : ${base64Encode(packet.hash)}');
-    // debugPrint('Content : ${base64Encode(packet.content)}');
     try {
       var response = await _http.post(Uri.parse(baseRpcUrl()), body: packet, headers: headers);
       var statusCode = response.statusCode;
