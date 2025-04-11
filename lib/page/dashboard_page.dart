@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,10 +20,11 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   double dx = 0;
   double dy = 0;
-  int _hoverIndex = 0;
+  int _onHoverIndex = -1;
   Timer? _timer;
   double? _width;
   double height = 150;
+  bool _initFetchDone = false;
   Completer<void>? _requestCompleter;
 
   @override
@@ -31,11 +33,12 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
     // Start fetching after the first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _timer = Timer.periodic(Duration(seconds: 5), (_) async {
+      _timer = Timer.periodic(Duration(minutes: 1), (_) async {
         if (_width != null && (_requestCompleter == null || _requestCompleter!.isCompleted)) {
           try {
             _requestCompleter = Completer<void>();
-            await _graphController.fetchGraph(_width!, height);
+            developer.log('Timer try to fetch graph');
+            await _graphController.fetchGraph(_width!, height, true);
           } finally {
             _requestCompleter!.complete();
           }
@@ -49,12 +52,16 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints box) {
         var width = box.maxWidth;
-        _width = width; // Store width in state
-        _graphController.fetchGraph(_width!, height);
+        if (!_initFetchDone || _width != width) {
+          _width = width; // Store width in state
+          _graphController.fetchGraph(_width!, height, false);
+          _initFetchDone = true;
+        }
         return Obx(
           () {
             return CardContent(
               controllers: [
+                OutlinedButton(onPressed: () => _graphController.fetchGraph(_width!, height, true), child: Icon(Icons.refresh, size: 16)),
                 SizedBox(
                   width: 100,
                   child: DropDownMenu<GraphTimeframe>(
@@ -64,7 +71,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                     items: List.generate(GraphTimeframe.values.length, (index) => DropdownMenuItem(value: GraphTimeframe.values[index], child: Text(GraphTimeframe.values[index].name))),
                     onChanged: (tf) {
                       _graphController.timeframe.value = tf;
-                      _graphController.fetchGraph(width, height);
+                      _graphController.fetchGraph(_width!, height, true);
                     },
                   ),
                 )
@@ -97,10 +104,11 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: MouseRegion(
-          onHover: (e) => setState(() => _hoverIndex = index),
-          onExit: (e) => setState(() => _hoverIndex = 0),
+          cursor: _onHoverIndex == index ? SystemMouseCursors.grab : SystemMouseCursors.basic,
+          onHover: (e) => setState(() => _onHoverIndex = index),
+          onExit: (e) => setState(() => _onHoverIndex = -1),
           child: Material(
-            elevation: _hoverIndex == index ? 8 : 0,
+            elevation: _onHoverIndex == index ? 8 : 0,
             child: Image.memory(
               gaplessPlayback: true,
               graph.bytes,

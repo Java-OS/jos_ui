@@ -12,14 +12,14 @@ class GraphController extends GetxController {
   var graphList = <Graph>[].obs;
   var timeframe = GraphTimeframe.hourly.obs;
 
-  Future<void> fetchGraph(double width, double height) async {
+  Future<void> fetchGraph(double width, double height,bool disableLoading) async {
     developer.log('List graph images');
     var reqParam = {
       'timeframe': timeframe.value.name.toUpperCase(),
       'width': width,
       'height': height,
     };
-    await _apiService.callApi(Rpc.RPC_RRD_GRAPH_FETCH, parameters: reqParam, disableLoading: true).then((e) => e as List).then((e) => graphList.value = e.map((item) => Graph.fromMap(item)).toList());
+    await _apiService.callApi(Rpc.RPC_RRD_GRAPH_FETCH, parameters: reqParam, disableLoading: disableLoading).then((e) => e as List).then((e) => graphList.value = e.map((item) => Graph.fromMap(item)).toList());
   }
 
   Future<void> sortGraph() async {
