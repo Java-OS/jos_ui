@@ -897,14 +897,14 @@ class Transfer {
 
   String? get name => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 4);
   String? get path => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 6);
-  List<int>? get hash => const fb.Int8ListReader().vTableGetNullable(_bc, _bcOffset, 8);
-  int get parts => const fb.Int32Reader().vTableGet(_bc, _bcOffset, 10, 0);
-  int get index => const fb.Int32Reader().vTableGet(_bc, _bcOffset, 12, 0);
-  List<int>? get bytes => const fb.Int8ListReader().vTableGetNullable(_bc, _bcOffset, 14);
+  int get parts => const fb.Int32Reader().vTableGet(_bc, _bcOffset, 8, 0);
+  int get index => const fb.Int32Reader().vTableGet(_bc, _bcOffset, 10, 0);
+  List<int>? get bytes => const fb.Int8ListReader().vTableGetNullable(_bc, _bcOffset, 12);
+  String? get size => const fb.StringReader().vTableGetNullable(_bc, _bcOffset, 14);
 
   @override
   String toString() {
-    return 'Transfer{name: ${name}, path: ${path}, hash: ${hash}, parts: ${parts}, index: ${index}, bytes: ${bytes}}';
+    return 'Transfer{name: ${name}, path: ${path}, parts: ${parts}, index: ${index}, bytes: ${bytes}, size: ${size}}';
   }
 }
 
@@ -933,19 +933,19 @@ class TransferBuilder {
     fbBuilder.addOffset(1, offset);
     return fbBuilder.offset;
   }
-  int addHashOffset(int? offset) {
-    fbBuilder.addOffset(2, offset);
-    return fbBuilder.offset;
-  }
   int addParts(int? parts) {
-    fbBuilder.addInt32(3, parts);
+    fbBuilder.addInt32(2, parts);
     return fbBuilder.offset;
   }
   int addIndex(int? index) {
-    fbBuilder.addInt32(4, index);
+    fbBuilder.addInt32(3, index);
     return fbBuilder.offset;
   }
   int addBytesOffset(int? offset) {
+    fbBuilder.addOffset(4, offset);
+    return fbBuilder.offset;
+  }
+  int addSizeOffset(int? offset) {
     fbBuilder.addOffset(5, offset);
     return fbBuilder.offset;
   }
@@ -958,25 +958,25 @@ class TransferBuilder {
 class TransferObjectBuilder extends fb.ObjectBuilder {
   final String? _name;
   final String? _path;
-  final List<int>? _hash;
   final int? _parts;
   final int? _index;
   final List<int>? _bytes;
+  final String? _size;
 
   TransferObjectBuilder({
     String? name,
     String? path,
-    List<int>? hash,
     int? parts,
     int? index,
     List<int>? bytes,
+    String? size,
   })
       : _name = name,
         _path = path,
-        _hash = hash,
         _parts = parts,
         _index = index,
-        _bytes = bytes;
+        _bytes = bytes,
+        _size = size;
 
   /// Finish building, and store into the [fbBuilder].
   @override
@@ -985,17 +985,17 @@ class TransferObjectBuilder extends fb.ObjectBuilder {
         : fbBuilder.writeString(_name!);
     final int? pathOffset = _path == null ? null
         : fbBuilder.writeString(_path!);
-    final int? hashOffset = _hash == null ? null
-        : fbBuilder.writeListInt8(_hash!);
     final int? bytesOffset = _bytes == null ? null
         : fbBuilder.writeListInt8(_bytes!);
+    final int? sizeOffset = _size == null ? null
+        : fbBuilder.writeString(_size!);
     fbBuilder.startTable(6);
     fbBuilder.addOffset(0, nameOffset);
     fbBuilder.addOffset(1, pathOffset);
-    fbBuilder.addOffset(2, hashOffset);
-    fbBuilder.addInt32(3, _parts);
-    fbBuilder.addInt32(4, _index);
-    fbBuilder.addOffset(5, bytesOffset);
+    fbBuilder.addInt32(2, _parts);
+    fbBuilder.addInt32(3, _index);
+    fbBuilder.addOffset(4, bytesOffset);
+    fbBuilder.addOffset(5, sizeOffset);
     return fbBuilder.endTable();
   }
 

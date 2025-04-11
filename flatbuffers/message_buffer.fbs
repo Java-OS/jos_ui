@@ -280,8 +280,8 @@ table Event {
 table Transfer {
     name: string;
     path: string;
-    hash: [byte];
-    parts: int;
-    index: int;
+    parts: int32;
+    index: int32;
     bytes: [byte];
+    size: string; // dart js does not support long
 }

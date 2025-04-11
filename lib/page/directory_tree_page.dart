@@ -1,5 +1,8 @@
 import 'package:contextmenu_plus/contextmenu_plus.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dropzone/flutter_dropzone.dart';
+import 'package:fluttericon/entypo_icons.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/directory_path.dart';
@@ -7,10 +10,12 @@ import 'package:jos_ui/component/file_view.dart';
 import 'package:jos_ui/component/key_value.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
+import 'package:jos_ui/controller/upload_download_controller.dart';
+import 'package:jos_ui/dialog/event_dialog.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
-import 'package:jos_ui/dialog/progress_dialog.dart';
+import 'package:jos_ui/dialog/upload_download_dialog.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-
+import 'dart:developer' as developer;
 class DirectoryTreePage extends StatefulWidget {
   const DirectoryTreePage({super.key});
 
@@ -21,6 +26,8 @@ class DirectoryTreePage extends StatefulWidget {
 class _DirectoryTreePageState extends State<DirectoryTreePage> {
   final _directoryPathScrollController = ScrollController();
   final _filesystemController = Get.put(FilesystemController());
+  final _uploadDownloadController = Get.put(UploadDownloadController());
+  late DropzoneViewController dropzoneViewController;
   double dx = 0;
   double dy = 0;
   var isOnHover = false;
@@ -177,53 +184,57 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
                   ),
                   SizedBox(height: 2),
                   Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(border: Border.all(color: Colors.black12, width: 1)),
-                      child: MouseRegion(
-                        onHover: (e) => setState(() {
-                          dx = e.position.dx;
-                          dy = e.position.dy;
-                        }),
-                        child: GestureDetector(
-                          onTap: () {
-                            deselectAllItems();
-                          },
-                          onSecondaryTap: () {
-                            deselectAllItems();
-                            showContextMenu(Offset(dx, dy), context, (builder) => getContextMenu(), 0, 170);
-                          },
-                          child: GridView.builder(
-                            padding: EdgeInsets.all(8),
-                            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 150,
-                              mainAxisSpacing: 8,
-                              crossAxisSpacing: 8,
-                              childAspectRatio: 1,
-                            ),
-                            itemCount: _filesystemController.filesystemTree.value!.childs!.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              var child = _filesystemController.filesystemTree.value!.childs![index];
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(border: Border.all(color: Colors.black12, width: 1)),
+                          child: MouseRegion(
+                            onHover: (e) => setState(() {
+                              dx = e.position.dx;
+                              dy = e.position.dy;
+                            }),
+                            child: GestureDetector(
+                              onTap: () {
+                                deselectAllItems();
+                              },
+                              onSecondaryTap: () {
+                                deselectAllItems();
+                                showContextMenu(Offset(dx, dy), context, (builder) => getContextMenu(), 0, 170);
+                              },
+                              child: GridView.builder(
+                                padding: EdgeInsets.all(8),
+                                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 150,
+                                  mainAxisSpacing: 8,
+                                  crossAxisSpacing: 8,
+                                  childAspectRatio: 1,
+                                ),
+                                itemCount: _filesystemController.filesystemTree.value!.childs!.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  var child = _filesystemController.filesystemTree.value!.childs![index];
 
-                              return FileView(
-                                contextMenuItems: [
-                                  if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Copy', style: TextStyle(fontSize: 14)), leading: Icon(Icons.copy, size: 18), onTap: () => {setCopyItems(), Get.back()}),
-                                  if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Cut', style: TextStyle(fontSize: 14)), leading: Icon(Icons.cut, size: 18), onTap: () => {setCutItems(), Get.back()}),
-                                  ListTile(title: Text('Delete', style: TextStyle(fontSize: 14)), leading: Icon(MdiIcons.trashCanOutline, size: 18), onTap: () => deleteConfirmationDialog(true)),
-                                  ListTile(title: Text('Compress to zip', style: TextStyle(fontSize: 14)), leading: Icon(Icons.archive, size: 18), onTap: () => compressDialog()),
-                                  if (child.mime == 'application/zip') ListTile(title: Text('Decompress', style: TextStyle(fontSize: 14)), leading: Icon(Icons.unarchive, size: 18), onTap: () => {Get.back(), displayEvent(), _filesystemController.extractArchive(child.fullPath)}),
-                                ],
-                                isSelected: isSelected(child.fullPath),
-                                filesystemTree: child,
-                                iconColor: isItemOnAction(child.fullPath) ? Colors.grey : Colors.blueGrey,
-                                onDoubleClick: child.isFile ? null : () => enterFolder(child.fullPath),
-                                onSelect: () => selectItem(child.fullPath),
-                                onDeselect: () => deselectItem(child.fullPath),
-                              );
-                            },
+                                  return FileView(
+                                    contextMenuItems: [
+                                      if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Copy', style: TextStyle(fontSize: 14)), leading: Icon(Icons.copy, size: 18), onTap: () => {setCopyItems(), Get.back()}),
+                                      if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Cut', style: TextStyle(fontSize: 14)), leading: Icon(Icons.cut, size: 18), onTap: () => {setCutItems(), Get.back()}),
+                                      ListTile(title: Text('Delete', style: TextStyle(fontSize: 14)), leading: Icon(MdiIcons.trashCanOutline, size: 18), onTap: () => deleteConfirmationDialog(true)),
+                                      ListTile(title: Text('Compress to zip', style: TextStyle(fontSize: 14)), leading: Icon(Icons.archive, size: 18), onTap: () => compressDialog()),
+                                      if (child.mime == 'application/zip') ListTile(title: Text('Decompress', style: TextStyle(fontSize: 14)), leading: Icon(Icons.unarchive, size: 18), onTap: () => {Get.back(), displayEvent(), _filesystemController.extractArchive(child.fullPath)}),
+                                    ],
+                                    isSelected: isSelected(child.fullPath),
+                                    filesystemTree: child,
+                                    iconColor: isItemOnAction(child.fullPath) ? Colors.grey : Colors.blueGrey,
+                                    onDoubleClick: child.isFile ? null : () => enterFolder(child.fullPath),
+                                    onSelect: () => selectItem(child.fullPath),
+                                    onDeselect: () => deselectItem(child.fullPath),
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ],
@@ -288,10 +299,22 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
     _filesystemController.selectedItems.clear();
   }
 
+  void uploadFiles() async {
+    Get.back();
+    var pickFiles = await FilePicker.platform.pickFiles(dialogTitle: 'Upload files', allowMultiple: true);
+    if (pickFiles!.count > 0) {
+      displayUploadProgress();
+      _uploadDownloadController.files.value = pickFiles.files;
+      _uploadDownloadController.target.value = _filesystemController.directoryPath.value;
+      _uploadDownloadController.upload().then((_) => _filesystemController.fetchFilesystemTree()).then((_) => Get.back());
+    }
+  }
+
   List<Widget> getContextMenu() {
     return [
       if (isAnyItemOnAction()) ListTile(title: Text('Paste', style: TextStyle(fontSize: 14)), leading: Icon(Icons.paste, size: 18), onTap: () => {Get.back(), displayEvent(), _filesystemController.paste(), Get.back()}),
       ListTile(title: Text('New Folder', style: TextStyle(fontSize: 14)), leading: Icon(Icons.create_new_folder, size: 18), onTap: () => addFolderDialog()),
+      ListTile(title: Text('Upload', style: TextStyle(fontSize: 14)), leading: Icon(Entypo.download, size: 18), onTap: () => uploadFiles()),
     ];
   }
 

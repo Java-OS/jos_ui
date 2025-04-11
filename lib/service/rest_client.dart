@@ -10,13 +10,15 @@ import 'package:http/http.dart' as http;
 import 'package:jos_ui/component/toast.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/jvm_controller.dart';
+import 'package:jos_ui/controller/upload_download_controller.dart';
 import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/service/h5proto.dart';
 import 'package:jos_ui/service/storage_service.dart';
 import 'package:jos_ui/util/protobuf_utils.dart';
 
 class RestClient {
-  static final JvmController jvmController = Get.put(JvmController());
+  static final UploadDownloadController _uploadDownloadController = Get.put(UploadDownloadController());
+  static final JvmController _jvmController = Get.put(JvmController());
   static final _http = http.Client();
   static final _h5Proto = H5Proto.init();
 
@@ -27,7 +29,7 @@ class RestClient {
     var publicKey = _h5Proto.exportPublicKey();
 
     try {
-      var payloadBytes = ProtobufUtils.serializePayload(null, publicKey);
+      var payloadBytes = ProtobufUtils.serializePayload(null, Uint8List.fromList(utf8.encode(publicKey)));
       var packetBytes = ProtobufUtils.serializePacket(null, null, payloadBytes);
       var response = await _http.post(uri, body: packetBytes);
       var statusCode = response.statusCode;
@@ -64,7 +66,8 @@ class RestClient {
     var token = StorageService.getItem('token');
     var headers = {'authorization': 'Bearer $token'};
     developer.log('Header send: [$headers]');
-    var packet = await _h5Proto.encode(ProtobufUtils.serializePayload(null, jsonEncode(data)));
+    var bytes = Uint8List.fromList(utf8.encode(jsonEncode(data)));
+    var packet = await _h5Proto.encode(ProtobufUtils.serializePayload(null, bytes));
 
     try {
       var response = await _http.post(Uri.parse(baseLoginUrl()), body: packet, headers: headers);
@@ -114,7 +117,7 @@ class RestClient {
     var headers = {'Authorization': 'Bearer $token'};
     developer.log('Header send: [$headers]');
 
-    var data = parameters != null ? jsonEncode(parameters) : null;
+    var data = parameters != null ? Uint8List.fromList(utf8.encode(jsonEncode(parameters))) : null;
     var metadata = ProtobufUtils.serializeMetadata(null, rpc.value, null, null, null);
     var payload = ProtobufUtils.serializePayload(metadata, data);
     var packet = await _h5Proto.encode(payload);
@@ -157,7 +160,7 @@ class RestClient {
 
   static void storeJvmNeedRestart(bool doJvmRestart) {
     developer.log('Receive header X-Jvm-Restart with value: [$doJvmRestart]');
-    doJvmRestart ? jvmController.enableRestartJvm() : jvmController.disableRestartJvm();
+    doJvmRestart ? _jvmController.enableRestartJvm() : _jvmController.disableRestartJvm();
   }
 
   static Future<Payload> download(String path, String? password) async {
@@ -173,7 +176,8 @@ class RestClient {
     };
 
     var serializeMetadata = ProtobufUtils.serializeMetadata(false, null, null, null, null);
-    var packet = await _h5Proto.encode(ProtobufUtils.serializePayload(serializeMetadata, jsonEncode(parameters)));
+    var bytes = Uint8List.fromList(utf8.encode(jsonEncode(parameters)));
+    var packet = await _h5Proto.encode(ProtobufUtils.serializePayload(serializeMetadata, bytes));
 
     try {
       var response = await _http.post(Uri.parse(baseDownloadUrl()), body: packet, headers: headers);
@@ -201,6 +205,32 @@ class RestClient {
     }
     var metadata = ProtobufUtils.serializeMetadata(false, null, null, null, null);
     return Payload(ProtobufUtils.serializePayload(metadata, null));
+  }
+
+  static Future<void> upload(String fileName, String targetPath, Uint8List bytes) async {
+    var token = StorageService.getItem('token');
+    if (token == null) Get.toNamed('/login');
+    var headers = {'Authorization': 'Bearer $token'};
+
+    int totalChunks = (bytes.length / chunkSize).ceil();
+
+    for (int i = 0; i < totalChunks; i++) {
+      int start = i * chunkSize;
+      int end = start + chunkSize;
+      if (end > bytes.length) end = bytes.length;
+
+      Uint8List chunk = bytes.sublist(start, end);
+      var serializeTransferBytes = ProtobufUtils.serializeTransfer(fileName, targetPath, totalChunks, i, chunk, bytes.length);
+      var serializeMetadata = ProtobufUtils.serializeMetadata(null, null, null, null, null);
+      var serializePayload = ProtobufUtils.serializePayload(serializeMetadata, serializeTransferBytes);
+      var packetBytes = await _h5Proto.encode(serializePayload);
+      _uploadDownloadController.percentage.value = (i / totalChunks).toDouble();
+
+      var response = await _http.post(Uri.parse(baseUploadUrl()), body: packetBytes, headers: headers);
+      developer.log('Chunk $fileName ${bytes.length} $i/$totalChunks status:${response.statusCode}');
+      
+      if (_uploadDownloadController.isCancel.value) break;
+    }
   }
 
   static Future<Payload> decodeResponsePayload(http.Response response) async {

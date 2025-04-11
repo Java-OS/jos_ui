@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/text_field_box.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
-import 'package:jos_ui/dialog/progress_dialog.dart';
+import 'package:jos_ui/dialog/event_dialog.dart';
 
 var _filesystemController = Get.put(FilesystemController());
 
@@ -144,7 +144,7 @@ Future<void> deleteConfirmationDialog(bool closeContextMenu) async {
                 child: Text('Confirm'),
                 onPressed: () async {
                   Get.back();
-                  _filesystemController.delete();
+                  _filesystemController.delete().then((_) => Get.back());
                   displayEvent();
                 },
               ),

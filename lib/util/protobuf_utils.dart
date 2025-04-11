@@ -37,7 +37,7 @@ class ProtobufUtils {
     return builder.buffer;
   }
 
-  static Uint8List serializePayload(Uint8List? metadata, String? content) {
+  static Uint8List serializePayload(Uint8List? metadata, Uint8List? content) {
     var builder = fb.Builder();
 
     var metadataOffset = 0;
@@ -56,7 +56,7 @@ class ProtobufUtils {
     }
 
     // Serialize the content field
-    var contentOffset = content != null ? builder.writeString(content) : null;
+    var contentOffset = content != null ? builder.writeListUint8(content) : null;
 
     // Start and finish the Payload table
     builder.startTable(2);
@@ -65,6 +65,28 @@ class ProtobufUtils {
 
     var payloadOffset = builder.endTable();
     builder.finish(payloadOffset);
+
+    return builder.buffer;
+  }
+
+  static Uint8List serializeTransfer(String fileName, String path, int parts, int index, Uint8List bytes, int size) {
+    var builder = fb.Builder();
+    final fileNameOffset = builder.writeString(fileName);
+    final pathOffset = builder.writeString(path);
+    final bytesOffset = builder.writeListUint8(bytes);
+    final sizeOffset = builder.writeString(size.toString());
+
+    builder.startTable(6);
+
+    builder.addOffset(0, fileNameOffset);
+    builder.addOffset(1, pathOffset);
+    builder.addInt32(2, parts);
+    builder.addInt32(3, index);
+    builder.addOffset(4, bytesOffset);
+    builder.addOffset(5, sizeOffset);
+
+    final metadataOffset = builder.endTable();
+    builder.finish(metadataOffset);
 
     return builder.buffer;
   }

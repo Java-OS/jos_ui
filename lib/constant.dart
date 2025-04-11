@@ -8,7 +8,7 @@ const secondaryColor = Color.fromRGBO(34, 76, 84, 1.0);
 const dashboardMosaicBackgroundColor = Color.fromRGBO(80, 100, 80, 0.5);
 final navigatorKey = GlobalKey<NavigatorState>();
 final globalKey = GlobalKey();
-
+const int chunkSize = 512 * 1024; // 512 KB
 String baseHandshakeUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/handshake";
 
 String baseLoginUrl() => "${StorageService.getItem('server_ip_address') ?? 'http://127.0.0.1:7080'}/api/login";
