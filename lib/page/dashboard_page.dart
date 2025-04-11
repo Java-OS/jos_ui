@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/drop_down.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/graph_controller.dart';
 import 'package:jos_ui/model/graph_timeframe.dart';
 
@@ -22,7 +21,6 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   double dx = 0;
   double dy = 0;
   int _onHoverIndex = -1;
-  Timer? _timer;
   double? _width;
   double height = 150;
   bool _initFetchDone = false;
@@ -34,15 +32,9 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
     // Start fetching after the first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _timer = Timer.periodic(Duration(minutes: 1), (_) async {
-        if (_width != null && (_requestCompleter == null || _requestCompleter!.isCompleted)) {
-          try {
-            _requestCompleter = Completer<void>();
-            developer.log('Timer try to fetch graph');
-            await _graphController.fetchGraph(_width!, height, true);
-          } finally {
-            _requestCompleter!.complete();
-          }
+      _graphController.startTimer(() async {
+        if (_width != null) {
+          await _graphController.fetchGraph(_width!, height, true);
         }
       });
     });
@@ -52,12 +44,15 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints box) {
-        var width = box.maxWidth;
-        if (!_initFetchDone || _width != width) {
-          _width = width; // Store width in state
-          _graphController.fetchGraph(_width!, height, false);
-          _initFetchDone = true;
-        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          var width = box.maxWidth;
+          if (!_initFetchDone || _width != width) {
+            _width = width;
+            _graphController.fetchGraph(_width!, height, false);
+            _initFetchDone = true;
+          }
+        });
+
         return Obx(
           () {
             return CardContent(
@@ -131,7 +126,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   @override
   void dispose() {
+    Get.delete<GraphController>();
     super.dispose();
-    _timer?.cancel();
   }
 }
