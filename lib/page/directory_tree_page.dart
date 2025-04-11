@@ -1,7 +1,6 @@
 import 'package:contextmenu_plus/contextmenu_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
@@ -15,7 +14,7 @@ import 'package:jos_ui/dialog/event_dialog.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/dialog/upload_download_dialog.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'dart:developer' as developer;
+
 class DirectoryTreePage extends StatefulWidget {
   const DirectoryTreePage({super.key});
 
@@ -27,7 +26,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
   final _directoryPathScrollController = ScrollController();
   final _filesystemController = Get.put(FilesystemController());
   final _uploadDownloadController = Get.put(UploadDownloadController());
-  late DropzoneViewController dropzoneViewController;
+
   double dx = 0;
   double dy = 0;
   var isOnHover = false;
