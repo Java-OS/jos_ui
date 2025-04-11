@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/drop_down.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/graph_controller.dart';
 import 'package:jos_ui/model/graph_timeframe.dart';
 
@@ -130,7 +131,6 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _timer?.cancel();
   }
