@@ -15,6 +15,7 @@ import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/service/h5proto.dart';
 import 'package:jos_ui/service/storage_service.dart';
 import 'package:jos_ui/util/protobuf_utils.dart';
+import 'package:pool/pool.dart';
 
 class RestClient {
   static final UploadDownloadController _uploadDownloadController = Get.put(UploadDownloadController());
@@ -213,23 +214,43 @@ class RestClient {
     var headers = {'Authorization': 'Bearer $token'};
 
     int totalChunks = (bytes.length / chunkSize).ceil();
+    final pool = Pool(10); // Max 10 concurrent uploads
+    final futures = <Future>[];
 
     for (int i = 0; i < totalChunks; i++) {
-      int start = i * chunkSize;
-      int end = start + chunkSize;
-      if (end > bytes.length) end = bytes.length;
-
-      Uint8List chunk = bytes.sublist(start, end);
-      var serializeTransferBytes = ProtobufUtils.serializeTransfer(fileName, targetPath, totalChunks, i, chunk, bytes.length);
-      var serializeMetadata = ProtobufUtils.serializeMetadata(null, null, null, null, null);
-      var serializePayload = ProtobufUtils.serializePayload(serializeMetadata, serializeTransferBytes);
-      var packetBytes = await _h5Proto.encode(serializePayload);
-      _uploadDownloadController.percentage.value = (i / totalChunks).toDouble();
-
-      var response = await _http.post(Uri.parse(baseUploadUrl()), body: packetBytes, headers: headers);
-      developer.log('Chunk $fileName ${bytes.length} $i/$totalChunks status:${response.statusCode}');
-      
       if (_uploadDownloadController.isCancel.value) break;
+
+      final chunkIndex = i;
+      futures.add(
+        pool.withResource(
+          () async {
+            int start = chunkIndex * chunkSize;
+            int end = start + chunkSize;
+            if (end > bytes.length) end = bytes.length;
+
+            Uint8List chunk = bytes.sublist(start, end);
+            var serializeTransferBytes = ProtobufUtils.serializeTransfer(fileName, targetPath, totalChunks, chunkIndex, chunk, bytes.length);
+            var serializeMetadata = ProtobufUtils.serializeMetadata(null, null, null, null, null);
+            var serializePayload = ProtobufUtils.serializePayload(serializeMetadata, serializeTransferBytes);
+            var packetBytes = await _h5Proto.encode(serializePayload);
+
+            // Update progress
+            _uploadDownloadController.percentage.value = (chunkIndex / totalChunks).toDouble();
+
+            var response = await _http.post(
+              Uri.parse(baseUploadUrl()),
+              body: packetBytes,
+              headers: headers,
+            );
+            developer.log('Chunk $fileName ${bytes.length} $chunkIndex/$totalChunks status:${response.statusCode}');
+          },
+        ),
+      );
+    }
+
+    await Future.wait(futures);
+    if (!_uploadDownloadController.isCancel.value) {
+      _uploadDownloadController.percentage.value = 1.0;
     }
   }
 
