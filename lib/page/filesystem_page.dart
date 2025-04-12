@@ -44,7 +44,13 @@ class _FilesystemPageState extends State<FilesystemPage> {
     var list = <Widget>[];
     var filesystems = _filesystemController.partitions;
     for (var fs in filesystems) {
-      int used = fs.freeSize != null ? fs.totalSize - (fs.freeSize as int) : 0;
+      int used = 0;
+      if (fs.freeSize != null && fs.freeSize == 0) {
+        used = fs.totalSize;
+      } else if (fs.freeSize != null) {
+        used = fs.totalSize - (fs.freeSize as int);
+      }
+      print('>>>>>>>>>>>>>> ${fs.totalSize}  ${fs.freeSize} $used');
       list.add(
         Padding(
           padding: const EdgeInsets.all(4.0),
