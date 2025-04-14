@@ -50,7 +50,7 @@ class _FilesystemPageState extends State<FilesystemPage> {
       } else if (fs.freeSize != null) {
         used = fs.totalSize - (fs.freeSize as int);
       }
-      print('>>>>>>>>>>>>>> ${fs.totalSize}  ${fs.freeSize} $used');
+
       list.add(
         Padding(
           padding: const EdgeInsets.all(4.0),

@@ -33,7 +33,7 @@ class GraphController extends GetxController {
       'timeframe': timeframe.value.name.toUpperCase(),
       'sort': graphList.map((e) => e.name).join(','),
     };
-    _apiService.callApi(Rpc.RPC_RRD_GRAPH_SORT, parameters: reqParam).then((e) => e as List).then((e) => graphList.value = e.map((item) => Graph.fromMap(item)).toList());
+    _apiService.callApi(Rpc.RPC_RRD_GRAPH_SORT, parameters: reqParam,disableLoading: true).then((e) => e as List).then((e) => graphList.value = e.map((item) => Graph.fromMap(item)).toList());
   }
 
   @override

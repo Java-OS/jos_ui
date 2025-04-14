@@ -208,118 +208,55 @@ class RestClient {
     return Payload(ProtobufUtils.serializePayload(metadata, null));
   }
 
-static Future<void> upload(String fileName, String targetPath, Uint8List bytes) async {
-  var token = StorageService.getItem('token');
-  if (token == null) Get.toNamed('/login');
-  var headers = {'Authorization': 'Bearer $token'};
+  static Future<void> upload(String fileName, String targetPath, Uint8List bytes) async {
+    var token = StorageService.getItem('token');
+    if (token == null) Get.toNamed('/login');
+    var headers = {'Authorization': 'Bearer $token'};
 
-  int totalChunks = (bytes.length / chunkSize).ceil();
-  final pool = Pool(10); // Max 10 concurrent uploads
-  final futures = <Future>[];
-  int completedChunks = 0;
+    int totalChunks = (bytes.length / chunkSize).ceil();
+    final pool = Pool(10); // Max 10 concurrent uploads
+    final futures = <Future>[];
 
-  // Create a stream of chunk indices
-  final chunkIndices = Stream.fromIterable(Iterable.generate(totalChunks));
+    for (int i = 0; i < totalChunks; i++) {
+      if (_uploadDownloadController.isCancel.value) break;
 
-  // Create a stream controller to handle cancellation
-  final streamController = StreamController<int>();
-  chunkIndices.listen((i) => streamController.add(i),
-    onDone: () => streamController.close(),
-    cancelOnError: true,
-  );
+      final chunkIndex = i;
+      futures.add(
+        pool.withResource(
+          () async {
+            int start = chunkIndex * chunkSize;
+            int end = start + chunkSize;
+            if (end > bytes.length) end = bytes.length;
 
-  // Listen to the stream and create upload tasks
-  await for (final chunkIndex in streamController.stream) {
-    if (_uploadDownloadController.isCancel.value) {
-      streamController.close();
-      break;
+            Uint8List chunk = bytes.sublist(start, end);
+            var serializeTransferBytes = ProtobufUtils.serializeTransfer(fileName, targetPath, totalChunks, chunkIndex, chunk, bytes.length);
+            var serializeMetadata = ProtobufUtils.serializeMetadata(null, null, null, null, null);
+            var serializePayload = ProtobufUtils.serializePayload(serializeMetadata, serializeTransferBytes);
+            var packetBytes = await _h5Proto.encode(serializePayload);
+
+            // Update progress
+            _uploadDownloadController.percentage.value = (chunkIndex / totalChunks).toDouble();
+
+            var response = await _http.post(
+              Uri.parse(baseUploadUrl()),
+              body: packetBytes,
+              headers: headers,
+            );
+            developer.log('Chunk $fileName ${bytes.length} $chunkIndex/$totalChunks status:${response.statusCode}');
+            if (response.statusCode != 200) {
+              var payload = await decodeResponsePayload(response);
+              throw Exception(payload.metadata!.message);
+            }
+          },
+        ),
+      );
     }
 
-    futures.add(pool.withResource(() async {
-      if (_uploadDownloadController.isCancel.value) return;
-
-      int start = chunkIndex * chunkSize;
-      int end = start + chunkSize;
-      if (end > bytes.length) end = bytes.length;
-
-      Uint8List chunk = bytes.sublist(start, end);
-      var serializeTransferBytes = ProtobufUtils.serializeTransfer(
-        fileName, targetPath, totalChunks, chunkIndex, chunk, bytes.length);
-      var serializeMetadata = ProtobufUtils.serializeMetadata(null, null, null, null, null);
-      var serializePayload = ProtobufUtils.serializePayload(serializeMetadata, serializeTransferBytes);
-      var packetBytes = await _h5Proto.encode(serializePayload);
-
-      var response = await _http.post(
-        Uri.parse(baseUploadUrl()),
-        body: packetBytes,
-        headers: headers,
-      );
-      
-      developer.log('Chunk $fileName ${bytes.length} $chunkIndex/$totalChunks status:${response.statusCode}');
-      
-      // Update progress
-      completedChunks++;
-      _uploadDownloadController.percentage.value = (completedChunks / totalChunks).toDouble();
-    }));
+    await Future.wait(futures);
+    if (!_uploadDownloadController.isCancel.value) {
+      _uploadDownloadController.percentage.value = 1.0;
+    }
   }
-
-  // Wait for all uploads to complete
-  await Future.wait(futures);
-  
-  if (!_uploadDownloadController.isCancel.value) {
-    _uploadDownloadController.percentage.value = 1.0;
-  }
-  
-  // Clean up
-  await pool.close();
-  await streamController.close();
-}
-
-//   static Future<void> upload(String fileName, String targetPath, Uint8List bytes) async {
-//     var token = StorageService.getItem('token');
-//     if (token == null) Get.toNamed('/login');
-//     var headers = {'Authorization': 'Bearer $token'};
-// 
-//     int totalChunks = (bytes.length / chunkSize).ceil();
-//     final pool = Pool(10); // Max 10 concurrent uploads
-//     final futures = <Future>[];
-// 
-//     for (int i = 0; i < totalChunks; i++) {
-//       if (_uploadDownloadController.isCancel.value) break;
-// 
-//       final chunkIndex = i;
-//       futures.add(
-//         pool.withResource(
-//           () async {
-//             int start = chunkIndex * chunkSize;
-//             int end = start + chunkSize;
-//             if (end > bytes.length) end = bytes.length;
-// 
-//             Uint8List chunk = bytes.sublist(start, end);
-//             var serializeTransferBytes = ProtobufUtils.serializeTransfer(fileName, targetPath, totalChunks, chunkIndex, chunk, bytes.length);
-//             var serializeMetadata = ProtobufUtils.serializeMetadata(null, null, null, null, null);
-//             var serializePayload = ProtobufUtils.serializePayload(serializeMetadata, serializeTransferBytes);
-//             var packetBytes = await _h5Proto.encode(serializePayload);
-// 
-//             // Update progress
-//             _uploadDownloadController.percentage.value = (chunkIndex / totalChunks).toDouble();
-// 
-//             var response = await _http.post(
-//               Uri.parse(baseUploadUrl()),
-//               body: packetBytes,
-//               headers: headers,
-//             );
-//             developer.log('Chunk $fileName ${bytes.length} $chunkIndex/$totalChunks status:${response.statusCode}');
-//           },
-//         ),
-//       );
-//     }
-// 
-//     await Future.wait(futures);
-//     if (!_uploadDownloadController.isCancel.value) {
-//       _uploadDownloadController.percentage.value = 1.0;
-//     }
-//   }
 
   static Future<Payload> decodeResponsePayload(http.Response response) async {
     var bodyBytes = response.bodyBytes;

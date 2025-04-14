@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
+import 'package:jos_ui/component/toast.dart';
 import 'package:jos_ui/service/rest_client.dart';
 
 class UploadDownloadController extends GetxController {
@@ -22,7 +23,12 @@ class UploadDownloadController extends GetxController {
       var bytes = files[i].bytes!;
       inProgressItem.value = fileName;
       developer.log('Upload file: $fileName to: $target');
-      await RestClient.upload(fileName, target.value, bytes);
+      try {
+        await RestClient.upload(fileName, target.value, bytes);
+      } catch (e) {
+        displayWarning('$e');
+        break;
+      }
       if (isCancel.value) break;
     }
   }
