@@ -3,10 +3,14 @@ import 'dart:developer' as developer;
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/toast.dart';
+import 'package:jos_ui/controller/filesystem_controller.dart';
+import 'package:jos_ui/model/filesystem_tree.dart';
 import 'package:jos_ui/service/rest_client.dart';
 
 class UploadDownloadController extends GetxController {
-  var files = <PlatformFile>[].obs;
+  final _filesystemController = Get.put(FilesystemController());
+  var uploadFiles = <PlatformFile>[].obs;
+  var downloadFile = Rxn<FilesystemTree>();
   var target = ''.obs;
   var inProgressItem = ''.obs;
   var isCancel = false.obs;
@@ -15,12 +19,12 @@ class UploadDownloadController extends GetxController {
   var index = 0.obs;
 
   Future<void> upload() async {
-    for (var i = 0; i < files.length; i++) {
+    for (var i = 0; i < uploadFiles.length; i++) {
       reset();
-      count.value = files.length;
+      count.value = uploadFiles.length;
       index.value = i + 1;
-      var fileName = files[i].name;
-      var bytes = files[i].bytes!;
+      var fileName = uploadFiles[i].name;
+      var bytes = uploadFiles[i].bytes!;
       inProgressItem.value = fileName;
       developer.log('Upload file: $fileName to: $target');
       try {
@@ -31,7 +35,20 @@ class UploadDownloadController extends GetxController {
       }
       if (isCancel.value) break;
     }
+
+    if (!isCancel.value) {
+      await _filesystemController.fetchFilesystemTree();
+    }
   }
+
+  Future<void> download() async {
+    index.value = 1;
+    count.value = 1;
+    inProgressItem.value = downloadFile.value!.name;
+    await RestClient.download(downloadFile.value!.fullPath);
+    reset();
+  }
+
 
   void reset() {
     percentage = 0.0.obs;
@@ -44,7 +61,7 @@ class UploadDownloadController extends GetxController {
   @override
   void onClose() {
     reset();
-    files = <PlatformFile>[].obs;
+    uploadFiles = <PlatformFile>[].obs;
     target = ''.obs;
     super.onClose();
   }

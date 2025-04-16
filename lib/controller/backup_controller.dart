@@ -39,7 +39,7 @@ class BackupController extends GetxController {
 
   Future<void> downloadBackup(int id) async {
     var fileName = backupList[id];
-    await RestClient.download('/etc/$fileName', passwordEditingController.text);
+    // await RestClient.download('/etc/$fileName', passwordEditingController.text);
     Get.back();
     passwordEditingController.clear();
   }

@@ -164,53 +164,80 @@ class RestClient {
     doJvmRestart ? _jvmController.enableRestartJvm() : _jvmController.disableRestartJvm();
   }
 
-  static Future<Payload> download(String path, String? password) async {
+  static Future<void> download(String path) async {
     developer.log('Download file: [$path]');
     var token = StorageService.getItem('token');
-    if (token == null) Get.toNamed('/login');
+    if (token == null) {
+      Get.toNamed('/login');
+      return;
+    }
     var headers = {'Authorization': 'Bearer $token'};
     developer.log('Header send: [$headers]');
 
-    var parameters = {
-      'file': path,
-      'password': password,
-    };
+    List<int> bytes = [];
+    late String name ;
+    var chunkIndex = 0;
+    var totalChunks = 1;
+    do {
+      if (_uploadDownloadController.isCancel.value) break;
+      // parameters
+      var parameters = {
+        'filePath': path,
+        'index': chunkIndex,
+      };
+      chunkIndex++;
+      // send request
+      var serializeMetadata = ProtobufUtils.serializeMetadata(false, null, null, null, null);
+      var bodyBytes = Uint8List.fromList(utf8.encode(jsonEncode(parameters)));
+      var packet = await _h5Proto.encode(ProtobufUtils.serializePayload(serializeMetadata, bodyBytes));
 
-    var serializeMetadata = ProtobufUtils.serializeMetadata(false, null, null, null, null);
-    var bytes = Uint8List.fromList(utf8.encode(jsonEncode(parameters)));
-    var packet = await _h5Proto.encode(ProtobufUtils.serializePayload(serializeMetadata, bytes));
+      try {
+        var response = await _http.post(Uri.parse(baseDownloadUrl()), body: packet, headers: headers);
+        int statusCode = response.statusCode;
+        var payload = await decodeResponsePayload(response);
 
-    try {
-      var response = await _http.post(Uri.parse(baseDownloadUrl()), body: packet, headers: headers);
-      var statusCode = response.statusCode;
-      developer.log('Response received with http code: $statusCode');
+        if (statusCode != 200) {
+          developer.log('Failed to download chunk $chunkIndex, statusCode: $statusCode');
+          // break; // Or handle the failure as needed.
+          throw Exception(payload.metadata!.message);
+        }
 
-      final blob = Blob([response.bodyBytes]);
-      final urlObject = Url.createObjectUrlFromBlob(blob);
+        var transfer = Transfer(payload.content!);
+        name = transfer.name!;
+        totalChunks = transfer.parts;
+        bytes.addAll(transfer.bytes!);
 
-      final contentDisposition = response.headers['content-disposition'];
-      final filename = contentDisposition?.split('filename=')[1].replaceAll('"', '');
+        developer.log('Download chunk $name ${bytes.length} $chunkIndex/$totalChunks status:$statusCode');
+        _uploadDownloadController.percentage.value = (chunkIndex / totalChunks).toDouble();
+      } catch (e) {
+        developer.log('Error during download: $e');
+        throw Exception('Download failed');
+      }
+    } while(chunkIndex != totalChunks);
 
-      final anchor = AnchorElement(href: '#')
-        ..setAttribute('download', '')
-        ..style.display = 'none';
-      document.body!.append(anchor);
-
-      anchor.href = urlObject;
-      anchor.download = filename;
-      anchor.click();
-      anchor.remove();
-      Url.revokeObjectUrl(urlObject);
-    } catch (e) {
-      developer.log('[Http Error] $rpc ${e.toString()}');
+    if (!_uploadDownloadController.isCancel.value) {
+      _uploadDownloadController.percentage.value = 1.0;
     }
-    var metadata = ProtobufUtils.serializeMetadata(false, null, null, null, null);
-    return Payload(ProtobufUtils.serializePayload(metadata, null));
+
+    saveFileWeb(Uint8List.fromList(bytes), name);
   }
+
+  static void saveFileWeb(Uint8List data, String filename) async {
+    final blob = Blob([data]);
+    final url = Url.createObjectUrlFromBlob(blob);
+    AnchorElement(href: url)
+      ..setAttribute('download', filename)
+      ..click();
+    Url.revokeObjectUrl(url); // Clean up
+  }
+
 
   static Future<void> upload(String fileName, String targetPath, Uint8List bytes) async {
     var token = StorageService.getItem('token');
-    if (token == null) Get.toNamed('/login');
+    if (token == null) {
+      Get.toNamed('/login');
+      return;
+    }
     var headers = {'Authorization': 'Bearer $token'};
 
     int totalChunks = (bytes.length / chunkSize).ceil();
@@ -242,7 +269,7 @@ class RestClient {
               body: packetBytes,
               headers: headers,
             );
-            developer.log('Chunk $fileName ${bytes.length} $chunkIndex/$totalChunks status:${response.statusCode}');
+            developer.log('Upload chunk $fileName ${bytes.length} $chunkIndex/$totalChunks status:${response.statusCode}');
             if (response.statusCode != 200) {
               var payload = await decodeResponsePayload(response);
               throw Exception(payload.metadata!.message);

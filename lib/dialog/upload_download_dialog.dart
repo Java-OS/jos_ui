@@ -33,7 +33,7 @@ Future<void> displayDownloadConfigModal(int index, BuildContext context) async {
   );
 }
 
-Future<void> displayUploadProgress() async {
+Future<void> displayTransferProgress(bool isDownload) async {
   showDialog(
     barrierDismissible: false,
     context: Get.context!,
@@ -53,16 +53,13 @@ Future<void> displayUploadProgress() async {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(_uploadDownloadController.inProgressItem.value, style: TextStyle(fontSize: 12, color: Colors.white)),
-                  Text('${_uploadDownloadController.index.value}/${_uploadDownloadController.count.value}', style: TextStyle(fontSize: 12, color: Colors.white)),
+                  if (!isDownload) Text('${_uploadDownloadController.index.value}/${_uploadDownloadController.count.value}', style: TextStyle(fontSize: 12, color: Colors.white)),
                   LinearProgressIndicator(color: Colors.lightGreenAccent, value: _uploadDownloadController.percentage.value),
                   SizedBox(height: 8),
                   Align(
                     alignment: Alignment.bottomRight,
                     child: OutlinedButton(
-                      onPressed: () {
-                        _uploadDownloadController.isCancel.value = true;
-                        Get.back();
-                      },
+                      onPressed: () => _uploadDownloadController.isCancel.value = true,
                       style: OutlinedButton.styleFrom(side: BorderSide(color: Colors.grey)),
                       child: Text('Cancel', style: TextStyle(color: Colors.white)),
                     ),

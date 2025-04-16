@@ -13,6 +13,7 @@ import 'package:jos_ui/controller/upload_download_controller.dart';
 import 'package:jos_ui/dialog/event_dialog.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/dialog/upload_download_dialog.dart';
+import 'package:jos_ui/model/filesystem_tree.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class DirectoryTreePage extends StatefulWidget {
@@ -219,6 +220,7 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
                                       if (!isItemOnAction(child.fullPath)) ListTile(title: Text('Cut', style: TextStyle(fontSize: 14)), leading: Icon(Icons.cut, size: 18), onTap: () => {setCutItems(), Get.back()}),
                                       ListTile(title: Text('Delete', style: TextStyle(fontSize: 14)), leading: Icon(MdiIcons.trashCanOutline, size: 18), onTap: () => deleteConfirmationDialog(true)),
                                       ListTile(title: Text('Compress to zip', style: TextStyle(fontSize: 14)), leading: Icon(Icons.archive, size: 18), onTap: () => compressDialog()),
+                                      if (child.isFile) ListTile(title: Text('Download', style: TextStyle(fontSize: 14)), leading: Icon(Entypo.upload, size: 18), onTap: () => downloadFile(child)),
                                       if (child.mime == 'application/zip') ListTile(title: Text('Decompress', style: TextStyle(fontSize: 14)), leading: Icon(Icons.unarchive, size: 18), onTap: () => {Get.back(), displayEvent(), _filesystemController.extractArchive(child.fullPath)}),
                                     ],
                                     isSelected: isSelected(child.fullPath),
@@ -302,11 +304,20 @@ class _DirectoryTreePageState extends State<DirectoryTreePage> {
     Get.back();
     var pickFiles = await FilePicker.platform.pickFiles(dialogTitle: 'Upload files', allowMultiple: true);
     if (pickFiles!.count > 0) {
-      displayUploadProgress();
-      _uploadDownloadController.files.value = pickFiles.files;
+      _uploadDownloadController.uploadFiles.value = pickFiles.files;
       _uploadDownloadController.target.value = _filesystemController.directoryPath.value;
-      _uploadDownloadController.upload().then((_) => _filesystemController.fetchFilesystemTree()).then((_) => Get.back());
+      await displayTransferProgress(false);
+      await _uploadDownloadController.upload();
+      Get.back();
     }
+  }
+
+  void downloadFile(FilesystemTree file) async {
+    Get.back();
+    _uploadDownloadController.downloadFile.value = file;
+    await displayTransferProgress(true);
+    await _uploadDownloadController.download();
+    Get.back();
   }
 
   List<Widget> getContextMenu() {
