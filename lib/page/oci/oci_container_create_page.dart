@@ -9,7 +9,6 @@ import 'package:jos_ui/component/tile.dart';
 import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/base_dialog.dart';
 import 'package:jos_ui/dialog/environment_dialog.dart';
-import 'package:jos_ui/model/container/container_info.dart';
 import 'package:jos_ui/model/container/network_info.dart';
 import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/service/api_service.dart';
@@ -49,9 +48,9 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
               onStepContinue: () => _containerController.step.value++,
               onStepCancel: () => _containerController.step.value--,
               currentStep: _containerController.step.value,
-              controlsBuilder: (context, controlDetails) {
+              controlsBuilder: (BuildContext context, ControlsDetails controlDetails) {
                 bool isAfterFirstStep = controlDetails.currentStep > 0;
-                bool isLastStep = controlDetails.currentStep == 4;
+                bool isLastStep = controlDetails.currentStep == 5;
                 bool isImageSelected = _containerController.selectedImage.isNotEmpty;
                 return Row(
                   children: [
@@ -67,11 +66,7 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
                     SizedBox(width: 8),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: isLastStep
-                            ? _containerController.createContainer
-                            : (isImageSelected)
-                                ? controlDetails.onStepContinue
-                                : null,
+                        onPressed: () => createContainer(controlDetails, isLastStep, isImageSelected),
                         child: Text(isLastStep ? 'Create container' : 'Next'),
                       ),
                     ),
@@ -84,7 +79,7 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
                 Step(title: Text('Network'), content: getNetworkStep()),
                 Step(title: Text('Port'), content: getPortStep()),
                 Step(title: Text('Environment'), content: getEnvironmentStep()),
-                // Step(title: Text('POD'), content: Text('Content 4')),
+                Step(title: Text('Command'), content: getCommandStep()),
               ],
             ),
           ),
@@ -93,16 +88,17 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
     );
   }
 
-  Future<void> streamLogs(ContainerInfo container) async {
-    // _containerController.ociSSEConsumer(container.names.first, EventCode.OCI_LOG);
+  void createContainer(ControlsDetails controlDetails, bool isLastStep, bool isImageSelected) async {
+    if (isLastStep) {
+      await _containerController.createContainer();
+      Get.back();
+    }
+    if (isImageSelected) {
+      controlDetails.onStepContinue!();
+    }
   }
 
-  Future<void> openCreateContainerDialog() async {
-    _containerController.listImages();
-    _containerController.listVolumes();
-    _containerController.listNetworks();
-  }
-
+  /*------ Basic ------*/
   Widget getBasicStep() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -128,8 +124,6 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
     );
   }
 
-/*---------------------------------------------------------------------*/
-/* Image */
   Future<void> displaySelectContainerImage() async {
     showDialog(
       context: Get.context!,
@@ -258,8 +252,7 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
     );
   }
 
-/*---------------------------------------------------------------------*/
-/* Volume */
+  /*------ Volume ------*/
   Widget getVolumeStep() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -348,8 +341,7 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
     );
   }
 
-/*---------------------------------------------------------------------*/
-/* Network */
+  /*------ Network ------*/
   Widget getNetworkStep() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -452,98 +444,7 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
     );
   }
 
-/*---------------------------------------------------------------------*/
-/* Environments */
-  Widget getEnvironmentStep() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Obx(
-        () => Column(
-          children: [
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: OutlinedButton.icon(
-                onPressed: () => displayAddEnvironmentDialog(_containerController.containerEnvironmentKeyEditingController, _containerController.containerEnvironmentValueEditingController, _containerController.addEnvironment),
-                label: Text('Add environment'),
-                icon: Icon(Icons.join_right, size: 16, color: Colors.blue),
-              ),
-            ),
-            SizedBox(height: 8),
-            Visibility(
-              visible: _containerController.environments.isNotEmpty,
-              child: SizedBox(
-                width: double.infinity,
-                height: 150,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: DataTable(
-                    dataRowMinHeight: 12,
-                    dataRowMaxHeight: 28,
-                    columnSpacing: 0,
-                    columns: getEnvironmentColumns(),
-                    rows: getEnvironmentRows(),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  List<DataColumn> getEnvironmentColumns() {
-    var keyColumn = DataColumn(label: Text('Key', style: TextStyle(fontWeight: FontWeight.bold)));
-    var valueColumn = DataColumn(label: Text('Value', style: TextStyle(fontWeight: FontWeight.bold)));
-    var emptyColumn = DataColumn(label: SizedBox(width: 60));
-    return [keyColumn, valueColumn, emptyColumn];
-  }
-
-  List<DataRow> getEnvironmentRows() {
-    var listItems = <DataRow>[];
-    _containerController.environments.forEach((key, value) {
-      var row = DataRow(cells: [
-        DataCell(
-          Tooltip(
-            preferBelow: false,
-            message: key,
-            child: Text(truncateWithEllipsis(10, key), style: TextStyle(fontSize: 12)),
-          ),
-        ),
-        DataCell(
-          Tooltip(
-            preferBelow: false,
-            message: value,
-            child: Text(truncateWithEllipsis(50, value), style: TextStyle(fontSize: 12)),
-          ),
-        ),
-        DataCell(
-          Align(
-            alignment: Alignment.centerRight,
-            child: SizedBox(
-              width: 80,
-              child: Row(
-                children: [
-                  IconButton(onPressed: () => _containerController.removeEnvironment(key), splashRadius: 12, icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black)),
-                  IconButton(
-                    onPressed: () => displayUpdateEnvironmentDialog(_containerController.containerEnvironmentKeyEditingController, _containerController.containerEnvironmentValueEditingController, key, value, _containerController.updateEnvironment),
-                    splashRadius: 12,
-                    icon: Icon(MdiIcons.pencilOutline, size: 16, color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ]);
-      listItems.add(row);
-    });
-    return listItems;
-  }
-
-/*---------------------------------------------------------------------*/
-/* Ports */
+  /*------ Ports ------*/
   Widget getPortStep() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -735,6 +636,107 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
           ],
         );
       },
+    );
+  }
+
+  /*------ Environments ------*/
+  Widget getEnvironmentStep() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Obx(
+        () => Column(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: OutlinedButton.icon(
+                onPressed: () => displayAddEnvironmentDialog(_containerController.containerEnvironmentKeyEditingController, _containerController.containerEnvironmentValueEditingController, _containerController.addEnvironment),
+                label: Text('Add environment'),
+                icon: Icon(Icons.join_right, size: 16, color: Colors.blue),
+              ),
+            ),
+            SizedBox(height: 8),
+            Visibility(
+              visible: _containerController.environments.isNotEmpty,
+              child: SizedBox(
+                width: double.infinity,
+                height: 150,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: DataTable(
+                    dataRowMinHeight: 12,
+                    dataRowMaxHeight: 28,
+                    columnSpacing: 0,
+                    columns: getEnvironmentColumns(),
+                    rows: getEnvironmentRows(),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<DataColumn> getEnvironmentColumns() {
+    var keyColumn = DataColumn(label: Text('Key', style: TextStyle(fontWeight: FontWeight.bold)));
+    var valueColumn = DataColumn(label: Text('Value', style: TextStyle(fontWeight: FontWeight.bold)));
+    var emptyColumn = DataColumn(label: SizedBox(width: 60));
+    return [keyColumn, valueColumn, emptyColumn];
+  }
+
+  List<DataRow> getEnvironmentRows() {
+    var listItems = <DataRow>[];
+    _containerController.environments.forEach((key, value) {
+      var row = DataRow(cells: [
+        DataCell(
+          Tooltip(
+            preferBelow: false,
+            message: key,
+            child: Text(truncateWithEllipsis(10, key), style: TextStyle(fontSize: 12)),
+          ),
+        ),
+        DataCell(
+          Tooltip(
+            preferBelow: false,
+            message: value,
+            child: Text(truncateWithEllipsis(50, value), style: TextStyle(fontSize: 12)),
+          ),
+        ),
+        DataCell(
+          Align(
+            alignment: Alignment.centerRight,
+            child: SizedBox(
+              width: 80,
+              child: Row(
+                children: [
+                  IconButton(onPressed: () => _containerController.removeEnvironment(key), splashRadius: 12, icon: Icon(MdiIcons.trashCanOutline, size: 16, color: Colors.black)),
+                  IconButton(
+                    onPressed: () => displayUpdateEnvironmentDialog(_containerController.containerEnvironmentKeyEditingController, _containerController.containerEnvironmentValueEditingController, key, value, _containerController.updateEnvironment),
+                    splashRadius: 12,
+                    icon: Icon(MdiIcons.pencilOutline, size: 16, color: Colors.black),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ]);
+      listItems.add(row);
+    });
+    return listItems;
+  }
+
+  /*------ Command ------*/
+  Widget getCommandStep() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          TextFieldBox(controller: _containerController.commandEditingController, label: 'CMD (Optional)'),
+        ],
+      ),
     );
   }
 }

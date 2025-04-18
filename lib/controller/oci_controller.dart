@@ -45,6 +45,7 @@ class OciController extends GetxController {
   final TextEditingController hostPortEditingController = TextEditingController();
   final TextEditingController hostIpEditingController = TextEditingController();
   final TextEditingController rangeEditingController = TextEditingController();
+  final TextEditingController commandEditingController = TextEditingController();
 
   /* Registries */
   final TextEditingController registryEditingController = TextEditingController();
@@ -203,41 +204,23 @@ class OciController extends GetxController {
     _apiService.callApi(Rpc.RPC_CONTAINER_START, parameters: reqParams, message: 'Failed to kill container $name').then((e) => listContainers());
   }
 
-  void createContainer() async {
-    // ociSSEConsumer(null, EventCode.NOTIFICATION);
+  Future<void> createContainer() async {
     developer.log('Try to create container');
     var name = containerNameEditingController.text;
     var dnsSearch = containerDnsSearchEditingController.text;
     var dnsServer = containerDnsServerEditingController.text;
     var user = containerUserEditingController.text;
     var workDir = containerWorkDirEditingController.text;
+    var netns = selectedNetwork.value != null ? {'nsmode': selectedNetwork.value!.driver} : null;
+    var command = commandEditingController.text.split(' ').toList();
     developer.log('Create container $name');
 
-    var netns = selectedNetwork.value != null ? {'nsmode': selectedNetwork.value!.driver} : null;
-
-    var container = CreateContainer(
-      name,
-      dnsSearch.isEmpty ? null : [dnsSearch],
-      dnsServer.isEmpty ? null : dnsServer.split(','),
-      environments.isEmpty ? null : environments,
-      useHostEnvironments.value,
-      expose.isEmpty ? null : expose,
-      hosts.isEmpty ? null : hosts,
-      selectedImage.value,
-      null,
-      privileged.value,
-      user.isEmpty ? null : user,
-      workDir.isEmpty ? null : workDir,
-      connectVolumes.isEmpty ? null : connectVolumes,
-      portMappings.isEmpty ? null : portMappings,
-      networkConnect.isEmpty ? null : networkConnect,
-      netns,
-    );
+    var container = CreateContainer(name, dnsSearch.isEmpty ? null : [dnsSearch], dnsServer.isEmpty ? null : dnsServer.split(','), environments.isEmpty ? null : environments, useHostEnvironments.value, expose.isEmpty ? null : expose, hosts.isEmpty ? null : hosts, selectedImage.value, null, privileged.value, user.isEmpty ? null : user, workDir.isEmpty ? null : workDir, connectVolumes.isEmpty ? null : connectVolumes, portMappings.isEmpty ? null : portMappings, networkConnect.isEmpty ? null : networkConnect, netns, command);
 
     var json = jsonEncode(container.toMap());
 
     var reqParams = {'container': json};
-    _apiService.callApi(Rpc.RPC_CONTAINER_CREATE, parameters: reqParams).then((_) => Get.back()).then((_) => listContainers()).then((_) => cleanContainerParameters());
+    _apiService.callApi(Rpc.RPC_CONTAINER_CREATE, parameters: reqParams).then((_) => listContainers()).then((_) => cleanContainerParameters());
   }
 
   /* Other methods */

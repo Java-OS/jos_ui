@@ -76,7 +76,7 @@ class _SettingsDatetimePageState extends State<SettingsDatetimePage> {
                   children: [
                     Obx(() => Checkbox(value: _dateTimeController.isNtpActive.value, onChanged: (e) => switchToNtp(e!))),
                     SizedBox(width: 4),
-                    Text('Set date and time automatically', style: TextStyle()),
+                    Text('Set date and time automatically'),
                   ],
                 ),
                 Row(

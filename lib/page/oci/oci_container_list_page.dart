@@ -90,10 +90,13 @@ class _OciContainerListPageState extends State<OciContainerListPage> {
                           icon: Icon(container.state == 'running' ? MdiIcons.stopCircleOutline : MdiIcons.playCircleOutline, size: 16, color: Colors.black),
                           onPressed: () => container.state == 'running' ? _containerController.stopContainer(container.id) : _containerController.startContainer(container.id),
                         ),
-                        IconButton(
-                          splashRadius: 20,
-                          icon: Icon(Icons.terminal, size: 16, color: Colors.black),
-                          onPressed: () => displayExecInstance(container),
+                        Visibility(
+                          visible: container.state == 'running',
+                          child: IconButton(
+                            splashRadius: 20,
+                            icon: Icon(Icons.terminal, size: 16, color: Colors.black),
+                            onPressed: () => displayExecInstance(container),
+                          ),
                         ),
                         Visibility(
                           visible: container.state == 'running',

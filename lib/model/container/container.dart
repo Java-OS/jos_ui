@@ -5,6 +5,7 @@ import 'package:jos_ui/model/container/volume_parameter.dart';
 
 class CreateContainer {
   final String? name;
+  final List<String>? command;
   final List<String>? dnsSearch;
   final List<String>? dnsServer;
   final Map<String, String>? environments;
@@ -21,7 +22,7 @@ class CreateContainer {
   final Map<String, NetworkConnect>? networks;
   final Map<String, String>? netns;
 
-  CreateContainer(this.name, this.dnsSearch, this.dnsServer, this.environments, this.useHostEnvironments, this.expose, this.hosts, this.image, this.pod, this.privileged, this.user, this.workDir, this.volumes, this.portMappings, this.networks, this.netns);
+  CreateContainer(this.name, this.dnsSearch, this.dnsServer, this.environments, this.useHostEnvironments, this.expose, this.hosts, this.image, this.pod, this.privileged, this.user, this.workDir, this.volumes, this.portMappings, this.networks, this.netns, this.command);
 
   Map<String, dynamic> toMap() {
     return {
@@ -41,6 +42,7 @@ class CreateContainer {
       'portmappings': portMappings?.map((e) => e.toMap()).toList(),
       'Networks': networks?.map((k,v) => MapEntry(k, v.toMap())),
       'netns': netns,
+      'command': command
     };
   }
 }
