@@ -1,28 +1,20 @@
+import 'package:jos_ui/model/module_dependency.dart';
+
 class Module {
   final String name;
-  final String version;
-  final String description;
-  final bool enable;
   final bool started;
-  final List<String> dependencies;
-  final String fullName;
-  final bool lock;
-  final bool service;
+  final String path;
+  final List<ModuleDependency> dependencies;
 
-  Module({required this.name, required this.version, required this.description, required this.enable, required this.started, required this.dependencies, required this.fullName, required this.lock, required this.service});
+  Module({required this.name, required this.started, required this.path, required this.dependencies});
 
   factory Module.fromMap(Map<String, dynamic> json) {
-    var deps = (json['dependencies'] as List).map((e) => e.toString()).toList();
+    var deps = (json['dependencies'] as List).map((e) => ModuleDependency.fromMap(e)).toList();
     return Module(
       name: json['name'],
-      version: json['version'],
-      description: json['description'],
-      enable: json['enable'],
       started: json['started'],
+      path: json['path'],
       dependencies: deps,
-      fullName: json['fullName'],
-      lock: json['lock'],
-      service: json['service'],
     );
   }
 }

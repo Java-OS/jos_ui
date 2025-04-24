@@ -10,11 +10,12 @@ import 'package:jos_ui/page/firewall/firewall_chain_page.dart';
 import 'package:jos_ui/page/firewall/firewall_rule_page.dart';
 import 'package:jos_ui/page/firewall/firewall_table_page.dart';
 import 'package:jos_ui/page/kernel_log_page.dart';
-import 'package:jos_ui/page/module_log_page.dart';
+import 'package:jos_ui/page/module/dependency_page.dart';
+import 'package:jos_ui/page/module/module_log_page.dart';
 import 'package:jos_ui/page/layout/responsive_layout.dart';
 import 'package:jos_ui/page/loading_page.dart';
 import 'package:jos_ui/page/login_page.dart';
-import 'package:jos_ui/page/module_page.dart';
+import 'package:jos_ui/page/module/module_page.dart';
 import 'package:jos_ui/page/network/network_hosts_page.dart';
 import 'package:jos_ui/page/network/network_interfaces_page.dart';
 import 'package:jos_ui/page/network/network_networks_page.dart';
@@ -89,6 +90,7 @@ class JosApplication extends StatelessWidget {
           GetPage(name: Routes.filesystem.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: FilesystemPage())),
           GetPage(name: Routes.directoryTree.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: DirectoryTreePage())),
           GetPage(name: Routes.modules.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: ModulePage())),
+          GetPage(name: Routes.dependencies.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: DependencyPage())),
           GetPage(name: Routes.moduleLogs.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: ModuleLogPage())),
           GetPage(name: Routes.oci.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciContainerListPage())),
           GetPage(name: Routes.ociContainerCreate.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciContainerCreatePage())),

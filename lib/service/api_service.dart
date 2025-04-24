@@ -21,15 +21,18 @@ class ApiService extends GetxController {
         return [];
       }
     } else {
-      switch (type) {
-        case MessageType.info:
-          displayInfo(message!);
-        case MessageType.warning:
-          displayWarning(message!);
-        case MessageType.error:
-          displayError(message!);
-        case MessageType.success:
-          displaySuccess(message!);
+      var respMetaMessage = payload.metadata!.message ;
+      if (respMetaMessage != null) {
+        switch (type) {
+          case MessageType.info:
+            displayInfo(respMetaMessage);
+          case MessageType.warning:
+            displayWarning(respMetaMessage);
+          case MessageType.error:
+            displayError(respMetaMessage);
+          case MessageType.success:
+            displaySuccess(respMetaMessage);
+        }
       }
       isLoading.value = false;
     }

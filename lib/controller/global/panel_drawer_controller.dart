@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:fluttericon/linearicons_free_icons.dart';
 import 'package:fluttericon/mfg_labs_icons.dart';
+import 'package:fluttericon/octicons_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class PanelDrawerController extends GetxController {
-
   var menuItems = [
     {'title': 'Dashboard', 'path': Routes.dashboard.path, 'icon': Icons.dashboard, 'font-size': 16, 'icon-size': 24},
-    {'title': 'Modules', 'path': Routes.modules.path, 'icon': Icons.widgets, 'font-size': 16, 'icon-size': 24},
+    {
+      'title': 'Modules',
+      'icon': Icons.widgets,
+      'font-size': 16,
+      'icon-size': 24,
+      'path': '/modules',
+      'submenu': [
+        {'title': 'Module', 'path': Routes.modules.path, 'icon': FontAwesome5.java, 'font-size': 16, 'icon-size': 24},
+        {'title': 'Dependencies', 'path': Routes.dependencies.path, 'icon': LineariconsFree.layers, 'font-size': 12, 'icon-size': 16},
+      ],
+    },
     {
       'title': 'OCI',
       'icon': MdiIcons.oci,
       'font-size': 16,
       'icon-size': 24,
-      'path' : '/oci',
+      'path': '/oci',
       'submenu': [
         {'title': 'Container', 'path': Routes.oci.path, 'icon': MdiIcons.cubeOutline, 'font-size': 12, 'icon-size': 16},
         {'title': 'Image', 'path': Routes.ociImages.path, 'icon': MdiIcons.layersTriple, 'font-size': 12, 'icon-size': 16},
@@ -31,7 +41,7 @@ class PanelDrawerController extends GetxController {
       'icon': Icons.lan_outlined,
       'font-size': 16,
       'icon-size': 24,
-      'path' : '/network',
+      'path': '/network',
       'submenu': [
         {'title': 'Interfaces', 'path': Routes.networkInterfaces.path, 'icon': FontAwesome5.ethernet, 'font-size': 12, 'icon-size': 16},
         {'title': 'Networks', 'path': Routes.networkNetworks.path, 'icon': Icons.hub_outlined, 'font-size': 12, 'icon-size': 16},
@@ -45,7 +55,7 @@ class PanelDrawerController extends GetxController {
       'icon': MdiIcons.cogs,
       'font-size': 16,
       'icon-size': 24,
-      'path' : '/system',
+      'path': '/system',
       'submenu': [
         {'title': 'Basic', 'path': Routes.settingBasic.path, 'icon': Icons.settings, 'font-size': 12, 'icon-size': 16},
         {'title': 'Kernel Modules', 'path': Routes.settingKernelModules.path, 'icon': Typicons.puzzle, 'font-size': 12, 'icon-size': 16},
@@ -66,7 +76,11 @@ class PanelDrawerController extends GetxController {
 
   void routeTo(String? path) {
     selectedItem.value = path!;
-    Get.toNamed(path);
+    if (Get.currentRoute == Routes.dashboard.path) {
+      Get.offNamed(path);
+    } else {
+      Get.toNamed(path);
+    }
   }
 
   bool isExpanded() {

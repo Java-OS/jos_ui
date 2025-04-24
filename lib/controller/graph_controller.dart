@@ -38,6 +38,7 @@ class GraphController extends GetxController {
 
   @override
   void onClose() {
+    developer.log('GraphController closed');
     _timer?.cancel();
     super.onClose();
   }
