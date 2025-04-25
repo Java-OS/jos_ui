@@ -9,7 +9,7 @@ class ModuleDependency {
     return ModuleDependency(
       name: json['name'],
       path: json['path'],
-      modules: json['modules'],
+      modules: List<String>.from(json['modules']),
     );
   }
 }
