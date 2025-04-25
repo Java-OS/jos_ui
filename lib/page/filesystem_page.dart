@@ -7,7 +7,7 @@ import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/filesystem.dart';
-
+import 'dart:developer' as developer;
 class FilesystemPage extends StatefulWidget {
   const FilesystemPage({super.key});
 
@@ -45,9 +45,8 @@ class _FilesystemPageState extends State<FilesystemPage> {
     var filesystems = _filesystemController.partitions;
     for (var fs in filesystems) {
       int used = 0;
-      if (fs.freeSize != null && fs.freeSize == 0) {
-        used = fs.totalSize;
-      } else if (fs.freeSize != null) {
+
+      if (fs.freeSize != null && fs.freeSize != 0) {
         used = fs.totalSize - (fs.freeSize as int);
       }
 
