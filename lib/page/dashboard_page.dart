@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,7 +56,13 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
           () {
             return CardContent(
               controllers: [
-                OutlinedButton(onPressed: () => _graphController.fetchGraph(_width!, height, true), child: Icon(Icons.refresh, size: 16)),
+                SizedBox(
+                  height: 32,
+                  child: OutlinedButton(
+                    onPressed: () => _graphController.fetchGraph(_width!, height, true),
+                    child: Icon(Icons.refresh, size: 16),
+                  ),
+                ),
                 SizedBox(
                   width: 100,
                   child: DropDownMenu<GraphTimeframe>(
