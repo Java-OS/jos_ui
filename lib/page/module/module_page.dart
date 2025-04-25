@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/tile.dart';
@@ -21,7 +20,7 @@ class _ModulePageState extends State<ModulePage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((e) => _moduleController.fetchModules());
+    WidgetsBinding.instance.addPostFrameCallback((e) => _moduleController.fetchModules(false));
     super.initState();
   }
 
@@ -29,10 +28,7 @@ class _ModulePageState extends State<ModulePage> {
   Widget build(BuildContext context) {
     return CardContent(
       controllers: [
-        OutlinedButton(
-          onPressed: () => Get.toNamed(Routes.moduleLogs.path),
-          child: Icon(ModernPictograms.article, size: 16),
-        ),
+        OutlinedButton(onPressed: () => _moduleController.fetchModules(false), child: Icon(Icons.refresh, size: 16)),
       ],
       child: SingleChildScrollView(
         child: Obx(
@@ -46,12 +42,13 @@ class _ModulePageState extends State<ModulePage> {
                 padding: const EdgeInsets.all(4.0),
                 child: TileItem(
                   actions: SizedBox(
-                    width: 100,
+                    width: 120,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         // infoButton(module),
+                        setDepButton(module),
                         serviceButton(module),
                         deleteButton(module),
                       ],
@@ -99,6 +96,22 @@ class _ModulePageState extends State<ModulePage> {
       splashRadius: 10,
       splashColor: Colors.transparent,
       icon: Icon(Icons.info_outline, size: 16, color: Colors.black),
+    );
+  }
+
+  Widget setDepButton(Module module) {
+    return IconButton(
+      onPressed: module.started
+          ? null
+          : () {
+              _moduleController.doSelectItems.value = true;
+              _moduleController.selectedModule.value = module;
+              _moduleController.selectedDependencies.value = module.dependencies;
+              Get.toNamed(Routes.dependencies.path);
+            },
+      splashRadius: 10,
+      splashColor: Colors.transparent,
+      icon: Icon(Icons.link, size: 16, color: module.started ? Colors.grey : Colors.black),
     );
   }
 }

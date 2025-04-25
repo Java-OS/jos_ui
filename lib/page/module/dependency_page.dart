@@ -1,9 +1,9 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
-import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/tile.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/module_controller.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
@@ -26,7 +26,9 @@ class _DependencyPageState extends State<DependencyPage> {
   @override
   Widget build(BuildContext context) {
     return CardContent(
-      controllers: controllers(context),
+      controllers: [
+        if (!_moduleController.doSelectItems.value) OutlinedButton(onPressed: () => _moduleController.fetchDependencyLayers(), child: Icon(Icons.refresh, size: 16)),
+      ],
       child: SingleChildScrollView(
         child: Obx(
           () => ListView.builder(
@@ -35,15 +37,27 @@ class _DependencyPageState extends State<DependencyPage> {
             itemCount: _moduleController.dependencies.length,
             itemBuilder: (context, index) {
               var dep = _moduleController.dependencies[index];
-              return Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: TileItem(
-                  subTitle: Text(
-                    dep.path,
-                    style: TextStyle(fontSize: 14),
+              return Obx(
+                () => Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: TileItem(
+                    actions: Visibility(
+                      visible: _moduleController.doSelectItems.value,
+                      child: SizedBox(
+                        width: 100,
+                        child: Checkbox(
+                          value: _moduleController.isDependencySelected(dep),
+                          onChanged: (e) => _moduleController.updateSelectedDependencies(dep, e!),
+                        ),
+                      ),
+                    ),
+                    subTitle: Text(
+                      dep.path,
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    index: index,
+                    title: Text(dep.name),
                   ),
-                  index: index,
-                  title: Text(dep.name),
                 ),
               );
             },
@@ -53,15 +67,6 @@ class _DependencyPageState extends State<DependencyPage> {
     );
   }
 
-  List<Widget> controllers(BuildContext context) {
-    return [
-      OutlinedButton(
-        onPressed: () => Get.toNamed(Routes.moduleLogs.path),
-        child: Icon(ModernPictograms.article, size: 16),
-      ),
-    ];
-  }
-
   Widget deleteButton(String name) {
     return IconButton(
       onPressed: () => _moduleController.removeModule(name),
@@ -69,5 +74,12 @@ class _DependencyPageState extends State<DependencyPage> {
       splashColor: Colors.transparent,
       icon: Icon(MdiIcons.trashCanOutline, size: 16),
     );
+  }
+
+  @override
+  void dispose() {
+    developer.log('Dispose dependency page');
+    _moduleController.clear();
+    super.dispose();
   }
 }

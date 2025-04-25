@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/linearicons_free_icons.dart';
 import 'package:fluttericon/mfg_labs_icons.dart';
+import 'package:fluttericon/modern_pictograms_icons.dart';
 import 'package:fluttericon/octicons_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:get/get.dart';
@@ -12,14 +13,15 @@ class PanelDrawerController extends GetxController {
   var menuItems = [
     {'title': 'Dashboard', 'path': Routes.dashboard.path, 'icon': Icons.dashboard, 'font-size': 16, 'icon-size': 24},
     {
-      'title': 'Modules',
+      'title': 'Module',
       'icon': Icons.widgets,
       'font-size': 16,
       'icon-size': 24,
-      'path': '/modules',
+      'path': '/module',
       'submenu': [
-        {'title': 'Module', 'path': Routes.modules.path, 'icon': FontAwesome5.java, 'font-size': 16, 'icon-size': 24},
+        {'title': 'Modules', 'path': Routes.modules.path, 'icon': FontAwesome5.java, 'font-size': 12, 'icon-size': 16},
         {'title': 'Dependencies', 'path': Routes.dependencies.path, 'icon': LineariconsFree.layers, 'font-size': 12, 'icon-size': 16},
+        {'title': 'Logs', 'path': Routes.moduleLogs.path, 'icon': ModernPictograms.article, 'font-size': 12, 'icon-size': 16},
       ],
     },
     {

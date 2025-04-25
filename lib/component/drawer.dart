@@ -29,10 +29,11 @@ class DrawerComponent extends StatelessWidget {
       var iconSize = item['icon-size'] as double;
       var submenu = item['submenu'];
       var path = item['path'] as String;
+      var isOnPath = path == Get.currentRoute;
       if (submenu != null) {
         var tile = ExpansionTile(
-          leading: svg ?? Icon(icon),
-          title: Text(title),
+          leading: svg ?? Icon(icon,color: Colors.black87),
+          title: Text(title,style: TextStyle(color: Colors.black87)),
           initiallyExpanded: _panelDrawerController.selectedItem.value.startsWith(path),
           onExpansionChanged: (_) => _panelDrawerController.submenuItem.value = path,
           children: buildList(submenu as List<Map<String, Object>>, true),
@@ -40,15 +41,17 @@ class DrawerComponent extends StatelessWidget {
         list.add(tile);
       } else {
         var tile = ListTile(
+          selectedColor: Colors.black87,
+          selectedTileColor: Colors.lightBlueAccent,
           leading: Padding(
             padding: isSubmenu ? EdgeInsets.only(left: 18.0) : EdgeInsets.zero,
-            child: svg ?? Icon(icon, size: iconSize),
+            child: svg ?? Icon(icon, size: iconSize,color: isOnPath ? Colors.white : Colors.black87),
           ),
           title: Padding(
             padding: isSubmenu ? EdgeInsets.only(left: 18.0) : EdgeInsets.zero,
-            child: Text(title, style: TextStyle(fontSize: fontSize)),
+            child: Text(title, style: TextStyle(fontSize: fontSize,color: isOnPath ? Colors.white : Colors.black87)),
           ),
-          selected: _panelDrawerController.selectedItem.value == path,
+          selected: isOnPath,
           onTap: () => _panelDrawerController.routeTo(path),
         );
         list.add(tile);
