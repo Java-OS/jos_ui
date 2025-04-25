@@ -76,8 +76,9 @@ class Rpc {
   static const Rpc RPC_MODULE_START = Rpc._(501);
   static const Rpc RPC_MODULE_STOP = Rpc._(502);
   static const Rpc RPC_MODULE_REMOVE = Rpc._(503);
-  static const Rpc RPC_MODULE_DEP_LAYERS = Rpc._(504);
-  static const Rpc RPC_MODULE_DEP_LAYER_REMOVE = Rpc._(505);
+  static const Rpc RPC_MODULE_DEP_SET = Rpc._(504);
+  static const Rpc RPC_MODULE_DEP_LAYERS = Rpc._(505);
+  static const Rpc RPC_MODULE_DEP_LAYER_REMOVE = Rpc._(506);
   static const Rpc RPC_NETWORK_ETHERNET_INFORMATION = Rpc._(600);
   static const Rpc RPC_NETWORK_ETHERNET_SET_IP = Rpc._(601);
   static const Rpc RPC_NETWORK_ETHERNET_UP = Rpc._(602);
@@ -236,8 +237,9 @@ class Rpc {
     501: RPC_MODULE_START,
     502: RPC_MODULE_STOP,
     503: RPC_MODULE_REMOVE,
-    504: RPC_MODULE_DEP_LAYERS,
-    505: RPC_MODULE_DEP_LAYER_REMOVE,
+    504: RPC_MODULE_DEP_SET,
+    505: RPC_MODULE_DEP_LAYERS,
+    506: RPC_MODULE_DEP_LAYER_REMOVE,
     600: RPC_NETWORK_ETHERNET_INFORMATION,
     601: RPC_NETWORK_ETHERNET_SET_IP,
     602: RPC_NETWORK_ETHERNET_UP,
