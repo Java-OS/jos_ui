@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/drawer.dart';
 import 'package:jos_ui/controller/authentication_controller.dart';
 import 'package:jos_ui/controller/system_controller.dart';
-import 'package:jos_ui/dialog/information_dialog.dart';
+import 'package:jos_ui/dialog/system_information_dialog.dart';
 import 'package:jos_ui/dialog/power_dialog.dart';
 
 class DesktopScaffold extends StatefulWidget {
@@ -50,7 +50,7 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                         onHover: (e) => setState(() => _hoverOnInfo = true),
                         onExit: (e) => setState(() => _hoverOnInfo = false),
                         child: GestureDetector(
-                          onTap: () => _systemController.fetchSystemInformation().then((_) => displayInformationModal()),
+                          onTap: () => _systemController.fetchSystemInformation().then((_) => displaySystemInformationModal()),
                           child: AnimatedContainer(
                             curve: Curves.easeInOut,
                             color: _hoverOnInfo ? Colors.blue : Colors.transparent,

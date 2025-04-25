@@ -5,7 +5,7 @@ import 'package:jos_ui/util/utils.dart';
 
 var _systemController = Get.put(SystemController());
 
-Future<void> displayInformationModal() async {
+Future<void> displaySystemInformationModal() async {
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {

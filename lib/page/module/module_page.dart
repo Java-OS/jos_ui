@@ -5,6 +5,8 @@ import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/tile.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/module_controller.dart';
+import 'package:jos_ui/dialog/module_information_dialog.dart';
+import 'package:jos_ui/model/module.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class ModulePage extends StatefulWidget {
@@ -49,8 +51,9 @@ class _ModulePageState extends State<ModulePage> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        deleteButton(module.name),
-                        serviceButton(module.name, module.started),
+                        // infoButton(module),
+                        serviceButton(module),
+                        deleteButton(module),
                       ],
                     ),
                   ),
@@ -69,7 +72,8 @@ class _ModulePageState extends State<ModulePage> {
     );
   }
 
-  Widget deleteButton(String name) {
+  Widget deleteButton(Module module) {
+    var name = module.name;
     return IconButton(
       onPressed: () => _moduleController.removeModule(name),
       splashRadius: 10,
@@ -78,12 +82,23 @@ class _ModulePageState extends State<ModulePage> {
     );
   }
 
-  Widget serviceButton(String name, bool isStarted) {
+  Widget serviceButton(Module module) {
+    var name = module.name;
+    var isStarted = module.started;
     return IconButton(
       onPressed: () => isStarted ? _moduleController.stopService(name) : _moduleController.startService(name),
       splashRadius: 10,
       splashColor: Colors.transparent,
       icon: Icon(isStarted ? Icons.pause : Icons.play_arrow, size: 16, color: Colors.black),
+    );
+  }
+
+  Widget infoButton(Module module) {
+    return IconButton(
+      onPressed: () => displayModuleInformationModal(module),
+      splashRadius: 10,
+      splashColor: Colors.transparent,
+      icon: Icon(Icons.info_outline, size: 16, color: Colors.black),
     );
   }
 }
