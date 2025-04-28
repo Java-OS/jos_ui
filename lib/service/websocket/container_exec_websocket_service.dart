@@ -53,7 +53,7 @@ class ContainerExecWebsocketService extends GetxController {
 
   void disconnectWebsocket() async {
     if (_socket != null) {
-      developer.log('Container log websocket disconnected');
+      developer.log('Container terminal websocket disconnected');
       await _subscription!.cancel();
       _socket!.close(1000, 'CLOSE_NORMAL');
       isConnected.value = false;
