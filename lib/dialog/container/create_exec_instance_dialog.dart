@@ -28,7 +28,7 @@ Future<void> displayExecInstance(ContainerInfo containerInfo) async {
                 alignment: Alignment.bottomRight,
                 child: ElevatedButton(onPressed: () {
                   Get.back();
-                  displayTerminal(containerInfo);
+                  displayContainerTerminal(containerInfo);
                 }, child: Text('Execute')),
               ),
             ],

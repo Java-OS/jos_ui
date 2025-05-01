@@ -5,6 +5,7 @@ import 'package:jos_ui/controller/authentication_controller.dart';
 import 'package:jos_ui/controller/system_controller.dart';
 import 'package:jos_ui/dialog/system_information_dialog.dart';
 import 'package:jos_ui/dialog/power_dialog.dart';
+import 'package:jos_ui/dialog/system_terminal.dart';
 
 class DesktopScaffold extends StatefulWidget {
   final Widget content;
@@ -23,6 +24,7 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
   bool _hoverOnLogout = false;
   bool _hoverOnPower = false;
   bool _hoverOnInfo = false;
+  bool _hoverOnTerminal = false;
 
   @override
   void initState() {
@@ -45,6 +47,21 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                   preferredSize: Size.fromHeight(50),
                   child: AppBar(
                     actions: [
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        onHover: (e) => setState(() => _hoverOnTerminal = true),
+                        onExit: (e) => setState(() => _hoverOnTerminal = false),
+                        child: GestureDetector(
+                          onTap: () => displaySystemTerminal(),
+                          child: AnimatedContainer(
+                            curve: Curves.easeInOut,
+                            color: _hoverOnTerminal ? Colors.blue : Colors.transparent,
+                            width: 60,
+                            duration: Duration(milliseconds: 600),
+                            child: Icon(Icons.terminal_outlined, color: _hoverOnTerminal ? Colors.white : Colors.black),
+                          ),
+                        ),
+                      ),
                       MouseRegion(
                         cursor: SystemMouseCursors.click,
                         onHover: (e) => setState(() => _hoverOnInfo = true),
