@@ -66,12 +66,12 @@ class _OciImagesPageState extends State<OciImagesPage> {
                   ),
                 ),
                 title: Text(containerImage.name),
-                subTitle: Text(truncate(containerImage.id)),
+                subTitle: Visibility(visible:containerImage.id.isNotEmpty ,child: Text(truncate(containerImage.id))),
                 actions: Visibility(
                   visible: containerImage.id.isNotEmpty,
                   replacement: IconButton(
                     splashRadius: 20,
-                    icon: Icon(Icons.cancel, size: 16, color: Colors.black),
+                    icon: Icon(Icons.close, size: 16, color: Colors.black),
                     onPressed: () => _containerController.cancelPullImage(containerImage.name),
                   ),
                   child: IconButton(
@@ -86,9 +86,5 @@ class _OciImagesPageState extends State<OciImagesPage> {
         ),
       ),
     );
-  }
-
-  Future<void> streamLogs(ContainerImage ci) async {
-    // _containerController.ociSSEConsumer(ci.name, EventCode.OCI_LOG);
   }
 }

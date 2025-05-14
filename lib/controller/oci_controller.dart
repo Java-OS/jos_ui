@@ -9,6 +9,7 @@ import 'package:jos_ui/message_buffer.dart';
 import 'package:jos_ui/model/container/container.dart';
 import 'package:jos_ui/model/container/container_image.dart';
 import 'package:jos_ui/model/container/container_info.dart';
+import 'package:jos_ui/model/container/image_pull_details.dart';
 import 'package:jos_ui/model/container/image_search.dart';
 import 'package:jos_ui/model/container/network.dart';
 import 'package:jos_ui/model/container/network_connect.dart';
@@ -75,7 +76,16 @@ class OciController extends GetxController {
   /* Image methods */
   Future<void> listImages() async {
     developer.log('List images');
-    _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_LIST).then((e) => e as List).then((list) => containerImageList.value = list.map((e) => ContainerImage.fromMap(e)).toList());
+    await _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_LIST).then((e) => jsonDecode(e)).then((e) => e as List).then((list) => containerImageList.value = list.map((e) => ContainerImage.fromMap(e)).toList());
+
+    var result = await _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_PULL_DETAILS);
+    developer.log('$result');
+
+    for (var i = 0; i < result.length; i++) {
+      var ipd = ImagePullDetails.fromMap(result[i]);
+      var ci = ContainerImage.fromMap({'Names': [ipd.name]});
+      if (!containerImageList.any((e) => e.name == ci.name)) containerImageList.add(ci);
+    }
   }
 
   Future<void> removeImage(String id) async {
@@ -99,7 +109,7 @@ class OciController extends GetxController {
     developer.log('Pull image $name');
     var reqParams = {'name': name};
     searchImageList.removeWhere((item) => item.name == name);
-    _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_PULL, parameters: reqParams).then((e) => ContainerImage('', '', 0, 0, name, '')).then((e) => containerImageList.add(e));
+    _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_PULL, parameters: reqParams).then((e) => jsonDecode(e)).then((e) => ContainerImage('', '', 0, 0, name, '')).then((e) => containerImageList.add(e));
   }
 
   void cancelPullImage(String name) async {
@@ -119,7 +129,7 @@ class OciController extends GetxController {
   /* Volume methods */
   Future<void> listVolumes() async {
     developer.log('List volumes');
-    _apiService.callApi(Rpc.RPC_CONTAINER_VOLUME_LIST).then((e) => e as List).then((list) => volumeList.value = list.map((e) => Volume.fromMap(e)).toList());
+    _apiService.callApi(Rpc.RPC_CONTAINER_VOLUME_LIST).then((e) => jsonDecode(e)).then((e) => e as List).then((list) => volumeList.value = list.map((e) => Volume.fromMap(e)).toList());
   }
 
   void createVolume() async {
@@ -143,7 +153,7 @@ class OciController extends GetxController {
   /* Network methods */
   Future<void> listNetworks() async {
     developer.log('List networks');
-    _apiService.callApi(Rpc.RPC_CONTAINER_NETWORK_LIST).then((e) => e as List).then((list) => networkList.value = list.map((e) => NetworkInfo.fromMap(e)).toList());
+    _apiService.callApi(Rpc.RPC_CONTAINER_NETWORK_LIST).then((e) => jsonDecode(e)).then((e) => e as List).then((list) => networkList.value = list.map((e) => NetworkInfo.fromMap(e)).toList());
   }
 
   void createNetwork() async {
@@ -169,7 +179,7 @@ class OciController extends GetxController {
   /* Container methods */
   Future<void> listContainers() async {
     developer.log('List containers');
-    _apiService.callApi(Rpc.RPC_CONTAINER_LIST).then((e) => e as List).then((list) => containerList.value = list.map((e) => ContainerInfo.fromMap(e)).toList());
+    _apiService.callApi(Rpc.RPC_CONTAINER_LIST).then((e) => jsonDecode(e)).then((e) => e as List).then((list) => containerList.value = list.map((e) => ContainerInfo.fromMap(e)).toList());
   }
 
   Future<void> killContainer(String name) async {
