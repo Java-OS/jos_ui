@@ -145,6 +145,7 @@ class RestClient {
         developer.log('Normal error by http , The jvm going to shutdown before sending response');
       } else {
         developer.log('[Http Error] $rpc ${e.toString()}');
+        Get.offAllNamed(Routes.base.path);
       }
     }
     var serializeMetadata = ProtobufUtils.serializeMetadata(false, null, null, null, null);

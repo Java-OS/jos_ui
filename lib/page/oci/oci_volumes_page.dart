@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/tile.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/create_volume_dialog.dart';
@@ -21,7 +22,7 @@ class _OciImagesPageState extends State<OciVolumesPage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((e) => _containerController.listVolumes());
+    WidgetsBinding.instance.addPostFrameCallback((e) => _containerController.listVolumes(false));
     super.initState();
   }
 
@@ -64,7 +65,8 @@ class _OciImagesPageState extends State<OciVolumesPage> {
     );
   }
 
-  fetchTreeAndDisplay(String path) {
-    // _filesystemController.fetchFilesystemTree(path).then((value) => displayFilesystemTree(true, true));
+  fetchTreeAndDisplay(String path) async {
+    _filesystemController.directoryPath.value = path;
+    await _filesystemController.fetchFilesystemTree().then((_) => Get.toNamed(Routes.ociVolumesFiles.path));
   }
 }

@@ -73,17 +73,25 @@ class OciController extends GetxController {
   var step = 0.obs;
   var registries = <String>{}.obs;
 
-  /* Image methods */
-  Future<void> listImages() async {
-    developer.log('List images');
-    await _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_LIST).then((e) => jsonDecode(e)).then((e) => e as List).then((list) => containerImageList.value = list.map((e) => ContainerImage.fromMap(e)).toList());
+  Timer? _timer;
 
-    var result = await _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_PULL_DETAILS);
-    developer.log('$result');
+  void startTimer(Function callback) {
+    _timer = Timer.periodic(Duration(seconds: 10), (_) => callback());
+  }
+
+  /* Image methods */
+  Future<void> listImages(bool disableLoading) async {
+    developer.log('List images');
+    await _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_LIST, disableLoading: disableLoading).then((e) => jsonDecode(e)).then((e) => e as List).then((list) => containerImageList.value = list.map((e) => ContainerImage.fromMap(e)).toList());
+
+    var result = await _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_PULL_DETAILS, disableLoading: disableLoading);
+    developer.log('current pull: $result');
 
     for (var i = 0; i < result.length; i++) {
       var ipd = ImagePullDetails.fromMap(result[i]);
-      var ci = ContainerImage.fromMap({'Names': [ipd.name]});
+      var ci = ContainerImage.fromMap({
+        'Names': [ipd.name]
+      });
       if (!containerImageList.any((e) => e.name == ci.name)) containerImageList.add(ci);
     }
   }
@@ -91,7 +99,7 @@ class OciController extends GetxController {
   Future<void> removeImage(String id) async {
     developer.log('remove image $id');
     var reqParams = {'name': id};
-    _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_REMOVE, parameters: reqParams, message: 'Failed to remove image $id').then((e) => listImages());
+    _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_REMOVE, parameters: reqParams, message: 'Failed to remove image $id').then((e) => listImages(false));
   }
 
   Future<void> searchImage() async {
@@ -101,15 +109,21 @@ class OciController extends GetxController {
 
     developer.log('Search image $name');
 
-    _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_SEARCH, parameters: reqParams).then((e) => e as List).then((list) => searchImageList.value = list.map((e) => ImageSearch.fromMap(e)).toList());
+    var result = await _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_SEARCH, parameters: reqParams);
+
+    if (result != null) {
+      var resultObject = jsonDecode(result);
+      for (var i = 0; i < resultObject.length; i++) {
+        searchImageList.add(ImageSearch.fromMap(resultObject[i]));
+      }
+    }
   }
 
   void pullImage(String name) async {
-    // ociSSEConsumer(null, EventCode.NOTIFICATION);
     developer.log('Pull image $name');
     var reqParams = {'name': name};
     searchImageList.removeWhere((item) => item.name == name);
-    _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_PULL, parameters: reqParams).then((e) => jsonDecode(e)).then((e) => ContainerImage('', '', 0, 0, name, '')).then((e) => containerImageList.add(e));
+    _apiService.callApi(Rpc.RPC_CONTAINER_IMAGE_PULL, parameters: reqParams);
   }
 
   void cancelPullImage(String name) async {
@@ -127,33 +141,33 @@ class OciController extends GetxController {
   }
 
   /* Volume methods */
-  Future<void> listVolumes() async {
+  Future<void> listVolumes(bool disableLoading) async {
     developer.log('List volumes');
-    _apiService.callApi(Rpc.RPC_CONTAINER_VOLUME_LIST).then((e) => jsonDecode(e)).then((e) => e as List).then((list) => volumeList.value = list.map((e) => Volume.fromMap(e)).toList());
+    _apiService.callApi(Rpc.RPC_CONTAINER_VOLUME_LIST,disableLoading: disableLoading).then((e) => jsonDecode(e)).then((e) => e as List).then((list) => volumeList.value = list.map((e) => Volume.fromMap(e)).toList());
   }
 
   void createVolume() async {
     var name = volumeNameEditingController.text;
     developer.log('Create volume $name');
     var reqParams = {'name': name};
-    _apiService.callApi(Rpc.RPC_CONTAINER_VOLUME_CREATE, parameters: reqParams).then((e) => listVolumes().then((_) => Get.back()).then((_) => clean()));
+    _apiService.callApi(Rpc.RPC_CONTAINER_VOLUME_CREATE, parameters: reqParams).then((e) => listVolumes(false).then((_) => Get.back()).then((_) => clean()));
   }
 
   Future<void> removeVolume(String name) async {
     developer.log('Remove volume $name');
     var reqParams = {'name': name};
-    _apiService.callApi(Rpc.RPC_CONTAINER_VOLUME_REMOVE, parameters: reqParams).then((e) => listVolumes());
+    _apiService.callApi(Rpc.RPC_CONTAINER_VOLUME_REMOVE, parameters: reqParams).then((e) => listVolumes(false));
   }
 
   Future<void> pruneVolume() async {
     developer.log('Prune volume');
-    _apiService.callApi(Rpc.RPC_CONTAINER_VOLUME_PRUNE).then((e) => listVolumes());
+    _apiService.callApi(Rpc.RPC_CONTAINER_VOLUME_PRUNE).then((e) => listVolumes(false));
   }
 
   /* Network methods */
-  Future<void> listNetworks() async {
+  Future<void> listNetworks(bool disableLoading) async {
     developer.log('List networks');
-    _apiService.callApi(Rpc.RPC_CONTAINER_NETWORK_LIST).then((e) => jsonDecode(e)).then((e) => e as List).then((list) => networkList.value = list.map((e) => NetworkInfo.fromMap(e)).toList());
+    _apiService.callApi(Rpc.RPC_CONTAINER_NETWORK_LIST,disableLoading: disableLoading).then((e) => jsonDecode(e)).then((e) => e as List).then((list) => networkList.value = list.map((e) => NetworkInfo.fromMap(e)).toList());
   }
 
   void createNetwork() async {
@@ -167,13 +181,13 @@ class OciController extends GetxController {
     var networkJson = jsonEncode(network.toMap());
 
     var reqParams = {'network': networkJson};
-    _apiService.callApi(Rpc.RPC_CONTAINER_NETWORK_CREATE, parameters: reqParams).then((e) => listNetworks().then((_) => Get.back()).then((_) async => await listNetworks()));
+    _apiService.callApi(Rpc.RPC_CONTAINER_NETWORK_CREATE, parameters: reqParams).then((e) => listNetworks(false)).then((_) => Get.back());
   }
 
   void removeNetwork(String name) async {
     developer.log('Remove network $name');
     var reqParams = {'name': name};
-    _apiService.callApi(Rpc.RPC_CONTAINER_NETWORK_REMOVE, parameters: reqParams).then((e) => listNetworks());
+    _apiService.callApi(Rpc.RPC_CONTAINER_NETWORK_REMOVE, parameters: reqParams).then((e) => listNetworks(false));
   }
 
   /* Container methods */

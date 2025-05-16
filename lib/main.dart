@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/page/dashboard_page.dart';
-import 'package:jos_ui/page/directory_tree_page.dart';
 import 'package:jos_ui/page/event_page.dart';
 import 'package:jos_ui/page/filesystem_page.dart';
 import 'package:jos_ui/page/firewall/firewall_chain_page.dart';
@@ -23,7 +22,9 @@ import 'package:jos_ui/page/oci/oci_container_create_page.dart';
 import 'package:jos_ui/page/oci/oci_container_list_page.dart';
 import 'package:jos_ui/page/oci/oci_images_page.dart';
 import 'package:jos_ui/page/oci/oci_networks_page.dart';
+import 'package:jos_ui/page/oci/oci_image_search_page.dart';
 import 'package:jos_ui/page/oci/oci_settings_page.dart';
+import 'package:jos_ui/page/oci/oci_volumes_files_page.dart';
 import 'package:jos_ui/page/oci/oci_volumes_page.dart';
 import 'package:jos_ui/page/settings/settings_backup_page.dart';
 import 'package:jos_ui/page/settings/settings_basic_page.dart';
@@ -88,7 +89,6 @@ class JosApplication extends StatelessWidget {
           GetPage(name: Routes.firewallChains.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: FirewallChainPage())),
           GetPage(name: Routes.firewallRules.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: FirewallRulePage())),
           GetPage(name: Routes.filesystem.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: FilesystemPage())),
-          GetPage(name: Routes.directoryTree.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: DirectoryTreePage())),
           GetPage(name: Routes.modules.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: ModulePage())),
           GetPage(name: Routes.dependencies.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: DependencyPage())),
           GetPage(name: Routes.moduleLogs.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: ModuleLogPage())),
@@ -97,7 +97,9 @@ class JosApplication extends StatelessWidget {
           GetPage(name: Routes.ociImages.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciImagesPage())),
           GetPage(name: Routes.ociNetworks.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciNetworksPage())),
           GetPage(name: Routes.ociVolumes.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciVolumesPage())),
+          GetPage(name: Routes.ociVolumesFiles.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciVolumesFilesPage())),
           GetPage(name: Routes.ociSettings.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciSettingsPage())),
+          GetPage(name: Routes.ociImageSearch.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: OciImageSearchPage())),
           GetPage(name: Routes.events.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: EventPage())),
           GetPage(name: Routes.kernelLogs.path, transitionDuration: Duration.zero, page: () => ResponsiveLayout(body: KernelLogPage())),
         ],

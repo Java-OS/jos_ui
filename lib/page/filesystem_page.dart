@@ -3,11 +3,10 @@ import 'package:get/get.dart';
 import 'package:jos_ui/component/bar_chart.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/char_button.dart';
-import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/filesystem_controller.dart';
 import 'package:jos_ui/dialog/filesystem_dialog.dart';
 import 'package:jos_ui/model/filesystem.dart';
-import 'dart:developer' as developer;
+
 class FilesystemPage extends StatefulWidget {
   const FilesystemPage({super.key});
 
@@ -62,7 +61,6 @@ class _FilesystemPageState extends State<FilesystemPage> {
                   text: getPartitionText(fs),
                   warn: fs.type == 'LVM2_member' ? Colors.grey : Colors.red,
                   textStyle: TextStyle(fontSize: 12),
-                  onClick: canUsePartition(fs) ? null : () => fetchTreeAndDisplay(fs),
                   disabled: canUsePartition(fs),
                 ),
               ),
@@ -136,7 +134,7 @@ class _FilesystemPageState extends State<FilesystemPage> {
 
   fetchTreeAndDisplay(PartitionInformation partition) async {
     _filesystemController.directoryPath.value = partition.mountPoint;
-    await _filesystemController.fetchFilesystemTree().then((_) => Get.toNamed(Routes.directoryTree.path));
+    // await _filesystemController.fetchFilesystemTree().then((_) => Get.toNamed(Routes.directoryTree.path));
     // .then((value) => displayFilesystemTree(true, false));
   }
 }

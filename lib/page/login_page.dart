@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/controller/authentication_controller.dart';
@@ -14,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    _authenticationController.requestPublicKey();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _authenticationController.requestPublicKey());
     super.initState();
   }
 

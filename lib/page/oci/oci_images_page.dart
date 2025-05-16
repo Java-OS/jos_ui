@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/tile.dart';
+import 'package:jos_ui/constant.dart';
 import 'package:jos_ui/controller/oci_controller.dart';
 import 'package:jos_ui/dialog/container/image_search_dialog.dart';
 import 'package:jos_ui/message_buffer.dart';
@@ -22,7 +23,7 @@ class _OciImagesPageState extends State<OciImagesPage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => _containerController.listImages());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _containerController.listImages(false));
     super.initState();
   }
 
@@ -31,12 +32,12 @@ class _OciImagesPageState extends State<OciImagesPage> {
     return CardContent(
       controllers: [
         OutlinedButton(
-          onPressed: () => _containerController.listImages(),
+          onPressed: () => _containerController.listImages(false),
           child: Icon(Icons.refresh, size: 16, color: Colors.black),
         ),
         SizedBox(width: 8),
         OutlinedButton(
-          onPressed: () => displayContainerSearchImage(),
+          onPressed: () => Get.toNamed(Routes.ociImageSearch.path),
           child: Icon(Icons.add, size: 16, color: Colors.black),
         ),
       ],

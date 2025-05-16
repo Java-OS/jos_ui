@@ -162,7 +162,6 @@ Future<void> deleteConfirmationDialog(bool closeContextMenu) async {
 }
 
 Future<void> compressDialog() async {
-  Get.back();
   showDialog(
     context: Get.context!,
     builder: (BuildContext context) {
@@ -182,7 +181,7 @@ Future<void> compressDialog() async {
                 child: Text('Confirm'),
                 onPressed: () async {
                   Get.back();
-                  _filesystemController.createArchive();
+                  _filesystemController.createArchive().then((_) => Get.back());
                   displayEvent();
                 },
               )

@@ -19,7 +19,7 @@ class _OciImagesPageState extends State<OciNetworksPage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((e) => _containerController.listNetworks());
+    WidgetsBinding.instance.addPostFrameCallback((e) => _containerController.listNetworks(false));
     super.initState();
   }
 

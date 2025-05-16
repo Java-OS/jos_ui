@@ -1,6 +1,7 @@
+import 'dart:developer' as developer;
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:jos_ui/component/card_content.dart';
 import 'package:jos_ui/component/radio_tile.dart';
@@ -14,7 +15,6 @@ import 'package:jos_ui/model/firewall/protocol.dart';
 import 'package:jos_ui/service/api_service.dart';
 import 'package:jos_ui/util/utils.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:tab_container/tab_container.dart';
 
 class OciContainerCreatePage extends StatefulWidget {
   const OciContainerCreatePage({super.key});
@@ -30,9 +30,9 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((e) {
-      _containerController.listImages();
-      _containerController.listVolumes();
-      _containerController.listNetworks();
+      _containerController.listImages(false);
+      _containerController.listVolumes(true);
+      _containerController.listNetworks(true);
     });
     super.initState();
   }
@@ -50,8 +50,7 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
               currentStep: _containerController.step.value,
               controlsBuilder: (BuildContext context, ControlsDetails controlDetails) {
                 bool isAfterFirstStep = controlDetails.currentStep > 0;
-                bool isLastStep = controlDetails.currentStep == 5;
-                bool isImageSelected = _containerController.selectedImage.isNotEmpty;
+                bool isLastStep = controlDetails.currentStep == steps().length - 1;
                 return Row(
                   children: [
                     Visibility(
@@ -66,21 +65,14 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
                     SizedBox(width: 8),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => createContainer(controlDetails, isLastStep, isImageSelected),
+                        onPressed: () => createContainer(controlDetails, isLastStep),
                         child: Text(isLastStep ? 'Create container' : 'Next'),
                       ),
                     ),
                   ],
                 );
               },
-              steps: [
-                Step(title: Text('Basic'), content: getBasicStep()),
-                Step(title: Text('Volume'), content: getVolumeStep()),
-                Step(title: Text('Network'), content: getNetworkStep()),
-                Step(title: Text('Port'), content: getPortStep()),
-                Step(title: Text('Environment'), content: getEnvironmentStep()),
-                Step(title: Text('Command'), content: getCommandStep()),
-              ],
+              steps: steps(),
             ),
           ),
         ),
@@ -88,12 +80,25 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
     );
   }
 
-  void createContainer(ControlsDetails controlDetails, bool isLastStep, bool isImageSelected) async {
+  List<Step> steps() {
+    return [
+      Step(title: Text('Image'), content: getImageStep()),
+      Step(title: Text('Basic'), content: getBasicStep()),
+      Step(title: Text('Volume'), content: getVolumeStep()),
+      Step(title: Text('Network'), content: getNetworkStep()),
+      Step(title: Text('Port'), content: getPortStep()),
+      Step(title: Text('Environment'), content: getEnvironmentStep()),
+      Step(title: Text('Command'), content: getCommandStep()),
+    ];
+  }
+
+  void createContainer(ControlsDetails controlDetails, bool isLastStep) async {
+    developer.log('Selected image: ${_containerController.selectedImage.value}');
     if (isLastStep) {
       await _containerController.createContainer();
       Get.back();
     }
-    if (isImageSelected) {
+    if (_containerController.selectedImage.isNotEmpty) {
       controlDetails.onStepContinue!();
     }
   }
@@ -109,73 +114,15 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
           TextFieldBox(controller: _containerController.containerUserEditingController, label: 'User  (Optional)'),
           SizedBox(height: 8),
           TextFieldBox(controller: _containerController.containerWorkDirEditingController, label: 'Work Directory (Optional)'),
-          SizedBox(height: 8),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: OutlinedButton.icon(
-              onPressed: () => displaySelectContainerImage(),
-              label: Text(_containerController.selectedImage.value.isEmpty ? 'Choose Image' : _containerController.selectedImage.value),
-              icon: Icon(MdiIcons.layersTriple, size: 16, color: Colors.blue),
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Future<void> displaySelectContainerImage() async {
-    showDialog(
-      context: Get.context!,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          title: getModalHeader('Select image'),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-          contentPadding: EdgeInsets.zero,
-          titlePadding: EdgeInsets.zero,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 400,
-                height: 350,
-                child: TabContainer(
-                  childPadding: const EdgeInsets.all(0),
-                  color: Colors.blueAccent,
-                  selectedTextStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.white, fontFamily: 'cairo'),
-                  unselectedTextStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.blue, fontFamily: 'cairo'),
-                  tabs: [
-                    Text('Available Images', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, fontFamily: 'cairo')),
-                    Text('Search', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, fontFamily: 'cairo')),
-                  ],
-                  children: [
-                    installedImagesTab(),
-                    searchImagesTab(),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 50,
-                child: ElevatedButton(
-                  onPressed: () => Get.back(),
-                  child: Text('Apply'),
-                ),
-              ),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  Widget installedImagesTab() {
-    return Container(
-      color: Colors.white,
-      height: double.infinity,
-      padding: EdgeInsets.all(14.0),
+  /*------ Choose Image ------*/
+  Widget getImageStep() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: ListView.builder(
         shrinkWrap: true,
         itemCount: _containerController.containerImageList.length,
@@ -195,59 +142,6 @@ class _OciContainerCreatePageState extends State<OciContainerCreatePage> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget searchImagesTab() {
-    return Container(
-      color: Colors.white,
-      height: double.infinity,
-      padding: EdgeInsets.all(14.0),
-      child: Column(
-        children: [
-          TextFieldBox(
-            maxLines: 1,
-            controller: _containerController.searchImageEditingController,
-            prefix: Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 4),
-              child: Icon(Icons.search),
-            ),
-            suffix: Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: ElevatedButton(onPressed: () => _containerController.searchImage(), child: Text('Search')),
-            ),
-          ),
-          SizedBox(height: 8),
-          Obx(
-            () => Expanded(
-              child: Visibility(
-                visible: _apiService.isLoading.isFalse,
-                replacement: Center(child: SpinKitCircle(color: Colors.blueAccent)),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _containerController.searchImageList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    var imageSearch = _containerController.searchImageList[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Obx(
-                        () => RadioTileItem<String>(
-                          index: index,
-                          value: imageSearch.name,
-                          selectedValue: _containerController.selectedImage.value,
-                          title: Text(imageSearch.name),
-                          subTitle: Text(truncate(imageSearch.index)),
-                          onChanged: (value) => _containerController.selectedImage.value = value,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

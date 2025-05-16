@@ -16,9 +16,14 @@ class AuthenticationController extends GetxController {
   var captchaImage = Rxn<Image>();
 
   Future<void> requestPublicKey() async {
-    var result = await RestClient.sendEcdhPublicKey();
-    if (result != null) {
-      captchaImage.value = Image.memory(base64Decode(result));
+    var completed = false;
+    while (!completed) {
+      var result = await RestClient.sendEcdhPublicKey();
+      if (result != null) {
+        developer.log('Public key received');
+        completed = true;
+        captchaImage.value = Image.memory(base64Decode(result));
+      }
     }
   }
 

@@ -2,7 +2,7 @@ class ImageSearch {
   final String index;
   final String name;
   final String description;
-  final String stars;
+  final int stars;
   final String official;
   final String automated;
   String tag;
@@ -13,7 +13,7 @@ class ImageSearch {
     var index = map['Index'];
     var name = map['Name'];
     var description = map['Description'] ?? '';
-    var stars = map['Stars'];
+    var stars = map['Stars'] as int;
     var official = map['Official'] ?? '';
     var automated = map['Automated'] ?? '';
     var tag = map['Tag'] ?? '';
